@@ -16,6 +16,7 @@
 #include "../../../../world/level/Level.h"
 #include "../../../../world/item/DyePowderItem.h"
 #include "../../../../world/item/crafting/Recipe.h"
+#include "platform/input/Keyboard.h"
 
 static NinePatchLayer* guiPaneFrame = NULL;
 
@@ -420,7 +421,7 @@ void PaneCraftingScreen::clearCategoryItems()
 
 void PaneCraftingScreen::keyPressed( int eventKey )
 {
-	if (eventKey == Keyboard::KEY_ESCAPE) {
+	if (eventKey == Keyboard::KEY_ESCAPE || eventKey == Keyboard::KEY_E) {
 		minecraft->setScreen(NULL);
 		//minecraft->grabMouse();
 	} else {

@@ -697,12 +697,12 @@ void Minecraft::tickInput() {
 		if (isPressed) {
 			gui.handleKeyPressed(key);
 
-			#if defined(WIN32) || defined(RPI)//|| defined(_DEBUG) || defined(DEBUG)
+			#if defined(WIN32) || defined(RPI) || defined (PLATFORM_DESKTOP)//|| defined(_DEBUG) || defined(DEBUG)
 				if (key >= '0' && key <= '9') {
 					int digit = key - '0';
 					int slot = digit - 1;
 
-					if (slot >= 0 && slot < gui.getNumSlots()-1)
+					if (slot >= 0 && slot < gui.getNumSlots())
 						player->inventory->selectSlot(slot);
 
 					#if defined(WIN32)
@@ -728,14 +728,8 @@ void Minecraft::tickInput() {
 				if (!screen && key == Keyboard::KEY_O || key == 250) {
 					releaseMouse();
 				}
-			#endif
-			#if defined(WIN32)
-				if (key == Keyboard::KEY_F) {
-					options.isFlying = !options.isFlying;
-					player->noPhysics = options.isFlying;
-				}
 
-				if (key == Keyboard::KEY_T) {
+				if (key == Keyboard::KEY_F5) {
 					options.thirdPersonView = !options.thirdPersonView;
 					/*
 					ImprovedNoise noise;
@@ -743,6 +737,21 @@ void Minecraft::tickInput() {
 						printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
 					*/
 				}
+			#endif
+			#if defined(WIN32)
+				if (key == Keyboard::KEY_F) {
+					options.isFlying = !options.isFlying;
+					player->noPhysics = options.isFlying;
+				}
+
+				// if (key == Keyboard::KEY_T) {
+				// 	options.thirdPersonView = !options.thirdPersonView;
+				// 	/*
+				// 	ImprovedNoise noise;
+				// 	for (int i = 0; i < 16; ++i)
+				// 		printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
+				// 	*/
+				// }
 
 				if (key == Keyboard::KEY_O) {
 					useAmbientOcclusion = !useAmbientOcclusion;

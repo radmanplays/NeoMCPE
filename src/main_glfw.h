@@ -1,11 +1,13 @@
 #ifndef MAIN_GLFW_H__
 #define MAIN_GLFW_H__
 
+#include "App.h"
 #include "GLFW/glfw3.h"
 #include "client/renderer/gles.h"
 #include "SharedConstants.h"
 
 #include <cstdio>
+#include "platform/input/Keyboard.h"
 #include "platform/input/Mouse.h"
 #include "platform/input/Multitouch.h"
 #include "util/Mth.h"
@@ -22,6 +24,7 @@ int transformKey(int glfwkey) {
 		case GLFW_KEY_ESCAPE: return Keyboard::KEY_ESCAPE;
 		case GLFW_KEY_BACKSPACE: return Keyboard::KEY_BACKSPACE;
 		case GLFW_KEY_LEFT_SHIFT: return Keyboard::KEY_LSHIFT;
+		case GLFW_KEY_ENTER: return Keyboard::KEY_RETURN;
 		default: return glfwkey;
 	}
 }
@@ -105,8 +108,8 @@ int main(void) {
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
 	GLFWwindow* window = glfwCreateWindow(appContext.platform->getScreenWidth(), appContext.platform->getScreenHeight(), "main", NULL, NULL);

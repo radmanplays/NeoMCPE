@@ -115,10 +115,11 @@ void Options::initDefaultValues() {
 		keyMenuCancel.key   = 4;
 	#endif
 #endif
-
+#if defined(PLATFORM_DESKTOP) || defined(RPI)
+	sensitivity *= 0.4f;
+#endif
 #if defined(RPI)
 	username = "StevePi";
-	sensitivity *= 0.4f;
 	useMouseForDigging = true;
 #endif
 }

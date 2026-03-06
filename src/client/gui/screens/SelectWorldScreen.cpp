@@ -425,13 +425,23 @@ void SelectWorldScreen::render( int xm, int ym, float a )
 	//Performance::watches.get("sws-worlds").start();
 
 	worldsList->setComponentSelected(bWorldView.selected);
+	// #ifdef PLATFORM_DESKTOP
 
+	// We should add scrolling with mouse wheel but currently i dont know how to implement it
 	if (_mouseHasBeenUp)
 		worldsList->render(xm, ym, a);
 	else {
 		worldsList->render(0, 0, a);
 		_mouseHasBeenUp = !Mouse::getButtonState(MouseAction::ACTION_LEFT);
 	}
+	// #else
+	// 	if (_mouseHasBeenUp)
+	// 	worldsList->render(xm, ym, a);
+	// 	else {
+	// 		worldsList->render(0, 0, a);
+	// 		_mouseHasBeenUp = !Mouse::getButtonState(MouseAction::ACTION_LEFT);
+	// 	}
+	// #endif
 
 	//Performance::watches.get("sws-worlds").stop();
 	//Performance::watches.get("sws-screen").start();
