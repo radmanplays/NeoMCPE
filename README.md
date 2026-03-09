@@ -9,7 +9,7 @@ First of all I made it build with CMake (w/o VS2012). Also I fixed some compile 
 - [x] Compile for Linux
 - [ ] Compile for android aarch64
 - [ ] Rewrite platform logic
-- [ ] Fix sound
+- [x] Fix sound
 - [ ] Do a server connection gui
 
 # Build
