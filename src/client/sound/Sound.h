@@ -43,7 +43,6 @@ public:
 
     void destroy() const {
         if (isValid()) {
-			delete buffer;
             buffer = 0;
         }
     }
