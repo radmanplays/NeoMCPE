@@ -737,6 +737,10 @@ void Minecraft::tickInput() {
 						printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
 					*/
 				}
+				
+				// Change distance
+				if (key == Keyboard::KEY_F)
+					options.viewDistance = (options.viewDistance + 1) % 4;
 			#endif
 			#if defined(WIN32)
 				if (key == Keyboard::KEY_F) {

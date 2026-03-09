@@ -140,7 +140,7 @@ void SoundSystemAL::playAt( const SoundDesc& sound, float x, float y, float z, f
 {
     if (pitch < 0.01f) pitch = 1;
 
-    //LOGI("playing sound '%s' with volume/pitch: %f, %f @ %f, %f, %f\n", sound.name.c_str(), volume, pitch, x, y, z);
+    LOGI("playing sound '%s' with volume/pitch: %f, %f @ %f, %f, %f\n", sound.name.c_str(), volume, pitch, x, y, z);
     
     ALuint bufferID;
     if (!getBufferId(sound, &bufferID)) {
@@ -151,7 +151,7 @@ void SoundSystemAL::playAt( const SoundDesc& sound, float x, float y, float z, f
     }
     errIdString = "Get buffer";
     checkError();
-    //LOGI("playing sound %d - '%s' with volume/pitch: %f, %f @ %f, %f, %f\n", bufferID, sound.name.c_str(), volume, pitch, x, y, z);
+    LOGI("playing sound %d - '%s' with volume/pitch: %f, %f @ %f, %f, %f\n", bufferID, sound.name.c_str(), volume, pitch, x, y, z);
 
     int sourceIndex;
     errIdString = "Get free index";
@@ -232,12 +232,12 @@ bool SoundSystemAL::getBufferId(const SoundDesc& sound, ALuint* buf) {
     :   (sound.channels==2? AL_FORMAT_STEREO8  : AL_FORMAT_MONO8);
     
     alBufferData(bufferID, format, sound.frames, sound.size, sound.frameRate);
-    //LOGI("Creating %d (%p) from sound: '%s'\n", bufferID, sound.frames, sound.name.c_str());
+    LOGI("Creating %d (%p) from sound: '%s'\n", bufferID, sound.frames, sound.name.c_str());
     errIdString = "Buffer data";
-    //LOGI("Creating buffer with data: %d (%d), %p, %d, %d\n", format, sound.byteWidth, sound.frames, sound.size, sound.frameRate);
+    LOGI("Creating buffer with data: %d (%d), %p, %d, %d\n", format, sound.byteWidth, sound.frames, sound.size, sound.frameRate);
     checkError();
 
-    //LOGI("Sound ch: %d, fmt: %d, frames: %p, len: %f, fr: %d, sz: %d, numfr: %d\n", sound.channels, format, sound.frames, sound.length(), sound.frameRate, sound.size, sound.numFrames);
+    LOGI("Sound ch: %d, fmt: %d, frames: %p, len: %f, fr: %d, sz: %d, numfr: %d\n", sound.channels, format, sound.frames, sound.length(), sound.frameRate, sound.size, sound.numFrames);
     
     
     Buffer buffer;
