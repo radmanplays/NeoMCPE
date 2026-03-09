@@ -3,15 +3,7 @@
 
 #include "../../Screen.h"
 #include "../../components/LargeImageButton.h"
-
-
-class BuyButton: public ImageButton {
-	typedef ImageButton super;
-public:
-	BuyButton(int id);
-	void render(Minecraft* minecraft, int xm, int ym);
-};
-
+#include "../../components/TextBox.h"
 
 namespace Touch {
 
@@ -36,8 +28,6 @@ private:
 	LargeImageButton bHost;
 	LargeImageButton bJoin;
 	LargeImageButton bOptions;
-	TButton bTest;
-	BuyButton bBuy;
 
 	std::string copyright;
 	int copyrightPosX;

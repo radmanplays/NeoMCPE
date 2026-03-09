@@ -25,6 +25,11 @@ void Screen::render( int xm, int ym, float a )
 		Button* button = buttons[i];
 		button->render(minecraft, xm, ym);
 	}
+
+	for (unsigned int i = 0; i < textBoxes.size(); i++) {
+		TextBox* textbox = textBoxes[i];
+		textbox->render(minecraft, xm, ym);
+	}
 }
 
 void Screen::init( Minecraft* minecraft, int width, int height )
@@ -157,6 +162,11 @@ void Screen::keyPressed( int eventKey )
 		minecraft->setScreen(NULL);
 		//minecraft->grabMouse();
 	}
+
+	for (auto& textbox : textBoxes) {
+		textbox->handleKey(eventKey);
+	}
+
 	if (minecraft->useTouchscreen())
 		return;
 
@@ -179,6 +189,14 @@ void Screen::keyPressed( int eventKey )
 	}
 
 	updateTabButtonSelection();
+}
+
+void Screen::keyboardNewChar(char inputChar) {
+	// yeah im using these modern cpp features in this project :sunglasses:
+	
+	for (auto& textbox : textBoxes) {
+		textbox->handleChar(inputChar);
+	}
 }
 
 void Screen::updateTabButtonSelection()
@@ -209,6 +227,10 @@ void Screen::mouseClicked( int x, int y, int buttonNum )
 */
 			}
 		}
+	}
+
+	for (auto& textbox : textBoxes) {
+		textbox->mouseClicked(minecraft, x, y, buttonNum);
 	}
 }
 
@@ -252,4 +274,10 @@ void Screen::lostFocus() {
 void Screen::toGUICoordinate( int& x, int& y ) {
 	x = x * width / minecraft->width;
 	y = y * height / minecraft->height - 1;
+}
+
+void Screen::tick() {
+	for (auto& textbox : textBoxes) {
+		textbox->tick(minecraft);
+	}
 }

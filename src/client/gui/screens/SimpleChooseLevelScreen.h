@@ -2,6 +2,8 @@
 #define NET_MINECRAFT_CLIENT_GUI_SCREENS__DemoChooseLevelScreen_H__
 
 #include "ChooseLevelScreen.h"
+#include "../components/TextBox.h"
+
 class Button;
 
 class SimpleChooseLevelScreen: public ChooseLevelScreen
@@ -21,12 +23,18 @@ public:
 	bool handleBackEvent(bool isDown);
 
 private:
-	Button* bCreative;
-	Button* bSurvival;
+	// Button* bCreative;
+	Button* bGamemode;
 	Button* bBack;
+	Button* bCreate;
 	bool hasChosen;
 
 	std::string levelName;
+
+	int gamemode;
+
+	TextBox tLevelName;
+	TextBox tSeed;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_SCREENS__DemoChooseLevelScreen_H__*/
