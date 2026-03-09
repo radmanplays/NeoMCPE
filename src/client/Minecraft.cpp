@@ -889,6 +889,10 @@ void Minecraft::tickInput() {
 		handleBuildAction(&bai);
 	}
 
+	if (Mouse::getButtonState(MouseAction::ACTION_LEFT) == 0) {
+		gameMode->stopDestroyBlock();
+	}
+
 	prevMouseDownLeft = Mouse::isButtonDown(MouseAction::ACTION_LEFT);
 	
 	static int buildHoldTicks = 0;
