@@ -1,4 +1,6 @@
 # MinecraftPE
+> [!Important]
+> We have a discord server, where you can report bugs or send feedback https://discord.gg/ryZ884DWJf
 
 This is leaked source code of Minecraft PE 0.6.1 with my own impovements :sunglasses:
 
