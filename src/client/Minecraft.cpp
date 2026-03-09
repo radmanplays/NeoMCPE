@@ -890,11 +890,20 @@ void Minecraft::tickInput() {
 	}
 
 	prevMouseDownLeft = Mouse::isButtonDown(MouseAction::ACTION_LEFT);
+	
+	static int buildHoldTicks = 0;
 
 	// Build and use/interact is on same button
+	// USPESHNO spizheno
 	if (Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
-		BuildActionIntention bai(BuildActionIntention::BAI_BUILD | BuildActionIntention::BAI_INTERACT);
-		handleBuildAction(&bai);
+		if (buildHoldTicks >= 5) buildHoldTicks = 0;
+
+		if (++buildHoldTicks == 1) {
+			BuildActionIntention bai(BuildActionIntention::BAI_BUILD | BuildActionIntention::BAI_INTERACT);
+			handleBuildAction(&bai);
+		}
+	} else {
+		buildHoldTicks = 0;
 	}
 
 	lastTickTime = getTimeMs();
