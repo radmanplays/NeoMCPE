@@ -32,10 +32,15 @@ mkdir build && cd build
 cmake .. -B .
 make -j4
 ```
+## Visual Studio
+
+1. Open the repository folder in **Visual Studio**.  
+2. Visual Studio will automatically detect the `CMakeLists.txt` file and generate the project configuration.  
+3. Set **MinecraftPE** as the **startup project**.  
+4. Press **Run** (or F5) to build and launch the game.
 
 ## Android
-Download r14b Android NDK and run `build.ps1`:
-
+Download [r14b Android NDK](http://dl.google.com/android/repository/android-ndk-r14b-windows-x86_64.zip) and run `build.ps1`:
 ```
 # Full build (NDK + Java + APK + install)
 C:\apkbuild\build.ps1
