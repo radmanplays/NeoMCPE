@@ -130,6 +130,9 @@ public:
 	virtual void openURL(const std::string& url) {
 #ifdef _WIN32
 		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+#elif __linux__
+    std::string command = "xdg-open " + url;
+    system(command.c_str());
 #endif
 	}
 
