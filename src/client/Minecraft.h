@@ -109,7 +109,6 @@ public:
 	void onGraphicsReset();
 
 	bool isLevelGenerated();
-	int getLicenseId();
 
     void audioEngineOn();
     void audioEngineOff();

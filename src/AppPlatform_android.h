@@ -68,9 +68,6 @@ public:
 
         _methodGetDateString(0),
 
-        _methodCheckLicense(0),
-        _methodHasBuyButton(0),
-        _methodBuyGame(0),
         _methodVibrate(0),
         _methodSupportsTouchscreen(0),
 		_methodSetIsPowerVR(0),
@@ -146,10 +143,6 @@ public:
         _methodUserInputString = env->GetMethodID( _activityClass, "getUserInputString", "()[Ljava/lang/String;");
 
         _methodGetDateString = env->GetMethodID( _activityClass, "getDateString", "(I)Ljava/lang/String;");
-
-        _methodCheckLicense = env->GetMethodID( _activityClass, "checkLicense", "()I");
-        _methodHasBuyButton = env->GetMethodID( _activityClass, "hasBuyButtonWhenInvalidLicense", "()Z");
-        _methodBuyGame = env->GetMethodID( _activityClass, "buyGame", "()V");
 
         _methodVibrate = env->GetMethodID( _activityClass, "vibrate", "(I)V");
         _methodSupportsTouchscreen = env->GetMethodID( _activityClass, "supportsTouchscreen", "()Z");
@@ -473,36 +466,6 @@ public:
 		return out;
 	}
 
-	int checkLicense() {
-        if (!_isInited) return -2;
-        if (!_methodCheckLicense) return -2;
-
-        JVMAttacher ta(_vm);
-        JNIEnv* env = ta.getEnv();
-
-        return env->CallIntMethod(instance, _methodCheckLicense);
-    }
-
-    bool hasBuyButtonWhenInvalidLicense() {
-        if (!_isInited) return false;
-        if (!_methodHasBuyButton) return false;
-
-        JVMAttacher ta(_vm);
-        JNIEnv* env = ta.getEnv();
-
-        return JNI_TRUE == env->CallBooleanMethod(instance, _methodHasBuyButton);
-    }
-
-    void buyGame() {
-        if (!_isInited) return;
-        if (!_methodBuyGame) return;
-
-        JVMAttacher ta(_vm);
-        JNIEnv* env = ta.getEnv();
-
-        env->CallVoidMethod(instance, _methodBuyGame);
-    }
-
     virtual void finish() {
         if (!_isInited) return;
         if (!_methodFinish) return;
@@ -643,10 +606,6 @@ private:
     jmethodID _methodUserInputString;
 
     jmethodID _methodGetDateString;
-
-    jmethodID _methodCheckLicense;
-    jmethodID _methodHasBuyButton;
-    jmethodID _methodBuyGame;
 
     jmethodID _getScreenWidth;
     jmethodID _getScreenHeight;

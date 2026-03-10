@@ -5,9 +5,7 @@
 #include "JoinGameScreen.h"
 #include "OptionsScreen.h"
 #include "PauseScreen.h"
-#include "InvalidLicenseScreen.h"
 #include "PrerenderTilesScreen.h" // test button
-//#include "BuyGameScreen.h"
 
 #include "../../../util/Mth.h"
 
@@ -27,9 +25,7 @@
 StartMenuScreen::StartMenuScreen()
 :	bHost(    2, 0, 0, 160, 24, "Start Game"),
 	bJoin(    3, 0, 0, 160, 24, "Join Game"),
-	bOptions( 4, 0, 0,  78, 22, "Options"),
-	bBuy(     5, 0, 0, 78, 22, "Buy"),
-	bTest(    999, 0, 0, 78, 22, "Create")
+	bOptions( 4, 0, 0,  78, 22, "Options")
 {
 }
 
@@ -39,6 +35,9 @@ StartMenuScreen::~StartMenuScreen()
 
 void StartMenuScreen::init()
 {
+
+	bJoin.active = bHost.active = bOptions.active = true;
+
 	if (minecraft->options.username.empty()) {
 		return; // tick() will redirect to UsernameScreen
 	}
@@ -94,14 +93,12 @@ void StartMenuScreen::setupPositions() {
 #endif
 
 	bOptions.y = yBase + 28 + 2;
-	bTest.y = bBuy.y = bOptions.y;
 	//#endif
 
 	// Center buttons
 	bHost.x = (width - bHost.width) / 2;
 	bJoin.x = (width - bJoin.width) / 2;
 	bOptions.x = (width - bJoin.width) / 2;
-	bTest.x = bBuy.x = bOptions.x + bOptions.width + 4;
 
 	copyrightPosX = width - minecraft->font->width(copyright) - 1;
 	versionPosX = (width - minecraft->font->width(version)) / 2;// - minecraft->font->width(version) - 2;
@@ -112,7 +109,6 @@ void StartMenuScreen::tick() {
 		minecraft->setScreen(new UsernameScreen());
 		return;
 	}
-	_updateLicense();
 }
 
 void StartMenuScreen::buttonClicked(Button* button) {
@@ -133,16 +129,6 @@ void StartMenuScreen::buttonClicked(Button* button) {
 	if (button->id == bOptions.id)
 	{
 		minecraft->setScreen(new OptionsScreen());
-	}
-	if (button->id == bTest.id)
-	{
-		//minecraft->setScreen(new PauseScreen());
-		//minecraft->setScreen(new PrerenderTilesScreen());
-	}
-	if (button->id == bBuy.id)
-	{
-		minecraft->platform()->buyGame();
-		//minecraft->setScreen(new BuyGameScreen());
 	}
 }
 
@@ -200,23 +186,6 @@ void StartMenuScreen::render( int xm, int ym, float a )
 			float y0 = height - 10 + font->lineHeight - 1;
 			this->fill(12, (int)y0, 12 + (int)wtxt, (int)(y0 + 1), 0xffffffff);
     }
-}
-
-void StartMenuScreen::_updateLicense()
-{
-	int id = minecraft->getLicenseId();
-	if (LicenseCodes::isReady(id))
-	{
-		if (LicenseCodes::isOk(id))
-			bJoin.active = bHost.active = bOptions.active = true;
-		else
-		{
-			bool hasBuyButton = minecraft->platform()->hasBuyButtonWhenInvalidLicense();
-			minecraft->setScreen(new InvalidLicenseScreen(id, hasBuyButton));
-		}
-	} else {
-		bJoin.active = bHost.active = bOptions.active = false;
-	}
 }
 
 void StartMenuScreen::mouseClicked(int x, int y, int buttonNum) {

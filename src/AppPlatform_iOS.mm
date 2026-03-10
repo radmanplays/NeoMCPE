@@ -175,10 +175,6 @@ BinaryBlob AppPlatform_iOS::readAssetFile(const std::string& filename_) {
     return BinaryBlob(bytes, numBytes);
 }
 
-void AppPlatform_iOS::buyGame() {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=479516143&mt=8"]];
-}
-
 std::string AppPlatform_iOS::getDateString(int s) {
 
     NSDate* date = [NSDate dateWithTimeIntervalSince1970:s];

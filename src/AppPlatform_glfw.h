@@ -111,28 +111,19 @@ public:
 		return std::string(mbstr);
 	}
 
-	virtual int checkLicense() {
-		static int _z = 0;//20;
-		_z--;
-		if (_z < 0) return 0;
-		//if (_z < 0) return 107;
-		return -2;
-	}
-
 	virtual int getScreenWidth() { return 854; };
 	virtual int getScreenHeight() { return 480; };
 
 	virtual float getPixelsPerMillimeter();
 
 	virtual bool supportsTouchscreen() { return true; }
-	virtual bool hasBuyButtonWhenInvalidLicense() { return false; }
 
 	virtual void openURL(const std::string& url) {
 #ifdef _WIN32
 		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 #elif __linux__
-    std::string command = "xdg-open " + url;
-    system(command.c_str());
+		std::string command = "xdg-open " + url;
+		system(command.c_str());
 #endif
 	}
 

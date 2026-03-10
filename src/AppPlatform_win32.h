@@ -111,21 +111,12 @@ public:
 		return std::string(mbstr);
 	}
 
-	virtual int checkLicense() {
-		static int _z = 0;//20;
-		_z--;
-		if (_z < 0) return 0;
-		//if (_z < 0) return 107;
-		return -2;
-	}
-
 	virtual int getScreenWidth();
 	virtual int getScreenHeight();
 
 	virtual float getPixelsPerMillimeter();
 
 	virtual bool supportsTouchscreen();
-	virtual bool hasBuyButtonWhenInvalidLicense();
 
 	virtual void openURL(const std::string& url) {
 		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);

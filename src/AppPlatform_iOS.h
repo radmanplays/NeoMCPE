@@ -41,17 +41,6 @@ public:
     
     std::string getDateString(int s);
 
-	virtual int checkLicense() {
-        return 0;
-		static int _z = 20;
-		_z--;
-		if (_z < 0) return 0;
-		//if (_z < 0) return 107;
-		return -2;
-	}
-    
-    virtual void buyGame();
-
 	virtual int getScreenWidth();
 	virtual int getScreenHeight();
     virtual float getPixelsPerMillimeter();

@@ -2,8 +2,6 @@
 #include "../ProgressScreen.h"
 #include "../OptionsScreen.h"
 #include "../PauseScreen.h"
-#include "../InvalidLicenseScreen.h"
-//#include "BuyGameScreen.h"
 
 #include "../../Font.h"
 #include "../../components/SmallButton.h"
@@ -22,62 +20,6 @@
 #include "../DialogDefinitions.h"
 #include "../SimpleChooseLevelScreen.h"
 
-//
-// Buy Button implementation
-//
-BuyButton::BuyButton(int id)
-:	super(id, "")
-{
-	ImageDef def;
-	// Setup the source rectangle
-	def.setSrc(IntRectangle(64, 182, 190, 55));
-	def.width = 75;//rc.w / 3;
-	def.height = 75 * (55.0f / 190.0f);//rc.h / 3;
-	def.name = "gui/gui.png";
-
-	setImageDef(def, true);
-}
-
-void BuyButton::render(Minecraft* minecraft, int xm, int ym) {
-	glColor4f2(1, 1, 1, 1);
-	bool hovered = active && (minecraft->useTouchscreen()? (xm >= x && ym >= y && xm < x + width && ym < y + height) : false);
-	renderBg(minecraft, xm, ym);
-	TextureId texId = (_imageDef.name.length() > 0)? minecraft->textures->loadAndBindTexture(_imageDef.name) : Textures::InvalidId;
-	if ( Textures::isTextureIdValid(texId) ) {
-		const ImageDef& d = _imageDef;
-		Tesselator& t = Tesselator::instance;
-		
-		t.begin();
-			if (!active)				t.color(0xff808080);
-			else if (hovered||selected) t.color(0xffcccccc);
-			//else						t.color(0xffe0e0e0);
-			else t.color(0xffffffff);
-
-			float hx = ((float) d.width) * 0.5f;
-			float hy = ((float) d.height) * 0.5f;
-			const float cx = ((float)x+d.x) + hx;
-			const float cy = ((float)y+d.y) + hy;
-			if (hovered) {
-				hx *= 0.95f;
-				hy *= 0.95f;
-			}
-
-			const TextureData* td = minecraft->textures->getTemporaryTextureData(texId);
-			const IntRectangle* src = _imageDef.getSrc();
-			if (td != NULL && src != NULL) {
-				float u0 = (src->x) / (float)td->w;
-				float u1 = (src->x+src->w) / (float)td->w;
-				float v0 = (src->y) / (float)td->h;
-				float v1 = (src->y+src->h) / (float)td->h;
-				t.vertexUV(cx-hx, cy-hy, blitOffset, u0, v0);
-				t.vertexUV(cx-hx, cy+hy, blitOffset, u0, v1);
-				t.vertexUV(cx+hx, cy+hy, blitOffset, u1, v1);
-				t.vertexUV(cx+hx, cy-hy, blitOffset, u1, v0);
-			}
-		t.draw();
-	}
-}
-
 namespace Touch {
 
 // 
@@ -88,8 +30,7 @@ namespace Touch {
 StartMenuScreen::StartMenuScreen()
 :	bHost(    2, "Start Game"),
 	bJoin(    3, "Join Game"),
-	bOptions( 4, "Options"),
-	bBuy(     5)
+	bOptions( 4, "Options")
 {
 	ImageDef def;
 	bJoin.width = 75;
@@ -148,7 +89,7 @@ void StartMenuScreen::init()
         version = versionString + " (Demo)";
     #endif
 
-	bJoin.active = bHost.active = bOptions.active = false;
+	bJoin.active = bHost.active = bOptions.active = true;
 }
 
 void StartMenuScreen::setupPositions() {
@@ -166,18 +107,9 @@ void StartMenuScreen::setupPositions() {
 	bJoin.x		= 0*buttonWidth + (int)(1*spacing);
 	bHost.x		= 1*buttonWidth + (int)(2*spacing);
 	bOptions.x	= 2*buttonWidth + (int)(3*spacing);
-	//bBuy.y = bOptions.y - bBuy.h - 6;
-	//bBuy.x = bOptions.x + bOptions.w - bBuy.w;
-
-	bBuy.y = height - bBuy.height - 3;
-	bBuy.x = (width - bBuy.width) / 2;
     
 	copyrightPosX = width - minecraft->font->width(copyright) - 1;
 	versionPosX = (width - minecraft->font->width(version)) / 2;// - minecraft->font->width(version) - 2;
-}
-
-void StartMenuScreen::tick() {
-	_updateLicense();
 }
 
 void StartMenuScreen::buttonClicked(::Button* button) {
@@ -202,11 +134,6 @@ void StartMenuScreen::buttonClicked(::Button* button) {
 	if (button->id == bOptions.id)
 	{
 		minecraft->setScreen(new OptionsScreen());
-	}
-	if (button->id == bBuy.id)
-	{
-		minecraft->platform()->buyGame();
-		//minecraft->setScreen(new BuyGameScreen());
 	}
 }
 
@@ -256,22 +183,6 @@ void StartMenuScreen::render( int xm, int ym, float a )
     glDisable2(GL_BLEND);
 }
 
-void StartMenuScreen::_updateLicense()
-{
-	int id = minecraft->getLicenseId();
-	if (LicenseCodes::isReady(id))
-	{
-		if (LicenseCodes::isOk(id))
-			bJoin.active = bHost.active = bOptions.active = true;
-		else
-		{
-			bool hasBuyButton = minecraft->platform()->hasBuyButtonWhenInvalidLicense();
-			minecraft->setScreen(new InvalidLicenseScreen(id, hasBuyButton));
-		}
-	} else {
-		bJoin.active = bHost.active = bOptions.active = false;
-	}
-}
 
 void StartMenuScreen::mouseClicked(int x, int y, int buttonNum) {
 	const int logoX = 2;

@@ -1455,12 +1455,6 @@ LevelStorageSource* Minecraft::getLevelSource()
 	return storageSource;
 }
 
-int Minecraft::getLicenseId() {
-	if (!LicenseCodes::isReady(_licenseId))
-		_licenseId = platform()->checkLicense();
-	return _licenseId;
-}
-
 void Minecraft::audioEngineOn() {
 #ifndef STANDALONE_SERVER
     soundEngine->enable(true);

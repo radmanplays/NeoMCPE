@@ -5,14 +5,6 @@
 #include "../../components/LargeImageButton.h"
 #include "../../components/TextBox.h"
 
-class BuyButton: public ImageButton {
-	typedef ImageButton super;
-public:
-	BuyButton(int id);
-	void render(Minecraft* minecraft, int xm, int ym);
-};
-
-
 namespace Touch {
 
 class StartMenuScreen: public Screen
@@ -23,8 +15,7 @@ public:
 	
 	void init();
 	void setupPositions();
-	
-	void tick();
+
 	void render(int xm, int ym, float a);
 
 	void buttonClicked(Button* button);
@@ -32,12 +23,10 @@ public:
 	bool handleBackEvent(bool isDown);
 	bool isInGameScreen();
 private:
-	void _updateLicense();
 	
 	LargeImageButton bHost;
 	LargeImageButton bJoin;
 	LargeImageButton bOptions;
-	BuyButton bBuy;
 
 	std::string copyright;
 	int copyrightPosX;

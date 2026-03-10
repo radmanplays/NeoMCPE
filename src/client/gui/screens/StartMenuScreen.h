@@ -21,13 +21,10 @@ public:
 	bool handleBackEvent(bool isDown);
 	bool isInGameScreen();
 private:
-	void _updateLicense();
 
 	Button bHost;
 	Button bJoin;
 	Button bOptions;
-	Button bTest;
-	Button bBuy;
 
 	std::string copyright;
 	int copyrightPosX;

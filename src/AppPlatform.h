@@ -96,9 +96,6 @@ public:
 	virtual std::string getDateString(int s) { return ""; }
 	//virtual void createUserInputScreen(const char* types) {}
 
-    virtual int checkLicense() { return 0; }
-	virtual bool hasBuyButtonWhenInvalidLicense() { return false; }
-
 	virtual void uploadPlatformDependentData(int id, void* data) {}
 	virtual BinaryBlob readAssetFile(const std::string& filename) { return BinaryBlob(); }
 	virtual void _tick() {}
@@ -116,8 +113,6 @@ public:
 #ifdef __APPLE__
     virtual bool isSuperFast() = 0;
 #endif
-
-	virtual void buyGame() {}
 
 	virtual void openURL(const std::string& url) {}
 
