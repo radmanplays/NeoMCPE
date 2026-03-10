@@ -2,22 +2,50 @@
 > [!Important]
 > We have a discord server, where you can report bugs or send feedback https://discord.gg/ryZ884DWJf
 
-This is leaked source code of Minecraft PE 0.6.1 with my own impovements :sunglasses:
+Source code for **Minecraft Pocket Edition 0.6.1 alpha** with various fixes and improvements.
 
-First of all I made it build with CMake (w/o VS2012). Also I fixed some compile errors. And finally I ported it to GLFW to make it run on several platforms and remove binary dependencies.
+This project aims to preserve and improve this early version of Minecraft PE.
 
-# TODO
+# TODO / Roadmap
 - [x] Add platform GLFW
 - [x] Compile for Linux
-- [ ] Compile for android aarch64
+- [x] Compile for android aarch64
+    - [x] Touch control improvements
+    - [ ] Screen fixes
 - [ ] Rewrite platform logic
 - [x] Fix sound
-- [ ] Do a server connection gui
+- [ ] Do a server connection GUI
+- [ ] Controller support
+- [ ] Minecraft server hosting
+- [x] Screen fixess
+- [x] Fix fog
+- [x] Add sprinting
+- [x] Chat (semi working) and commands
+- [x] Implementing options
+- [x] Better F3
 
 # Build
+
 ## CMake
 ```
 mkdir build && cd build
 cmake .. -B .
 make -j4
+```
+
+## Android
+Download r14b Android NDK and run `build.ps1`:
+
+```
+# Full build (NDK + Java + APK + install)
+C:\apkbuild\build.ps1
+
+# Skip NDK recompile (Java/assets changed only)
+C:\apkbuild\build.ps1 -NoJava
+
+# Skip Java recompile (C++ changed only)  
+C:\apkbuild\build.ps1 -NoCpp
+
+# Only repackage + install (no recompile at all)
+C:\apkbuild\build.ps1 -NoBuild
 ```
