@@ -86,13 +86,15 @@ void TextBox::render(Minecraft* minecraft, int xm, int ym) {
         Gui::GuiScale * (height - 2)
     );
 
+	int _y = y + (height - Font::DefaultLineHeight) / 2;
+
     if (text.empty() && !focused) {
-        drawString(minecraft->font, hint, x + 2, y + 2, 0xff5e5e5e);
+        drawString(minecraft->font, hint, x + 2, _y, 0xff5e5e5e);
     }
 
     if (focused && blink) text.push_back('_');
 
-    drawString(minecraft->font, text, x + 2, y + 2, 0xffffffff);
+    drawString(minecraft->font, text, x + 2, _y, 0xffffffff);
 
     if (focused && blink) text.pop_back();
 
