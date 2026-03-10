@@ -4,6 +4,7 @@
 #include "../../Minecraft.h"
 #include "../components/Button.h"
 #include "../components/ImageButton.h"
+#include "platform/input/Mouse.h"
 
 CreditsScreen::CreditsScreen()
 : bHeader(NULL), btnBack(NULL)
@@ -65,11 +66,16 @@ void CreditsScreen::tick() {
     if (_scrollY + totalHeight < 0) {
         _scrollY = height;
     }
+
+    if (Mouse::isButtonDown(MouseAction::ACTION_LEFT)) {
+        _scrollSpeed = 1.5f;
+    } else {
+        _scrollSpeed = 0.5f;
+    }
 }
 
 void CreditsScreen::render(int xm, int ym, float a) {
     renderBackground();
-    super::render(xm, ym, a);
     int w = width;
     Font* font = minecraft->font;
     float y = _scrollY;
@@ -87,6 +93,8 @@ void CreditsScreen::render(int xm, int ym, float a) {
         }
         y += lineHeight;
     }
+    
+    super::render(xm, ym, a);
 }
 
 void CreditsScreen::buttonClicked(Button* button) {

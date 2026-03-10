@@ -64,6 +64,7 @@ void AvailableGamesList::renderItem( int i, int x, int y, int h, Tesselator& t )
 JoinGameScreen::JoinGameScreen()
 :	bJoin(  2, "Join Game"),
 	bBack(  3, "Back"),
+	bJoinByIp(4, "Join By IP"),
 	bHeader(0, ""),
 	gamesList(NULL)
 {
@@ -80,6 +81,7 @@ void JoinGameScreen::init()
 {
 	//buttons.push_back(&bJoin);
 	buttons.push_back(&bBack);
+	buttons.push_back(&bJoinByIp);
 	buttons.push_back(&bHeader);
 
 	minecraft->raknetInstance->clearServerList();
@@ -88,6 +90,7 @@ void JoinGameScreen::init()
 #ifdef ANDROID
 	//tabButtons.push_back(&bJoin);
 	tabButtons.push_back(&bBack);
+	tabButtons.push_back(&bJoinByIp);
 #endif
 }
 
@@ -95,16 +98,18 @@ void JoinGameScreen::setupPositions() {
 	//int yBase = height - 26;
 
 	//#ifdef ANDROID
-	bJoin.y =	0;
-	bBack.y =   0;
-	bHeader.y = 0;
+	bJoin.y     = 0;
+	bBack.y     = 0;
+	bJoinByIp.y = 0;
+	bHeader.y   = 0;
 	//#endif
 
 	// Center buttons
 	//bJoin.x = width / 2 - 4 - bJoin.w;
 	bBack.x = 0;//width / 2 + 4;
-	bHeader.x = bBack.width;
-	bHeader.width = width - bHeader.x;
+	bJoinByIp.x = width - bJoinByIp.width;;
+	bHeader.x = bJoinByIp.width;
+	bHeader.width = width - (bBack.width + bJoinByIp.width);
 }
 
 void JoinGameScreen::buttonClicked(Button* button)
