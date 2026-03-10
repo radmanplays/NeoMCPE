@@ -32,6 +32,8 @@ SimpleChooseLevelScreen::~SimpleChooseLevelScreen()
 
 void SimpleChooseLevelScreen::init()
 {
+    tLevelName.text = "New world";
+
     // header + close button
     bHeader = new Touch::THeader(0, "Create World");
     // create the back/X button as ImageButton like CreditsScreen
@@ -186,7 +188,7 @@ void SimpleChooseLevelScreen::buttonClicked( Button* button )
         return;
     }
 
-    if (button == bCreate) {
+    if (button == bCreate && !tLevelName.text.empty()) {
         int seed = getEpochTimeS();
         if (!tSeed.text.empty()) {
             std::string seedString = Util::stringTrim(tSeed.text);
