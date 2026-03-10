@@ -26,6 +26,7 @@ void Screen::render( int xm, int ym, float a )
 		button->render(minecraft, xm, ym);
 	}
 
+	// render any text boxes after buttons
 	for (unsigned int i = 0; i < textBoxes.size(); i++) {
 		TextBox* textbox = textBoxes[i];
 		textbox->render(minecraft, xm, ym);
@@ -163,6 +164,7 @@ void Screen::keyPressed( int eventKey )
 		//minecraft->grabMouse();
 	}
 
+	// pass key events to any text boxes first
 	for (auto& textbox : textBoxes) {
 		textbox->handleKey(eventKey);
 	}
@@ -189,14 +191,6 @@ void Screen::keyPressed( int eventKey )
 	}
 
 	updateTabButtonSelection();
-}
-
-void Screen::keyboardNewChar(char inputChar) {
-	// yeah im using these modern cpp features in this project :sunglasses:
-	
-	for (auto& textbox : textBoxes) {
-		textbox->handleChar(inputChar);
-	}
 }
 
 void Screen::updateTabButtonSelection()
@@ -229,6 +223,7 @@ void Screen::mouseClicked( int x, int y, int buttonNum )
 		}
 	}
 
+	// let textboxes see the click regardless
 	for (auto& textbox : textBoxes) {
 		textbox->mouseClicked(minecraft, x, y, buttonNum);
 	}
@@ -274,10 +269,4 @@ void Screen::lostFocus() {
 void Screen::toGUICoordinate( int& x, int& y ) {
 	x = x * width / minecraft->width;
 	y = y * height / minecraft->height - 1;
-}
-
-void Screen::tick() {
-	for (auto& textbox : textBoxes) {
-		textbox->tick(minecraft);
-	}
 }

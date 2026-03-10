@@ -21,6 +21,8 @@
 #include "../../platform/input/Mouse.h"
 #include "../../world/level/Level.h"
 #include "../../world/PosTranslator.h"
+#include "../../platform/time.h"
+#include <cmath>
 
 float Gui::InvGuiScale = 1.0f / 3.0f;
 float Gui::GuiScale = 1.0f / Gui::InvGuiScale;
@@ -116,6 +118,9 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 #endif
 #if defined(RPI)
 	renderDebugInfo();
+#elif defined(PLATFORM_DESKTOP)
+	if (minecraft->options.renderDebug)
+		renderDebugInfo();
 #endif
 
     glDisable(GL_BLEND);
@@ -632,17 +637,87 @@ void Gui::onLevelGenerated() {
 }
 
 void Gui::renderDebugInfo() {
-	static char buf[256];
-	float xx = minecraft->player->x;
-	float yy = minecraft->player->y - minecraft->player->heightOffset;
-	float zz = minecraft->player->z;
-	posTranslator.to(xx, yy, zz);
-	sprintf(buf, "pos: %3.1f, %3.1f, %3.1f\n", xx, yy, zz);
+	// FPS counter (updates once per second)
+	static float fps = 0.0f;
+	static float fpsLastTime = 0.0f;
+	static int   fpsFrames = 0;
+	float now = getTimeS();
+	fpsFrames++;
+	if (now - fpsLastTime >= 1.0f) {
+		fps = fpsFrames / (now - fpsLastTime);
+		fpsFrames = 0;
+		fpsLastTime = now;
+	}
+
+	LocalPlayer* p   = minecraft->player;
+	Level*       lvl = minecraft->level;
+
+	// Position
+	float px = p->x, py = p->y - p->heightOffset, pz = p->z;
+	posTranslator.to(px, py, pz);
+	int bx = (int)floorf(px), by = (int)floorf(py), bz = (int)floorf(pz);
+	int cx = bx >> 4, cz = bz >> 4;
+
+	// Facing direction
+	float yMod = fmodf(p->yRot, 360.0f);
+	if (yMod < 0) yMod += 360.0f;
+	const char* facing;
+	const char* axis;
+	if      (yMod < 45  || yMod >= 315) { facing = "South"; axis = "+Z"; }
+	else if (yMod < 135)                 { facing = "West";  axis = "-X"; }
+	else if (yMod < 225)                 { facing = "North"; axis = "-Z"; }
+	else                                 { facing = "East";  axis = "+X"; }
+
+	// Biome
+	const char* biomeName = "unknown";
+	if (lvl) {
+		Biome* biome = lvl->getBiome(bx, bz);
+		if (biome) biomeName = biome->name.c_str();
+	}
+
+	// Time
+	long worldTime = lvl ? lvl->getTime() : 0;
+	long dayTime   = worldTime % Level::TICKS_PER_DAY;
+	long day       = worldTime / Level::TICKS_PER_DAY;
+	long seed      = lvl ? lvl->getSeed() : 0;
+
+	// Build lines (NULL entry = blank gap)
+	static char ln[8][96];
+	sprintf(ln[0], "Minecraft PE 0.6.1 alpha (mcpe64)");
+	sprintf(ln[1], "%.1f fps", fps);
+	ln[2][0] = '\0'; // blank separator
+	sprintf(ln[3], "XYZ: %.3f / %.3f / %.3f", px, py, pz);
+	sprintf(ln[4], "Block: %d %d %d   Chunk: %d %d", bx, by, bz, cx, cz);
+	sprintf(ln[5], "Facing: %s (%s)  (%.1f / %.1f)", facing, axis, p->yRot, p->xRot);
+	sprintf(ln[6], "Biome: %s", biomeName);
+	sprintf(ln[7], "Day %ld  Time: %ld  Seed: %ld", day, dayTime, seed);
+
+	const int N   = 8;
+	const float LH  = (float)Font::DefaultLineHeight; // 10 font-pixels
+	const float MGN = 2.0f;  // left/top margin in font-pixels
+	const float PAD = 2.0f;  // horizontal padding for background
+	Font* font = minecraft->font;
+
+	// 1) Draw semi-transparent background boxes behind each line
+	for (int i = 0; i < N; i++) {
+		if (ln[i][0] == '\0') continue;
+		float w  = (float)font->width(ln[i]);
+		float x0 = MGN - PAD;
+		float y0 = MGN + i * LH - 1.0f;
+		float x1 = MGN + w + PAD;
+		float y1 = MGN + (i + 1) * LH - 1.0f;
+		fill(x0, y0, x1, y1, 0x90000000);
+	}
+
+	// 2) Draw text (no extra scale — font coords are in GUI units, same as fill)
 	Tesselator& t = Tesselator::instance;
 	t.beginOverride();
-	t.scale2d(InvGuiScale, InvGuiScale);
-	minecraft->font->draw(buf, 2, 2, 0xffffff);
-	t.resetScale();
+	for (int i = 0; i < N; i++) {
+		if (ln[i][0] == '\0') continue;
+		float y = MGN + i * LH;
+		int col = (i == 0) ? 0xffFFFF55 : 0xffffffff; // title yellow, rest white
+		font->draw(ln[i], MGN, y, col);
+	}
 	t.endOverrideAndDraw();
 }
 
@@ -674,6 +749,70 @@ void Gui::renderOnSelectItemNameText( const int screenWidth, Font* font, int ySl
 				font->drawShadow(item->getName(), x, y, 0x00ffffff + (alpha << 24));
 		}
 	}
+}
+
+
+
+// helper structure used by drawColoredString
+struct ColorSegment {
+    std::string text;
+    uint32_t color;
+};
+
+// parse [tag] and [/tag] markers; tags may contain a color name (gold, green, etc.)
+static void parseColorTags(const std::string& in, std::vector<ColorSegment>& out) {
+    uint32_t curColor = 0xffffff;
+    size_t pos = 0;
+    while (pos < in.size()) {
+        size_t open = in.find('[', pos);
+        if (open == std::string::npos) {
+            out.push_back({in.substr(pos), curColor});
+            break;
+        }
+        if (open > pos) {
+            out.push_back({in.substr(pos, open - pos), curColor});
+        }
+        size_t close = in.find(']', open);
+        if (close == std::string::npos) {
+            out.push_back({in.substr(open), curColor});
+            break;
+        }
+        std::string tag = in.substr(open + 1, close - open - 1);
+        if (!tag.empty() && tag[0] == '/') {
+            curColor = 0xffffff;
+        } else {
+            std::string lower;
+            lower.resize(tag.size());
+            std::transform(tag.begin(), tag.end(), lower.begin(), ::tolower);
+            if (lower.find("gold") != std::string::npos) curColor = 0xffd700;
+            else if (lower.find("green") != std::string::npos) curColor = 0x00ff00;
+            else if (lower.find("yellow") != std::string::npos) curColor = 0xffff00;
+            else if (lower.find("red") != std::string::npos) curColor = 0xff0000;
+            else if (lower.find("blue") != std::string::npos) curColor = 0x0000ff;
+        }
+        pos = close + 1;
+    }
+}
+
+void Gui::drawColoredString(Font* font, const std::string& text, float x, float y, int alpha) {
+    std::vector<ColorSegment> segs;
+    parseColorTags(text, segs);
+    float cx = x;
+    for (auto &s : segs) {
+        int color = s.color + (alpha << 24);
+        font->drawShadow(s.text, cx, y, color);
+        cx += font->width(s.text);
+    }
+}
+
+float Gui::getColoredWidth(Font* font, const std::string& text) {
+    std::vector<ColorSegment> segs;
+    parseColorTags(text, segs);
+    float w = 0;
+    for (auto &s : segs) {
+        w += font->width(s.text);
+    }
+    return w;
 }
 
 void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isChatting, Font* font ) {
@@ -709,7 +848,14 @@ void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isC
 				this->fill(x, y - 1, x + MAX_MESSAGE_WIDTH, y + 8, (alpha / 2) << 24);
 				glEnable(GL_BLEND);
 
-				font->drawShadow(msg, x, y, 0xffffff + (alpha << 24));
+				// special-case join/leave announcements
+		int baseColor = 0xffffff;
+		if (msg.find(" joined the game") != std::string::npos ||
+			msg.find(" left the game") != std::string::npos) {
+			baseColor = 0xffff00; // yellow
+		}
+		// replace previous logic; allow full colour tags now
+		Gui::drawColoredString(font, msg, x, y, alpha);
 			}
 		}
 	}

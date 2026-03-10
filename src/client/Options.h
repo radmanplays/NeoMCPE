@@ -48,6 +48,7 @@ public:
 		static const Option DESTROY_VIBRATION;
 
 		static const Option PIXELS_PER_MILLIMETER;
+		static const Option VSYNC;
 
 		/*
         static Option* getItem(int id) {
@@ -113,6 +114,7 @@ public:
     bool bobView;
     bool anaglyph3d;
     bool limitFramerate;
+    bool vsync;
     bool fancyGraphics;
     bool ambientOcclusion;
 	bool useMouseForDigging;
@@ -206,19 +208,21 @@ public:
 		} else if (item == &Option::PIXELS_PER_MILLIMETER) {
 			 pixelsPerMillimeter = value;
 		}
-		notifyOptionUpdate(item, value);
-    }
+		notifyOptionUpdate(item, value);		save();    }
 	void set(const Option* item, int value) {
 		if(item == &Option::DIFFICULTY) {
 			difficulty = value;
+		} else if(item == &Option::GUI_SCALE) {
+			guiScale = value % 5;
 		}
 		notifyOptionUpdate(item, value);
+		save();
 	}
 
     void toggle(const Option* option, int dir) {
         if (option == &Option::INVERT_MOUSE)	invertYMouse = !invertYMouse;
         if (option == &Option::RENDER_DISTANCE) viewDistance = (viewDistance + dir) & 3;
-        if (option == &Option::GUI_SCALE)		guiScale = (guiScale + dir) & 3;
+        if (option == &Option::GUI_SCALE)		guiScale = (guiScale + dir) % 5;
         if (option == &Option::VIEW_BOBBING)	bobView = !bobView;
 		if (option == &Option::THIRD_PERSON)	thirdPersonView = !thirdPersonView;
 		if (option == &Option::HIDE_GUI)		hideGui = !hideGui;
@@ -232,6 +236,7 @@ public:
             //minecraft->textures.reloadAll();
         }
         if (option == &Option::LIMIT_FRAMERATE) limitFramerate = !limitFramerate;
+        if (option == &Option::VSYNC) vsync = !vsync;
         if (option == &Option::DIFFICULTY) difficulty = (difficulty + dir) & 3;
         if (option == &Option::GRAPHICS) {
             fancyGraphics = !fancyGraphics;
@@ -247,6 +252,7 @@ public:
 
 	int getIntValue(const Option* item) {
 		if(item == &Option::DIFFICULTY) return difficulty;
+		if(item == &Option::GUI_SCALE) return guiScale;
 		return 0;
 	}
 
@@ -267,6 +273,8 @@ public:
             return anaglyph3d;
         if (item == &Option::LIMIT_FRAMERATE)
             return limitFramerate;
+        if (item == &Option::VSYNC)
+            return vsync;
         if (item == &Option::AMBIENT_OCCLUSION)
             return ambientOcclusion;
         if (item == &Option::THIRD_PERSON)
@@ -312,6 +320,7 @@ public:
 	void addOptionToSaveOutput(StringVector& stringVector, std::string name, bool boolValue);
 	void addOptionToSaveOutput(StringVector& stringVector, std::string name, float floatValue);
 	void addOptionToSaveOutput(StringVector& stringVector, std::string name, int intValue);
+	void addOptionToSaveOutput(StringVector& stringVector, std::string name, const std::string& strValue);
 	void notifyOptionUpdate(const Option* option, bool value);
 	void notifyOptionUpdate(const Option* option, float value);
 	void notifyOptionUpdate(const Option* option, int value);

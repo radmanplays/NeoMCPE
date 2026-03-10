@@ -4,6 +4,7 @@
 //package net.minecraft.network.packet;
 
 #include "../Packet.h"
+#include <cstdint>
 
 class SetTimePacket: public Packet {
 public:
@@ -11,7 +12,7 @@ public:
     }
 
     SetTimePacket(long time)
-	:	time(time)
+	:	time((int32_t)time)
 	{}
 
 	void write(RakNet::BitStream* bitStream)
@@ -30,7 +31,7 @@ public:
 		callback->handle(source, (SetTimePacket*)this);
 	}
 	
-	long time;
+	int32_t time;
 };
 
 #endif /*NET_MINECRAFT_NETWORK_PACKET__SetTimePacket_H__*/

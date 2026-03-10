@@ -25,13 +25,17 @@ Slider::Slider(Minecraft* minecraft, const Options::Option* option, const std::v
 	assert(stepVec.size() > 1);
 	numSteps = sliderSteps.size();
 	if(option != NULL) {
-		curStepValue;
-		int curStep;
+		// initialize slider position based on the current option value
 		curStepValue = minecraft->options.getIntValue(option);
-		std::vector<int>::iterator currentItem = std::find(sliderSteps.begin(), sliderSteps.end(), curStepValue);
+		auto currentItem = std::find(sliderSteps.begin(), sliderSteps.end(), curStepValue);
 		if(currentItem != sliderSteps.end()) {
-			curStep = currentItem - sliderSteps.begin();
+			curStep = static_cast<int>(currentItem - sliderSteps.begin());
+		} else {
+			// fallback to first step
+			curStep = 0;
+			curStepValue = sliderSteps[0];
 		}
+		percentage = float(curStep) / float(numSteps - 1);
 	}
 }
 
@@ -46,10 +50,15 @@ void Slider::render( Minecraft* minecraft, int xm, int ym ) {
 	//fill(x, y + 8, x + (int)(width * percentage), y + height, 0xffff00ff);
 	fill(xSliderStart, ySliderStart, xSliderEnd, ySliderEnd, 0xff606060);
 	if(sliderType == SliderStep) {
-		int stepDistance = barWidth / (numSteps -1);
-		for(int a = 0; a <= numSteps - 1; ++a) {
-			int renderSliderStepPosX = xSliderStart + a * stepDistance + 1;
-			fill(renderSliderStepPosX - 1, ySliderStart - 2, renderSliderStepPosX + 1, ySliderEnd + 2, 0xff606060);
+		// numSteps should be >=2; protect against bad input (zero division)
+		if(numSteps <= 1) {
+			// nothing to render
+		} else {
+			int stepDistance = barWidth / (numSteps -1);
+			for(int a = 0; a <= numSteps - 1; ++a) {
+				int renderSliderStepPosX = xSliderStart + a * stepDistance + 1;
+				fill(renderSliderStepPosX - 1, ySliderStart - 2, renderSliderStepPosX + 1, ySliderEnd + 2, 0xff606060);
+			}
 		}
 	}
 	minecraft->textures->loadAndBindTexture("gui/touchgui.png");

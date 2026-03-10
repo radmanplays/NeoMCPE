@@ -47,6 +47,12 @@ public:
 
 	void renderChatMessages( const int screenHeight, unsigned int max, bool isChatting, Font* font );
 
+	// draw a string containing simple [color]...[/color] tags; color names are matched
+	// case-insensitively and default to white. alpha is applied to each segment.
+	// draw tagged string (ignores simple [color]…[/color] tags)
+	static void drawColoredString(Font* font, const std::string& text, float x, float y, int alpha);
+	static float getColoredWidth(Font* font, const std::string& text);
+
 	void renderOnSelectItemNameText( const int screenWidth, Font* font, int ySlot );
 
 	void renderSleepAnimation( const int screenWidth, const int screenHeight );

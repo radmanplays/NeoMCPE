@@ -9,6 +9,8 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <windows.h>
+#include <shellapi.h>
 
 static void png_funcReadFile(png_structp pngPtr, png_bytep data, png_size_t length) {
 	((std::istream*)png_get_io_ptr(pngPtr))->read((char*)data, length);
@@ -121,6 +123,10 @@ public:
 
 	virtual bool supportsTouchscreen();
 	virtual bool hasBuyButtonWhenInvalidLicense();
+
+	virtual void openURL(const std::string& url) {
+		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	}
 
 private:
 };

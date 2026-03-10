@@ -119,6 +119,8 @@ public:
 
 	virtual void buyGame() {}
 
+	virtual void openURL(const std::string& url) {}
+
 	virtual void finish() {}
 	
 	virtual bool supportsTouchscreen() { return false; }

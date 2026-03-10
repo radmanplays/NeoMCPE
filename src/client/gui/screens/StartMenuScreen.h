@@ -17,6 +17,7 @@ public:
 	void render(int xm, int ym, float a);
 
 	void buttonClicked(Button* button);
+	virtual void mouseClicked(int x, int y, int buttonNum);
 	bool handleBackEvent(bool isDown);
 	bool isInGameScreen();
 private:

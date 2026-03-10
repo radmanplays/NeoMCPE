@@ -10,7 +10,7 @@ OptionsGroup::OptionsGroup( std::string labelID )  {
 
 void OptionsGroup::setupPositions() {
 	// First we write the header and then we add the items
-	int curY = y + 10;
+	int curY = y + 18;
 	for(std::vector<GuiElement*>::iterator it = children.begin(); it != children.end(); ++it) {
 		(*it)->width = width - 5;
 		
@@ -23,7 +23,9 @@ void OptionsGroup::setupPositions() {
 }
 
 void OptionsGroup::render( Minecraft* minecraft, int xm, int ym ) {
-	minecraft->font->draw(label, (float)x + 2, (float)y, 0xffffffff, false);
+	float padX = 10.0f;
+	float padY = 5.0f;
+	minecraft->font->draw(label, (float)x + padX, (float)y + padY, 0xffffffff, false);
 	super::render(minecraft, xm, ym);
 }
 
@@ -45,6 +47,7 @@ void OptionsGroup::createToggle( const Options::Option* option, Minecraft* minec
 	def.height = 20 * 0.7f;
 	OptionButton* element = new OptionButton(option);
 	element->setImageDef(def, true);
+	element->updateImage(&minecraft->options);
 	std::string itemLabel = I18n::get(option->getCaptionId());
 	OptionsItem* item = new OptionsItem(itemLabel, element);
 	addChild(item);
@@ -58,11 +61,38 @@ void OptionsGroup::createProgressSlider( const Options::Option* option, Minecraf
 									minecraft->options.getProgrssMax(option));
 	element->width = 100;
 	element->height = 20;
-	OptionsItem* item = new OptionsItem(label, element);
+	std::string itemLabel = I18n::get(option->getCaptionId());
+	OptionsItem* item = new OptionsItem(itemLabel, element);
 	addChild(item);
 	setupPositions();
 }
 
 void OptionsGroup::createStepSlider( const Options::Option* option, Minecraft* minecraft ) {
-
+	// integer-valued option; use step slider
+	std::vector<int> steps;
+	// render distance was removed; fall through to other cases
+	if(option == &Options::Option::DIFFICULTY) {
+		steps.push_back(0);
+		steps.push_back(1);
+		steps.push_back(2);
+		steps.push_back(3);
+	} else if(option == &Options::Option::GUI_SCALE) {
+		// slider order: small,normal,large,larger,auto
+		steps.push_back(1);
+		steps.push_back(2);
+		steps.push_back(3);
+		steps.push_back(4);
+		steps.push_back(0);
+	} else {
+		// fallback: use single value; duplicate so numSteps>1 and avoid divide-by-zero
+		steps.push_back(0);
+		steps.push_back(0);
+	}
+	Slider* element = new Slider(minecraft, option, steps);
+	element->width = 100;
+	element->height = 20;
+	std::string itemLabel = I18n::get(option->getCaptionId());
+	OptionsItem* item = new OptionsItem(itemLabel, element);
+	addChild(item);
+	setupPositions();
 }

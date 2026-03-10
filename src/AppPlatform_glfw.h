@@ -10,6 +10,10 @@
 #include <fstream>
 #include <sstream>
 #include <GLFW/glfw3.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <shellapi.h>
+#endif
 
 static void png_funcReadFile(png_structp pngPtr, png_bytep data, png_size_t length) {
 	((std::istream*)png_get_io_ptr(pngPtr))->read((char*)data, length);
@@ -123,7 +127,16 @@ public:
 	virtual bool supportsTouchscreen() { return true; }
 	virtual bool hasBuyButtonWhenInvalidLicense() { return false; }
 
+	virtual void openURL(const std::string& url) {
+#ifdef _WIN32
+		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+#endif
+	}
+
 private:
 };
+
+void* winGLLoader(const char* name);
+void glPatchDesktopCompat();
 
 #endif /*APPPLATFORM_GLFW_H__*/
