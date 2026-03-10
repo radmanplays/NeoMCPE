@@ -77,8 +77,8 @@ void OptionsScreen::init() {
 	categoryButtons.push_back(new Touch::TButton(4, "Controls"));
 	categoryButtons.push_back(new Touch::TButton(5, "Graphics"));
 
-	btnChangeUsername = new Button(10, "Username");
-	btnCredits = new Button(11, "Credits");
+	btnChangeUsername = new Touch::TButton(10, "Username");
+	btnCredits = new Touch::TButton(11, "Credits");
 
 	buttons.push_back(bHeader);
 	buttons.push_back(btnClose);

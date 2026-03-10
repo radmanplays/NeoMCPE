@@ -864,6 +864,10 @@ void Minecraft::tickInput() {
 	
 	static bool prevMouseDownLeft = false;
 
+	if (Mouse::getButtonState(MouseAction::ACTION_LEFT) == 0) {
+		gameMode->stopDestroyBlock();
+	}
+
 	if (useTouchscreen()) {
 		// Touch: gesture recognizer classifies the action type (turn/destroy/build)
 		BuildActionIntention bai;
