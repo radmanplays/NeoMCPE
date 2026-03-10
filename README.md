@@ -36,7 +36,7 @@ make -j4
 
 1. Open the repository folder in **Visual Studio**.  
 2. Visual Studio will automatically detect the `CMakeLists.txt` file and generate the project configuration.  
-3. Set **MinecraftPE** as the **startup project**.  
+3. Set **MinecraftPE.exe** as the **target**.  
 4. Press **Run** (or F5) to build and launch the game.
 
 ## Android
