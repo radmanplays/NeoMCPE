@@ -3,6 +3,7 @@
 
 #include "../Screen.h"
 #include "../components/Button.h"
+#include "client/gui/components/TextBox.h"
 #include <string>
 
 class UsernameScreen : public Screen
@@ -30,6 +31,7 @@ protected:
 
 private:
     Button _btnDone;
+    TextBox tUsername;
     std::string _input;
     int _cursorBlink;
 };
