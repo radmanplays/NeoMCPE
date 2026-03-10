@@ -10,10 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <GLFW/glfw3.h>
-#ifdef _WIN32
-#include <windows.h>
-#include <shellapi.h>
-#endif
+#include <ctime>
 
 static void png_funcReadFile(png_structp pngPtr, png_bytep data, png_size_t length) {
 	((std::istream*)png_get_io_ptr(pngPtr))->read((char*)data, length);
@@ -106,9 +103,12 @@ public:
     }
 
     std::string getDateString(int s) {
-        std::stringstream ss;
-		ss << s << " s (UTC)";
-		return ss.str();
+		time_t tm = s;
+
+		char mbstr[100];
+		std::strftime(mbstr, sizeof(mbstr), "%F %T", std::localtime(&tm));
+
+		return std::string(mbstr);
 	}
 
 	virtual int checkLicense() {

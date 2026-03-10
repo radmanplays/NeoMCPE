@@ -103,9 +103,12 @@ public:
     }
 
     std::string getDateString(int s) {
-        std::stringstream ss;
-		ss << s << " s (UTC)";
-		return ss.str();
+ 		time_t tm = s;
+
+		char mbstr[100];
+		std::strftime(mbstr, sizeof(mbstr), "%F %T", std::localtime(&tm));
+
+		return std::string(mbstr);
 	}
 
 	virtual int checkLicense() {
