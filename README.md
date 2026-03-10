@@ -43,14 +43,14 @@ make -j4
 Download [r14b Android NDK](http://dl.google.com/android/repository/android-ndk-r14b-windows-x86_64.zip) and run `build.ps1`:
 ```
 # Full build (NDK + Java + APK + install)
-C:\apkbuild\build.ps1
+.\build.ps1
 
 # Skip NDK recompile (Java/assets changed only)
-C:\apkbuild\build.ps1 -NoJava
+.\build.ps1 -NoJava
 
 # Skip Java recompile (C++ changed only)  
-C:\apkbuild\build.ps1 -NoCpp
+.\build.ps1 -NoCpp
 
 # Only repackage + install (no recompile at all)
-C:\apkbuild\build.ps1 -NoBuild
+.\build.ps1 -NoBuild
 ```
