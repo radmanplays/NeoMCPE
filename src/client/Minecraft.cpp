@@ -31,6 +31,7 @@
 #include "gui/Screen.h"
 #include "gui/Font.h"
 #include "gui/screens/RenameMPLevelScreen.h"
+#include "gui/screens/ConsoleScreen.h"
 #include "sound/SoundEngine.h"
 #endif
 #include "../platform/CThread.h"
@@ -490,15 +491,14 @@ void Minecraft::update() {
 	checkGlError("Update finished");
 
 	if (options.renderDebug) {
+#ifndef PLATFORM_DESKTOP
 		if (!PerfTimer::enabled) {
 			PerfTimer::reset();
 			PerfTimer::enabled = true;
 		}
-
-		//TIMER_PUSH("debugfps");
 		_perfRenderer->renderFpsMeter(1);
 		checkGlError("render debug");
-		//TIMER_POP();
+#endif
 	} else {
 		PerfTimer::enabled = false;
 	}
@@ -721,9 +721,12 @@ void Minecraft::tickInput() {
 					#endif
 				}
 			#endif
-			#if defined(PLATFORM_DESKTOP) || defined (_WIN32)
+			#if defined(PLATFORM_DESKTOP)
 				if (key == Keyboard::KEY_E) {
 					screenChooser.setScreen(SCREEN_BLOCKSELECTION);
+				}
+				if (!screen && key == Keyboard::KEY_T && level) {
+					setScreen(new ConsoleScreen());
 				}
 				if (!screen && key == Keyboard::KEY_O || key == 250) {
 					releaseMouse();
@@ -737,109 +740,99 @@ void Minecraft::tickInput() {
 						printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
 					*/
 				}
-				
-				// Change distance
-				if (key == Keyboard::KEY_F)
+			#endif
+			#if defined(WIN32)
+				if (key == Keyboard::KEY_F) {
+					options.isFlying = !options.isFlying;
+					player->noPhysics = options.isFlying;
+				}
+
+
+				if (key == Keyboard::KEY_L)
 					options.viewDistance = (options.viewDistance + 1) % 4;
 
-				#ifdef CHEATS
-					if (key == Keyboard::KEY_J) {
-						options.isFlying = !options.isFlying;
-						player->noPhysics = options.isFlying;
+				if (key == Keyboard::KEY_U) {
+					onGraphicsReset();
+					player->heal(100);
+				}
+
+				if (key == Keyboard::KEY_B || key == 108) // Toggle the game mode
+					setIsCreativeMode(!isCreativeMode());
+
+				if (key == Keyboard::KEY_P) // Step forward in time
+					level->setTime( level->getTime() + 1000);
+
+				if (key == Keyboard::KEY_G) {
+					setScreen(new ArmorScreen());
+					/*
+					std::vector<AABB>& boxs = level->getCubes(NULL, AABB(128.1f, 73, 128.1f, 128.9f, 74.9f, 128.9f));
+					LOGI("boxes: %d\n", (int)boxs.size());
+					*/
+				}
+
+				if (key == Keyboard::KEY_Y) {
+					textures->reloadAll();
+					player->hurtTo(2);
+				}
+				if (key == Keyboard::KEY_Z || key == 108) {
+					for (int i = 0; i < 1; ++i) {
+						Mob* mob = NULL;
+						int forceId = 0;//MobTypes::Sheep;
+
+						int types[] = {
+							MobTypes::Sheep,
+							MobTypes::Pig,
+							MobTypes::Chicken,
+							MobTypes::Cow,
+						};
+
+						int mobType = (forceId > 0)? forceId : types[Mth::random(sizeof(types) / sizeof(int))];
+						mob = MobFactory::CreateMob(mobType, level);
+
+						//((Animal*)mob)->setAge(-1000);
+						float dx = 4 - 8 * Mth::random() + 4 * Mth::sin(Mth::DEGRAD * player->yRot);
+						float dz = 4 - 8 * Mth::random() + 4 * Mth::cos(Mth::DEGRAD * player->yRot);
+						if (mob && !MobSpawner::addMob(level, mob, player->x + dx, player->y, player->z + dz, Mth::random()*360, 0, true))
+							delete mob;
 					}
+				}
 
-					if (key == Keyboard::KEY_O) {
-						useAmbientOcclusion = !useAmbientOcclusion;
-						options.ambientOcclusion = useAmbientOcclusion;
-						levelRenderer->allChanged();
+				if (key == Keyboard::KEY_X) {
+					const EntityList& entities = level->getAllEntities();
+					for (int i = entities.size()-1; i >= 0; --i) {
+						Entity* e = entities[i];
+						if (!e->isPlayer())
+							level->removeEntity(e);
 					}
+				}
 
-					if (key == Keyboard::KEY_L)
-						options.viewDistance = (options.viewDistance + 1) % 4;
+				if (key == Keyboard::KEY_C /*|| key == 4*/) {
+					player->inventory->clearInventoryWithDefault();
+					// @todo: Add saving here for benchmarking
+				}
+				if (key == Keyboard::KEY_H) {
+					setScreen( new PrerenderTilesScreen() );
+				}
 
-					if (key == Keyboard::KEY_U) {
-						onGraphicsReset();
-						player->heal(100);
+				if (key == Keyboard::KEY_O) {
+					for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
+						if (player->inventory->getItem(i))
+							player->inventory->dropSlot(i, false);
+				}
+				if (key == Keyboard::KEY_F3) {
+					options.renderDebug = !options.renderDebug;
+				}
+				if (key == Keyboard::KEY_M) {
+					options.difficulty = (options.difficulty == Difficulty::PEACEFUL)?
+						Difficulty::NORMAL : Difficulty::PEACEFUL;
+					//setIsCreativeMode( !isCreativeMode() );
+				}
+
+				if (options.renderDebug) {
+					if (key >= '0' && key <= '9') {
+						_perfRenderer->debugFpsMeterKeyPress(key - '0');
 					}
-
-					if (key == Keyboard::KEY_B || key == 108) // Toggle the game mode
-						setIsCreativeMode(!isCreativeMode());
-
-					if (key == Keyboard::KEY_P) // Step forward in time
-						level->setTime( level->getTime() + 1000);
-
-					if (key == Keyboard::KEY_G) {
-						setScreen(new ArmorScreen());
-						/*
-						std::vector<AABB>& boxs = level->getCubes(NULL, AABB(128.1f, 73, 128.1f, 128.9f, 74.9f, 128.9f));
-						LOGI("boxes: %d\n", (int)boxs.size());
-						*/
-					}
-
-					if (key == Keyboard::KEY_Y) {
-						textures->reloadAll();
-						player->hurtTo(2);
-					}
-					if (key == Keyboard::KEY_Z || key == 108) {
-						for (int i = 0; i < 1; ++i) {
-							Mob* mob = NULL;
-							int forceId = 0;//MobTypes::Sheep;
-
-							int types[] = {
-								MobTypes::Sheep,
-								MobTypes::Pig,
-								MobTypes::Chicken,
-								MobTypes::Cow,
-							};
-
-							int mobType = (forceId > 0)? forceId : types[Mth::random(sizeof(types) / sizeof(int))];
-							mob = MobFactory::CreateMob(mobType, level);
-
-							//((Animal*)mob)->setAge(-1000);
-							float dx = 4 - 8 * Mth::random() + 4 * Mth::sin(Mth::DEGRAD * player->yRot);
-							float dz = 4 - 8 * Mth::random() + 4 * Mth::cos(Mth::DEGRAD * player->yRot);
-							if (mob && !MobSpawner::addMob(level, mob, player->x + dx, player->y, player->z + dz, Mth::random()*360, 0, true))
-								delete mob;
-						}
-					}
-
-					if (key == Keyboard::KEY_X) {
-						const EntityList& entities = level->getAllEntities();
-						for (int i = entities.size()-1; i >= 0; --i) {
-							Entity* e = entities[i];
-							if (!e->isPlayer())
-								level->removeEntity(e);
-						}
-					}
-
-					if (key == Keyboard::KEY_C /*|| key == 4*/) {
-						player->inventory->clearInventoryWithDefault();
-						// @todo: Add saving here for benchmarking
-					}
-					if (key == Keyboard::KEY_H) {
-						setScreen( new PrerenderTilesScreen() );
-					}
-
-					if (key == Keyboard::KEY_O) {
-						for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
-							if (player->inventory->getItem(i))
-								player->inventory->dropSlot(i, false);
-					}
-					if (key == Keyboard::KEY_F3) {
-						options.renderDebug = !options.renderDebug;
-					}
-					if (key == Keyboard::KEY_M) {
-						options.difficulty = (options.difficulty == Difficulty::PEACEFUL)?
-							Difficulty::NORMAL : Difficulty::PEACEFUL;
-						//setIsCreativeMode( !isCreativeMode() );
-					}
-
-					if (options.renderDebug) {
-						if (key >= '0' && key <= '9') {
-							_perfRenderer->debugFpsMeterKeyPress(key - '0');
-						}
-					}
-				#endif
+				}
 			#endif
 
 			#ifndef PLATFORM_DESKTOP
@@ -871,35 +864,40 @@ void Minecraft::tickInput() {
 	
 	static bool prevMouseDownLeft = false;
 
-	// Destroy and attack is on same button
-	if (Mouse::isButtonDown(MouseAction::ACTION_LEFT)) {
-		auto baiFlags = BuildActionIntention::BAI_REMOVE | BuildActionIntention::BAI_ATTACK;
-
-		if (!prevMouseDownLeft) baiFlags |= BuildActionIntention::BAI_FIRSTREMOVE;
-
-		BuildActionIntention bai(baiFlags);
-		handleBuildAction(&bai);
-	}
-
-	if (Mouse::getButtonState(MouseAction::ACTION_LEFT) == 0) {
-		gameMode->stopDestroyBlock();
-	}
-
-	prevMouseDownLeft = Mouse::isButtonDown(MouseAction::ACTION_LEFT);
-	
-	static int buildHoldTicks = 0;
-
-	// Build and use/interact is on same button
-	// USPESHNO spizheno
-	if (Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
-		if (buildHoldTicks >= 5) buildHoldTicks = 0;
-
-		if (++buildHoldTicks == 1) {
-			BuildActionIntention bai(BuildActionIntention::BAI_BUILD | BuildActionIntention::BAI_INTERACT);
+	if (useTouchscreen()) {
+		// Touch: gesture recognizer classifies the action type (turn/destroy/build)
+		BuildActionIntention bai;
+		if (inputHolder && inputHolder->getBuildInput()->tickBuild(player, &bai)) {
 			handleBuildAction(&bai);
 		}
 	} else {
-		buildHoldTicks = 0;
+		// Desktop: left mouse = destroy/attack
+		if (Mouse::isButtonDown(MouseAction::ACTION_LEFT)) {
+			auto baiFlags = BuildActionIntention::BAI_REMOVE | BuildActionIntention::BAI_ATTACK;
+
+			if (!prevMouseDownLeft) baiFlags |= BuildActionIntention::BAI_FIRSTREMOVE;
+
+			BuildActionIntention bai(baiFlags);
+			handleBuildAction(&bai);
+		}
+
+		prevMouseDownLeft = Mouse::isButtonDown(MouseAction::ACTION_LEFT);
+
+		// Build and use/interact is on same button
+		// USPESHNO spizheno
+		static int buildHoldTicks = 0;
+		if (Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
+			BuildActionIntention bai(BuildActionIntention::BAI_BUILD | BuildActionIntention::BAI_INTERACT);
+			handleBuildAction(&bai);
+			if (buildHoldTicks >= 5) buildHoldTicks = 0;
+
+			if (++buildHoldTicks == 1) {
+				BuildActionIntention bai(BuildActionIntention::BAI_BUILD | BuildActionIntention::BAI_INTERACT);
+				handleBuildAction(&bai);
+			}
+		} else {
+			buildHoldTicks = 0;
+		}
 	}
 
 	lastTickTime = getTimeMs();
@@ -1146,24 +1144,37 @@ void Minecraft::setSize(int w, int h) {
 	width  = w;
 	height = h;
 
-	if (width >= 1000) {
+	// determine gui scale, optionally overriding auto
+	if (options.guiScale != 0) {
+		// manual selection: 1->small, 2->normal, 3->large, 4->larger
+		switch (options.guiScale) {
+		case 1: Gui::GuiScale = 2.0f; break;
+		case 2: Gui::GuiScale = 3.0f; break;
+		case 3: Gui::GuiScale = 4.0f; break;
+		case 4: Gui::GuiScale = 5.0f; break; // bigger than large
+		default: Gui::GuiScale = 1.0f; break; // auto
+		}
+	} else {
+		// auto compute from resolution
+		if (width >= 1000) {
         #ifdef __APPLE__
             Gui::GuiScale = (width > 2000)? 8.0f : 4.0f;
         #else
             Gui::GuiScale = 4.0f;
         #endif
     }
-	else if (width >= 800) {
+		else if (width >= 800) {
 #ifdef __APPLE__
         Gui::GuiScale = 4.0f;
 #else
 		Gui::GuiScale = 3.0f;
 #endif
     }
-	else if (width >= 400)
-		Gui::GuiScale = 2.0f;
-	else
-		Gui::GuiScale = 1.0f;
+		else if (width >= 400)
+			Gui::GuiScale = 2.0f;
+		else
+			Gui::GuiScale = 1.0f;
+	}
 
 	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
 	int screenWidth  = (int)(width  * Gui::InvGuiScale);
@@ -1216,7 +1227,12 @@ void Minecraft::_reloadInput() {
 #ifndef STANDALONE_SERVER
 	delete inputHolder;
 
-	if (useTouchscreen() && !PLATFORM_DESKTOP) {
+#ifdef PLATFORM_DESKTOP
+	const bool useTouchHolder = false;
+#else
+	const bool useTouchHolder = useTouchscreen();
+#endif
+	if (useTouchHolder) {
 		inputHolder = new TouchInputHolder(this, &options);
 	} else {
 		#if defined(ANDROID) || defined(__APPLE__) 
@@ -1526,5 +1542,8 @@ void Minecraft::optionUpdated( const Options::Option* option, float value ) {
 }
 
 void Minecraft::optionUpdated( const Options::Option* option, int value ) {
-
+    if(option == &Options::Option::GUI_SCALE) {
+        // reapply screen scaling using current window size
+        setSize(width, height);
+    }
 }

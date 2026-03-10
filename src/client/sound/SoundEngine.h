@@ -2,9 +2,10 @@
 #define NET_MINECRAFT_CLIENT_SOUND__SoundEngine_H__
 
 //package net.minecraft.client.sound;
+
 #if defined(ANDROID) && !defined(PRE_ANDROID23)
 	#include "../../platform/audio/SoundSystemSL.h"
-#elif (defined(__APPLE__) || defined (PLATFORM_DESKTOP)) && !defined(NO_SOUND)
+#elif defined(__APPLE__) || defined(PLATFORM_DESKTOP)
     #include "../../platform/audio/SoundSystemAL.h"
 #else
 	#include "../../platform/audio/SoundSystem.h"
@@ -22,7 +23,7 @@ class SoundEngine
 
 	#if defined(ANDROID) && !defined(PRE_ANDROID23) && !defined(RPI)
 		SoundSystemSL soundSystem;
-    #elif (defined(__APPLE__) || defined (PLATFORM_DESKTOP)) && !defined(NO_SOUND)
+    #elif defined(__APPLE__) || defined(PLATFORM_DESKTOP)
         SoundSystemAL soundSystem;
 	#else
 	    SoundSystem soundSystem;

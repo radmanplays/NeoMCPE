@@ -22,6 +22,62 @@
 #include "../DialogDefinitions.h"
 #include "../SimpleChooseLevelScreen.h"
 
+//
+// Buy Button implementation
+//
+BuyButton::BuyButton(int id)
+:	super(id, "")
+{
+	ImageDef def;
+	// Setup the source rectangle
+	def.setSrc(IntRectangle(64, 182, 190, 55));
+	def.width = 75;//rc.w / 3;
+	def.height = 75 * (55.0f / 190.0f);//rc.h / 3;
+	def.name = "gui/gui.png";
+
+	setImageDef(def, true);
+}
+
+void BuyButton::render(Minecraft* minecraft, int xm, int ym) {
+	glColor4f2(1, 1, 1, 1);
+	bool hovered = active && (minecraft->useTouchscreen()? (xm >= x && ym >= y && xm < x + width && ym < y + height) : false);
+	renderBg(minecraft, xm, ym);
+	TextureId texId = (_imageDef.name.length() > 0)? minecraft->textures->loadAndBindTexture(_imageDef.name) : Textures::InvalidId;
+	if ( Textures::isTextureIdValid(texId) ) {
+		const ImageDef& d = _imageDef;
+		Tesselator& t = Tesselator::instance;
+		
+		t.begin();
+			if (!active)				t.color(0xff808080);
+			else if (hovered||selected) t.color(0xffcccccc);
+			//else						t.color(0xffe0e0e0);
+			else t.color(0xffffffff);
+
+			float hx = ((float) d.width) * 0.5f;
+			float hy = ((float) d.height) * 0.5f;
+			const float cx = ((float)x+d.x) + hx;
+			const float cy = ((float)y+d.y) + hy;
+			if (hovered) {
+				hx *= 0.95f;
+				hy *= 0.95f;
+			}
+
+			const TextureData* td = minecraft->textures->getTemporaryTextureData(texId);
+			const IntRectangle* src = _imageDef.getSrc();
+			if (td != NULL && src != NULL) {
+				float u0 = (src->x) / (float)td->w;
+				float u1 = (src->x+src->w) / (float)td->w;
+				float v0 = (src->y) / (float)td->h;
+				float v1 = (src->y+src->h) / (float)td->h;
+				t.vertexUV(cx-hx, cy-hy, blitOffset, u0, v0);
+				t.vertexUV(cx-hx, cy+hy, blitOffset, u0, v1);
+				t.vertexUV(cx+hx, cy+hy, blitOffset, u1, v1);
+				t.vertexUV(cx+hx, cy-hy, blitOffset, u1, v0);
+			}
+		t.draw();
+	}
+}
+
 namespace Touch {
 
 // 
@@ -32,7 +88,8 @@ namespace Touch {
 StartMenuScreen::StartMenuScreen()
 :	bHost(    2, "Start Game"),
 	bJoin(    3, "Join Game"),
-	bOptions( 4, "Options")
+	bOptions( 4, "Options"),
+	bBuy(     5)
 {
 	ImageDef def;
 	bJoin.width = 75;
@@ -61,19 +118,21 @@ void StartMenuScreen::init()
 	buttons.push_back(&bJoin);
 	buttons.push_back(&bOptions);
     
-    //buttons.push_back(&bTest);
+
 
 	tabButtons.push_back(&bHost);
 	tabButtons.push_back(&bJoin);
 	tabButtons.push_back(&bOptions);
 
+	#ifdef DEMO_MODE
+		buttons.push_back(&bBuy);
+		tabButtons.push_back(&bBuy);
+	#endif
+
 	copyright = "\xffMojang AB";//. Do not distribute!";
 
-	#ifdef PRE_ANDROID23
-		std::string versionString = Common::getGameVersionString("j");
-	#else
-		std::string versionString = Common::getGameVersionString();
-	#endif
+	// always show base version string
+	std::string versionString = Common::getGameVersionString();
 
 	#ifdef DEMO_MODE
         #ifdef __APPLE__
@@ -103,31 +162,26 @@ void StartMenuScreen::setupPositions() {
 	bOptions.y = yBase;
 	//#endif
 
-	//bTest.x = 0; //width - bTest.w;
-	//bTest.y = height - bTest.h;
-
 	// Center buttons
 	bJoin.x		= 0*buttonWidth + (int)(1*spacing);
 	bHost.x		= 1*buttonWidth + (int)(2*spacing);
 	bOptions.x	= 2*buttonWidth + (int)(3*spacing);
+	//bBuy.y = bOptions.y - bBuy.h - 6;
+	//bBuy.x = bOptions.x + bOptions.w - bBuy.w;
 
+	bBuy.y = height - bBuy.height - 3;
+	bBuy.x = (width - bBuy.width) / 2;
+    
 	copyrightPosX = width - minecraft->font->width(copyright) - 1;
 	versionPosX = (width - minecraft->font->width(version)) / 2;// - minecraft->font->width(version) - 2;
 }
 
 void StartMenuScreen::tick() {
-	Screen::tick();
-
 	_updateLicense();
 }
 
 void StartMenuScreen::buttonClicked(::Button* button) {
 
-	//if (button->id == bTest.id) {
-	//	minecraft->selectLevel("Broken", "Broken", 1317199248);
-	//	minecraft->hostMultiplayer();
-	//	minecraft->setScreen(new ProgressScreen());
-	//}
 	if (button->id == bHost.id)
 	{
 		#if defined(DEMO_MODE) || defined(APPLE_DEMO_PROMOTION)
@@ -148,6 +202,11 @@ void StartMenuScreen::buttonClicked(::Button* button) {
 	if (button->id == bOptions.id)
 	{
 		minecraft->setScreen(new OptionsScreen());
+	}
+	if (button->id == bBuy.id)
+	{
+		minecraft->platform()->buyGame();
+		//minecraft->setScreen(new BuyGameScreen());
 	}
 }
 
@@ -187,6 +246,10 @@ void StartMenuScreen::render( int xm, int ym, float a )
 
 		drawString(font, version, versionPosX, (int)(y+h)+2, /*50,*/ 0xffcccccc);//0x666666);
 		drawString(font, copyright, copyrightPosX, height - 10, 0xffffff);
+		glColor4f2(1, 1, 1, 1);
+		if (Textures::isTextureIdValid(minecraft->textures->loadAndBindTexture("gui/logo/github.png")))
+			blit(2, height - 10, 0, 0, 8, 8, 256, 256);
+		drawString(font, "Kolyah35/minecraft-pe-0.6.1", 12, height - 10, 0xffcccccc);
 		//patch->draw(t, 0, 20);
 	}
 	Screen::render(xm, ym, a);
@@ -210,9 +273,21 @@ void StartMenuScreen::_updateLicense()
 	}
 }
 
+void StartMenuScreen::mouseClicked(int x, int y, int buttonNum) {
+	const int logoX = 2;
+	const int logoW = 8 + 2 + font->width("Kolyah35/minecraft-pe-0.6.1");
+	const int logoY = height - 10;
+	const int logoH = 10;
+	if (x >= logoX && x <= logoX + logoW && y >= logoY && y <= logoY + logoH)
+		minecraft->platform()->openURL("https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1");
+	else
+		Screen::mouseClicked(x, y, buttonNum);
+}
+
 bool StartMenuScreen::handleBackEvent( bool isDown ) {
 	minecraft->quit();
 	return true;
 }
 
-};
+} // namespace Touch
+

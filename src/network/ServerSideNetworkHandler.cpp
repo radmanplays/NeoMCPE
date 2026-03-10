@@ -134,6 +134,11 @@ void ServerSideNetworkHandler::displayGameMessage(const std::string& message)
 	raknetInstance->send(packet);
 }
 
+void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChatPacket* packet)
+{
+	displayGameMessage(packet->message);
+}
+
 void ServerSideNetworkHandler::onNewClient(const RakNet::RakNetGUID& clientGuid)
 {
 	LOGI("onNewClient, client guid: %s\n", clientGuid.ToString());
@@ -254,6 +259,11 @@ void ServerSideNetworkHandler::onReady_ClientGeneration(const RakNet::RakNetGUID
 
 	// send level info
 	SetTimePacket(level->getTime()).write(&bitStream);
+	rakPeer->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, source, false);
+
+	// send adventure settings (includes showNameTags, etc.)
+	bitStream.Reset();
+	AdventureSettingsPacket(level->adventureSettings).write(&bitStream);
 	rakPeer->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, source, false);
 
 	// send all pre-existing players to the new player

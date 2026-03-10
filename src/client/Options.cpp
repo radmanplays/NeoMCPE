@@ -34,6 +34,7 @@ void Options::initDefaultValues() {
 	bobView = true;
 	anaglyph3d = false;
 	limitFramerate = false;
+	vsync = true;
 	fancyGraphics = true;//false;
 	ambientOcclusion = false;
 	if(minecraft->supportNonTouchScreen())
@@ -44,7 +45,7 @@ void Options::initDefaultValues() {
 	//useMouseForDigging = true;
 
 	//skin     = "Default";
-	username = "Steve";
+	username = "";
 	serverVisible = true;
 
 	keyUp	 = KeyMapping("key.forward", Keyboard::KEY_W);
@@ -144,7 +145,8 @@ const Options::Option
 	Options::Option::USE_TOUCHSCREEN	 (16, "options.usetouchscreen", false, true),
 	Options::Option::USE_TOUCH_JOYPAD	 (17, "options.usetouchpad", false, true),
 	Options::Option::DESTROY_VIBRATION   (18, "options.destroyvibration", false, true),
-	Options::Option::PIXELS_PER_MILLIMETER(19, "options.pixelspermilimeter", true, false);
+	Options::Option::PIXELS_PER_MILLIMETER(19, "options.pixelspermilimeter", true, false),
+	Options::Option::VSYNC               (20, "options.vsync",             false, true);
 
 /* private */
 const float Options::SOUND_MIN_VALUE = 0.0f;
@@ -181,7 +183,8 @@ const char* Options::GUI_SCALE[] = {
 	"options.guiScale.auto",
 	"options.guiScale.small",
 	"options.guiScale.normal",
-	"options.guiScale.large"
+	"options.guiScale.large",
+	"options.guiScale.larger"
 };
 
 void Options::update()
@@ -234,6 +237,13 @@ void Options::update()
 				viewDistance = 3;
 				fancyGraphics = false;
 			}
+		}
+		// Graphics extras
+		if (key == OptionStrings::Graphics_Vsync)
+			readBool(value, vsync);
+		if (key == OptionStrings::Graphics_GUIScale) {
+			int v;
+			if (readInt(value, v)) guiScale = v % 5;
 		}
 		// Game
 		if (key == OptionStrings::Game_DifficultyLevel) {
@@ -294,6 +304,8 @@ void Options::load()
 void Options::save()
 {
 	StringVector stringVec;
+	// Login
+	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_Username, username);
 	// Game
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_ServerVisible, serverVisible);
 	addOptionToSaveOutput(stringVec, OptionStrings::Game_DifficultyLevel, difficulty);
@@ -305,6 +317,8 @@ void Options::save()
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchScreen, useTouchScreen);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchJoypad, isJoyTouchArea);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_FeedbackVibration, destroyVibration);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Vsync, vsync);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_GUIScale, guiScale);
 // 
 // 	static const Option MUSIC;
 // 	static const Option SOUND;
@@ -348,6 +362,7 @@ void Options::save()
 	//    System.out.println("Failed to save options");
 	//    e.printStackTrace();
 	//}
+	optionsFile.save(stringVec);
 }
 void Options::addOptionToSaveOutput(StringVector& stringVector, std::string name, bool boolValue) {
 	std::stringstream ss;
@@ -363,6 +378,9 @@ void Options::addOptionToSaveOutput(StringVector& stringVector, std::string name
 	std::stringstream ss;
 	ss << name << ":" << intValue;
 	stringVector.push_back(ss.str());
+}
+void Options::addOptionToSaveOutput(StringVector& stringVector, std::string name, const std::string& strValue) {
+	stringVector.push_back(name + ":" + strValue);
 }
 
 std::string Options::getMessage( const Option* item )

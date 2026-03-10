@@ -1,4 +1,5 @@
 #include "StartMenuScreen.h"
+#include "UsernameScreen.h"
 #include "SelectWorldScreen.h"
 #include "ProgressScreen.h"
 #include "JoinGameScreen.h"
@@ -38,6 +39,10 @@ StartMenuScreen::~StartMenuScreen()
 
 void StartMenuScreen::init()
 {
+	if (minecraft->options.username.empty()) {
+		return; // tick() will redirect to UsernameScreen
+	}
+
 	buttons.push_back(&bHost);
 	buttons.push_back(&bJoin);
 	//buttons.push_back(&bTest);
@@ -57,11 +62,8 @@ void StartMenuScreen::init()
 
 	copyright = "\xffMojang AB";//. Do not distribute!";
 
-	#ifdef PRE_ANDROID23
-		std::string versionString = Common::getGameVersionString("j");
-	#else
-		std::string versionString = Common::getGameVersionString();
-	#endif
+	// always show base version string, suffix was previously added for Android builds
+	std::string versionString = Common::getGameVersionString();
 
 	#ifdef DEMO_MODE
 	#ifdef __APPLE__
@@ -106,6 +108,10 @@ void StartMenuScreen::setupPositions() {
 }
 
 void StartMenuScreen::tick() {
+	if (minecraft->options.username.empty()) {
+		minecraft->setScreen(new UsernameScreen());
+		return;
+	}
 	_updateLicense();
 }
 
@@ -181,8 +187,19 @@ void StartMenuScreen::render( int xm, int ym, float a )
 
 	drawString(font, version, versionPosX, 62, /*50,*/ 0xffcccccc);//0x666666);
 	drawString(font, copyright, copyrightPosX, height - 10, 0xffffff);
-
-	Screen::render(xm, ym, a);
+	glEnable2(GL_BLEND);
+	glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f2(1, 1, 1, 1);
+	if (Textures::isTextureIdValid(minecraft->textures->loadAndBindTexture("gui/logo/github.png")))
+		blit(2, height - 10, 0, 0, 8, 8, 256, 256);
+{
+			std::string txt = "Kolyah35/minecraft-pe-0.6.1";
+			float wtxt = font->width(txt);
+			Gui::drawColoredString(font, txt, 12, height - 10, 255);
+			// underline link
+			float y0 = height - 10 + font->lineHeight - 1;
+			this->fill(12, (int)y0, 12 + (int)wtxt, (int)(y0 + 1), 0xffffffff);
+    }
 }
 
 void StartMenuScreen::_updateLicense()
@@ -200,6 +217,17 @@ void StartMenuScreen::_updateLicense()
 	} else {
 		bJoin.active = bHost.active = bOptions.active = false;
 	}
+}
+
+void StartMenuScreen::mouseClicked(int x, int y, int buttonNum) {
+	const int logoX = 2;
+	const int logoW = 8 + 2 + font->width("Kolyah35/minecraft-pe-0.6.1");
+	const int logoY = height - 10;
+	const int logoH = 10;
+	if (x >= logoX && x <= logoX + logoW && y >= logoY && y <= logoY + logoH)
+		minecraft->platform()->openURL("https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1");
+	else
+		Screen::mouseClicked(x, y, buttonNum);
 }
 
 bool StartMenuScreen::handleBackEvent( bool isDown ) {

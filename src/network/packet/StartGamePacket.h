@@ -2,11 +2,12 @@
 #define NET_MINECRAFT_NETWORK_PACKET__StartGamePacket_H__
 
 #include "../Packet.h"
+#include <cstdint>
 
 class StartGamePacket : public Packet
 {
 public:
-	long levelSeed;
+	int32_t levelSeed;
 	int levelGeneratorVersion;
 	int gameType;
 
@@ -18,7 +19,7 @@ public:
 	}
 
 	StartGamePacket(long seed, int levelGeneratorVersion, int gameType, int entityId, float x, float y, float z)
-	:	levelSeed(seed),
+	:	levelSeed((int32_t)seed),
 		levelGeneratorVersion(levelGeneratorVersion),
 		gameType(gameType),
 		entityId(entityId),

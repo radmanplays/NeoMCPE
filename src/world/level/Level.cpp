@@ -2236,6 +2236,6 @@ AdventureSettings::AdventureSettings()
 	noPvM(false),
 	noMvP(false),
 	immutableWorld(false),
-	showNameTags(false)
+	showNameTags(true)
 {
 }

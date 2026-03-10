@@ -170,6 +170,7 @@ options.guiScale.auto=Auto
 options.guiScale.small=Small
 options.guiScale.normal=Normal
 options.guiScale.large=Large
+options.guiScale.larger=Larger
 options.advancedOpengl=Advanced OpenGL
 options.renderClouds=Clouds
 options.farWarning1=A 64 bit Java installation is recommended

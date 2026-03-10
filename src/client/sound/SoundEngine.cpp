@@ -230,10 +230,13 @@ void SoundEngine::playUI(const std::string& name, float volume, float pitch) {}
 void SoundEngine::play(const std::string& name, float x, float y, float z, float volume, float pitch) {
 	if ((volume *= options->sound) <= 0) return;
 
-	volume = Mth::clamp(volume, 0.0f, 1.0f);
+	volume = Mth::clamp( volume * _getVolumeMult(x, y, z), 0.0f, 1.0f);
+	if (/*!loaded || */options->sound == 0 || volume <= 0) return;
 
 	SoundDesc sound;
 	if (sounds.get(name, sound)) {
+		float dist = SOUND_DISTANCE;
+		if (volume > 1) dist *= volume;
 		soundSystem.playAt(sound, x-_x, y-_y, z-_z, volume, pitch);
 	}
 }

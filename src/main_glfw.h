@@ -7,6 +7,8 @@
 #include "SharedConstants.h"
 
 #include <cstdio>
+#include <chrono>
+#include <thread>
 #include "platform/input/Keyboard.h"
 #include "platform/input/Mouse.h"
 #include "platform/input/Multitouch.h"
@@ -31,6 +33,20 @@ int transformKey(int glfwkey) {
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if(action == GLFW_REPEAT) return;
+
+	if (key == GLFW_KEY_F11 && action == GLFW_PRESS) {
+		GLFWmonitor* monitor = glfwGetWindowMonitor(window);
+		if (monitor) {
+			// Currently fullscreen → go windowed
+			glfwSetWindowMonitor(window, NULL, 80, 80, 854, 480, 0);
+		} else {
+			// Currently windowed → go fullscreen on primary monitor
+			GLFWmonitor* primary = glfwGetPrimaryMonitor();
+			const GLFWvidmode* mode = glfwGetVideoMode(primary);
+			glfwSetWindowMonitor(window, primary, 0, 0, mode->width, mode->height, mode->refreshRate);
+		}
+		return;
+	}
 
 	Keyboard::feed(transformKey(key), action);
 }
@@ -126,8 +142,9 @@ int main(void) {
 	glfwSetWindowSizeCallback(window, window_size_callback);
 
 	glfwMakeContextCurrent(window);
-	gladLoadGLES1Loader((GLADloadproc)glfwGetProcAddress);
-	glfwSwapInterval(1);
+	gladLoadGLES1Loader((GLADloadproc)winGLLoader);
+	glfwSwapInterval(0);
+	glPatchDesktopCompat();
 #endif
 
 	App* app = new MAIN_CLASS();
@@ -139,11 +156,23 @@ int main(void) {
 	g_app->setSize(appContext.platform->getScreenWidth(), appContext.platform->getScreenHeight());
 
 	// Main event loop
+	using clock = std::chrono::steady_clock;
 	while(!glfwWindowShouldClose(window) && !app->wantToQuit()) {
+		auto frameStart = clock::now();
+
 		app->update();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		glfwSwapInterval(((MAIN_CLASS*)app)->options.vsync ? 1 : 0);
+		if(((MAIN_CLASS*)app)->options.limitFramerate) {
+			auto frameEnd = clock::now();
+			auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+			auto target = std::chrono::microseconds(33333); // ~30 fps
+			if(elapsed < target)
+				std::this_thread::sleep_for(target - elapsed);
+		}
 	}
 
 	delete app;

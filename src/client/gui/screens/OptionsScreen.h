@@ -10,28 +10,36 @@ class OptionsPane;
 class OptionsScreen: public Screen
 {
 	typedef Screen super;
-	void init();
 
+	void init();
 	void generateOptionScreens();
 
 public:
 	OptionsScreen();
 	~OptionsScreen();
+
 	void setupPositions();
-	void buttonClicked( Button* button );
+	void buttonClicked(Button* button);
 	void render(int xm, int ym, float a);
 	void removed();
 	void selectCategory(int index);
 
-	virtual void mouseClicked( int x, int y, int buttonNum );
-	virtual void mouseReleased( int x, int y, int buttonNum );
+	virtual void mouseClicked(int x, int y, int buttonNum);
+	virtual void mouseReleased(int x, int y, int buttonNum);
 	virtual void tick();
+
 private:
 	Touch::THeader* bHeader;
 	ImageButton* btnClose;
+
+	Button* btnChangeUsername;
+	Button* btnCredits;   // <-- ADD THIS
+
 	std::vector<Touch::TButton*> categoryButtons;
 	std::vector<OptionsPane*> optionPanes;
+
 	OptionsPane* currentOptionPane;
+
 	int selectedCategory;
 };
 
