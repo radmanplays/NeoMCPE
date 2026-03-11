@@ -31,6 +31,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -54,7 +56,8 @@ import com.mojang.minecraftpe.sound.SoundPlayer;
 
 public class MainActivity extends Activity {
 	/** Called when the activity is first created. */
-    
+    private static final int PERMISSION_REQUEST_CODE = 123;
+
     private GLView _glView;
     public float invScale = 1.0f;// / 1.5f;
     private int _screenWidth = 0;
@@ -108,10 +111,53 @@ public class MainActivity extends Activity {
     	setContentView(_glView);
     	
     	_soundPlayer = new SoundPlayer(this, AudioManager.STREAM_MUSIC);
+
+        // request dangerous permissions at runtime if necessary
+        checkAndRequestPermissions();
     }
 
-    public boolean isTouchscreen() { return true; }
-    public boolean supportsTouchscreen() { return true; }
+    private void checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            boolean needRequest = false;
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                needRequest = true;
+            }
+            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                needRequest = true;
+            }
+            if (needRequest) {
+                requestPermissions(new String[] {
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                }, PERMISSION_REQUEST_CODE);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            boolean granted = true;
+            for (int r : grantResults) {
+                if (r != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    break;
+                }
+            }
+            if (!granted) {
+                // user denied; you might want to warn or close the app
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    // method required by native code to detect touchscreen support
+    public boolean supportsTouchscreen() {
+        return true; // all devices using this build are touch-capable
+    }
+
     static public boolean isXperiaPlay() { return false; }
 
     static private boolean _isPowerVr = false;
