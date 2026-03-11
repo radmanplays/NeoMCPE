@@ -583,6 +583,15 @@ public class MainActivity extends Activity {
         return kcm.get(keyCode, metaState);
     }
 
+    public void openURL(String url) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url));
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public String getPlatformStringVar(int id) {
     	if (id == 0) return android.os.Build.MODEL;
     	return null;
