@@ -1,6 +1,9 @@
 #include "App.h"
 #include "AppPlatform_android.h"
 
+// JNI keycode constants
+#include <android/keycodes.h>
+
 //#include "main_android_java.h"
 #include "platform/input/Multitouch.h"
 #include <unistd.h>
@@ -181,20 +184,40 @@ Java_com_mojang_minecraftpe_GLRenderer_nativeUpdate(JNIEnv* env) {
 //
 // Keyboard events
 //
+// helper to convert Android keycodes to our internal Keyboard constants
+static int androidKeyToInternal(int androidKey) {
+    switch(androidKey) {
+        case AKEYCODE_DEL: return Keyboard::KEY_BACKSPACE;
+        case AKEYCODE_ENTER:
+        case AKEYCODE_NUMPAD_ENTER:
+            return Keyboard::KEY_RETURN;
+        // letters are delivered via nativeTextChar so no need to map here
+        default:
+            return androidKey; // fall back to raw code
+    }
+}
+
 JNIEXPORT void JNICALL
 Java_com_mojang_minecraftpe_MainActivity_nativeOnKeyDown(JNIEnv* env, jclass cls, jint keyCode) {
     LOGI("@nativeOnKeyDown: %d\n", keyCode);
-    Keyboard::feed(keyCode, true);
+    int mapped = androidKeyToInternal(keyCode);
+    Keyboard::feed(mapped, true);
 }
 JNIEXPORT void JNICALL
 Java_com_mojang_minecraftpe_MainActivity_nativeTextChar(JNIEnv* env, jclass cls, jint unicodeChar) {
-    if (unicodeChar > 0 && unicodeChar < 128)
+    // soft-keyboards may send a backspace as a character code
+    if (unicodeChar == 8) {
+        Keyboard::feed(Keyboard::KEY_BACKSPACE, true);
+        Keyboard::feed(Keyboard::KEY_BACKSPACE, false);
+    } else if (unicodeChar > 0 && unicodeChar < 128) {
         Keyboard::feedText((char)unicodeChar);
+    }
 }
 JNIEXPORT void JNICALL
 Java_com_mojang_minecraftpe_MainActivity_nativeOnKeyUp(JNIEnv* env, jclass cls, jint keyCode) {
     LOGI("@nativeOnKeyUp: %d\n", (int)keyCode);
-    Keyboard::feed(keyCode, false);
+    int mapped = androidKeyToInternal(keyCode);
+    Keyboard::feed(mapped, false);
 }
 
 JNIEXPORT jboolean JNICALL
