@@ -82,6 +82,9 @@ void UsernameScreen::mouseClicked(int x, int y, int button)
         // click outside both fields -> blur both
         tUsername.loseFocus(minecraft);
     }
+
+    // also let the parent class handle button presses/etc.
+    Screen::mouseClicked(x, y, button);
 }
 
 void UsernameScreen::removed()
