@@ -32,6 +32,12 @@ mkdir build && cd build
 cmake .. -B .
 make -j4
 ```
+or
+```
+mkdir build && cd build
+cmake --build . --config Release -j 10
+```
+
 ## Visual Studio
 
 1. Open the repository folder in **Visual Studio**.  
