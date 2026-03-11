@@ -1,5 +1,7 @@
 #include "Minecraft.h"
 #include "client/player/input/IBuildInput.h"
+#include <string>
+#include <cstdlib>
 
 #if defined(APPLE_DEMO_PROMOTION)
     #define NO_NETWORK
@@ -1302,12 +1304,12 @@ bool Minecraft::joinMultiplayerFromString( const std::string& server )
 	}
 
 	printf("%s \n", port.c_str());
-
+	
 	if (isLookingForMultiplayer && netCallback) {
 		isLookingForMultiplayer = false;
-		char *endptr;
 		printf("test");
-		return raknetInstance->connect(ip.c_str(), strtol(port.c_str(), &endptr, 10));
+		int portNum = atoi(port.c_str());
+		return raknetInstance->connect(ip.c_str(), portNum);
 	}
 	return false;
 }
