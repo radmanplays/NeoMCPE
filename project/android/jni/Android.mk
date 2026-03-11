@@ -68,6 +68,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/gui/screens/SelectWorldScreen.cpp \
 ../../../src/client/gui/screens/StartMenuScreen.cpp \
 ../../../src/client/gui/screens/TextEditScreen.cpp \
+../../../src/client/gui/screens/JoinByIPScreen.cpp \
 ../../../src/client/gui/screens/touch/TouchIngameBlockSelectionScreen.cpp \
 ../../../src/client/gui/screens/touch/TouchJoinGameScreen.cpp \
 ../../../src/client/gui/screens/touch/TouchSelectWorldScreen.cpp \
