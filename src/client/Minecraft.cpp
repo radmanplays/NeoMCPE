@@ -1302,11 +1302,12 @@ bool Minecraft::joinMultiplayerFromString( const std::string& server )
 	}
 
 	printf("%s \n", port.c_str());
-	
+
 	if (isLookingForMultiplayer && netCallback) {
 		isLookingForMultiplayer = false;
+		char *endptr;
 		printf("test");
-		return raknetInstance->connect(ip.c_str(), std::stoi(port));
+		return raknetInstance->connect(ip.c_str(), strtol(port.c_str(), &endptr, 10));
 	}
 	return false;
 }
