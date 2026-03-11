@@ -155,5 +155,5 @@ set(CompileFiles ../../src/main.cpp
 add_executable(mcpe_server ${CompileFiles})
 target_link_libraries(mcpe_server raknet ${CMAKE_THREAD_LIBS_INIT})
 target_include_directories(mcpe_server PUBLIC
-    "/home/invisedivine/Документы/minecraft-pe-0.6.1/src/"
+    "minecraft-pe-0.6.1/src/"
 )
