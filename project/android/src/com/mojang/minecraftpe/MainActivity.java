@@ -468,17 +468,16 @@ public class MainActivity extends NativeActivity {
 
 	    _userInputStatus = 1;
 	    InputMethodManager inputManager = (InputMethodManager)getSystemService("input_method");
-        boolean result = inputManager.showSoftInput(this.getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
-	}
-    
-    protected void onStart() {
-    	//System.out.println("onStart");
-    	super.onStart();
-    }
-
-    protected void onResume() {
-    	//System.out.println("onResume");
-    	super.onResume();
+        View focused = this.getCurrentFocus();
+        if (focused != null) {
+            boolean result = inputManager.showSoftInput(focused, InputMethodManager.SHOW_IMPLICIT);
+        } else {
+            // fallback: try to show using decor view token
+            View decor = getWindow().getDecorView();
+            if (decor != null) {
+                inputManager.showSoftInput(decor, InputMethodManager.SHOW_IMPLICIT);
+            }
+        }
     }
 
     protected void onPause() {
