@@ -1,5 +1,5 @@
 # ============================================================
-#  MCPE 0.4.0 Android Build Script  —  from-scratch capable
+#  MCPE 0.6.1 Android Build Script  —  from-scratch capable
 #  Works on a clean machine; creates all dirs, keystore and
 #  stub Java files automatically.
 #
