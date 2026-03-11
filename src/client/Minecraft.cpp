@@ -55,7 +55,6 @@
 #include "player/input/XperiaPlayInput.h"
 
 #endif
-
 #include "player/input/MouseTurnInput.h"
 #include "../world/entity/MobFactory.h"
 #include "../world/level/MobSpawner.h"
@@ -1288,6 +1287,30 @@ bool Minecraft::joinMultiplayer( const PingedCompatibleServer& server )
 	return false;
 }
 
+bool Minecraft::joinMultiplayerFromString( const std::string& server )
+{	
+	std::string ip = "";
+	std::string port = "19132";
+	
+	size_t pos = server.find(":");
+
+	if (pos != std::string::npos) {
+		ip = server.substr(0, pos);
+		port = server.substr(pos + 1);
+	} else {
+		ip = server;
+	}
+
+	printf("%s \n", port.c_str());
+	
+	if (isLookingForMultiplayer && netCallback) {
+		isLookingForMultiplayer = false;
+		printf("test");
+		return raknetInstance->connect(ip.c_str(), std::stoi(port));
+	}
+	return false;
+}
+
 void Minecraft::hostMultiplayer(int port) {
     // Tear down last instance
     raknetInstance->disconnect();
@@ -1454,6 +1477,12 @@ LevelStorageSource* Minecraft::getLevelSource()
 {
 	return storageSource;
 }
+
+// int Minecraft::getLicenseId() {
+// 	if (!LicenseCodes::isReady(_licenseId))
+// 		_licenseId = platform()->checkLicense();
+// 	return _licenseId;
+// }
 
 void Minecraft::audioEngineOn() {
 #ifndef STANDALONE_SERVER
