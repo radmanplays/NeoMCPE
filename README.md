@@ -1,6 +1,6 @@
 # MinecraftPE
 > [!Important]
-> We have a discord server, where you can report bugs or send feedback https://discord.gg/ryZ884DWJf
+> We have a discord server, where you can report bugs or send feedback https://discord.gg/c58YesBxve
 
 Source code for **Minecraft Pocket Edition 0.6.1 alpha** with various fixes and improvements.
 
