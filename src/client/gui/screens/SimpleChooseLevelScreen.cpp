@@ -32,6 +32,13 @@ SimpleChooseLevelScreen::~SimpleChooseLevelScreen()
 
 void SimpleChooseLevelScreen::init()
 {
+    // make sure the base class loads the existing level list; the
+    // derived screen uses ChooseLevelScreen::getUniqueLevelName(), which
+    // depends on `levels` being populated.  omitting this used to result
+    // in duplicate IDs ("creating the second world would load the
+    // first") when the name already existed.
+    ChooseLevelScreen::init();
+
     tLevelName.text = "New world";
 
     // header + close button
