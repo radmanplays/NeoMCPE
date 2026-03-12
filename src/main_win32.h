@@ -113,6 +113,14 @@ LRESULT WINAPI windowProc ( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		Multitouch::feed(0, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0);
 		break;
 	}
+	case WM_MOUSEWHEEL: {
+		// wheel delta is multiples of WHEEL_DELTA (120); convert to +/-1
+		int delta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
+		short x = GET_X_LPARAM(lParam);
+		short y = GET_Y_LPARAM(lParam);
+		Mouse::feed(MouseAction::ACTION_WHEEL, 0, x, y, 0, delta);
+		break;
+	}
 	default:
 		if (uMsg == WM_NCDESTROY) g_running = false;
 		else {

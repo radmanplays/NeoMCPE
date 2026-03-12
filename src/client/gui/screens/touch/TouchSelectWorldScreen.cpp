@@ -389,6 +389,26 @@ static char ILLEGAL_FILE_CHARACTERS[] = {
 	'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'
 };
 
+void SelectWorldScreen::mouseWheel(int dx, int dy, int xm, int ym)
+{
+	if (!worldsList) return;
+	if (dy == 0) return;
+	int num = worldsList->getNumberOfItems();
+	int idx = worldsList->selectedItem;
+	if (dy > 0) {
+		if (idx > 0) {
+			idx--;
+			worldsList->stepLeft();
+		}
+	} else {
+		if (idx < num - 1) {
+			idx++;
+			worldsList->stepRight();
+		}
+	}
+	worldsList->selectedItem = idx;
+}
+
 void SelectWorldScreen::tick()
 {
 #if 0

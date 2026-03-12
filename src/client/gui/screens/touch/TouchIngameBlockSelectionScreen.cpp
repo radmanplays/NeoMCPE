@@ -153,6 +153,11 @@ int IngameBlockSelectionScreen::getSlotPosY(int slotY) {
 	return height - 16 - 3 - 22 * 2 - 22 * slotY;
 }
 
+int IngameBlockSelectionScreen::getSlotHeight() {
+	// same as non-touch implementation
+	return 22;
+}
+
 void IngameBlockSelectionScreen::mouseClicked(int x, int y, int buttonNum) {
 	_pendingClose = _blockList->_clickArea->isInside((float)x, (float)y);
 	if (!_pendingClose)
@@ -164,6 +169,24 @@ void IngameBlockSelectionScreen::mouseReleased(int x, int y, int buttonNum) {
 		minecraft->setScreen(NULL);
 	else
 		super::mouseReleased(x, y, buttonNum);
+}
+
+void IngameBlockSelectionScreen::mouseWheel(int dx, int dy, int xm, int ym)
+{
+	if (dy == 0) return;
+	if (_blockList) {
+		float amount = -dy * getSlotHeight();
+		_blockList->scrollBy(0, amount);
+	}
+	int cols = InventoryColumns;
+	int maxIndex = InventorySize - 1;
+	int idx = selectedItem;
+	if (dy > 0) {
+		if (idx >= cols) idx -= cols;
+	} else {
+		if (idx + cols <= maxIndex) idx += cols;
+	}
+	selectedItem = idx;
 }
 
 bool IngameBlockSelectionScreen::addItem(const InventoryPane* pane, int itemId)

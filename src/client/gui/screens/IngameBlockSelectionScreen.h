@@ -23,6 +23,9 @@ protected:
 
 	virtual void buttonClicked(Button* button);
 
+	// wheel input for creative inventory scrolling
+	virtual void mouseWheel(int dx, int dy, int xm, int ym) override;
+
 	virtual void keyPressed(int eventKey);
 private:
 	void renderSlots();

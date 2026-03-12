@@ -39,12 +39,16 @@ public:
 protected:
 	virtual void mouseClicked(int x, int y, int buttonNum);
 	virtual void mouseReleased(int x, int y, int buttonNum);
+
+	// also support wheel scrolling
+	virtual void mouseWheel(int dx, int dy, int xm, int ym) override;
 private:
 	void renderDemoOverlay();
 
 	//int getLinearSlotId(int x, int y);
 	int getSlotPosX(int slotX);
 	int getSlotPosY(int slotY);
+	int getSlotHeight();
 
 private:
 	int selectedItem;
