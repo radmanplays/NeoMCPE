@@ -18,6 +18,20 @@
 #include "../../network/packet/SendInventoryPacket.h"
 #include "../../network/packet/EntityEventPacket.h"
 #include "../../network/packet/PlayerActionPacket.h"
+#include <vector>
+#include <cctype>
+#include "../../platform/log.h"
+#include "../../platform/HttpClient.h"
+#include "../../platform/CThread.h"
+#include "../../util/StringUtils.h"
+
+#if defined(_WIN32)
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
+
 #ifndef STANDALONE_SERVER
 #include "../gui/Screen.h"
 #include "../gui/screens/FurnaceScreen.h"
@@ -32,6 +46,195 @@
 #include "../../world/item/ArmorItem.h"
 #include "../../network/packet/PlayerArmorEquipmentPacket.h"
 
+namespace {
+
+static bool isBase64(unsigned char c) {
+    return (std::isalnum(c) || (c == '+') || (c == '/'));
+}
+
+static std::string base64Decode(const std::string& encoded) {
+    static const std::string base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    std::string out;
+    int in_len = (int)encoded.size();
+    int i = 0;
+    int in_ = 0;
+    unsigned char char_array_4[4], char_array_3[3];
+
+    while (in_len-- && (encoded[in_] != '=') && isBase64(encoded[in_])) {
+        char_array_4[i++] = encoded[in_]; in_++;
+        if (i == 4) {
+            for (i = 0; i < 4; i++)
+                char_array_4[i] = (unsigned char)base64Chars.find(char_array_4[i]);
+
+            char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+            char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+            char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+            for (i = 0; i < 3; i++)
+                out += char_array_3[i];
+            i = 0;
+        }
+    }
+
+    if (i) {
+        for (int j = i; j < 4; j++)
+            char_array_4[j] = 0;
+        for (int j = 0; j < 4; j++)
+            char_array_4[j] = (unsigned char)base64Chars.find(char_array_4[j]);
+
+        char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+        char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+        char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+        for (int j = 0; (j < i - 1); j++)
+            out += char_array_3[j];
+    }
+    return out;
+}
+
+static std::string extractJsonString(const std::string& json, const std::string& key) {
+    std::string search = "\"" + key + "\"";
+    size_t pos = json.find(search);
+    if (pos == std::string::npos) return "";
+    pos = json.find(':', pos + search.size());
+    if (pos == std::string::npos) return "";
+    pos++;
+    while (pos < json.size() && std::isspace((unsigned char)json[pos])) pos++;
+    if (pos >= json.size() || json[pos] != '"') return "";
+    pos++;
+    size_t end = json.find('"', pos);
+    if (end == std::string::npos) return "";
+    return json.substr(pos, end - pos);
+}
+
+static std::string getSkinUrlForUsername(const std::string& username) {
+    if (username.empty()) {
+        LOGI("[Skin] username empty\n");
+        return "";
+    }
+
+    LOGI("[Skin] resolving UUID for user '%s'...\n", username.c_str());
+    std::vector<unsigned char> body;
+    std::string apiUrl = "http://api.mojang.com/users/profiles/minecraft/" + username;
+    if (!HttpClient::download(apiUrl, body)) {
+        LOGW("[Skin] failed to download UUID for %s\n", username.c_str());
+        return "";
+    }
+
+    std::string response(body.begin(), body.end());
+    std::string uuid = extractJsonString(response, "id");
+    if (uuid.empty()) {
+        LOGW("[Skin] no UUID found in Mojang response for %s\n", username.c_str());
+        return "";
+    }
+
+    LOGI("[Skin] UUID=%s for user %s\n", uuid.c_str(), username.c_str());
+
+    std::string profileUrl = "http://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
+    if (!HttpClient::download(profileUrl, body)) {
+        LOGW("[Skin] failed to download profile for UUID %s\n", uuid.c_str());
+        return "";
+    }
+
+    response.assign(body.begin(), body.end());
+    std::string encoded = extractJsonString(response, "value");
+    if (encoded.empty()) {
+        LOGW("[Skin] no value field in profile response for UUID %s\n", uuid.c_str());
+        return "";
+    }
+
+    std::string decoded = base64Decode(encoded);
+    size_t skinPos = decoded.find("\"SKIN\"");
+    if (skinPos == std::string::npos) {
+        LOGW("[Skin] no SKIN entry in decoded profile for UUID %s\n", uuid.c_str());
+        return "";
+    }
+    size_t urlPos = decoded.find("\"url\"", skinPos);
+    if (urlPos == std::string::npos) {
+        LOGW("[Skin] no url field under SKIN for UUID %s\n", uuid.c_str());
+        return "";
+    }
+
+    // extract the URL value from the substring starting at urlPos
+    std::string urlFragment = decoded.substr(urlPos);
+    std::string skinUrl = extractJsonString(urlFragment, "url");
+    if (skinUrl.empty()) {
+        LOGW("[Skin] failed to parse skin URL for UUID %s\n", uuid.c_str());
+        return "";
+    }
+
+    LOGI("[Skin] skin URL for %s: %s\n", username.c_str(), skinUrl.c_str());
+    return skinUrl;
+}
+
+static bool ensureDirectoryExists(const std::string& path) {
+#if defined(_WIN32)
+    return _mkdir(path.c_str()) == 0 || errno == EEXIST;
+#else
+    struct stat st;
+    if (stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
+        return true;
+    return mkdir(path.c_str(), 0755) == 0 || errno == EEXIST;
+#endif
+}
+
+static bool fileExists(const std::string& path) {
+    struct stat st;
+    if (stat(path.c_str(), &st) != 0)
+        return false;
+
+#if defined(_WIN32)
+    return (st.st_mode & _S_IFREG) != 0;
+#else
+    return S_ISREG(st.st_mode);
+#endif
+}
+
+static void* fetchSkinForPlayer(void* param) {
+    LocalPlayer* player = (LocalPlayer*)param;
+    if (!player) return NULL;
+
+    LOGI("[Skin] starting skin download for %s\n", player->name.c_str());
+
+    const std::string cacheDir = "data/images/skins";
+    if (!ensureDirectoryExists(cacheDir)) {
+        LOGW("[Skin] failed to create cache directory %s\n", cacheDir.c_str());
+    }
+
+    std::string cacheFile = cacheDir + "/" + player->name + ".png";
+    if (fileExists(cacheFile)) {
+        LOGI("[Skin] using cached skin for %s\n", player->name.c_str());
+        player->setTextureName("skins/" + player->name + ".png");
+        return NULL;
+    }
+
+    std::string skinUrl = getSkinUrlForUsername(player->name);
+    if (skinUrl.empty()) {
+        LOGW("[Skin] skin URL lookup failed for %s\n", player->name.c_str());
+        return NULL;
+    }
+
+    LOGI("[Skin] downloading skin from %s\n", skinUrl.c_str());
+    std::vector<unsigned char> skinData;
+    if (!HttpClient::download(skinUrl, skinData) || skinData.empty()) {
+        LOGW("[Skin] download failed for %s\n", skinUrl.c_str());
+        return NULL;
+    }
+
+    // Save to cache
+    FILE* fp = fopen(cacheFile.c_str(), "wb");
+    if (fp) {
+        fwrite(skinData.data(), 1, skinData.size(), fp);
+        fclose(fp);
+        LOGI("[Skin] cached skin to %s\n", cacheFile.c_str());
+    } else {
+        LOGW("[Skin] failed to write skin cache %s\n", cacheFile.c_str());
+    }
+
+    player->setTextureName("skins/" + player->name + ".png");
+    return NULL;
+}
+
 //@note: doesn't work completely, since it doesn't care about stairs rotation
 static bool isJumpable(int tileId) {
 	return tileId != Tile::fence->id
@@ -42,6 +245,8 @@ static bool isJumpable(int tileId) {
         && tileId != Tile::wallSign->id
 		&& (Tile::tiles[tileId] != NULL && Tile::tiles[tileId]->getRenderShape() != Tile::SHAPE_STAIRS);
 }
+
+} // anonymous namespace
 
 LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, User* user, int dimension, bool isCreative)
 :	Player(level, isCreative),
@@ -58,10 +263,10 @@ LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, User* user, int dim
 	this->dimension = dimension;
 	_init();
 
-	if (user != NULL) {
-		if (user->name.length() > 0)
-			//customTextureUrl = "http://s3.amazonaws.com/MinecraftSkins/" + user.name + ".png";
-			this->name = user->name;
+	if (user != NULL && !user->name.empty()) {
+		this->name = user->name;
+		// Fetch user skin from Mojang servers in the background (avoids blocking the main thread)
+		new CThread(fetchSkinForPlayer, this);
 	}
 }
 

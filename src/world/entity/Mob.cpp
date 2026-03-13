@@ -110,6 +110,11 @@ std::string Mob::getTexture()
 	return textureName;
 }
 
+void Mob::setTextureName(const std::string& name)
+{
+	textureName = name;
+}
+
 bool Mob::isPickable()
 {
 	return !removed;

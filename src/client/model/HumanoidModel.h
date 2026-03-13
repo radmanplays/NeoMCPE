@@ -9,7 +9,7 @@ class ItemInstance;
 class HumanoidModel: public Model
 {
 public:
-    HumanoidModel(float g = 0, float yOffset = 0);
+HumanoidModel(float g = 0, float yOffset = 0, int texW = 64, int texH = 32);
 
 	void setupAnim(float time, float r, float bob, float yRot, float xRot, float scale);
 

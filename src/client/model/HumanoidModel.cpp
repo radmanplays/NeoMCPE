@@ -4,8 +4,8 @@
 #include "../../world/entity/player/Player.h"
 #include "../../world/entity/player/Inventory.h"
 
-HumanoidModel::HumanoidModel( float g /*= 0*/, float yOffset /*= 0*/ )
-:	holdingLeftHand(false),
+HumanoidModel::HumanoidModel( float g /*= 0*/, float yOffset /*= 0*/, int texW /*= 64*/, int texH /*= 32*/ )
+:    holdingLeftHand(false),
 	holdingRightHand(false),
 	sneaking(false),
 	bowAndArrow(false),
@@ -18,6 +18,9 @@ HumanoidModel::HumanoidModel( float g /*= 0*/, float yOffset /*= 0*/ )
 	leg0(0, 16),
 	leg1(0, 16)
 {
+	texWidth = texW;
+	texHeight = texH;
+
 	head.setModel(this);
 	body.setModel(this);
 	arm0.setModel(this);

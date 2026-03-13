@@ -79,6 +79,8 @@ file(GLOB SERVER_SOURCES
     "src/network/command/CommandServer.cpp"
 
     "src/platform/CThread.cpp"
+    "src/platform/HttpClient.cpp"
+    "src/platform/PngLoader.cpp"
     "src/platform/time.cpp"
 
     "src/platform/input/Controller.cpp"

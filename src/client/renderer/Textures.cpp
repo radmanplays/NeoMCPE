@@ -5,6 +5,7 @@
 #include "../Options.h"
 #include "../../platform/time.h"
 #include "../../AppPlatform.h"
+#include "../../util/StringUtils.h"
 
 /*static*/ int  Textures::textureChanges = 0;
 /*static*/ bool Textures::MIPMAP = false;
@@ -64,7 +65,8 @@ TextureId Textures::loadTexture( const std::string& resourceName, bool inTexture
 	if (it != idMap.end())
 		return it->second;
 
-	TextureData texdata = platform->loadTexture(resourceName, inTextureFolder);
+	bool isUrl = Util::startsWith(resourceName, "http://") || Util::startsWith(resourceName, "https://");
+	TextureData texdata = platform->loadTexture(resourceName, isUrl ? false : inTextureFolder);
 	if (texdata.data)
 		return assignTexture(resourceName, texdata);
     else if (texdata.identifier != InvalidId) {

@@ -14,8 +14,8 @@ static const std::string armorFilenames[10] = {
 
 PlayerRenderer::PlayerRenderer( HumanoidModel* humanoidModel, float shadow )
 :	super(humanoidModel, shadow),
-	armorParts1(new HumanoidModel(1.0f)),
-	armorParts2(new HumanoidModel(0.5f))
+	armorParts1(new HumanoidModel(1.0f, 0, 64, 64)),
+	armorParts2(new HumanoidModel(0.5f, 0, 64, 64))
 {
 }
 
