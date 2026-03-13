@@ -153,6 +153,10 @@ void StartMenuScreen::render( int xm, int ym, float a )
 {
 	renderBackground();
 
+	// Show current username in the top-left corner
+	std::string username = minecraft->options.username.empty() ? "unknown" : minecraft->options.username;
+	drawString(font, std::string("Username: ") + username, 2, 2, 0xffffffff);
+
 #if defined(RPI)
 	TextureId id = minecraft->textures->loadTexture("gui/pi_title.png");
 #else

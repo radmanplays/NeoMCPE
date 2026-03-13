@@ -161,6 +161,10 @@ bool StartMenuScreen::isInGameScreen() { return false; }
 void StartMenuScreen::render( int xm, int ym, float a )
 {
 	renderBackground();
+
+	// Show current username in the top-left corner
+	std::string username = minecraft->options.username.empty() ? "unknown" : minecraft->options.username;
+	drawString(font, std::string("Username: ") + username, 2, 2, 0xffffffff);
     
     glEnable2(GL_BLEND);
 
