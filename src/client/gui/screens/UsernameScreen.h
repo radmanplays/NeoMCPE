@@ -30,7 +30,7 @@ protected:
     virtual void buttonClicked(Button* button);
 
 private:
-    Button _btnDone;
+    Touch::TButton _btnDone;
     TextBox tUsername;
     std::string _input;
     int _cursorBlink;
