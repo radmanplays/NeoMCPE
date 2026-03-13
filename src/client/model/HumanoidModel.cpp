@@ -10,8 +10,8 @@ HumanoidModel::HumanoidModel( float g /*= 0*/, float yOffset /*= 0*/, int texW /
 	sneaking(false),
 	bowAndArrow(false),
 	head(0, 0),
+	hair(32, 0),
 	//ear (24, 0),
-	//hair(32, 0),
 	body(16, 16),
 	arm0(24 + 16, 16),
 	arm1(24 + 16, 16),
@@ -22,19 +22,28 @@ HumanoidModel::HumanoidModel( float g /*= 0*/, float yOffset /*= 0*/, int texW /
 	texHeight = texH;
 
 	head.setModel(this);
+	hair.setModel(this);
 	body.setModel(this);
 	arm0.setModel(this);
 	arm1.setModel(this);
 	leg0.setModel(this);
 	leg1.setModel(this);
 
+	// If the texture is 64x64, use the modern skin layout for arms/legs and add overlay layers.
+	bool modernSkin = (texWidth == 64 && texHeight == 64);
+	if (modernSkin) {
+		// Left arm and left leg are located in the bottom half of a 64x64 skin.
+		arm1.texOffs(32, 48);
+		leg1.texOffs(16, 48);
+	}
+
 	head.addBox(-4, -8, -4, 8, 8, 8, g); // Head
 	head.setPos(0, 0 + yOffset, 0);
 
-	//ear.addBox(-3, -6, -1, 6, 6, 1, g); // Ear
-
-	//hair.addBox(-4, -8, -4, 8, 8, 8, g + 0.5f); // Head
-	//      hair.setPos(0, 0 + yOffset, 0);
+	if (modernSkin) {
+		hair.addBox(-4, -8, -4, 8, 8, 8, g + 0.5f); // Outer head layer (hat)
+		hair.setPos(0, 0 + yOffset, 0);
+	}
 
 	body.addBox(-4, 0, -2, 8, 12, 4, g); // Body
 	body.setPos(0, 0 + yOffset, 0);
@@ -52,6 +61,24 @@ HumanoidModel::HumanoidModel( float g /*= 0*/, float yOffset /*= 0*/, int texW /
 	leg1.mirror = true;
 	leg1.addBox(-2, 0, -2, 4, 12, 4, g); // Leg1
 	leg1.setPos(2, 12 + yOffset, 0);
+
+	if (modernSkin) {
+		// Overlay layers for 64x64 skins (same geometry, different texture regions)
+		body.texOffs(16, 32);
+		body.addBox(-4, 0, -2, 8, 12, 4, g + 0.5f);
+
+		arm0.texOffs(40, 32);
+		arm0.addBox(-3, -2, -2, 4, 12, 4, g + 0.5f);
+
+		arm1.texOffs(48, 48);
+		arm1.addBox(-1, -2, -2, 4, 12, 4, g + 0.5f);
+
+		leg0.texOffs(0, 32);
+		leg0.addBox(-2, 0, -2, 4, 12, 4, g + 0.5f);
+
+		leg1.texOffs(0, 48);
+		leg1.addBox(-2, 0, -2, 4, 12, 4, g + 0.5f);
+	}
 }
 
 void HumanoidModel::render(Entity* e, float time, float r, float bob, float yRot, float xRot, float scale )
@@ -71,14 +98,24 @@ void HumanoidModel::render(Entity* e, float time, float r, float bob, float yRot
 	
 	setupAnim(time, r, bob, yRot, xRot, scale);
 	
+	// Sync overlay with head rotation/position
+	if (texWidth == 64 && texHeight == 64) {
+		hair.xRot = head.xRot;
+		hair.yRot = head.yRot;
+		hair.zRot = head.zRot;
+		hair.y = head.y;
+	}
+
 	head.render(scale);
+	if (texWidth == 64 && texHeight == 64) {
+		hair.render(scale);
+	}
 	body.render(scale);
 	arm0.render(scale);
 	arm1.render(scale);
 	leg0.render(scale);
 	leg1.render(scale);
 	bowAndArrow = false;
-	//hair.render(scale);
 }
 
 void HumanoidModel::render( HumanoidModel* model, float scale )
@@ -86,8 +123,12 @@ void HumanoidModel::render( HumanoidModel* model, float scale )
 	head.yRot = model->head.yRot;
 	head.y = model->head.y;
 	head.xRot = model->head.xRot;
-	//hair.yRot = head.yRot;
-	//hair.xRot = head.xRot;
+	if (texWidth == 64 && texHeight == 64) {
+		hair.yRot = head.yRot;
+		hair.xRot = head.xRot;
+		hair.zRot = head.zRot;
+		hair.y = head.y;
+	}
 
 	arm0.xRot = model->arm0.xRot;
 	arm0.zRot = model->arm0.zRot;
@@ -99,12 +140,14 @@ void HumanoidModel::render( HumanoidModel* model, float scale )
 	leg1.xRot = model->leg1.xRot;
 
 	head.render(scale);
+	if (texWidth == 64 && texHeight == 64) {
+		hair.render(scale);
+	}
 	body.render(scale);
 	arm0.render(scale);
 	arm1.render(scale);
 	leg0.render(scale);
 	leg1.render(scale);
-	//hair.render(scale);
 }
 
 void HumanoidModel::renderHorrible( float time, float r, float bob, float yRot, float xRot, float scale )
