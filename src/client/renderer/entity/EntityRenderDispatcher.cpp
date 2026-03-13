@@ -51,7 +51,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	assign(	ER_SPIDER_RENDERER,		new SpiderRenderer());
 	assign(	ER_TNT_RENDERER,		new TntRenderer());
 	assign(	ER_ARROW_RENDERER,		new ArrowRenderer());
-	assign( ER_PLAYER_RENDERER,		new PlayerRenderer(new HumanoidModel(), 0));
+	assign( ER_PLAYER_RENDERER,		new PlayerRenderer(new HumanoidModel(0, 0, 64, 64), 0));
 	assign( ER_THROWNEGG_RENDERER,  new ItemSpriteRenderer(Item::egg->getIcon(0)));
 	assign( ER_SNOWBALL_RENDERER,   new ItemSpriteRenderer(Item::snowBall->getIcon(0)));
 	assign( ER_PAINTING_RENDERER,   new PaintingRenderer());

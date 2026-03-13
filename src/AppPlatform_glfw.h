@@ -3,6 +3,8 @@
 
 #include "AppPlatform.h"
 #include "platform/log.h"
+#include "platform/HttpClient.h"
+#include "platform/PngLoader.h"
 #include "client/renderer/gles.h"
 #include "world/level/storage/FolderMethods.h"
 #include <png.h>
@@ -11,6 +13,7 @@
 #include <sstream>
 #include <GLFW/glfw3.h>
 #include <ctime>
+#include "util/StringUtils.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -55,10 +58,19 @@ public:
 
     TextureData loadTexture(const std::string& filename_, bool textureFolder)
 	{
+		// Support fetching PNG textures via HTTP/HTTPS (for skins, etc)
+		if (Util::startsWith(filename_, "http://") || Util::startsWith(filename_, "https://")) {
+			std::vector<unsigned char> body;
+			if (HttpClient::download(filename_, body) && !body.empty()) {
+				return loadTextureFromMemory(body.data(), body.size());
+			}
+			return TextureData();
+		}
+
 		TextureData out;
 
 		std::string filename = textureFolder? "data/images/" + filename_
-											: filename_;
+								: filename_;
 		std::ifstream source(filename.c_str(), std::ios::binary);
 
 		if (source) {
@@ -107,7 +119,11 @@ public:
 		}
     }
 
-    std::string getDateString(int s) {
+	TextureData loadTextureFromMemory(const unsigned char* data, size_t size) override {
+		return loadPngFromMemory(data, size);
+	}
+
+	virtual std::string getDateString(int s) override {
 		time_t tm = s;
 
 		char mbstr[100];

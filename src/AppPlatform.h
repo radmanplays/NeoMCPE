@@ -71,6 +71,7 @@ public:
 
 	virtual void saveScreenshot(const std::string& filename, int glWidth, int glHeight) {}
 	virtual TextureData loadTexture(const std::string& filename_, bool textureFolder) { return TextureData(); }
+	virtual TextureData loadTextureFromMemory(const unsigned char* data, size_t size) { return TextureData(); }
 
     virtual void playSound(const std::string& fn, float volume, float pitch) {}
 
