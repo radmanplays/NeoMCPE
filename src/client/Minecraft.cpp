@@ -10,7 +10,6 @@
 #if defined(RPI)
 	#define CREATORMODE
 #endif
-
 #include "../network/RakNetInstance.h"
 #include "../network/ClientSideNetworkHandler.h"
 #include "../network/ServerSideNetworkHandler.h"
@@ -113,7 +112,7 @@ static void checkGlError(const char* tag) {
 	}
 #endif /*GLDEBUG*/
 }
-
+#include <fstream>
 /*static*/
 const char* Minecraft::progressMessages[] = {
 	"Locating server",
@@ -1128,6 +1127,7 @@ void Minecraft::init()
 {
 	options.minecraft = this;
 	options.initDefaultValues();
+
 #ifndef STANDALONE_SERVER
 	checkGlError("Init enter");
 

@@ -207,7 +207,7 @@ void Options::update()
             if (readFloat(value, sens)) {
                 // sens is in range [0,1] with default/center at 0.5 (for aesthetics)
                 // We wanna map it to something like [0.3, 0.9] BUT keep 0.5 @ ~0.5...
-                sensitivity = 0.3f + std::pow(1.1f * sens, 1.3f) * 0.42f;
+                sensitivity = sens;
             }
         }
 		if (key == OptionStrings::Controls_InvertMouse) {
@@ -304,12 +304,12 @@ void Options::load()
 void Options::save()
 {
 	StringVector stringVec;
+	
 	// Login
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_Username, username);
 	// Game
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_ServerVisible, serverVisible);
 	addOptionToSaveOutput(stringVec, OptionStrings::Game_DifficultyLevel, difficulty);
-
 	// Input
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_InvertMouse, invertYMouse);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_Sensitivity, sensitivity);
@@ -317,8 +317,13 @@ void Options::save()
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchScreen, useTouchScreen);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchJoypad, isJoyTouchArea);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_FeedbackVibration, destroyVibration);
+	// Graphics
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Vsync, vsync);
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_GUIScale, guiScale);
+	addOptionToSaveOutput(stringVec, OptionStrings::Game_DifficultyLevel, difficulty);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Fancy, fancyGraphics);
+	//addOptionToSaveOutput(stringVec, OptionStrings::VIEW_BOBBING, fancyGraphics);
+
 // 
 // 	static const Option MUSIC;
 // 	static const Option SOUND;
