@@ -13,10 +13,10 @@
 #include "../../network/packet/RemoveBlockPacket.h"
 #include "../../world/entity/player/Abilities.h"
 
-static const int DestructionTickDelay = 10;
+static const int DestructionTickDelay = 5;
 
 CreativeMode::CreativeMode(Minecraft* minecraft)
-:	super(minecraft)
+: 	super(minecraft)
 {
 }
 
@@ -29,12 +29,8 @@ void CreativeMode::startDestroyBlock(int x, int y, int z, int face) {
 }
 
 void CreativeMode::creativeDestroyBlock(int x, int y, int z, int face) {
-	//if (!
-	minecraft->level->extinguishFire(x, y, z, face)
-	//{
-		;
-		destroyBlock(x, y, z, face);
-	//}
+	minecraft->level->extinguishFire(x, y, z, face);
+	destroyBlock(x, y, z, face);
 }
 
 void CreativeMode::continueDestroyBlock(int x, int y, int z, int face) {
@@ -46,6 +42,7 @@ void CreativeMode::continueDestroyBlock(int x, int y, int z, int face) {
 }
 
 void CreativeMode::stopDestroyBlock() {
+	destroyDelay = 0;
 }
 
 void CreativeMode::initAbilities( Abilities& abilities ) {
