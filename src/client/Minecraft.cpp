@@ -451,20 +451,21 @@ void Minecraft::update() {
 	//	}
 	//}
 
-	if (pause && level != NULL) {
-		float lastA = timer.a;
-		timer.advanceTime();
-		timer.a = lastA;
-	} else {
+	// If we're paused (local world / invisible server), freeze gameplay and
+	// networking and only keep UI responsive.
+	bool freezeGame = pause;
+
+	if (!freezeGame) {
 		timer.advanceTime();
 	}
 
-	if (raknetInstance) {
+	if (raknetInstance && !freezeGame) {
 		raknetInstance->runEvents(netCallback);
 	}
 
 	TIMER_PUSH("tick");
-	int toTick = timer.ticks;
+	int toTick = freezeGame ? 1 : timer.ticks;
+	if (!freezeGame) timer.ticks = 0;
 	for (int i = 0; i < toTick; ++i, ++ticks)
 		tick(i, toTick-1);
 
@@ -589,7 +590,9 @@ void Minecraft::tick(int nTick, int maxTick) {
 		#endif
 	}
 	TIMER_POP_PUSH("particles");
-	particleEngine->tick();
+	if (!pause) {
+		particleEngine->tick();
+	}
 	if (screen) {
 		screenMutex = true;
 		screen->tick();
@@ -1018,6 +1021,17 @@ bool Minecraft::isOnline()
 }
 
 void Minecraft::pauseGame(bool isBackPaused) {
+	// Only freeze gameplay when running a local server and it is not accepting
+	// incoming connections (invisible server), which includes typical single-
+	// player/lobby mode. If the server is visible, the game should keep ticking.
+	bool canFreeze = false;
+	if (raknetInstance && raknetInstance->isServer() && netCallback) {
+		ServerSideNetworkHandler* ss = (ServerSideNetworkHandler*) netCallback;
+		if (!ss->allowsIncomingConnections())
+			canFreeze = true;
+	}
+	pause = canFreeze;
+
 #ifndef STANDALONE_SERVER
 	if (screen != NULL) return;
 	screenChooser.setScreen(isBackPaused? SCREEN_PAUSEPREV : SCREEN_PAUSE);
@@ -1070,6 +1084,8 @@ void Minecraft::setScreen( Screen* screen )
 
 		//noRender = false;
 	} else {
+		// Closing a screen and returning to the game should unpause.
+		pause = false;
 		grabMouse();
 	}
 #endif
