@@ -5,6 +5,7 @@
 #include <cctype>
 #include <cstring>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #if defined(_WIN32)
@@ -176,7 +177,9 @@ bool resolveAndConnect(const std::string& host, int port, int& outSock) {
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    const std::string portStr = std::to_string(port);
+    std::ostringstream portStream;
+    portStream << port;
+    const std::string portStr = portStream.str();
     if (getaddrinfo(host.c_str(), portStr.c_str(), &hints, &result) != 0)
         return false;
 

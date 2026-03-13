@@ -413,7 +413,7 @@ void LocalPlayer::tick() {
 
         printf("armor %d: %d\n", i, a->getAuxValue());
     }
-/**/
+*/
 
 	updateArmorTypeHash();
 #ifndef STANDALONE_SERVER

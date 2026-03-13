@@ -74,7 +74,7 @@ void HumanoidMobRenderer::additionalRendering(Mob* mob, float a) {
 
 	// Render player cape if available
 {
-    Player* player = dynamic_cast<Player*>(mob);
+    Player* player = Player::asPlayer(mob);
     if (player) {
         const std::string capeTex = player->getCapeTexture();
         if (!capeTex.empty()) {

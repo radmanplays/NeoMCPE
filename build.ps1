@@ -220,14 +220,15 @@ if (-not $NoCpp -and -not $NoBuild) {
     Write-Step "NDK build (arm64-v8a)"
     # NDK r14b on Windows hits the 32K CreateProcess limit with long paths.
     # Work around it by building through a short junction C:\m -> repo root.
-    $junctionBase = "C:\m"
-    if (-not (Test-Path $junctionBase)) {
-        & cmd.exe /c "mklink /J `"$junctionBase`" `"$repo`"" | Out-Null
+    # Use forward slashes in the build paths to prevent the NDK toolchain from stripping backslashes.
+    $junctionBase = "C:/m"
+    if (-not (Test-Path "C:\m")) {
+        & cmd.exe /c "mklink /J `"C:\m`" `"$repo`"" | Out-Null
     }
-    Push-Location "$junctionBase\project\android\jni"
-    $env:NDK_MODULE_PATH = "$junctionBase\project\lib_projects"
+    Push-Location "$junctionBase/project/android/jni"
+    $env:NDK_MODULE_PATH = "$junctionBase/project/lib_projects"
     # run ndk-build and capture everything; let user see full output for debugging
-    $ndkOutput = & "$ndk\ndk-build.cmd" NDK_PROJECT_PATH="$junctionBase\project\android" APP_BUILD_SCRIPT="$junctionBase\project\android\jni\Android.mk" 2>&1 | Tee-Object -Variable ndkOutput
+    $ndkOutput = & "$ndk\ndk-build.cmd" NDK_PROJECT_PATH="$junctionBase/project/android" APP_BUILD_SCRIPT="$junctionBase/project/android/jni/Android.mk" 2>&1 | Tee-Object -Variable ndkOutput
     # dump entire output for diagnosis
     Write-Host "---- NDK BUILD OUTPUT BEGIN ----"
     $ndkOutput | ForEach-Object { Write-Host $_ }
