@@ -1,6 +1,7 @@
 #include "Gui.h"
 #include "Font.h"
 #include "client/Options.h"
+#include "platform/input/Keyboard.h"
 #include "screens/IngameBlockSelectionScreen.h"
 #include "../Minecraft.h"
 #include "../player/LocalPlayer.h"
@@ -87,14 +88,16 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
     // F: 3
 	int ySlot = screenHeight - 16 - 3;
 
-	if (minecraft->gameMode->canHurtPlayer()) {
-		minecraft->textures->loadAndBindTexture("gui/icons.png");
-		Tesselator& t = Tesselator::instance;
-		t.beginOverride();
-		t.colorABGR(0xffffffff);
-		renderHearts();
-		renderBubbles();
-		t.endOverrideAndDraw();
+	if (!minecraft->options.F1) {
+		if (minecraft->gameMode->canHurtPlayer()) {
+			minecraft->textures->loadAndBindTexture("gui/icons.png");
+			Tesselator& t = Tesselator::instance;
+			t.beginOverride();
+			t.colorABGR(0xffffffff);
+			renderHearts();
+			renderBubbles();
+			t.endOverrideAndDraw();
+		}
 	}
 
 	if(minecraft->player->getSleepTimer() > 0) {
@@ -106,7 +109,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_DEPTH_TEST);
 	}
-
+	if (!minecraft->options.F1) {
 	renderToolBar(a, ySlot, screenWidth);
 
 	glEnable(GL_BLEND);
@@ -122,6 +125,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 	if (minecraft->options.renderDebug)
 		renderDebugInfo();
 #endif
+	}
 
     glDisable(GL_BLEND);
 	glEnable2(GL_ALPHA_TEST);
@@ -201,6 +205,10 @@ void Gui::handleClick(int button, int x, int y) {
 
 void Gui::handleKeyPressed(int key)
 {
+	if (key == Keyboard::KEY_F1) {
+		minecraft->options.F1 = !minecraft->options.F1;
+	}
+	
 	if (key == 99)
 	{
 		if (minecraft->player->inventory->selected > 0)
@@ -516,7 +524,7 @@ void Gui::renderProgressIndicator( const bool isTouchInterface, const int screen
 	ItemInstance* currentItem = minecraft->player->inventory->getSelected();
 	bool bowEquipped = currentItem != NULL ? currentItem->getItem() == Item::bow : false;
 	bool itemInUse = currentItem != NULL ? currentItem->getItem() == minecraft->player->getUseItem()->getItem() : false;
-	if (!isTouchInterface || minecraft->options.isJoyTouchArea || (bowEquipped && itemInUse)) {
+	if ((!isTouchInterface || minecraft->options.isJoyTouchArea || (bowEquipped && itemInUse)) && !minecraft->options.F1) {
 		minecraft->textures->loadAndBindTexture("gui/icons.png");
 		glEnable(GL_BLEND);
 		glBlendFunc2(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);

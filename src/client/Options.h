@@ -108,6 +108,8 @@ private:
 public:
 	static bool debugGl;
 
+	bool F1;
+
 	float music;
     float sound;
     //note: sensitivity is transformed in Options::update
