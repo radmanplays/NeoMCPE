@@ -745,9 +745,7 @@ void Minecraft::tickInput() {
 				if (key == Keyboard::KEY_F3) {
 					options.renderDebug = !options.renderDebug;
 				}
-				if (key == Keyboard::KEY_F4) {
-					player->inventory->add(new ItemInstance(Tile::ironBlock));
-				}
+				
 				if (key == Keyboard::KEY_F5) {
 					options.thirdPersonView = !options.thirdPersonView;
 					/*
