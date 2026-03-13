@@ -9,6 +9,8 @@
 bool Options::debugGl = false;
 
 void Options::initDefaultValues() {
+	F1 = false;
+
 	difficulty = Difficulty::NORMAL;
 	hideGui = false;
 	thirdPersonView = false;
