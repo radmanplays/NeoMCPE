@@ -135,7 +135,7 @@ const Options::Option
 	Options::Option::ANAGLYPH			 (6, "options.anaglyph",		false, true),
 	Options::Option::LIMIT_FRAMERATE	 (7, "options.limitFramerate",false, true),
 	Options::Option::DIFFICULTY			 (8, "options.difficulty",	false, false),
-	Options::Option::GRAPHICS			 (9, "options.graphics",		false, false),
+	Options::Option::GRAPHICS			 (9, "options.graphics",		false, true),
 	Options::Option::AMBIENT_OCCLUSION	 (10, "options.ao",		false, true),
 	Options::Option::GUI_SCALE			 (11, "options.guiScale",	false, false),
 	Options::Option::THIRD_PERSON		 (12, "options.thirdperson",	false, true),
@@ -238,13 +238,29 @@ void Options::update()
 				fancyGraphics = false;
 			}
 		}
+		if (key == OptionStrings::Graphics_SmoothLightning) {
+			bool isLow;
+			readBool(value, ambientOcclusion);
+		}
+
 		// Graphics extras
 		if (key == OptionStrings::Graphics_Vsync)
 			readBool(value, vsync);
+		if (key == OptionStrings::Graphics_Anaglyph) 
+			readBool(value, anaglyph3d);
+		if (key == OptionStrings::Graphics_ViewBobbing) 
+			readBool(value, bobView);
 		if (key == OptionStrings::Graphics_GUIScale) {
 			int v;
 			if (readInt(value, v)) guiScale = v % 5;
 		}
+
+		// Audio
+		if (key == OptionStrings::Audio_Music)
+			readFloat(value, music);
+		if (key == OptionStrings::Audio_Sound) 
+			readFloat(value, sound);
+
 		// Game
 		if (key == OptionStrings::Game_DifficultyLevel) {
 			readInt(value, difficulty);
@@ -322,7 +338,14 @@ void Options::save()
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_GUIScale, guiScale);
 	addOptionToSaveOutput(stringVec, OptionStrings::Game_DifficultyLevel, difficulty);
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Fancy, fancyGraphics);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_SmoothLightning, ambientOcclusion);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Anaglyph, anaglyph3d);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_ViewBobbing, bobView);
+
 	//addOptionToSaveOutput(stringVec, OptionStrings::VIEW_BOBBING, fancyGraphics);
+	// Audio
+	addOptionToSaveOutput(stringVec, OptionStrings::Audio_Music, music);
+	addOptionToSaveOutput(stringVec, OptionStrings::Audio_Sound, sound);
 
 // 
 // 	static const Option MUSIC;

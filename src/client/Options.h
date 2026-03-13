@@ -275,6 +275,8 @@ public:
             return limitFramerate;
         if (item == &Option::VSYNC)
             return vsync;
+		if (item == &Option::GRAPHICS)
+            return fancyGraphics;
         if (item == &Option::AMBIENT_OCCLUSION)
             return ambientOcclusion;
         if (item == &Option::THIRD_PERSON)
