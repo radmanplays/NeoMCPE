@@ -46,17 +46,28 @@ cmake --build . --config Release -j 10
 4. Press **Run** (or F5) to build and launch the game.
 
 ## Android
-Download [r14b Android NDK](http://dl.google.com/android/repository/android-ndk-r14b-windows-x86_64.zip) and run `build.ps1`:
-```
+
+1. Download **Android NDK r14b**:  
+   http://dl.google.com/android/repository/android-ndk-r14b-windows-x86_64.zip
+
+2. Extract it to the root of your `C:` drive so the path becomes:
+
+   ```
+   C:\android-ndk-r14b
+   ```
+
+3. Run the build script:
+
+```powershell
 # Full build (NDK + Java + APK + install)
 .\build.ps1
 
-# Skip NDK recompile (Java/assets changed only)
-.\build.ps1 -NoJava
-
-# Skip Java recompile (C++ changed only)  
+# Skip C++ compilation (Java/assets changed only)
 .\build.ps1 -NoCpp
 
-# Only repackage + install (no recompile at all)
+# Skip Java compilation (C++ changed only)
+.\build.ps1 -NoJava
+
+# Only repackage + install (no compilation)
 .\build.ps1 -NoBuild
 ```
