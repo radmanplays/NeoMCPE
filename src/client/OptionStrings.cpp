@@ -18,9 +18,12 @@ const char* OptionStrings::Controls_UseTouchJoypad     = "ctrl_usetouchjoypad";
 const char* OptionStrings::Controls_IsLefthanded       = "ctrl_islefthanded";
 // why it isnt ctrl_feedback_vibration? i dont want touch it because compatibility with older versions
 const char* OptionStrings::Controls_FeedbackVibration  = "feedback_vibration";
+const char* OptionStrings::Controls_AutoJump  = "ctrl_autojump";
 
-const char* OptionStrings::Audio_Music  = "audio_music";
-const char* OptionStrings::Audio_Sound  = "audio_sound";
+const char* OptionStrings::Audio_Music                 = "audio_music";
+const char* OptionStrings::Audio_Sound                 = "audio_sound";
 
 const char* OptionStrings::Game_DifficultyLevel        = "game_difficulty";
 
+const char* OptionStrings::Tweaks_Sprint               = "tweaks_sprint"; 
+const char* OptionStrings::Tweaks_BarOnTop             = "tweaks_barontop"; 

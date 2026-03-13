@@ -23,8 +23,12 @@ void Options::initDefaultValues() {
 	useMouseForDigging = false;
 	destroyVibration = true;
 	isLeftHanded = false;
+	autoJump = true;
 
 	isJoyTouchArea = false;
+
+	useSprinting = true;
+	barOnTop = false;
 
 	music = 1;
 	sound = 1;
@@ -126,27 +130,30 @@ void Options::initDefaultValues() {
 }
 
 const Options::Option
-	Options::Option::MUSIC				 (0, "options.music",		true, false),
-	Options::Option::SOUND				 (1, "options.sound",		true, false),
-	Options::Option::INVERT_MOUSE		 (2, "options.invertMouse",	false, true),
-	Options::Option::SENSITIVITY		 (3, "options.sensitivity",	true, false),
-	Options::Option::RENDER_DISTANCE	 (4, "options.renderDistance",false, false),
-	Options::Option::VIEW_BOBBING		 (5, "options.viewBobbing",	false, true),
-	Options::Option::ANAGLYPH			 (6, "options.anaglyph",		false, true),
-	Options::Option::LIMIT_FRAMERATE	 (7, "options.limitFramerate",false, true),
-	Options::Option::DIFFICULTY			 (8, "options.difficulty",	false, false),
-	Options::Option::GRAPHICS			 (9, "options.graphics",		false, true),
-	Options::Option::AMBIENT_OCCLUSION	 (10, "options.ao",		false, true),
-	Options::Option::GUI_SCALE			 (11, "options.guiScale",	false, false),
-	Options::Option::THIRD_PERSON		 (12, "options.thirdperson",	false, true),
-    Options::Option::HIDE_GUI			 (13, "options.hidegui",     false, true),
-	Options::Option::SERVER_VISIBLE		 (14, "options.servervisible", false, true),
-	Options::Option::LEFT_HANDED		 (15, "options.lefthanded", false, true),
-	Options::Option::USE_TOUCHSCREEN	 (16, "options.usetouchscreen", false, true),
-	Options::Option::USE_TOUCH_JOYPAD	 (17, "options.usetouchpad", false, true),
-	Options::Option::DESTROY_VIBRATION   (18, "options.destroyvibration", false, true),
+	Options::Option::MUSIC				  (0, "options.music",		true, false),
+	Options::Option::SOUND				  (1, "options.sound",		true, false),
+	Options::Option::INVERT_MOUSE		  (2, "options.invertMouse",	false, true),
+	Options::Option::SENSITIVITY		  (3, "options.sensitivity",	true, false),
+	Options::Option::RENDER_DISTANCE	  (4, "options.renderDistance",false, false),
+	Options::Option::VIEW_BOBBING		  (5, "options.viewBobbing",	false, true),
+	Options::Option::ANAGLYPH			  (6, "options.anaglyph",		false, true),
+	Options::Option::LIMIT_FRAMERATE	  (7, "options.limitFramerate",false, true),
+	Options::Option::DIFFICULTY			  (8, "options.difficulty",	false, false),
+	Options::Option::GRAPHICS			  (9, "options.graphics",		false, true),
+	Options::Option::AMBIENT_OCCLUSION	  (10, "options.ao",		false, true),
+	Options::Option::GUI_SCALE			  (11, "options.guiScale",	false, false),
+	Options::Option::THIRD_PERSON		  (12, "options.thirdperson",	false, true),
+    Options::Option::HIDE_GUI			  (13, "options.hidegui",     false, true),
+	Options::Option::SERVER_VISIBLE		  (14, "options.servervisible", false, true),
+	Options::Option::LEFT_HANDED		  (15, "options.lefthanded", false, true),
+	Options::Option::USE_TOUCHSCREEN	  (16, "options.usetouchscreen", false, true),
+	Options::Option::USE_TOUCH_JOYPAD	  (17, "options.usetouchpad", false, true),
+	Options::Option::DESTROY_VIBRATION    (18, "options.destroyvibration", false, true),
 	Options::Option::PIXELS_PER_MILLIMETER(19, "options.pixelspermilimeter", true, false),
-	Options::Option::VSYNC               (20, "options.vsync",             false, true);
+	Options::Option::VSYNC                (20, "options.vsync",             false, true),
+	Options::Option::SPRINTING            (21, "options.sprint",             false, true),
+	Options::Option::BARONTOP            (22, "options.barontop",             false, true),
+	Options::Option::AUTOJUMP            (23, "options.autojump",             false, true);
 
 /* private */
 const float Options::SOUND_MIN_VALUE = 0.0f;
@@ -216,6 +223,9 @@ void Options::update()
 		if (key == OptionStrings::Controls_IsLefthanded) {
 			readBool(value, isLeftHanded);
 		}
+		if (key == OptionStrings::Controls_AutoJump) {
+			readBool(value, autoJump);
+		}
 		if (key == OptionStrings::Controls_UseTouchJoypad) {
 			readBool(value, isJoyTouchArea);
 			if (!minecraft->useTouchscreen())
@@ -267,6 +277,14 @@ void Options::update()
 			// Only support peaceful and normal right now
 			if (difficulty != Difficulty::PEACEFUL && difficulty != Difficulty::NORMAL)
 				difficulty = Difficulty::NORMAL;
+		}
+
+		// Enchancements
+		if (key == OptionStrings::Tweaks_Sprint) {
+			readBool(value, useSprinting);
+		}
+		if (key == OptionStrings::Tweaks_BarOnTop) {
+			readBool(value, barOnTop);
 		}
 	}
     
@@ -323,9 +341,11 @@ void Options::save()
 	
 	// Login
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_Username, username);
+
 	// Game
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_ServerVisible, serverVisible);
 	addOptionToSaveOutput(stringVec, OptionStrings::Game_DifficultyLevel, difficulty);
+
 	// Input
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_InvertMouse, invertYMouse);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_Sensitivity, sensitivity);
@@ -333,6 +353,8 @@ void Options::save()
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchScreen, useTouchScreen);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchJoypad, isJoyTouchArea);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_FeedbackVibration, destroyVibration);
+	addOptionToSaveOutput(stringVec, OptionStrings::Controls_AutoJump, autoJump);
+
 	// Graphics
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Vsync, vsync);
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_GUIScale, guiScale);
@@ -342,11 +364,13 @@ void Options::save()
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Anaglyph, anaglyph3d);
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_ViewBobbing, bobView);
 
-	//addOptionToSaveOutput(stringVec, OptionStrings::VIEW_BOBBING, fancyGraphics);
 	// Audio
 	addOptionToSaveOutput(stringVec, OptionStrings::Audio_Music, music);
 	addOptionToSaveOutput(stringVec, OptionStrings::Audio_Sound, sound);
 
+	// Tweaks
+	addOptionToSaveOutput(stringVec, OptionStrings::Tweaks_Sprint, useSprinting);
+	addOptionToSaveOutput(stringVec, OptionStrings::Tweaks_BarOnTop, barOnTop);
 // 
 // 	static const Option MUSIC;
 // 	static const Option SOUND;

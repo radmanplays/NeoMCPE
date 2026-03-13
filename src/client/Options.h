@@ -30,6 +30,7 @@ public:
 		static const Option SOUND;
 		static const Option INVERT_MOUSE;
 		static const Option SENSITIVITY;
+		static const Option AUTOJUMP;
 		static const Option RENDER_DISTANCE;
 		static const Option VIEW_BOBBING;
 		static const Option ANAGLYPH;
@@ -49,6 +50,8 @@ public:
 
 		static const Option PIXELS_PER_MILLIMETER;
 		static const Option VSYNC;
+		static const Option SPRINTING;
+		static const Option BARONTOP;
 
 		/*
         static Option* getItem(int id) {
@@ -120,6 +123,7 @@ public:
 	bool useMouseForDigging;
 	bool isLeftHanded;
 	bool destroyVibration;
+	bool autoJump;
     //std::string skin;
 
     KeyMapping keyUp;
@@ -163,6 +167,10 @@ public:
 	bool isJoyTouchArea;
 	bool useTouchScreen;
 	float pixelsPerMillimeter;
+
+	bool useSprinting;
+	bool barOnTop;
+
     Options(Minecraft* minecraft, const std::string& workingDirectory)
 	:	minecraft(minecraft)
 	{
@@ -246,6 +254,10 @@ public:
             ambientOcclusion = !ambientOcclusion;
             //minecraft->levelRenderer.allChanged();
         }
+		if (option == &Option::SPRINTING) useSprinting = !useSprinting;
+		if (option == &Option::BARONTOP) barOnTop = !barOnTop;
+		if (option == &Option::AUTOJUMP) autoJump = !autoJump;
+
 		notifyOptionUpdate(option, getBooleanValue(option));
         save();
     }
@@ -289,12 +301,18 @@ public:
 			return serverVisible;
 		if (item == &Option::LEFT_HANDED)
 			return isLeftHanded;
+		if (item == &Option::AUTOJUMP)
+			return autoJump;
 		if (item == &Option::USE_TOUCHSCREEN)
 			return useTouchScreen;
 		if (item == &Option::USE_TOUCH_JOYPAD)
 			return isJoyTouchArea;
 		if (item == &Option::DESTROY_VIBRATION)
 			return destroyVibration;
+		if (item == &Option::SPRINTING) 
+			return useSprinting;
+		if (item == &Option::BARONTOP) 
+			return barOnTop;
 		return false;
 	}
 

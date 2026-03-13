@@ -182,7 +182,7 @@ void LocalPlayer::aiStep() {
 	// Sprint: detect W double-tap
 	{
 		bool forwardHeld = (input->ya > 0);
-		if (forwardHeld && !prevForwardHeld) {
+		if (forwardHeld && !prevForwardHeld && minecraft->options.useSprinting) {
 			// leading edge of W press
 			if (sprintDoubleTapTimer > 0)
 				sprinting = true;
@@ -271,7 +271,7 @@ void LocalPlayer::move(float xa, float ya, float za) {
 
 		float newX = x, newZ = z;
 
-		if (autoJumpTime <= 0 && autoJumpEnabled)
+		if (autoJumpTime <= 0 && minecraft->options.autoJump)
 		{
 			// auto-jump when crossing the middle of a tile, and the tile in the front is blocked
 			bool jump = false;

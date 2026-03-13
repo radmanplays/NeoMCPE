@@ -585,11 +585,14 @@ void Gui::renderHearts() {
 	int oh = minecraft->player->lastHealth;
 	random.setSeed(tickCount * 312871);
 
-	int xx = 2;//screenWidth / 2 - getNumSlots() * 10;
+	int screenWidth = (int)(minecraft->width * InvGuiScale);
+	int screenHeight = (int)(minecraft->height * InvGuiScale);
+
+	int xx = (minecraft->options.barOnTop) ? screenWidth / 2 - getNumSlots() * 10 - 1 : 2;
 
 	int armor = minecraft->player->getArmorValue();
 	for (int i = 0; i < Player::MAX_HEALTH / 2; i++) {
-		int yo = 2;
+		int yo = (minecraft->options.barOnTop) ? screenHeight - 32 : 2;
 		int ip2 = i + i + 1;
 
 		if (armor > 0) {
@@ -617,11 +620,15 @@ void Gui::renderHearts() {
 
 void Gui::renderBubbles() {
 	if (minecraft->player->isUnderLiquid(Material::water)) {
-		int yo = 12;
+		int screenWidth = (int)(minecraft->width * InvGuiScale);
+		int screenHeight = (int)(minecraft->height * InvGuiScale);
+		
+		int xx = (minecraft->options.barOnTop) ? screenWidth / 2 - getNumSlots() * 10 - 1 : 2;
+		int yo = (minecraft->options.barOnTop) ? screenHeight - 42 : 12;
 		int count = (int) std::ceil((minecraft->player->airSupply - 2) * 10.0f / Player::TOTAL_AIR_SUPPLY);
 		int extra = (int) std::ceil((minecraft->player->airSupply) * 10.0f / Player::TOTAL_AIR_SUPPLY) - count;
 		for (int i = 0; i < count + extra; i++) {
-			int xo =  i * 8 + 2;
+			int xo =  i * 8 + xx;
 			if (i < count) blit(xo, yo, 16, 9 * 2, 9, 9);
 			else blit(xo, yo, 16 + 9, 9 * 2, 9, 9);
 		}

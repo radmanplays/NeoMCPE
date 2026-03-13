@@ -20,12 +20,16 @@ public:
 	static const char* Controls_UseTouchJoypad;
     static const char* Controls_IsLefthanded;
     static const char* Controls_FeedbackVibration;
+    static const char* Controls_AutoJump;
 
     static const char* Audio_Music;
 	static const char* Audio_Sound;
 
 
 	static const char* Game_DifficultyLevel;
+
+    static const char* Tweaks_Sprint;
+    static const char* Tweaks_BarOnTop;
 
 };
 

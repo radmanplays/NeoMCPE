@@ -1,5 +1,7 @@
 #include "Minecraft.h"
 #include "client/player/input/IBuildInput.h"
+#include "world/item/Item.h"
+#include "world/item/ItemInstance.h"
 #include <string>
 #include <cstdlib>
 
@@ -728,13 +730,24 @@ void Minecraft::tickInput() {
 				if (key == Keyboard::KEY_E) {
 					screenChooser.setScreen(SCREEN_BLOCKSELECTION);
 				}
+
 				if (!screen && key == Keyboard::KEY_T && level) {
 					setScreen(new ConsoleScreen());
 				}
+
 				if (!screen && key == Keyboard::KEY_O || key == 250) {
 					releaseMouse();
 				}
 
+				if (key == Keyboard::KEY_F)
+					options.viewDistance = (options.viewDistance + 1) % 4;
+
+				if (key == Keyboard::KEY_F3) {
+					options.renderDebug = !options.renderDebug;
+				}
+				if (key == Keyboard::KEY_F4) {
+					player->inventory->add(new ItemInstance(Tile::ironBlock));
+				}
 				if (key == Keyboard::KEY_F5) {
 					options.thirdPersonView = !options.thirdPersonView;
 					/*
@@ -743,6 +756,7 @@ void Minecraft::tickInput() {
 						printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
 					*/
 				}
+
 			#endif
 			#if defined(WIN32)
 				if (key == Keyboard::KEY_F) {
@@ -821,9 +835,6 @@ void Minecraft::tickInput() {
 					for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
 						if (player->inventory->getItem(i))
 							player->inventory->dropSlot(i, false);
-				}
-				if (key == Keyboard::KEY_F3) {
-					options.renderDebug = !options.renderDebug;
 				}
 				if (key == Keyboard::KEY_M) {
 					options.difficulty = (options.difficulty == Difficulty::PEACEFUL)?

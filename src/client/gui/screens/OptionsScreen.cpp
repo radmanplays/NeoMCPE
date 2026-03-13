@@ -76,6 +76,7 @@ void OptionsScreen::init() {
 	categoryButtons.push_back(new Touch::TButton(3, "Game"));
 	categoryButtons.push_back(new Touch::TButton(4, "Controls"));
 	categoryButtons.push_back(new Touch::TButton(5, "Graphics"));
+	categoryButtons.push_back(new Touch::TButton(6, "Tweaks"));
 
 	btnChangeUsername = new Touch::TButton(10, "Username");
 	btnCredits = new Touch::TButton(11, "Credits");
@@ -221,6 +222,7 @@ void OptionsScreen::generateOptionScreens() {
 	optionPanes.push_back(new OptionsPane());
 	optionPanes.push_back(new OptionsPane());
 	optionPanes.push_back(new OptionsPane());
+	optionPanes.push_back(new OptionsPane());
 
 	// Login Pane
 	optionPanes[0]->createOptionsGroup("options.group.mojang")
@@ -235,7 +237,8 @@ void OptionsScreen::generateOptionScreens() {
 
 	// Controls Pane
 	optionPanes[2]->createOptionsGroup("options.group.controls")
-		.addOptionItem(&Options::Option::INVERT_MOUSE, minecraft);
+		.addOptionItem(&Options::Option::INVERT_MOUSE, minecraft)
+		.addOptionItem(&Options::Option::AUTOJUMP, minecraft);
 
 	// Graphics Pane
 	optionPanes[3]->createOptionsGroup("options.group.graphics")
@@ -246,6 +249,11 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(&Options::Option::VSYNC, minecraft)
 		.addOptionItem(&Options::Option::MUSIC, minecraft)
 		.addOptionItem(&Options::Option::SOUND, minecraft);
+
+	// Tweaks Pane
+	optionPanes[4]->createOptionsGroup("options.group.tweaks")
+		.addOptionItem(&Options::Option::SPRINTING, minecraft)
+		.addOptionItem(&Options::Option::BARONTOP, minecraft);
 }
 
 void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {
