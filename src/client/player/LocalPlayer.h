@@ -105,6 +105,8 @@ private:
 	bool sprinting;
 	int  sprintDoubleTapTimer;
 	bool prevForwardHeld;
+public:
+	void setSprinting(bool sprint) { sprinting = sprint; }
 };
 
 #endif /*NET_MINECRAFT_CLIENT_PLAYER__LocalPlayer_H__*/

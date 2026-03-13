@@ -1,5 +1,6 @@
 #include "Minecraft.h"
 #include "client/player/input/IBuildInput.h"
+#include "platform/input/Keyboard.h"
 #include "world/item/Item.h"
 #include "world/item/ItemInstance.h"
 #include <string>
@@ -727,6 +728,10 @@ void Minecraft::tickInput() {
 				}
 			#endif
 			#if defined(PLATFORM_DESKTOP)
+				if (key == Keyboard::KEY_LEFT_CTRL) {
+					player->setSprinting(true);
+				}
+
 				if (key == Keyboard::KEY_E) {
 					screenChooser.setScreen(SCREEN_BLOCKSELECTION);
 				}
