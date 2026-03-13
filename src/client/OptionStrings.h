@@ -12,6 +12,7 @@ public:
 	static const char* Graphics_Vsync;
 	static const char* Graphics_SmoothLightning;
     static const char* Graphics_Anaglyph;
+    static const char* Graphics_ViewBobbing;
 
     static const char* Controls_Sensitivity;
     static const char* Controls_InvertMouse;

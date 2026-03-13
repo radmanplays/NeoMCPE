@@ -8,7 +8,8 @@ const char* OptionStrings::Graphics_LowQuality         = "gfx_lowquality";
 const char* OptionStrings::Graphics_Vsync              = "gfx_vsync";
 const char* OptionStrings::Graphics_GUIScale           = "gfx_guiscale";
 const char* OptionStrings::Graphics_SmoothLightning    = "gfx_smoothlightning";
-const char* OptionStrings::Graphics_Anaglyph    = "gfx_anaglyph";
+const char* OptionStrings::Graphics_Anaglyph           = "gfx_anaglyph";
+const char* OptionStrings::Graphics_ViewBobbing        = "gfx_viewbobbing";
 
 const char* OptionStrings::Controls_Sensitivity        = "ctrl_sensitivity";
 const char* OptionStrings::Controls_InvertMouse        = "ctrl_invertmouse";

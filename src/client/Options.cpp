@@ -248,6 +248,8 @@ void Options::update()
 			readBool(value, vsync);
 		if (key == OptionStrings::Graphics_Anaglyph) 
 			readBool(value, anaglyph3d);
+		if (key == OptionStrings::Graphics_ViewBobbing) 
+			readBool(value, bobView);
 		if (key == OptionStrings::Graphics_GUIScale) {
 			int v;
 			if (readInt(value, v)) guiScale = v % 5;
@@ -338,6 +340,7 @@ void Options::save()
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Fancy, fancyGraphics);
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_SmoothLightning, ambientOcclusion);
 	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Anaglyph, anaglyph3d);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_ViewBobbing, bobView);
 
 	//addOptionToSaveOutput(stringVec, OptionStrings::VIEW_BOBBING, fancyGraphics);
 	// Audio
