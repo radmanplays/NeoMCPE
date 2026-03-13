@@ -58,6 +58,8 @@
 #include "player/input/XperiaPlayInput.h"
 
 #endif
+
+#include "renderer/Chunk.h"
 #include "player/input/MouseTurnInput.h"
 #include "../world/entity/MobFactory.h"
 #include "../world/level/MobSpawner.h"
@@ -753,13 +755,6 @@ void Minecraft::tickInput() {
 					for (int i = 0; i < 16; ++i)
 						printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
 					*/
-				}
-
-			#endif
-			#if defined(WIN32)
-				if (key == Keyboard::KEY_F) {
-					options.isFlying = !options.isFlying;
-					player->noPhysics = options.isFlying;
 				}
 
 
