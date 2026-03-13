@@ -107,64 +107,74 @@ static std::string extractJsonString(const std::string& json, const std::string&
     return json.substr(pos, end - pos);
 }
 
-static std::string getSkinUrlForUsername(const std::string& username) {
+static std::string getTextureUrlForUsername(const std::string& username, const std::string& textureKey) {
     if (username.empty()) {
-        LOGI("[Skin] username empty\n");
+        LOGI("[%s] username empty\n", textureKey.c_str());
         return "";
     }
 
-    LOGI("[Skin] resolving UUID for user '%s'...\n", username.c_str());
+    LOGI("[%s] resolving UUID for user '%s'...\n", textureKey.c_str(), username.c_str());
     std::vector<unsigned char> body;
     std::string apiUrl = "http://api.mojang.com/users/profiles/minecraft/" + username;
     if (!HttpClient::download(apiUrl, body)) {
-        LOGW("[Skin] failed to download UUID for %s\n", username.c_str());
+        LOGW("[%s] failed to download UUID for %s\n", textureKey.c_str(), username.c_str());
         return "";
     }
 
     std::string response(body.begin(), body.end());
     std::string uuid = extractJsonString(response, "id");
     if (uuid.empty()) {
-        LOGW("[Skin] no UUID found in Mojang response for %s\n", username.c_str());
+        LOGW("[%s] no UUID found in Mojang response for %s\n", textureKey.c_str(), username.c_str());
         return "";
     }
 
-    LOGI("[Skin] UUID=%s for user %s\n", uuid.c_str(), username.c_str());
+    LOGI("[%s] UUID=%s for user %s\n", textureKey.c_str(), uuid.c_str(), username.c_str());
 
     std::string profileUrl = "http://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
     if (!HttpClient::download(profileUrl, body)) {
-        LOGW("[Skin] failed to download profile for UUID %s\n", uuid.c_str());
+        LOGW("[%s] failed to download profile for UUID %s\n", textureKey.c_str(), uuid.c_str());
         return "";
     }
 
     response.assign(body.begin(), body.end());
     std::string encoded = extractJsonString(response, "value");
     if (encoded.empty()) {
-        LOGW("[Skin] no value field in profile response for UUID %s\n", uuid.c_str());
+        LOGW("[%s] no value field in profile response for UUID %s\n", textureKey.c_str(), uuid.c_str());
         return "";
     }
 
     std::string decoded = base64Decode(encoded);
-    size_t skinPos = decoded.find("\"SKIN\"");
-    if (skinPos == std::string::npos) {
-        LOGW("[Skin] no SKIN entry in decoded profile for UUID %s\n", uuid.c_str());
+
+    std::string searchKey = "\"" + textureKey + "\"";
+    size_t texturePos = decoded.find(searchKey);
+    if (texturePos == std::string::npos) {
+        LOGW("[%s] no %s entry in decoded profile for UUID %s\n", textureKey.c_str(), textureKey.c_str(), uuid.c_str());
         return "";
     }
-    size_t urlPos = decoded.find("\"url\"", skinPos);
+    size_t urlPos = decoded.find("\"url\"", texturePos);
     if (urlPos == std::string::npos) {
-        LOGW("[Skin] no url field under SKIN for UUID %s\n", uuid.c_str());
+        LOGW("[%s] no url field under %s for UUID %s\n", textureKey.c_str(), textureKey.c_str(), uuid.c_str());
         return "";
     }
 
     // extract the URL value from the substring starting at urlPos
     std::string urlFragment = decoded.substr(urlPos);
-    std::string skinUrl = extractJsonString(urlFragment, "url");
-    if (skinUrl.empty()) {
-        LOGW("[Skin] failed to parse skin URL for UUID %s\n", uuid.c_str());
+    std::string textureUrl = extractJsonString(urlFragment, "url");
+    if (textureUrl.empty()) {
+        LOGW("[%s] failed to parse %s URL for UUID %s\n", textureKey.c_str(), textureKey.c_str(), uuid.c_str());
         return "";
     }
 
-    LOGI("[Skin] skin URL for %s: %s\n", username.c_str(), skinUrl.c_str());
-    return skinUrl;
+    LOGI("[%s] %s URL for %s: %s\n", textureKey.c_str(), textureKey.c_str(), username.c_str(), textureUrl.c_str());
+    return textureUrl;
+}
+
+static std::string getSkinUrlForUsername(const std::string& username) {
+    return getTextureUrlForUsername(username, "SKIN");
+}
+
+static std::string getCapeUrlForUsername(const std::string& username) {
+    return getTextureUrlForUsername(username, "CAPE");
 }
 
 static bool ensureDirectoryExists(const std::string& path) {
@@ -235,6 +245,51 @@ static void* fetchSkinForPlayer(void* param) {
     return NULL;
 }
 
+static void* fetchCapeForPlayer(void* param) {
+    LocalPlayer* player = (LocalPlayer*)param;
+    if (!player) return NULL;
+
+    LOGI("[Cape] starting cape download for %s\n", player->name.c_str());
+
+    const std::string cacheDir = "data/images/capes";
+    if (!ensureDirectoryExists(cacheDir)) {
+        LOGW("[Cape] failed to create cache directory %s\n", cacheDir.c_str());
+    }
+
+    std::string cacheFile = cacheDir + "/" + player->name + ".png";
+    if (fileExists(cacheFile)) {
+        LOGI("[Cape] using cached cape for %s\n", player->name.c_str());
+        player->setCapeTextureName("capes/" + player->name + ".png");
+        return NULL;
+    }
+
+    std::string capeUrl = getCapeUrlForUsername(player->name);
+    if (capeUrl.empty()) {
+        LOGW("[Cape] cape URL lookup failed for %s\n", player->name.c_str());
+        return NULL;
+    }
+
+    LOGI("[Cape] downloading cape from %s\n", capeUrl.c_str());
+    std::vector<unsigned char> capeData;
+    if (!HttpClient::download(capeUrl, capeData) || capeData.empty()) {
+        LOGW("[Cape] download failed for %s\n", capeUrl.c_str());
+        return NULL;
+    }
+
+    // Save to cache
+    FILE* fp = fopen(cacheFile.c_str(), "wb");
+    if (fp) {
+        fwrite(capeData.data(), 1, capeData.size(), fp);
+        fclose(fp);
+        LOGI("[Cape] cached cape to %s\n", cacheFile.c_str());
+    } else {
+        LOGW("[Cape] failed to write cape cache %s\n", cacheFile.c_str());
+    }
+
+    player->setCapeTextureName("capes/" + player->name + ".png");
+    return NULL;
+}
+
 //@note: doesn't work completely, since it doesn't care about stairs rotation
 static bool isJumpable(int tileId) {
 	return tileId != Tile::fence->id
@@ -265,8 +320,9 @@ LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, User* user, int dim
 
 	if (user != NULL && !user->name.empty()) {
 		this->name = user->name;
-		// Fetch user skin from Mojang servers in the background (avoids blocking the main thread)
+		// Fetch user skin and cape from Mojang servers in the background (avoids blocking the main thread)
 		new CThread(fetchSkinForPlayer, this);
+		new CThread(fetchCapeForPlayer, this);
 	}
 }
 

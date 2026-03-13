@@ -44,9 +44,14 @@ public:
     virtual std::string getTexture();
     virtual void setTextureName(const std::string& name);
 
-	virtual bool isAlive();
+    // Optional player cape texture (non-null on clients when available)
+    virtual std::string getCapeTexture();
+    virtual void setCapeTextureName(const std::string& name);
+
+    virtual bool isAlive();
     virtual bool isPickable();
     virtual bool isPushable();
+
 	virtual bool isShootable();
 
 	MoveControl* getMoveControl();
@@ -213,7 +218,22 @@ protected:
 	float walkingSpeed;
 	float flyingSpeed;
 
+	// Cape inertia positions
+	double xCape, yCape, zCape;
+	double xc, yc, zc;
+
+public:
+	// Cape position accessors (for renderers)
+	double getCapeX() const { return xCape; }
+	double getCapeY() const { return yCape; }
+	double getCapeZ() const { return zCape; }
+
+	double getCapePrevX() const { return xc; }
+	double getCapePrevY() const { return yc; }
+	double getCapePrevZ() const { return zc; }
+
 	std::string textureName;
+	std::string capeTextureName;
 	std::string modelName;
 	int deathScore;
 	float oRun, run;

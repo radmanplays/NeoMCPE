@@ -29,6 +29,7 @@ Mob::Mob(Level* level)
 	invulnerableDuration(20),
 	//hasHair(false),
 	textureName("mob/char.png"),
+	capeTextureName(""),
 	allowAlpha(true),
 	modelName(""),
 	bobStrength(1),
@@ -82,6 +83,15 @@ Mob::Mob(Level* level)
 	yRot = (float) (Mth::random() * Mth::PI * 2);
 
 	this->footSize = 0.5f;
+
+	// Initialize cape inertia positions
+	xCape = x;
+	yCape = y;
+	zCape = z;
+
+	xc = xCape;
+	yc = yCape;
+	zc = zCape;
 }
 
 Mob::~Mob() {
@@ -113,6 +123,16 @@ std::string Mob::getTexture()
 void Mob::setTextureName(const std::string& name)
 {
 	textureName = name;
+}
+
+std::string Mob::getCapeTexture()
+{
+	return capeTextureName;
+}
+
+void Mob::setCapeTextureName(const std::string& name)
+{
+	capeTextureName = name;
 }
 
 bool Mob::isPickable()
@@ -274,6 +294,10 @@ void Mob::superTick()
 
 void Mob::tick()
 {
+	xc = xCape;
+	yc = yCape;
+	zc = zCape;
+
 	super::tick();
 
 	if (arrowCount > 0) {
@@ -378,6 +402,18 @@ void Mob::tick()
 	while (xRot - xRotO >= 180)
 		xRotO += 360;
 	animStep += walkSpeed;
+
+	// Reduce jitter by using a smaller interpolation factor (more lag, smoother motion)
+	double dxCape = x - xCape;
+	double dyCape = y - yCape;
+	double dzCape = z - zCape;
+
+	const double interp = 0.15; // small value for smoother cape motion
+	const double interpY = 0.12; // extra smoothing on vertical movement
+
+	xCape += dxCape * interp;
+	yCape += dyCape * interpY;
+	zCape += dzCape * interp;
 }
 
 void Mob::setSize( float w, float h )
