@@ -39,6 +39,7 @@ public:
 
 	void handleClick(int button, int x, int y);
 	void handleKeyPressed( int key );
+	void scrollChat(int delta);
 
 	void tick();
 	void render(float a, bool mouseFree, int xMouse, int yMouse);
@@ -96,6 +97,7 @@ private:
 	int MAX_MESSAGE_WIDTH;
 	//ItemRenderer itemRenderer;
 	GuiMessageList guiMessages;
+	int chatScrollOffset;
 	Random random;
 
 	Minecraft* minecraft;

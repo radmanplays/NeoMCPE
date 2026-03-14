@@ -3,6 +3,8 @@
 #include "client/Options.h"
 #include "platform/input/Keyboard.h"
 #include "screens/IngameBlockSelectionScreen.h"
+#include "screens/ChatScreen.h"
+#include "screens/ConsoleScreen.h"
 #include "../Minecraft.h"
 #include "../player/LocalPlayer.h"
 #include "../renderer/Tesselator.h"
@@ -24,6 +26,7 @@
 #include "../../world/PosTranslator.h"
 #include "../../platform/time.h"
 #include <cmath>
+#include <algorithm>
 
 float Gui::InvGuiScale = 1.0f / 3.0f;
 float Gui::GuiScale = 1.0f / Gui::InvGuiScale;
@@ -37,6 +40,7 @@ Gui::Gui(Minecraft* minecraft)
 	progress(0),
 	overlayMessageTime(0),
 	animateOverlayMessageColor(false),
+	chatScrollOffset(0),
 	tbr(1),
 	_inventoryNeedsUpdate(true),
 	_flashSlotId(-1),
@@ -113,8 +117,18 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 	renderToolBar(a, ySlot, screenWidth);
 
 	glEnable(GL_BLEND);
+	bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
 	unsigned int max = 10;
-    bool isChatting = false;
+	if (isChatting) {
+		int lineHeight = 9;
+		max = (screenHeight - 48) / lineHeight;
+		if (max < 1) max = 1;
+		int maxScroll = (int)guiMessages.size() - (int)max;
+		if (maxScroll < 0) maxScroll = 0;
+		if (chatScrollOffset > maxScroll) chatScrollOffset = maxScroll;
+	} else {
+		chatScrollOffset = 0;
+	}
 	renderChatMessages(screenHeight, max, isChatting, font);
 #if !defined(RPI)
 	renderOnSelectItemNameText(screenWidth, font, ySlot);
@@ -205,6 +219,29 @@ void Gui::handleClick(int button, int x, int y) {
 
 void Gui::handleKeyPressed(int key)
 {
+	bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
+	if (isChatting) {
+		// Allow scrolling the chat history with the mouse/keyboard when chat is open
+		if (key == 38) { // VK_UP
+			scrollChat(1);
+			return;
+		} else if (key == 40) { // VK_DOWN
+			scrollChat(-1);
+			return;
+		} else if (key == 33) { // VK_PRIOR (Page Up)
+			// Scroll by a page
+			int screenHeight = (int)(minecraft->height * InvGuiScale);
+			int maxVisible = (screenHeight - 48) / 9;
+			scrollChat(maxVisible);
+			return;
+		} else if (key == 34) { // VK_NEXT (Page Down)
+			int screenHeight = (int)(minecraft->height * InvGuiScale);
+			int maxVisible = (screenHeight - 48) / 9;
+			scrollChat(-maxVisible);
+			return;
+		}
+	}
+
 	if (key == Keyboard::KEY_F1) {
 		minecraft->options.toggle(OPTIONS_HIDEGUI);
 	}
@@ -231,6 +268,23 @@ void Gui::handleKeyPressed(int key)
 	{
 		minecraft->player->inventory->dropSlot(minecraft->player->inventory->selected, false);
 	}
+}
+
+void Gui::scrollChat(int delta) {
+	if (delta == 0)
+		return;
+
+	int screenHeight = (int)(minecraft->height * InvGuiScale);
+	int maxVisible = (screenHeight - 48) / 9;
+	if (maxVisible <= 0)
+		return;
+
+	int maxScroll = (int)guiMessages.size() - maxVisible;
+	if (maxScroll < 0) maxScroll = 0;
+	int desired = chatScrollOffset + delta;
+	if (desired < 0) desired = 0;
+	if (desired > maxScroll) desired = maxScroll;
+	chatScrollOffset = desired;
 }
 
 void Gui::tick() {
@@ -263,8 +317,16 @@ void Gui::addMessage(const std::string& _string) {
 	message.message = string;
 	message.ticks = 0;
 	guiMessages.insert(guiMessages.begin(), message);
-	while (guiMessages.size() > 30) {
+
+	// Keep a larger history so users can scroll through the full chat
+	const unsigned int MaxHistoryLines = 200;
+	while (guiMessages.size() > MaxHistoryLines) {
 		guiMessages.pop_back();
+	}
+
+	// If the user has scrolled up, keep their window fixed (new messages shift older ones down)
+	if (chatScrollOffset > 0) {
+		chatScrollOffset++;
 	}
 }
 
@@ -846,9 +908,16 @@ void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isC
 	//        // glScalef2(1.0f / ssc.scale, 1.0f / ssc.scale, 1);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	int baseY = screenHeight - 48;
-	for (unsigned int i = 0; i < guiMessages.size() && i < max; i++) {
-		if (guiMessages.at(i).ticks < 20 * 10 || isChatting) {
-			float t = guiMessages.at(i).ticks / (20 * 10.0f);
+	int start = chatScrollOffset;
+	if (start < 0) start = 0;
+	for (unsigned int i = 0; i < max; i++) {
+		unsigned int msgIdx = (unsigned int)start + i;
+		if (msgIdx >= guiMessages.size())
+			break;
+
+		GuiMessage& message = guiMessages.at(msgIdx);
+		if (message.ticks < 20 * 10 || isChatting) {
+			float t = message.ticks / (20 * 10.0f);
 			t = 1 - t;
 			t = t * 10;
 			if (t < 0) t = 0;
@@ -860,18 +929,18 @@ void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isC
 			if (alpha > 0) {
 				const float x = 2;
 				const float y = (float)(baseY - i * 9);
-				std::string msg = guiMessages.at(i).message;
+				std::string msg = message.message;
 				this->fill(x, y - 1, x + MAX_MESSAGE_WIDTH, y + 8, (alpha / 2) << 24);
 				glEnable(GL_BLEND);
 
 				// special-case join/leave announcements
-		int baseColor = 0xffffff;
-		if (msg.find(" joined the game") != std::string::npos ||
-			msg.find(" left the game") != std::string::npos) {
-			baseColor = 0xffff00; // yellow
-		}
-		// replace previous logic; allow full colour tags now
-		Gui::drawColoredString(font, msg, x, y, alpha);
+			int baseColor = 0xffffff;
+			if (msg.find(" joined the game") != std::string::npos ||
+				msg.find(" left the game") != std::string::npos) {
+				baseColor = 0xffff00; // yellow
+			}
+			// replace previous logic; allow full colour tags now
+			Gui::drawColoredString(font, msg, x, y, alpha);
 			}
 		}
 	}

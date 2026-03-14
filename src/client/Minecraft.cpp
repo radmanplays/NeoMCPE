@@ -36,6 +36,7 @@
 #include "gui/Font.h"
 #include "gui/screens/RenameMPLevelScreen.h"
 #include "gui/screens/ConsoleScreen.h"
+#include "gui/screens/ChatScreen.h"
 #include "sound/SoundEngine.h"
 #endif
 #include "../platform/CThread.h"
@@ -672,15 +673,20 @@ void Minecraft::tickInput() {
 		}
 
 		if (e.action == MouseAction::ACTION_WHEEL) {
-			Inventory* v = player->inventory;
+			// If chat/console is open, use the wheel to scroll through chat history.
+			if (screen && (dynamic_cast<ChatScreen*>(screen) || dynamic_cast<ConsoleScreen*>(screen))) {
+				gui.scrollChat(e.dy);
+			} else {
+				Inventory* v = player->inventory;
 
-			int numSlots = gui.getNumSlots();
+				int numSlots = gui.getNumSlots();
 #ifndef PLATFORM_DESKTOP
-			numSlots--;
+				numSlots--;
 #endif
 
-			int slot = (v->selected - e.dy + numSlots) % numSlots;
-			v->selectSlot(slot);
+				int slot = (v->selected - e.dy + numSlots) % numSlots;
+				v->selectSlot(slot);
+			}
 		}
 		/*
 		if (mouseDiggable && options.useMouseForDigging) {

@@ -319,7 +319,7 @@ bool download(const std::string& url, std::vector<unsigned char>& outBody) {
         if (status != 200) {
             std::string bodySnippet;
             if (!outBody.empty()) {
-                size_t len = std::min(outBody.size(), (size_t)1024);
+                size_t len = outBody.size() < 1024 ? outBody.size() : 1024;
                 bodySnippet.assign(outBody.begin(), outBody.begin() + len);
             }
             LOGW("[HttpClient] HTTP status %d for %s\n", status, currentUrl.c_str());
