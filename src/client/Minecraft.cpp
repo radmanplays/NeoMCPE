@@ -755,7 +755,12 @@ void Minecraft::tickInput() {
 				if (key == Keyboard::KEY_F3) {
 					options.toggle(OPTIONS_RENDER_DEBUG);
 				}
-				
+				if (key == Keyboard::KEY_F4) {
+					player->inventory->add(new ItemInstance(Tile::goldBlock));
+					player->inventory->add(new ItemInstance(Tile::netherReactor));
+					player->inventory->add(new ItemInstance(Tile::stoneBrick));
+
+				}
 				if (key == Keyboard::KEY_F5) {
 					options.toggle(OPTIONS_THIRD_PERSON_VIEW);
 					/*
@@ -909,8 +914,6 @@ void Minecraft::tickInput() {
 		// USPESHNO spizheno
 		static int buildHoldTicks = 0;
 		if (Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
-			BuildActionIntention bai(BuildActionIntention::BAI_BUILD | BuildActionIntention::BAI_INTERACT);
-			handleBuildAction(&bai);
 			if (buildHoldTicks >= 5) buildHoldTicks = 0;
 
 			if (++buildHoldTicks == 1) {
@@ -919,6 +922,7 @@ void Minecraft::tickInput() {
 			}
 		} else {
 			buildHoldTicks = 0;
+			gameMode->releaseUsingItem(player);
 		}
 	}
 

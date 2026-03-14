@@ -177,14 +177,14 @@ ItemInstance NetherReactorTileEntity::GetLowOddsSpawnItem() {
 			Item::painting,
 			Item::door_wood
 		};
-		int itemIndex = level->random.nextInt(sizeof(items) / 4);
+		int itemIndex = level->random.nextInt(sizeof(items) / sizeof(Item*));
 		Item* itemToSpawn = items[itemIndex];
 		return ItemInstance(itemToSpawn);
 	} else {
 		static Tile* tiles[] = {
 			Tile::bookshelf
 		};
-		int tileIndex = level->random.nextInt(sizeof(tiles) / 4);
+		int tileIndex = level->random.nextInt(sizeof(tiles) / sizeof(Tile*));
 		Tile* tileToSpawn = tiles[tileIndex];
 		return ItemInstance(tileToSpawn);
 	}
