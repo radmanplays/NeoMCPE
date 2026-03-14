@@ -287,53 +287,58 @@ void RandomLevelSource::postProcess(ChunkSource* parent, int xt, int zt) {
 		feature.place(level, &random, x, y, z);
     }
 
-    for (int i = 0; i < 20; i++) {
+    // Coal: common, wide Y range, moderate vein size
+    for (int i = 0; i < 16; i++) {
         int x = xo + random.nextInt(16);
         int y = random.nextInt(128);
         int z = zo + random.nextInt(16);
-        OreFeature feature(Tile::coalOre->id, 16);
-		feature.place(level, &random, x, y, z);
+        OreFeature feature(Tile::coalOre->id, 14);
+        feature.place(level, &random, x, y, z);
     }
 
-    for (int i = 0; i < 20; i++) {
+    // Iron: common, limited to upper underground
+    for (int i = 0; i < 14; i++) {
         int x = xo + random.nextInt(16);
         int y = random.nextInt(64);
         int z = zo + random.nextInt(16);
-        OreFeature feature(Tile::ironOre->id, 8);
-		feature.place(level, &random, x, y, z);
+        OreFeature feature(Tile::ironOre->id, 10);
+        feature.place(level, &random, x, y, z);
     }
 
+    // Gold: rarer and deeper
     for (int i = 0; i < 2; i++) {
         int x = xo + random.nextInt(16);
         int y = random.nextInt(32);
         int z = zo + random.nextInt(16);
-        OreFeature feature(Tile::goldOre->id, 8);
-		feature.place(level, &random, x, y, z);
+        OreFeature feature(Tile::goldOre->id, 9);
+        feature.place(level, &random, x, y, z);
     }
 
-    for (int i = 0; i < 8; i++) {
+    // Redstone: somewhat common at low depths
+    for (int i = 0; i < 6; i++) {
         int x = xo + random.nextInt(16);
         int y = random.nextInt(16);
         int z = zo + random.nextInt(16);
-        OreFeature feature(Tile::redStoneOre->id, 7);
-		feature.place(level, &random, x, y, z);
+        OreFeature feature(Tile::redStoneOre->id, 8);
+        feature.place(level, &random, x, y, z);
     }
 
-    for (int i = 0; i < 1; i++) {
+    // Emerald (diamond-equivalent): still rare but slightly more than vanilla
+    for (int i = 0; i < 3; i++) {
         int x = xo + random.nextInt(16);
         int y = random.nextInt(16);
         int z = zo + random.nextInt(16);
-        OreFeature feature(Tile::emeraldOre->id, 7);
-		feature.place(level, &random, x, y, z);
+        OreFeature feature(Tile::emeraldOre->id, 6);
+        feature.place(level, &random, x, y, z);
     }
 
-    // lapis ore
+    // Lapis: rare and not in very high Y
     for (int i = 0; i < 1; i++) {
         int x = xo + random.nextInt(16);
         int y = random.nextInt(16) + random.nextInt(16);
         int z = zo + random.nextInt(16);
         OreFeature feature(Tile::lapisOre->id, 6);
-		feature.place(level, &random, x, y, z);
+        feature.place(level, &random, x, y, z);
     }
 
     const float ss = 0.5f;
@@ -504,7 +509,8 @@ LevelChunk* RandomLevelSource::getChunk(int xOffs, int zOffs) {
     prepareHeights(xOffs, zOffs, blocks, 0, temperatures);//biomes, temperatures);
     buildSurfaces(xOffs, zOffs, blocks, biomes);
 
-	//caveFeature.apply(this, level, xOffs, zOffs, blocks, LevelChunk::ChunkBlockCount);
+	// Carve caves into the chunk
+	caveFeature.apply(this, level, xOffs, zOffs, blocks, LevelChunk::ChunkBlockCount);
     levelChunk->recalcHeightmap();
 
     return levelChunk;

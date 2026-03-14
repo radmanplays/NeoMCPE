@@ -548,6 +548,14 @@ void ScrollingPane::stepThroughDecelerationAnimation(bool noAnimation) {
 	}
 }
 
+void ScrollingPane::scrollBy(float dx, float dy) {
+	// adjust the translation offsets fpx/fpy by the requested amount
+	float nfpx = fpx + dx;
+	float nfpy = fpy + dy;
+	// convert back to content offset (fpx = -contentOffset.x)
+	setContentOffset(Vec3(-nfpx, -nfpy, 0));
+}
+
 void ScrollingPane::setContentOffset(float x, float y) {
 	this->setContentOffsetWithAnimation(Vec3(x, y, 0), false);
 }

@@ -97,6 +97,9 @@ public:
 	virtual void buttonClicked(Button* button);
 	virtual void keyPressed(int eventKey);
 
+	// support for mouse wheel when desktop code uses touch variant
+	virtual void mouseWheel(int dx, int dy, int xm, int ym) override;
+
 	bool isInGameScreen();
 private:
 	void loadLevelSource();

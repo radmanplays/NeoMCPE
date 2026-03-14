@@ -78,6 +78,14 @@ void Screen::updateEvents()
 void Screen::mouseEvent()
 {
 	const MouseAction& e = Mouse::getEvent();
+	// forward wheel events to subclasses
+	if (e.action == MouseAction::ACTION_WHEEL) {
+		int xm = e.x * width / minecraft->width;
+		int ym = e.y * height / minecraft->height - 1;
+		mouseWheel(e.dx, e.dy, xm, ym);
+		return;
+	}
+
 	if (!e.isButton())
 		return;
 

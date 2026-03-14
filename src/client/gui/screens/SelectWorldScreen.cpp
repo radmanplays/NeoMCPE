@@ -356,7 +356,7 @@ void SelectWorldScreen::render( int xm, int ym, float a )
 	worldsList->setComponentSelected(bWorldView.selected);
 	// #ifdef PLATFORM_DESKTOP
 
-	// We should add scrolling with mouse wheel but currently i dont know how to implement it
+	// desktop: render the list normally (mouse wheel handled separately below)
 	if (_mouseHasBeenUp)
 		worldsList->render(xm, ym, a);
 	else {
@@ -411,6 +411,28 @@ std::string SelectWorldScreen::getUniqueLevelName( const std::string& level )
 }
 
 bool SelectWorldScreen::isInGameScreen() { return true;  }
+
+void SelectWorldScreen::mouseWheel(int dx, int dy, int xm, int ym)
+{
+	if (!worldsList)
+		return;
+	if (dy == 0)
+		return;
+	int num = worldsList->getNumberOfItems();
+	int idx = worldsList->selectedItem;
+	if (dy > 0) {
+		if (idx > 0) {
+			idx--;
+			worldsList->stepLeft();
+		}
+	} else {
+		if (idx < num - 1) {
+			idx++;
+			worldsList->stepRight();
+		}
+	}
+	worldsList->selectedItem = idx;
+}
 
 void SelectWorldScreen::keyPressed( int eventKey )
 {

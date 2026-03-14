@@ -1,4 +1,6 @@
 LOCAL_PATH := $(call my-dir)
+# Convert Windows backslashes to forward slashes so NDK toolchain doesn’t treat them as escapes.
+LOCAL_PATH := $(subst \,/,$(LOCAL_PATH))
 
 include $(CLEAR_VARS)
 
@@ -12,6 +14,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
                    ../../../src/platform/input/Multitouch.cpp \
                    ../../../src/platform/time.cpp \
                    ../../../src/platform/CThread.cpp \
+                   ../../../src/platform/HttpClient.cpp \
 ../../../src/NinecraftApp.cpp \
 ../../../src/Performance.cpp \
 ../../../src/SharedConstants.cpp \
@@ -68,6 +71,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/gui/screens/SelectWorldScreen.cpp \
 ../../../src/client/gui/screens/StartMenuScreen.cpp \
 ../../../src/client/gui/screens/TextEditScreen.cpp \
+../../../src/client/gui/screens/JoinByIPScreen.cpp \
 ../../../src/client/gui/screens/touch/TouchIngameBlockSelectionScreen.cpp \
 ../../../src/client/gui/screens/touch/TouchJoinGameScreen.cpp \
 ../../../src/client/gui/screens/touch/TouchSelectWorldScreen.cpp \

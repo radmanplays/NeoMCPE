@@ -28,12 +28,14 @@ public:
 private:
 	Touch::THeader* bHeader;
 	Button* bGamemode;
+	Button* bCheats;
 	ImageButton* bBack;
 	Button* bCreate;
 	bool hasChosen;
 
 	std::string levelName;
 	int gamemode;
+	bool cheatsEnabled;
 
 	TextBox tLevelName;
 	TextBox tSeed;

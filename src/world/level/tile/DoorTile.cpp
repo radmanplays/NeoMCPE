@@ -165,7 +165,8 @@ void DoorTile::neighborChanged(Level* level, int x, int y, int z, int type) {
 		}
 		if (spawn) {
 			if (!level->isClientSide) {
-				spawnResources(level, x, y, z, data, 0);
+				// use default chance (1.0) so the drop always occurs
+				spawnResources(level, x, y, z, data);
 			}
 		} else {
 			bool signal = level->hasNeighborSignal(x, y, z) || level->hasNeighborSignal(x, y + 1, z);
@@ -174,13 +175,12 @@ void DoorTile::neighborChanged(Level* level, int x, int y, int z, int type) {
 			}
 		}
 	} else {
+		// upper half: removal should not drop a second door. the
+		// lower half neighbour handler takes care of spawning the item
+		// whenever the door is broken from either end.
 		if (level->getTile(x, y - 1, z) != id) {
 			level->setTile(x, y, z, 0);
-			if(material == Material::metal) {
-				popResource(level, x, y, z, ItemInstance(Item::door_iron));
-			} else {
-				popResource(level, x, y, z, ItemInstance(Item::door_wood));
-			}
+			// no resource spawn here
 		}
 		if (type > 0 && type != id) {
 			neighborChanged(level, x, y - 1, z, type);
@@ -189,7 +189,11 @@ void DoorTile::neighborChanged(Level* level, int x, int y, int z, int type) {
 }
 
 int DoorTile::getResource(int data, Random* random) {
-	if ((data & 8) != 0) return 0;
+	// only the lower half should return a resource ID; the upper half
+	// itself never drops anything and playerDestroy suppresses spawning
+	// from the top.  This prevents duplicate drops if the bottom half is
+	// mined.
+	if ((data & UPPER_BIT) != 0) return 0;
 	if (material == Material::metal) return Item::door_iron->id;
 	return Item::door_wood->id;
 }
@@ -197,6 +201,14 @@ int DoorTile::getResource(int data, Random* random) {
 HitResult DoorTile::clip(Level* level, int xt, int yt, int zt, const Vec3& a, const Vec3& b) {
 	updateShape(level, xt, yt, zt);
 	return super::clip(level, xt, yt, zt, a, b);
+}
+
+// override to prevent double-dropping when top half is directly mined
+void DoorTile::playerDestroy(Level* level, Player* player, int x, int y, int z, int data) {
+	if ((data & UPPER_BIT) == 0) {
+		// only let the lower half handle the actual spawning
+		super::playerDestroy(level, player, x, y, z, data);
+	}
 }
 
 int DoorTile::getDir(LevelSource* level, int x, int y, int z) {

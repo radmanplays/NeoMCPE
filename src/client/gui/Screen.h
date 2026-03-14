@@ -57,6 +57,9 @@ protected:
 	virtual void mouseClicked(int x, int y, int buttonNum);
 	virtual void mouseReleased(int x, int y, int buttonNum);
 
+	// mouse wheel movement (dx/dy are wheel deltas, xm/ym are GUI coords)
+	virtual void mouseWheel(int dx, int dy, int xm, int ym) {}
+
 	virtual void keyPressed(int eventKey);
 	virtual void charPressed(char inputChar);
 public:

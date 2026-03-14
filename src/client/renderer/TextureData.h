@@ -16,7 +16,7 @@ typedef struct TextureData {
 	TextureData()
 	:	w(0),
 		h(0),
-		data(NULL),
+		data(nullptr),
         numBytes(0),
 		transparent(true),
 		memoryHandledExternally(false),

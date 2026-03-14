@@ -33,15 +33,16 @@ void UsernameScreen::setupPositions()
     int cx = width / 2;
     int cy = height / 2;
 
-    _btnDone.width  = 120;
-    _btnDone.height = 20;
+    // Make the done button match the touch-style option tabs
+    _btnDone.width  = 66;
+    _btnDone.height = 26;
     _btnDone.x = (width - _btnDone.width) / 2;
     _btnDone.y = height / 2 + 52;
 
-    tUsername.x = _btnDone.x;
-    tUsername.y = _btnDone.y - 60;
     tUsername.width = 120;
     tUsername.height = 20;
+    tUsername.x = (width - tUsername.width) / 2;
+    tUsername.y = _btnDone.y - 60;
 }
 
 void UsernameScreen::tick()
@@ -58,9 +59,10 @@ void UsernameScreen::keyPressed(int eventKey)
     }
 
     // deliberately do NOT call super::keyPressed — that would close the screen on Escape
-    _btnDone.active = !tUsername.text.empty();
-
     Screen::keyPressed(eventKey);
+
+    // enable the Done button only when there is some text (and ensure it updates after backspace)
+    _btnDone.active = !tUsername.text.empty();
 }
 
 void UsernameScreen::removed()

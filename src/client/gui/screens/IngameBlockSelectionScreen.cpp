@@ -202,6 +202,25 @@ void IngameBlockSelectionScreen::keyPressed(int eventKey)
 #endif
 }
 
+//------------------------------------------------------------------------------
+// wheel support for creative inventory; scroll moves selection vertically
+void IngameBlockSelectionScreen::mouseWheel(int dx, int dy, int xm, int ym)
+{
+	if (dy == 0) return;
+	// just move selection up/down one row; desktop UI doesn't have a pane
+	int cols = InventoryCols;
+	int maxIndex = InventorySize - 1;
+	int idx = selectedItem;
+	if (dy > 0) {
+		// wheel up -> previous row
+		if (idx >= cols) idx -= cols;
+	} else {
+		// wheel down -> next row
+		if (idx + cols <= maxIndex) idx += cols;
+	}
+	selectedItem = idx;
+}
+
 int IngameBlockSelectionScreen::getSelectedSlot(int x, int y)
 {
 	int left = width / 2 - InventoryCols * 10;

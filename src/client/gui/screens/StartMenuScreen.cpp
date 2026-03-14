@@ -6,6 +6,7 @@
 #include "OptionsScreen.h"
 #include "PauseScreen.h"
 #include "PrerenderTilesScreen.h" // test button
+#include "../components/ImageButton.h"
 
 #include "../../../util/Mth.h"
 
@@ -24,7 +25,8 @@
 StartMenuScreen::StartMenuScreen()
 :	bHost(    2, 0, 0, 160, 24, "Start Game"),
 	bJoin(    3, 0, 0, 160, 24, "Join Game"),
-	bOptions( 4, 0, 0,  78, 22, "Options")
+	bOptions( 4, 0, 0,  78, 22, "Options"),
+	bQuit(    5, "")
 {
 }
 
@@ -53,10 +55,18 @@ void StartMenuScreen::init()
 		tabButtons.push_back(&bOptions);
 	#endif
 
-	#ifdef DEMO_MODE
-		buttons.push_back(&bBuy);
-		tabButtons.push_back(&bBuy);
-	#endif
+    // add quit button (top right X icon) – match OptionsScreen style
+    {
+        ImageDef def;
+        def.name = "gui/touchgui.png";
+        def.width = 34;
+        def.height = 26;
+        def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
+        bQuit.setImageDef(def, true);
+        bQuit.scaleWhenPressed = false;
+        buttons.push_back(&bQuit);
+        // don't include in tab navigation
+    }
 
 	copyright = "\xffMojang AB";//. Do not distribute!";
 
@@ -99,8 +109,9 @@ void StartMenuScreen::setupPositions() {
 	bJoin.x = (width - bJoin.width) / 2;
 	bOptions.x = (width - bJoin.width) / 2;
 
-	copyrightPosX = width - minecraft->font->width(copyright) - 1;
-	versionPosX = (width - minecraft->font->width(version)) / 2;// - minecraft->font->width(version) - 2;
+    // position quit icon at top-right (use image-defined size)
+    bQuit.x = width - bQuit.width;
+    bQuit.y = 0;
 }
 
 void StartMenuScreen::tick() {
@@ -129,6 +140,10 @@ void StartMenuScreen::buttonClicked(Button* button) {
 	{
 		minecraft->setScreen(new OptionsScreen());
 	}
+	if (button == &bQuit)
+	{
+		minecraft->quit();
+	}
 }
 
 bool StartMenuScreen::isInGameScreen() { return false; }
@@ -136,6 +151,10 @@ bool StartMenuScreen::isInGameScreen() { return false; }
 void StartMenuScreen::render( int xm, int ym, float a )
 {
 	renderBackground();
+
+	// Show current username in the top-left corner
+	std::string username = minecraft->options.username.empty() ? "unknown" : minecraft->options.username;
+	drawString(font, std::string("Username: ") + username, 2, 2, 0xffffffff);
 
 #if defined(RPI)
 	TextureId id = minecraft->textures->loadTexture("gui/pi_title.png");

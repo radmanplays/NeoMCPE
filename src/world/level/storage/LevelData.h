@@ -72,6 +72,9 @@ public:
 	bool		getSpawnMobs() const;
 	void		setSpawnMobs(bool doSpawn);
 
+	bool		getAllowCheats() const;
+	void		setAllowCheats(bool allow);
+
 public:
 	PlayerData playerData;
 	int playerDataVersion;
@@ -89,6 +92,7 @@ private:
 	int gameType;
 	int storageVersion;
 	bool spawnMobs;
+	bool allowCheats;
 	//@note: This version is never written or loaded to disk. The only purpose
 	//       is to use it in the level generator on server and clients.
 	int generatorVersion;

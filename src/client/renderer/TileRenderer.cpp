@@ -1,4 +1,5 @@
 #include "TileRenderer.h"
+#include "Chunk.h"
 #include "../Minecraft.h"
 #include "Tesselator.h"
 
@@ -55,6 +56,7 @@ bool TileRenderer::tesselateBlockInWorld( Tile* tt, int x, int y, int z, float r
 	float c11 = 1;
 	float c2 = 0.8f;
 	float c3 = 0.6f;
+
 
 	float r11 = c11 * r;
 	float g11 = c11 * g;
@@ -127,6 +129,7 @@ bool TileRenderer::tesselateBlockInWorld( Tile* tt, int x, int y, int z, float r
 
 	return changed;
 }
+
 
 void TileRenderer::tesselateInWorld( Tile* tile, int x, int y, int z, int fixedTexture )
 {

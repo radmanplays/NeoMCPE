@@ -69,6 +69,7 @@ void OptionsScreen::init() {
 	categoryButtons.push_back(new Touch::TButton(3, "Game"));
 	categoryButtons.push_back(new Touch::TButton(4, "Controls"));
 	categoryButtons.push_back(new Touch::TButton(5, "Graphics"));
+	categoryButtons.push_back(new Touch::TButton(6, "Tweaks"));
 
 	btnCredits = new Touch::TButton(11, "Credits");
 
@@ -192,6 +193,7 @@ void OptionsScreen::generateOptionScreens() {
 	optionPanes.push_back(new OptionsGroup("options.group.game"));
 	optionPanes.push_back(new OptionsGroup("options.group.control"));
 	optionPanes.push_back(new OptionsGroup("options.group.graphics"));
+	optionPanes.push_back(new OptionsGroup("options.group.tweaks"));
 
 	// General Pane
 	optionPanes[0]->addOptionItem(OPTIONS_USERNAME, minecraft)
@@ -228,6 +230,9 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_ANAGLYPH_3D, minecraft)
 		.addOptionItem(OPTIONS_VIEW_BOBBING, minecraft)
 		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft);
+	
+	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
+		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft);
 }
 
 void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {

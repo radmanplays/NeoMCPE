@@ -49,6 +49,9 @@ public:
 
     int getResource(int data, Random* random);
 
+    // override to avoid duplicate drops when upper half is mined directly
+    void playerDestroy(Level* level, Player* player, int x, int y, int z, int data) override;
+
     HitResult clip(Level* level, int xt, int yt, int zt, const Vec3& a, const Vec3& b);
 
     int getDir(LevelSource* level, int x, int y, int z);

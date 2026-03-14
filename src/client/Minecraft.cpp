@@ -1,5 +1,10 @@
 #include "Minecraft.h"
 #include "client/player/input/IBuildInput.h"
+#include "platform/input/Keyboard.h"
+#include "world/item/Item.h"
+#include "world/item/ItemInstance.h"
+#include <string>
+#include <cstdlib>
 
 #if defined(APPLE_DEMO_PROMOTION)
     #define NO_NETWORK
@@ -8,7 +13,6 @@
 #if defined(RPI)
 	#define CREATORMODE
 #endif
-
 #include "../network/RakNetInstance.h"
 #include "../network/ClientSideNetworkHandler.h"
 #include "../network/ServerSideNetworkHandler.h"
@@ -56,6 +60,7 @@
 
 #endif
 
+#include "renderer/Chunk.h"
 #include "player/input/MouseTurnInput.h"
 #include "../world/entity/MobFactory.h"
 #include "../world/level/MobSpawner.h"
@@ -112,7 +117,7 @@ static void checkGlError(const char* tag) {
 	}
 #endif /*GLDEBUG*/
 }
-
+#include <fstream>
 /*static*/
 const char* Minecraft::progressMessages[] = {
 	"Locating server",
@@ -450,20 +455,21 @@ void Minecraft::update() {
 	//	}
 	//}
 
-	if (pause && level != NULL) {
-		float lastA = timer.a;
-		timer.advanceTime();
-		timer.a = lastA;
-	} else {
+	// If we're paused (local world / invisible server), freeze gameplay and
+	// networking and only keep UI responsive.
+	bool freezeGame = pause;
+
+	if (!freezeGame) {
 		timer.advanceTime();
 	}
 
-	if (raknetInstance) {
+	if (raknetInstance && !freezeGame) {
 		raknetInstance->runEvents(netCallback);
 	}
 
 	TIMER_PUSH("tick");
-	int toTick = timer.ticks;
+	int toTick = freezeGame ? 1 : timer.ticks;
+	if (!freezeGame) timer.ticks = 0;
 	for (int i = 0; i < toTick; ++i, ++ticks)
 		tick(i, toTick-1);
 
@@ -588,7 +594,9 @@ void Minecraft::tick(int nTick, int maxTick) {
 		#endif
 	}
 	TIMER_POP_PUSH("particles");
-	particleEngine->tick();
+	if (!pause) {
+		particleEngine->tick();
+	}
 	if (screen) {
 		screenMutex = true;
 		screen->tick();
@@ -722,16 +730,29 @@ void Minecraft::tickInput() {
 				}
 			#endif
 			#if defined(PLATFORM_DESKTOP)
+				if (key == Keyboard::KEY_LEFT_CTRL) {
+					player->setSprinting(true);
+				}
+
 				if (key == Keyboard::KEY_E) {
 					screenChooser.setScreen(SCREEN_BLOCKSELECTION);
 				}
+
 				if (!screen && key == Keyboard::KEY_T && level) {
 					setScreen(new ConsoleScreen());
 				}
+
 				if (!screen && key == Keyboard::KEY_O || key == 250) {
 					releaseMouse();
 				}
 
+				if (key == Keyboard::KEY_F)
+					options.viewDistance = (options.viewDistance + 1) % 4;
+
+				if (key == Keyboard::KEY_F3) {
+					options.renderDebug = !options.renderDebug;
+				}
+				
 				if (key == Keyboard::KEY_F5) {
 					options.toggle(OPTIONS_THIRD_PERSON_VIEW);
 					/*
@@ -739,12 +760,6 @@ void Minecraft::tickInput() {
 					for (int i = 0; i < 16; ++i)
 						printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
 					*/
-				}
-			#endif
-			#if defined(WIN32)
-				if (key == Keyboard::KEY_F) {
-					options.isFlying = !options.isFlying;
-					player->noPhysics = options.isFlying;
 				}
 
 
@@ -818,9 +833,6 @@ void Minecraft::tickInput() {
 					for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
 						if (player->inventory->getItem(i))
 							player->inventory->dropSlot(i, false);
-				}
-				if (key == Keyboard::KEY_F3) {
-					options.renderDebug = !options.renderDebug;
 				}
 				if (key == Keyboard::KEY_M) {
 					options.difficulty = (options.difficulty == Difficulty::PEACEFUL)?
@@ -1017,6 +1029,17 @@ bool Minecraft::isOnline()
 }
 
 void Minecraft::pauseGame(bool isBackPaused) {
+	// Only freeze gameplay when running a local server and it is not accepting
+	// incoming connections (invisible server), which includes typical single-
+	// player/lobby mode. If the server is visible, the game should keep ticking.
+	bool canFreeze = false;
+	if (raknetInstance && raknetInstance->isServer() && netCallback) {
+		ServerSideNetworkHandler* ss = (ServerSideNetworkHandler*) netCallback;
+		if (!ss->allowsIncomingConnections())
+			canFreeze = true;
+	}
+	pause = canFreeze;
+
 #ifndef STANDALONE_SERVER
 	if (screen != NULL) return;
 	screenChooser.setScreen(isBackPaused? SCREEN_PAUSEPREV : SCREEN_PAUSE);
@@ -1069,6 +1092,8 @@ void Minecraft::setScreen( Screen* screen )
 
 		//noRender = false;
 	} else {
+		// Closing a screen and returning to the game should unpause.
+		pause = false;
 		grabMouse();
 	}
 #endif
@@ -1288,6 +1313,31 @@ bool Minecraft::joinMultiplayer( const PingedCompatibleServer& server )
 	return false;
 }
 
+bool Minecraft::joinMultiplayerFromString( const std::string& server )
+{	
+	std::string ip = "";
+	std::string port = "19132";
+	
+	size_t pos = server.find(":");
+
+	if (pos != std::string::npos) {
+		ip = server.substr(0, pos);
+		port = server.substr(pos + 1);
+	} else {
+		ip = server;
+	}
+
+	printf("%s \n", port.c_str());
+	
+	if (isLookingForMultiplayer && netCallback) {
+		isLookingForMultiplayer = false;
+		printf("test");
+		int portNum = atoi(port.c_str());
+		return raknetInstance->connect(ip.c_str(), portNum);
+	}
+	return false;
+}
+
 void Minecraft::hostMultiplayer(int port) {
     // Tear down last instance
     raknetInstance->disconnect();
@@ -1454,6 +1504,12 @@ LevelStorageSource* Minecraft::getLevelSource()
 {
 	return storageSource;
 }
+
+// int Minecraft::getLicenseId() {
+// 	if (!LicenseCodes::isReady(_licenseId))
+// 		_licenseId = platform()->checkLicense();
+// 	return _licenseId;
+// }
 
 void Minecraft::audioEngineOn() {
 #ifndef STANDALONE_SERVER

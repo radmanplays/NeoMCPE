@@ -3,6 +3,7 @@
 
 #include "../../Screen.h"
 #include "../../components/LargeImageButton.h"
+#include "../../components/ImageButton.h"
 #include "../../components/TextBox.h"
 
 namespace Touch {
@@ -27,6 +28,7 @@ private:
 	LargeImageButton bHost;
 	LargeImageButton bJoin;
 	LargeImageButton bOptions;
+	ImageButton bQuit; // X close icon
 
 	std::string copyright;
 	int copyrightPosX;

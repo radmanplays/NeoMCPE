@@ -9,7 +9,7 @@
 #include "../../network/packet/RemoveBlockPacket.h"
 #include "../../world/entity/player/Abilities.h"
 
-static const int DestructionTickDelay = 10;
+static const int DestructionTickDelay = 5;
 
 class Creator: public ICreator {
 	//virtual void getEvents();
@@ -60,12 +60,8 @@ void CreatorMode::startDestroyBlock(int x, int y, int z, int face) {
 }
 
 void CreatorMode::CreatorDestroyBlock(int x, int y, int z, int face) {
-	//if (!
-	minecraft->level->extinguishFire(x, y, z, face)
-	//{
-		;
-		destroyBlock(x, y, z, face);
-	//}
+	minecraft->level->extinguishFire(x, y, z, face);
+	destroyBlock(x, y, z, face);
 }
 
 void CreatorMode::continueDestroyBlock(int x, int y, int z, int face) {
@@ -83,6 +79,7 @@ bool CreatorMode::useItemOn( Player* player, Level* level, ItemInstance* item, i
 }
 
 void CreatorMode::stopDestroyBlock() {
+	destroyDelay = 0;
 }
 
 void CreatorMode::initAbilities( Abilities& abilities ) {

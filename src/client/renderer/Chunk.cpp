@@ -137,12 +137,6 @@ void Chunk::rebuild()
 						Tile* tile = Tile::tiles[tileId];
 						int renderLayer = tile->getRenderLayer();
 
-//                        if (renderLayer == l)
-//                            rendered |= tileRenderer.tesselateInWorld(tile, x, y, z);
-//                        else {
-//                            _layerChunks[_layerChunkCount[renderLayer]++] = cindex;
-//                        }
-                        
 						if (renderLayer > l) {
 							renderNextLayer = true;
                             doRenderLayer[renderLayer] = true;

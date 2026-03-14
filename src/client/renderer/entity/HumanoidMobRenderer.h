@@ -21,6 +21,10 @@ protected:
 
 private:
 	HumanoidModel* humanoidModel;
+
+	// Last rotation values for cape smoothing (reduces jitter)
+	float lastCapeXRot;
+	float lastCapeZRot;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_RENDERER_ENTITY__HumanoidMobRenderer_H__*/

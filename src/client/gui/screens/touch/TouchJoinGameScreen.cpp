@@ -129,6 +129,11 @@ void JoinGameScreen::buttonClicked(Button* button)
 		//minecraft->locateMultiplayer();
 		//minecraft->setScreen(new JoinGameScreen());
 	}
+	if(button->id == bJoinByIp.id) {
+		minecraft->cancelLocateMultiplayer();
+		minecraft->screenChooser.setScreen(SCREEN_JOINBYIP);
+	}
+
 	if (button->id == bBack.id)
 	{
 		minecraft->cancelLocateMultiplayer();

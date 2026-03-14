@@ -89,6 +89,9 @@ public:
 
 	void render(int xm, int ym, float a);
 
+	// mouse wheel scroll (new in desktop implementation)
+	virtual void mouseWheel(int dx, int dy, int xm, int ym);
+
 	bool isInGameScreen();
 private:
 	void loadLevelSource();

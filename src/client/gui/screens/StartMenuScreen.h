@@ -3,6 +3,7 @@
 
 #include "../Screen.h"
 #include "../components/Button.h"
+#include "../components/ImageButton.h"
 
 class StartMenuScreen: public Screen
 {
@@ -25,6 +26,7 @@ private:
 	Button bHost;
 	Button bJoin;
 	Button bOptions;
+	ImageButton bQuit; // X button in top-right corner
 
 	std::string copyright;
 	int copyrightPosX;

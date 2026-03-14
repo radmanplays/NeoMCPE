@@ -51,6 +51,10 @@ public:
 	void tick();
 	void render(int xm, int ym, float alpha);
 
+	// scroll the content by the given amount (dx horizontal, dy vertical)
+	// positive values move content downward/rightward
+	void scrollBy(float dx, float dy);
+
 	bool getGridItemFor_slow(int itemIndex, GridItem& out);
 
 	void setSelected(int id, bool selected);

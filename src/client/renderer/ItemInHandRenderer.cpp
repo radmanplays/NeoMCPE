@@ -354,7 +354,7 @@ void ItemInHandRenderer::render( float a )
 		glRotatef2(-swing3 * 20, 0, 0, 1);
 		// glRotatef2(-swing2 * 80, 1, 0, 0);
 
-		mc->textures->loadAndBindTexture("mob/char.png");
+		mc->textures->loadAndBindTexture(player->getTexture());
 		glTranslatef2(-1.0f, +3.6f, +3.5f);
 		glRotatef2(120, 0, 0, 1);
 		glRotatef2(180 + 20, 1, 0, 0);

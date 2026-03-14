@@ -151,6 +151,8 @@ public:
 
 		_methodGetPixelsPerMillimeter = env->GetMethodID( _activityClass, "getPixelsPerMillimeter", "()F");
 		_methodGetPlatformStringVar = env->GetMethodID( _activityClass, "getPlatformStringVar", "(I)Ljava/lang/String;");
+		// custom helper to launch external URLs
+		_methodOpenURL = env->GetMethodID(_activityClass, "openURL", "(Ljava/lang/String;)V");
 
 		_classWindow = (jclass)env->NewGlobalRef(env->FindClass("android/view/Window"));
 		_classContext = (jclass)env->NewGlobalRef(env->FindClass("android/content/Context"));
@@ -465,7 +467,15 @@ public:
 		env->ReleaseStringUTFChars(stringVar, str);
 		return out;
 	}
-
+	// Opens a webpage using an Android intent.  Called from native code.
+	virtual void openURL(const std::string& url) {
+		if (!_isInited || !_methodOpenURL) return;
+		JVMAttacher ta(_vm);
+		JNIEnv* env = ta.getEnv();
+		jstring jurl = env->NewStringUTF(url.c_str());
+		env->CallVoidMethod(instance, _methodOpenURL, jurl);
+		env->DeleteLocalRef(jurl);
+	}
     virtual void finish() {
         if (!_isInited) return;
         if (!_methodFinish) return;
@@ -616,6 +626,7 @@ private:
 	jmethodID _methodIsNetworkEnabled;
 
 	jmethodID _methodGetPlatformStringVar;
+	jmethodID _methodOpenURL; // new JNI method for launching browser
 
 	jclass _classWindow;
 	jclass _classContext;
