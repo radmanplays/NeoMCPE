@@ -18,6 +18,10 @@ OptionBool renderDebug("renderDebug", false);
 OptionBool smoothCamera("smoothCamera", false);
 OptionBool fixedCamera("fixedCamera", false);
 OptionBool isFlying("isflying", false);
+OptionBool barOnTop("barOnTop", false);
+OptionBool allowSprint("allowSprint", true);
+OptionBool autoJump("autoJump", true);
+
 
 OptionFloat flySpeed("flySpeed", 1.f);
 OptionFloat cameraSpeed("cameraSpeed", 1.f);
@@ -149,6 +153,11 @@ void Options::initTable() {
     m_options[OPTIONS_KEY_MENU_CANCEL] = &keyMenuCancel;
 
 	m_options[OPTIONS_FIRST_LAUNCH] = &firstLaunch;
+
+	m_options[OPTIONS_BAR_ON_TOP] = &barOnTop;
+	m_options[OPTIONS_ALLOW_SPRINT] = &allowSprint;
+
+	m_options[OPTIONS_AUTOJUMP] = &autoJump;
 }
 
 void Options::set(OptionId key, const std::string& value) {

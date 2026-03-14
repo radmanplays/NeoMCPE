@@ -21,24 +21,24 @@ public:
 	IngameBlockSelectionScreen();
 	virtual ~IngameBlockSelectionScreen();
 
-	virtual void init();
-	virtual void setupPositions();
-	virtual void removed();
+	virtual void init() override;
+	virtual void setupPositions() override;
+	virtual void removed() override;
 
-	void tick();
-	void render(int xm, int ym, float a);
+	void tick() override;
+	void render(int xm, int ym, float a) override;
 
-	bool hasClippingArea(IntRectangle& out);
+	bool hasClippingArea(IntRectangle& out) override;
 
 	// IInventoryPaneCallback
-	bool addItem(const InventoryPane* pane, int itemId);
-	bool isAllowed(int slot);
-	std::vector<const ItemInstance*> getItems(const InventoryPane* forPane);
+	bool addItem(const InventoryPane* pane, int itemId) override;
+	bool isAllowed(int slot) override;
+	std::vector<const ItemInstance*> getItems(const InventoryPane* forPane) override;
 
-	void buttonClicked(Button* button);
+	void buttonClicked(Button* button) override;
 protected:
-	virtual void mouseClicked(int x, int y, int buttonNum);
-	virtual void mouseReleased(int x, int y, int buttonNum);
+	virtual void mouseClicked(int x, int y, int buttonNum) override;
+	virtual void mouseReleased(int x, int y, int buttonNum) override;
 
 	// also support wheel scrolling
 	virtual void mouseWheel(int dx, int dy, int xm, int ym) override;

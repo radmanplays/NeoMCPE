@@ -746,11 +746,8 @@ void Minecraft::tickInput() {
 					releaseMouse();
 				}
 
-				if (key == Keyboard::KEY_F)
-					options.viewDistance = (options.viewDistance + 1) % 4;
-
 				if (key == Keyboard::KEY_F3) {
-					options.renderDebug = !options.renderDebug;
+					options.toggle(OPTIONS_RENDER_DEBUG);
 				}
 				
 				if (key == Keyboard::KEY_F5) {
@@ -763,8 +760,10 @@ void Minecraft::tickInput() {
 				}
 
 
-				if (key == Keyboard::KEY_L)
-					options.viewDistance = (options.viewDistance + 1) % 4;
+				if (key == Keyboard::KEY_L) {
+					int dst = options.getIntValue(OPTIONS_VIEW_DISTANCE);
+					options.set(OPTIONS_VIEW_DISTANCE, (dst + 1) % 4);
+				}
 
 				if (key == Keyboard::KEY_U) {
 					onGraphicsReset();
@@ -835,12 +834,13 @@ void Minecraft::tickInput() {
 							player->inventory->dropSlot(i, false);
 				}
 				if (key == Keyboard::KEY_M) {
-					options.difficulty = (options.difficulty == Difficulty::PEACEFUL)?
-						Difficulty::NORMAL : Difficulty::PEACEFUL;
+					Difficulty difficulty = (Difficulty)options.getIntValue(OPTIONS_DIFFICULTY);
+					options.set(OPTIONS_DIFFICULTY, (difficulty == Difficulty::PEACEFUL)?
+						Difficulty::NORMAL : Difficulty::PEACEFUL);
 					//setIsCreativeMode( !isCreativeMode() );
 				}
 
-				if (options.renderDebug) {
+				if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
 					if (key >= '0' && key <= '9') {
 						_perfRenderer->debugFpsMeterKeyPress(key - '0');
 					}

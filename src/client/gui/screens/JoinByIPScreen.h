@@ -18,9 +18,7 @@ public:
     void render(int xm, int ym, float a);
 
 	virtual void keyPressed(int eventKey);
-	virtual void keyboardNewChar(char inputChar);
 	void buttonClicked(Button* button);
-    virtual void mouseClicked(int x, int y, int buttonNum);
     virtual bool handleBackEvent(bool isDown);
 private:
     TextBox tIP;

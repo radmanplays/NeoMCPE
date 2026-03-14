@@ -85,6 +85,11 @@ void StartMenuScreen::init()
 	// always show base version string
 	std::string versionString = Common::getGameVersionString();
 
+	std::string _username = minecraft->options.getStringValue(OPTIONS_USERNAME);
+	if (_username.empty()) _username = "unknown";
+
+	username = "Username: " + _username;
+
 	#ifdef DEMO_MODE
         #ifdef __APPLE__
             version = versionString + " (Lite)";
@@ -162,8 +167,7 @@ void StartMenuScreen::render( int xm, int ym, float a )
 	renderBackground();
 
 	// Show current username in the top-left corner
-	std::string username = minecraft->options.username.empty() ? "unknown" : minecraft->options.username;
-	drawString(font, std::string("Username: ") + username, 2, 2, 0xffffffff);
+	drawString(font, username, 2, 2, 0xffffffff);
     
     glEnable2(GL_BLEND);
 

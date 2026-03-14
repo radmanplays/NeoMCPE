@@ -12,21 +12,21 @@ public:
 	IngameBlockSelectionScreen();
 	virtual ~IngameBlockSelectionScreen() {}
 
-	virtual void init();
-	virtual void removed();
+	virtual void init() override;
+	virtual void removed() override;
 
-	void render(int xm, int ym, float a);
+	void render(int xm, int ym, float a) override;
 
 protected:
-	virtual void mouseClicked(int x, int y, int buttonNum);
-	virtual void mouseReleased(int x, int y, int buttonNum);
+	virtual void mouseClicked(int x, int y, int buttonNum) override;
+	virtual void mouseReleased(int x, int y, int buttonNum) override;
 
-	virtual void buttonClicked(Button* button);
+	virtual void buttonClicked(Button* button) override;
 
 	// wheel input for creative inventory scrolling
 	virtual void mouseWheel(int dx, int dy, int xm, int ym) override;
 
-	virtual void keyPressed(int eventKey);
+	virtual void keyPressed(int eventKey) override;
 private:
 	void renderSlots();
 	void renderSlot(int slot, int x, int y, float a);

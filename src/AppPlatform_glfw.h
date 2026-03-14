@@ -137,9 +137,9 @@ public:
 
 	virtual float getPixelsPerMillimeter();
 
-	virtual bool supportsTouchscreen() { return true; }
+	virtual bool supportsTouchscreen() override { return true; }
 
-	virtual void openURL(const std::string& url) {
+	virtual void openURL(const std::string& url) override {
 #ifdef _WIN32
 		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 #elif __linux__

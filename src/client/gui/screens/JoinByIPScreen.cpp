@@ -102,21 +102,6 @@ void JoinByIPScreen::setupPositions() {
     tIP.y     = ((height - bJoin.height) / 2) - tIP.height - 4;
 }
 
-void JoinByIPScreen::mouseClicked(int x, int y, int buttonNum) {
-    int lvlTop = tIP.y - (Font::DefaultLineHeight + 4);
-    int lvlBottom = tIP.y + tIP.height;
-    int lvlLeft = tIP.x;
-    int lvlRight = tIP.x + tIP.width;
-    bool clickedIP = x >= lvlLeft && x < lvlRight && y >= lvlTop && y < lvlBottom;
-
-    if (clickedIP) {
-        tIP.setFocus(minecraft);
-    } else {
-        tIP.loseFocus(minecraft);
-    }
-
-    Screen::mouseClicked(x, y, buttonNum);
-}
 void JoinByIPScreen::render( int xm, int ym, float a )
 {
 	renderBackground();
@@ -131,10 +116,4 @@ void JoinByIPScreen::keyPressed(int eventKey)
     }
     // let base class handle navigation and text box keys
     Screen::keyPressed(eventKey);
-}
-
-void JoinByIPScreen::keyboardNewChar(char inputChar)
-{
-    // forward character input to focused textbox(s)
-    for (auto* tb : textBoxes) tb->handleChar(inputChar);
 }

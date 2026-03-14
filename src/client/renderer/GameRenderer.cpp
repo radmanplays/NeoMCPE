@@ -373,7 +373,7 @@ void GameRenderer::renderLevel(float a) {
 //        glDisable2(GL_FOG);
         setupFog(1);
 
-        if (zoom == 1 && !mc->options.F1) {
+        if (zoom == 1 && !mc->options.getBooleanValue(OPTIONS_HIDEGUI)) {
 			TIMER_POP_PUSH("hand");
             glClear(GL_DEPTH_BUFFER_BIT);
             renderItemInHand(a, i);

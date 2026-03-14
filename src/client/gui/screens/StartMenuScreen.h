@@ -33,6 +33,8 @@ private:
 
 	std::string version;
 	int versionPosX;
+
+	std::string username;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_SCREENS__StartMenuScreen_H__*/
