@@ -20,7 +20,7 @@ public:
     virtual bool isPauseScreen()    { return false; }
 
     virtual void keyPressed(int eventKey);
-    virtual void keyboardNewChar(char inputChar);
+    virtual void charPressed(char inputChar);
     virtual bool handleBackEvent(bool isDown);
 
 private:

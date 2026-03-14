@@ -17,8 +17,9 @@ public:
 	virtual void tick( Minecraft* minecraft );
 
 	virtual void mouseClicked( Minecraft* minecraft, int x, int y, int buttonNum );
-
 	virtual void mouseReleased( Minecraft* minecraft, int x, int y, int buttonNum );
+	virtual void keyPressed(Minecraft* minecraft, int key);
+	virtual void charPressed(Minecraft* minecraft, char key);
 
 protected:
 	std::vector<GuiElement*> children;

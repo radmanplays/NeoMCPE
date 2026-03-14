@@ -165,8 +165,8 @@ int main(void) {
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-		glfwSwapInterval(((MAIN_CLASS*)app)->options.vsync ? 1 : 0);
-		if(((MAIN_CLASS*)app)->options.limitFramerate) {
+		glfwSwapInterval(((MAIN_CLASS*)app)->options.getBooleanValue(OPTIONS_VSYNC) ? 1 : 0);
+		if(((MAIN_CLASS*)app)->options.getBooleanValue(OPTIONS_LIMIT_FRAMERATE)) {
 			auto frameEnd = clock::now();
 			auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
 			auto target = std::chrono::microseconds(33333); // ~30 fps

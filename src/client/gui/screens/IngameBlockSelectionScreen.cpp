@@ -169,19 +169,19 @@ void IngameBlockSelectionScreen::keyPressed(int eventKey)
 	int tmpSelectedSlot = selectedItem;
 
 	Options& o = minecraft->options;
-	if (eventKey == o.keyLeft.key && selX > 0)
+	if (eventKey == o.getIntValue(OPTIONS_KEY_LEFT) && selX > 0)
 	{
 		tmpSelectedSlot -= 1;
 	}
-	else if (eventKey == o.keyRight.key && selX < (InventoryCols - 1))
+	else if (eventKey == o.getIntValue(OPTIONS_KEY_RIGHT) && selX < (InventoryCols - 1))
 	{
 		tmpSelectedSlot += 1;
 	}
-	else if (eventKey == o.keyDown.key && selY < (InventoryRows - 1))
+	else if (eventKey == o.getIntValue(OPTIONS_KEY_BACK) && selY < (InventoryRows - 1))
 	{
 		tmpSelectedSlot += InventoryCols;
 	}
-	else if (eventKey == o.keyUp.key && selY > 0)
+	else if (eventKey == o.getIntValue(OPTIONS_KEY_FORWARD) && selY > 0)
 	{
 		tmpSelectedSlot -= InventoryCols;
 	}
@@ -189,15 +189,15 @@ void IngameBlockSelectionScreen::keyPressed(int eventKey)
 	if (isAllowed(tmpSelectedSlot))
 		selectedItem = tmpSelectedSlot;
 
-	if (eventKey == o.keyMenuOk.key)
+	if (eventKey == o.getIntValue(OPTIONS_KEY_MENU_OK))
 		selectSlotAndClose();
 
 #ifdef RPI
-	if (eventKey == o.keyMenuCancel.key
+	if (eventKey == o.getIntValue(OPTIONS_KEY_MENU_CANCEL)
 		||	eventKey == Keyboard::KEY_ESCAPE)
 		minecraft->setScreen(NULL);
 #else
-	if (eventKey == o.keyMenuCancel.key)
+	if (eventKey == o.getIntValue(OPTIONS_KEY_MENU_CANCEL))
 		minecraft->setScreen(NULL);
 #endif
 }

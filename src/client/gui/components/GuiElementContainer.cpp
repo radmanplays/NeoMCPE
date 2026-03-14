@@ -52,3 +52,15 @@ void GuiElementContainer::mouseReleased( Minecraft* minecraft, int x, int y, int
 		(*it)->mouseReleased(minecraft, x, y, buttonNum);
 	}
 }
+
+void GuiElementContainer::keyPressed(Minecraft* minecraft, int key) {
+	for(std::vector<GuiElement*>::iterator it = children.begin(); it != children.end(); ++it) {
+		(*it)->keyPressed(minecraft, key);
+	}
+}
+
+void GuiElementContainer::charPressed(Minecraft* minecraft, char key) {
+	for(std::vector<GuiElement*>::iterator it = children.begin(); it != children.end(); ++it) {
+		(*it)->charPressed(minecraft, key);
+	}
+}

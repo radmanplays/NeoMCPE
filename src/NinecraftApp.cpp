@@ -111,7 +111,9 @@ void NinecraftApp::init()
 #ifndef STANDALONE_SERVER
 	LOGI("This: %p\n", this);
 	screenChooser.setScreen(SCREEN_STARTMENU);
-	if (options.username.empty()) {
+
+	if (options.getBooleanValue(OPTIONS_FIRST_LAUNCH)) {
+		options.toggle(OPTIONS_FIRST_LAUNCH);
 		setScreen(new UsernameScreen());
 	}
 #else

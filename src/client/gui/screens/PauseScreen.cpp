@@ -15,9 +15,9 @@ PauseScreen::PauseScreen(bool wasBackPaused)
 	bServerVisibility(0),
 //	bThirdPerson(0),
 	wasBackPaused(wasBackPaused),
-	bSound(&Options::Option::SOUND, 1, 0),
-	bThirdPerson(&Options::Option::THIRD_PERSON),
-    bHideGui(&Options::Option::HIDE_GUI)
+	// bSound(OPTIONS_SOUND_VOLUME, 1, 0),
+	bThirdPerson(OPTIONS_THIRD_PERSON_VIEW),
+    bHideGui(OPTIONS_HIDEGUI)
 {
 	ImageDef def;
 	def.setSrc(IntRectangle(160, 144, 39, 31));
@@ -27,7 +27,7 @@ PauseScreen::PauseScreen(bool wasBackPaused)
 	def.width = defSrc.w * 0.666667f;
 	def.height = defSrc.h * 0.666667f;
 
-	bSound.setImageDef(def, true);
+	// bSound.setImageDef(def, true);
 	defSrc.y += defSrc.h;
 	bThirdPerson.setImageDef(def, true);
     bHideGui.setImageDef(def, true);
@@ -60,10 +60,10 @@ void PauseScreen::init() {
 	buttons.push_back(bContinue);
 	buttons.push_back(bQuit);
 
-	bSound.updateImage(&minecraft->options);
+	// bSound.updateImage(&minecraft->options);
 	bThirdPerson.updateImage(&minecraft->options);
 	bHideGui.updateImage(&minecraft->options);
-	buttons.push_back(&bSound);
+	// buttons.push_back(&bSound);
 	buttons.push_back(&bThirdPerson);
     //buttons.push_back(&bHideGui);
 
@@ -88,7 +88,7 @@ void PauseScreen::init() {
 //	buttons.push_back(bThirdPerson);
 
 	for (unsigned int i = 0; i < buttons.size(); ++i) {
-		if (buttons[i] == &bSound) continue;
+		// if (buttons[i] == &bSound) continue;
 		if (buttons[i] == &bThirdPerson) continue;
 		if (buttons[i] == &bHideGui) continue;
 		tabButtons.push_back(buttons[i]);
@@ -115,10 +115,10 @@ void PauseScreen::setupPositions() {
 	bQuitAndSaveLocally->x = bServerVisibility->x = (width - bQuitAndSaveLocally->width) / 2;
 	bQuitAndSaveLocally->y = bServerVisibility->y = yBase + 32 * 3;
 
-	bSound.y = bThirdPerson.y = 8;
-	bSound.x = 4;
-	bThirdPerson.x = bSound.x + 4 + bSound.width;
-	bHideGui.x = bThirdPerson.x + 4 + bThirdPerson.width;
+	// bSound.y = bThirdPerson.y = 8;
+	// bSound.x = 4;
+	// bThirdPerson.x = bSound.x + 4 + bSound.width;
+	// bHideGui.x = bThirdPerson.x + 4 + bThirdPerson.width;
 
 	//bThirdPerson->x = (width - bThirdPerson->w) / 2;
 	//bThirdPerson->y = yBase + 32 * 4;

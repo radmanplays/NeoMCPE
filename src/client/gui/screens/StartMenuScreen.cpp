@@ -10,7 +10,6 @@
 #include "../../../util/Mth.h"
 
 #include "../Font.h"
-#include "../components/SmallButton.h"
 #include "../components/ScrolledSelectionList.h"
 
 #include "../../Minecraft.h"
@@ -38,7 +37,7 @@ void StartMenuScreen::init()
 
 	bJoin.active = bHost.active = bOptions.active = true;
 
-	if (minecraft->options.username.empty()) {
+	if (minecraft->options.getStringValue(OPTIONS_USERNAME).empty()) {
 		return; // tick() will redirect to UsernameScreen
 	}
 
@@ -105,7 +104,7 @@ void StartMenuScreen::setupPositions() {
 }
 
 void StartMenuScreen::tick() {
-	if (minecraft->options.username.empty()) {
+	if (minecraft->options.getStringValue(OPTIONS_USERNAME).empty()) {
 		minecraft->setScreen(new UsernameScreen());
 		return;
 	}

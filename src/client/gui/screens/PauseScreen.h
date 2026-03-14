@@ -35,7 +35,7 @@ private:
 	Button* bServerVisibility;
 //	Button* bThirdPerson;
 
-	OptionButton bSound;
+	// OptionButton bSound;
 	OptionButton bThirdPerson;
     OptionButton bHideGui;
 };

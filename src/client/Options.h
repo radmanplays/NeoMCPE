@@ -1,16 +1,87 @@
 #ifndef NET_MINECRAFT_CLIENT__Options_H__
 #define NET_MINECRAFT_CLIENT__Options_H__
 
+#define SOUND_MIN_VALUE 0.0f
+#define SOUND_MAX_VALUE 1.0f
+#define MUSIC_MIN_VALUE 0.0f
+#define MUSIC_MAX_VALUE 1.0f
+#define SENSITIVITY_MIN_VALUE 0.0f
+#define SENSITIVITY_MAX_VALUE 1.0f
+#define PIXELS_PER_MILLIMETER_MIN_VALUE 3.0f
+#define PIXELS_PER_MILLIMETER_MAX_VALUE 4.0f
+
 //package net.minecraft.client;
 
 //#include "locale/Language.h"
 
 #include <string>
 #include <cstdio>
-#include "KeyMapping.h"
 #include "../platform/input/Keyboard.h"
 #include "../util/StringUtils.h"
 #include "OptionsFile.h"
+#include "Option.h"
+#include <array>
+
+enum OptionId {
+    // General
+    OPTIONS_DIFFICULTY,
+    OPTIONS_HIDEGUI,
+    OPTIONS_THIRD_PERSON_VIEW,
+    OPTIONS_GUI_SCALE,
+    OPTIONS_DESTROY_VIBRATION,
+    OPTIONS_MUSIC_VOLUME,
+    OPTIONS_SOUND_VOLUME,
+    OPTIONS_SKIN,
+    OPTIONS_USERNAME,
+    OPTIONS_SERVER_VISIBLE,
+
+    // Graphics
+    OPTIONS_RENDER_DEBUG,
+    OPTIONS_SMOOTH_CAMERA,
+    OPTIONS_FIXED_CAMERA,
+    OPTIONS_VIEW_DISTANCE,
+    OPTIONS_VIEW_BOBBING,
+    OPTIONS_AMBIENT_OCCLUSION,
+    OPTIONS_ANAGLYPH_3D,
+    OPTIONS_LIMIT_FRAMERATE,
+    OPTIONS_VSYNC,
+    OPTIONS_FANCY_GRAPHICS,
+
+    // Cheats / debug
+    OPTIONS_FLY_SPEED,
+    OPTIONS_CAMERA_SPEED,
+    OPTIONS_IS_FLYING,
+
+    // Control
+    OPTIONS_USE_MOUSE_FOR_DIGGING,
+    OPTIONS_IS_LEFT_HANDED,
+    OPTIONS_IS_JOY_TOUCH_AREA,
+    OPTIONS_SENSITIVITY,
+    OPTIONS_INVERT_Y_MOUSE,
+    OPTIONS_USE_TOUCHSCREEN,
+
+    OPTIONS_KEY_FORWARD,
+    OPTIONS_KEY_LEFT,
+    OPTIONS_KEY_BACK,
+    OPTIONS_KEY_RIGHT,
+    OPTIONS_KEY_JUMP,
+    OPTIONS_KEY_INVENTORY,
+    OPTIONS_KEY_SNEAK,
+    OPTIONS_KEY_DROP,
+    OPTIONS_KEY_CHAT,
+    OPTIONS_KEY_FOG,
+    OPTIONS_KEY_USE,
+
+    OPTIONS_KEY_MENU_NEXT,
+    OPTIONS_KEY_MENU_PREV,
+    OPTIONS_KEY_MENU_OK,
+    OPTIONS_KEY_MENU_CANCEL,
+
+    OPTIONS_FIRST_LAUNCH,
+
+	// Should be last!
+	OPTIONS_COUNT
+};
 
 class Minecraft;
 typedef std::vector<std::string> StringVector;
@@ -18,320 +89,72 @@ typedef std::vector<std::string> StringVector;
 class Options
 {
 public:
-    class Option
-	{
-        const bool _isProgress;
-        const bool _isBoolean;
-        const std::string _captionId;
-		const int _ordinal;
+    static bool debugGl;
 
-	public:
-		static const Option MUSIC;
-		static const Option SOUND;
-		static const Option INVERT_MOUSE;
-		static const Option SENSITIVITY;
-		static const Option RENDER_DISTANCE;
-		static const Option VIEW_BOBBING;
-		static const Option ANAGLYPH;
-		static const Option LIMIT_FRAMERATE;
-		static const Option DIFFICULTY;
-		static const Option GRAPHICS;
-		static const Option AMBIENT_OCCLUSION;
-		static const Option GUI_SCALE;
-        
-		static const Option THIRD_PERSON;
-		static const Option HIDE_GUI;
-		static const Option SERVER_VISIBLE;
-		static const Option LEFT_HANDED;
-		static const Option USE_TOUCHSCREEN;
-		static const Option USE_TOUCH_JOYPAD;
-		static const Option DESTROY_VIBRATION;
-
-		static const Option PIXELS_PER_MILLIMETER;
-		static const Option VSYNC;
-
-		/*
-        static Option* getItem(int id) {
-            for (Option item : Option.values()) {
-                if (item.getId() == id) {
-                    return item;
-                }
-            }
-            return NULL;
-        }
-		*/
-
-        Option(int ordinal, const std::string& captionId, bool hasProgress, bool isBoolean)
-		:	_captionId(captionId),
-			_isProgress(hasProgress),
-			_isBoolean(isBoolean),
-			_ordinal(ordinal)
-		{}
-
-        bool isProgress() const {
-            return _isProgress;
-        }
-
-        bool isBoolean() const {
-            return _isBoolean;
-        }
-
-		bool isInt() const {
-			return (!_isBoolean && !_isProgress);
-		}
-
-        int getId() {
-            return _ordinal;
-        }
-
-        std::string getCaptionId() const {
-            return _captionId;
-        }
-    };
-
-private:
-	static const float SOUND_MIN_VALUE;
-	static const float SOUND_MAX_VALUE;
-	static const float MUSIC_MIN_VALUE;
-	static const float MUSIC_MAX_VALUE;
-	static const float SENSITIVITY_MIN_VALUE;
-	static const float SENSITIVITY_MAX_VALUE;
-	static const float PIXELS_PER_MILLIMETER_MIN_VALUE;
-	static const float PIXELS_PER_MILLIMETER_MAX_VALUE;
-    static const char* RENDER_DISTANCE_NAMES[];
-    static const char* DIFFICULTY_NAMES[];
-    static const char* GUI_SCALE[];
-	static const int DIFFICULY_LEVELS[];
-public:
-	static bool debugGl;
-
-	float music;
-    float sound;
-    //note: sensitivity is transformed in Options::update
-    float sensitivity;
-    bool invertYMouse;
-    int viewDistance;
-    bool bobView;
-    bool anaglyph3d;
-    bool limitFramerate;
-    bool vsync;
-    bool fancyGraphics;
-    bool ambientOcclusion;
-	bool useMouseForDigging;
-	bool isLeftHanded;
-	bool destroyVibration;
-    //std::string skin;
-
-    KeyMapping keyUp;
-    KeyMapping keyLeft;
-    KeyMapping keyDown;
-    KeyMapping keyRight;
-    KeyMapping keyJump;
-    KeyMapping keyBuild;
-    KeyMapping keyDrop;
-    KeyMapping keyChat;
-    KeyMapping keyFog;
-    KeyMapping keySneak;
-	KeyMapping keyCraft;
-	KeyMapping keyDestroy;
-	KeyMapping keyUse;
-
-	KeyMapping keyMenuNext;
-	KeyMapping keyMenuPrevious;
-	KeyMapping keyMenuOk;
-	KeyMapping keyMenuCancel;
-
-    KeyMapping* keyMappings[16];
-
-	/*protected*/ Minecraft* minecraft;
-    ///*private*/ File optionsFile;
-
-    int difficulty;
-    bool hideGui;
-    bool thirdPersonView;
-    bool renderDebug;
-
-    bool isFlying;
-    bool smoothCamera;
-    bool fixedCamera;
-    float flySpeed;
-    float cameraSpeed;
-    int guiScale;
-	std::string username;
-
-	bool serverVisible;
-	bool isJoyTouchArea;
-	bool useTouchScreen;
-	float pixelsPerMillimeter;
-    Options(Minecraft* minecraft, const std::string& workingDirectory)
-	:	minecraft(minecraft)
-	{
-        //optionsFile = /*new*/ File(workingDirectory, "options.txt");
-        initDefaultValues();
-
+    Options(Minecraft* minecraft, const std::string& workingDirectory = "") 
+	: minecraft(minecraft) {
+        initTable();
 		load();
     }
 
-	Options()
-	:	minecraft(NULL)
-	{
-		
-	}
+	void initTable();
 
-	void initDefaultValues();
+    void set(OptionId key, int value);
+    void set(OptionId key, float value);
+    void set(OptionId key, const std::string& value);
+    void toggle(OptionId key);
 
-    std::string getKeyDescription(int i) {
-        //Language language = Language.getInstance();
-        //return language.getElement(keyMappings[i].name);
-		return "Options::getKeyDescription not implemented";
+    int getIntValue(OptionId key) {
+        auto option = opt<OptionInt>(key);
+        return (option)? option->get() : 0;
     }
 
-    std::string getKeyMessage(int i) {
-        //return Keyboard.getKeyName(keyMappings[i].key);
-		return "Options::getKeyMessage not implemented";
+    std::string getStringValue(OptionId key) {
+        auto option = opt<OptionString>(key);
+        return (option)? option->get() : "";
     }
 
-    void setKey(int i, int key) {
-        keyMappings[i]->key = key;
-        save();
+    float getProgressValue(OptionId key) {
+        auto option = opt<OptionFloat>(key);
+        return (option)? option->get() : 0.f;
     }
 
-    void set(const Option* item, float value) {
-        if (item == &Option::MUSIC) {
-            music = value;
-            //minecraft.soundEngine.updateOptions();
-        } else if (item == &Option::SOUND) {
-            sound = value;
-            //minecraft.soundEngine.updateOptions();
-        } else if (item == &Option::SENSITIVITY) {
-            sensitivity = value;
-		} else if (item == &Option::PIXELS_PER_MILLIMETER) {
-			 pixelsPerMillimeter = value;
-		}
-		notifyOptionUpdate(item, value);		save();    }
-	void set(const Option* item, int value) {
-		if(item == &Option::DIFFICULTY) {
-			difficulty = value;
-		} else if(item == &Option::GUI_SCALE) {
-			guiScale = value % 5;
-		}
-		notifyOptionUpdate(item, value);
-		save();
-	}
-
-    void toggle(const Option* option, int dir) {
-        if (option == &Option::INVERT_MOUSE)	invertYMouse = !invertYMouse;
-        if (option == &Option::RENDER_DISTANCE) viewDistance = (viewDistance + dir) & 3;
-        if (option == &Option::GUI_SCALE)		guiScale = (guiScale + dir) % 5;
-        if (option == &Option::VIEW_BOBBING)	bobView = !bobView;
-		if (option == &Option::THIRD_PERSON)	thirdPersonView = !thirdPersonView;
-		if (option == &Option::HIDE_GUI)		hideGui = !hideGui;
-		if (option == &Option::SERVER_VISIBLE)		serverVisible = !serverVisible;
-		if (option == &Option::LEFT_HANDED) isLeftHanded = !isLeftHanded;
-		if (option == &Option::USE_TOUCHSCREEN) useTouchScreen = !useTouchScreen;
-		if (option == &Option::USE_TOUCH_JOYPAD) isJoyTouchArea = !isJoyTouchArea;
-		if (option == &Option::DESTROY_VIBRATION) destroyVibration = !destroyVibration;
-		if (option == &Option::ANAGLYPH) {
-            anaglyph3d = !anaglyph3d;
-            //minecraft->textures.reloadAll();
-        }
-        if (option == &Option::LIMIT_FRAMERATE) limitFramerate = !limitFramerate;
-        if (option == &Option::VSYNC) vsync = !vsync;
-        if (option == &Option::DIFFICULTY) difficulty = (difficulty + dir) & 3;
-        if (option == &Option::GRAPHICS) {
-            fancyGraphics = !fancyGraphics;
-            //minecraft->levelRenderer.allChanged();
-        }
-        if (option == &Option::AMBIENT_OCCLUSION) {
-            ambientOcclusion = !ambientOcclusion;
-            //minecraft->levelRenderer.allChanged();
-        }
-		notifyOptionUpdate(option, getBooleanValue(option));
-        save();
+    bool getBooleanValue(OptionId key) {
+        auto option = opt<OptionBool>(key);
+        return (option)? option->get() : false;
     }
 
-	int getIntValue(const Option* item) {
-		if(item == &Option::DIFFICULTY) return difficulty;
-		if(item == &Option::GUI_SCALE) return guiScale;
-		return 0;
-	}
-
-    float getProgressValue(const Option* item) {
-        if (item == &Option::MUSIC) return music;
-        if (item == &Option::SOUND) return sound;
-        if (item == &Option::SENSITIVITY) return sensitivity;
-		if (item == &Option::PIXELS_PER_MILLIMETER) return pixelsPerMillimeter;
-        return 0;
+    float getProgrssMin(OptionId key) {
+        auto option = opt<OptionFloat>(key);
+        return (option)? option->getMin() : 0.f;
     }
 
-    bool getBooleanValue(const Option* item) {
-        if (item == &Option::INVERT_MOUSE)
-            return invertYMouse;
-        if (item == &Option::VIEW_BOBBING)
-            return bobView;
-        if (item == &Option::ANAGLYPH)
-            return anaglyph3d;
-        if (item == &Option::LIMIT_FRAMERATE)
-            return limitFramerate;
-        if (item == &Option::VSYNC)
-            return vsync;
-        if (item == &Option::AMBIENT_OCCLUSION)
-            return ambientOcclusion;
-        if (item == &Option::THIRD_PERSON)
-            return thirdPersonView;
-        if (item == &Option::HIDE_GUI)
-            return hideGui;
-		if (item == &Option::THIRD_PERSON)
-			return thirdPersonView;
-		if (item == &Option::SERVER_VISIBLE)
-			return serverVisible;
-		if (item == &Option::LEFT_HANDED)
-			return isLeftHanded;
-		if (item == &Option::USE_TOUCHSCREEN)
-			return useTouchScreen;
-		if (item == &Option::USE_TOUCH_JOYPAD)
-			return isJoyTouchArea;
-		if (item == &Option::DESTROY_VIBRATION)
-			return destroyVibration;
-		return false;
-	}
+    float getProgrssMax(OptionId key) {
+        auto option = opt<OptionFloat>(key);
+        return (option)? option->getMax() : 0.f;
+    }
 
-	float getProgrssMin(const Option* item) {
-		if (item == &Option::MUSIC) return MUSIC_MIN_VALUE;
-		if (item == &Option::SOUND) return SOUND_MIN_VALUE;
-		if (item == &Option::SENSITIVITY) return SENSITIVITY_MIN_VALUE;
-		if (item == &Option::PIXELS_PER_MILLIMETER) return PIXELS_PER_MILLIMETER_MIN_VALUE;
-		return 0;
-	}
+    Option* getOpt(OptionId id) { return m_options[id]; }
 
-	float getProgrssMax(const Option* item) {
-		if (item == &Option::MUSIC) return MUSIC_MAX_VALUE;
-		if (item == &Option::SOUND) return SOUND_MAX_VALUE;
-		if (item == &Option::SENSITIVITY) return SENSITIVITY_MAX_VALUE;
-		if (item == &Option::PIXELS_PER_MILLIMETER) return PIXELS_PER_MILLIMETER_MAX_VALUE;
-		return 1.0f;
-	} 
-
-	std::string getMessage(const Option* item);
-
-	void update();
     void load();
     void save();
-	void addOptionToSaveOutput(StringVector& stringVector, std::string name, bool boolValue);
-	void addOptionToSaveOutput(StringVector& stringVector, std::string name, float floatValue);
-	void addOptionToSaveOutput(StringVector& stringVector, std::string name, int intValue);
-	void addOptionToSaveOutput(StringVector& stringVector, std::string name, const std::string& strValue);
-	void notifyOptionUpdate(const Option* option, bool value);
-	void notifyOptionUpdate(const Option* option, float value);
-	void notifyOptionUpdate(const Option* option, int value);
-private:
-    static bool readFloat(const std::string& string, float& value);
-    static bool readInt(const std::string& string, int& value);
-	static bool readBool(const std::string& string, bool& value);
+
+	void notifyOptionUpdate(OptionId key, bool value);
+	void notifyOptionUpdate(OptionId key, float value);
+	void notifyOptionUpdate(OptionId key, int value);
+    void notifyOptionUpdate(OptionId key, const std::string& value) {}
 
 private:
+    template<typename T>
+    T* opt(OptionId key) { 
+        if (m_options[key] == nullptr) return nullptr;
+        return dynamic_cast<T*>(m_options[key]); 
+    }
+
+	std::array<Option*, OPTIONS_COUNT> m_options;
 	OptionsFile optionsFile;
-	
+
+	Minecraft* minecraft;
 };
 
 #endif /*NET_MINECRAFT_CLIENT__Options_H__*/

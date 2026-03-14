@@ -49,13 +49,13 @@ void TextBox::mouseClicked(Minecraft* minecraft, int x, int y, int buttonNum) {
     }
 }
 
-void TextBox::handleChar(char c) {
+void TextBox::charPressed(Minecraft* minecraft, char c)  {
     if (focused && c >= 32 && c < 127 && (int)text.size() < 256) {
         text.push_back(c);
     }
 }
 
-void TextBox::handleKey(int key) {
+void TextBox::keyPressed(Minecraft* minecraft, int key) {
     if (focused && key == Keyboard::KEY_BACKSPACE && !text.empty()) {
         text.pop_back();
     }

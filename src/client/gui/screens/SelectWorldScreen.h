@@ -4,7 +4,6 @@
 #include "../Screen.h"
 #include "../TweenData.h"
 #include "../components/Button.h"
-#include "../components/SmallButton.h"
 #include "../components/RolledSelectionListH.h"
 #include "../../Minecraft.h"
 #include "../../../world/level/storage/LevelStorageSource.h"

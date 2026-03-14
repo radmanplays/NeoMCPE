@@ -116,9 +116,9 @@ public:
 	bool isPowerVR() { return _powerVr; }
 	bool isKindleFire(int kindleVersion);
 	bool transformResolution(int* w, int* h);
-	void optionUpdated(const Options::Option* option, bool value);
-	void optionUpdated(const Options::Option* option, float value);
-	void optionUpdated(const Options::Option* option, int value);
+	void optionUpdated(OptionId option, bool value);
+	void optionUpdated(OptionId option, float value);
+	void optionUpdated(OptionId option, int value);
 #ifdef __APPLE__
     bool _isSuperFast;
     bool isSuperFast() { return _isSuperFast; }

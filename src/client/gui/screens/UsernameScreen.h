@@ -13,24 +13,22 @@ public:
     UsernameScreen();
     virtual ~UsernameScreen();
 
-    void init();
+    void init() override;
     virtual void setupPositions() override;
-    void render(int xm, int ym, float a);
-    void tick();
+    void render(int xm, int ym, float a) override;
+    void tick() override;
 
-    virtual bool isPauseScreen() { return false; }
+    virtual bool isPauseScreen() override { return false; }
 
-    virtual void keyPressed(int eventKey);
-    virtual void keyboardNewChar(char inputChar);
-    virtual bool handleBackEvent(bool isDown) { return true; } // block back/escape
-    virtual void removed();
-    virtual void mouseClicked(int x, int y, int button);
+    virtual void keyPressed(int eventKey) override;
+    virtual bool handleBackEvent(bool isDown) override { return true; } // block back/escape
+    virtual void removed() override;
 
 protected:
-    virtual void buttonClicked(Button* button);
+    virtual void buttonClicked(Button* button) override;
 
 private:
-    Button _btnDone;
+    Touch::TButton _btnDone;
     TextBox tUsername;
     std::string _input;
     int _cursorBlink;

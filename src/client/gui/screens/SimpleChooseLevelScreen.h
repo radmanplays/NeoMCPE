@@ -23,7 +23,6 @@ public:
 	void buttonClicked(Button* button);
 	bool handleBackEvent(bool isDown);
 	virtual void keyPressed(int eventKey);
-	virtual void keyboardNewChar(char inputChar);
 	virtual void mouseClicked(int x, int y, int buttonNum);
 
 private:

@@ -3,12 +3,13 @@
 
 //package net.minecraft.world;
 
-class Difficulty {
-public:
-	static const int PEACEFUL	= 0;
-	static const int EASY		= 1;
-	static const int NORMAL		= 2;
-	static const int HARD		= 3;
+enum Difficulty {
+	PEACEFUL	= 0,
+	EASY		= 1,
+	NORMAL		= 2,
+	HARD		= 3,
+
+	COUNT
 };
 
 #endif /*NET_MINECRAFT_WORLD__Difficulty_H__*/

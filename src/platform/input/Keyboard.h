@@ -125,6 +125,8 @@ public:
 	static char getChar() {
 		return _inputText[_textIndex];
 	}
+
+	static const char* getKeyName(int key);
 private:
     static int _index;
 	static int _textIndex;

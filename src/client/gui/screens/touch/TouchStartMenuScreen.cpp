@@ -4,7 +4,6 @@
 #include "../PauseScreen.h"
 
 #include "../../Font.h"
-#include "../../components/SmallButton.h"
 #include "../../components/ScrolledSelectionList.h"
 #include "../../components/GuiElement.h"
 
@@ -58,7 +57,6 @@ void StartMenuScreen::init()
 	buttons.push_back(&bHost);
 	buttons.push_back(&bJoin);
 	buttons.push_back(&bOptions);
-    
 
 
 	tabButtons.push_back(&bHost);

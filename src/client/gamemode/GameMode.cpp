@@ -74,7 +74,7 @@ bool GameMode::destroyBlock(int x, int y, int z, int face) {
         minecraft->soundEngine->play(oldTile->soundType->getBreakSound(), x + 0.5f, y + 0.5f, z + 0.5f, (oldTile->soundType->getVolume() + 1) / 2, oldTile->soundType->getPitch() * 0.8f);
 #endif
         oldTile->destroy(level, x, y, z, data);
-		if (minecraft->options.destroyVibration) minecraft->platform()->vibrate(24);
+		if (minecraft->options.getBooleanValue(OPTIONS_DESTROY_VIBRATION)) minecraft->platform()->vibrate(24);
 
 		if (minecraft->isOnline()) {
 			RemoveBlockPacket packet(minecraft->player, x, y, z);

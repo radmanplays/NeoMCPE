@@ -3,7 +3,6 @@
 
 #include "../../Screen.h"
 #include "../../components/Button.h"
-#include "../../components/SmallButton.h"
 #include "../../components/RolledSelectionListV.h"
 #include "../../../Minecraft.h"
 #include "../../../../platform/input/Multitouch.h"

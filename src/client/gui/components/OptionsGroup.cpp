@@ -4,6 +4,9 @@
 #include "OptionsItem.h"
 #include "Slider.h"
 #include "../../../locale/I18n.h"
+#include "TextOption.h"
+#include "KeyOption.h"
+
 OptionsGroup::OptionsGroup( std::string labelID )  {
 	label = I18n::get(labelID);
 }
@@ -25,73 +28,87 @@ void OptionsGroup::setupPositions() {
 void OptionsGroup::render( Minecraft* minecraft, int xm, int ym ) {
 	float padX = 10.0f;
 	float padY = 5.0f;
+	
 	minecraft->font->draw(label, (float)x + padX, (float)y + padY, 0xffffffff, false);
+
 	super::render(minecraft, xm, ym);
 }
 
-OptionsGroup& OptionsGroup::addOptionItem( const Options::Option* option, Minecraft* minecraft ) {
-	if(option->isBoolean())
-		createToggle(option, minecraft);
-	else if(option->isProgress())
-		createProgressSlider(option, minecraft);
-	else if(option->isInt())
-		createStepSlider(option, minecraft);
+OptionsGroup& OptionsGroup::addOptionItem(OptionId optId, Minecraft* minecraft ) {
+	auto option = minecraft->options.getOpt(optId);
+
+	if (option == nullptr) return *this;
+
+	// TODO: do a options key class to check it faster via dynamic_cast
+	if (option->getStringId().find("options.key") != std::string::npos) createKey(optId, minecraft);
+	else if (dynamic_cast<OptionBool*>(option)) createToggle(optId, minecraft);
+	else if (dynamic_cast<OptionFloat*>(option)) createProgressSlider(optId, minecraft);
+	else if (dynamic_cast<OptionInt*>(option)) createStepSlider(optId, minecraft);
+	else if (dynamic_cast<OptionString*>(option)) createTextbox(optId, minecraft);
+
 	return *this;
 }
 
-void OptionsGroup::createToggle( const Options::Option* option, Minecraft* minecraft ) {
+// TODO: wrap this copypaste shit into templates
+
+void OptionsGroup::createToggle(OptionId optId, Minecraft* minecraft ) {
 	ImageDef def;
+
 	def.setSrc(IntRectangle(160, 206, 39, 20));
 	def.name = "gui/touchgui.png";
 	def.width = 39 * 0.7f;
 	def.height = 20 * 0.7f;
-	OptionButton* element = new OptionButton(option);
+	
+	OptionButton* element = new OptionButton(optId);
 	element->setImageDef(def, true);
 	element->updateImage(&minecraft->options);
-	std::string itemLabel = I18n::get(option->getCaptionId());
+	
+	std::string itemLabel = I18n::get(minecraft->options.getOpt(optId)->getStringId());
+	
+	OptionsItem* item = new OptionsItem(itemLabel, element);
+	
+	addChild(item);
+	setupPositions();
+}
+
+void OptionsGroup::createProgressSlider(OptionId optId, Minecraft* minecraft ) {
+	Slider* element = new SliderFloat(minecraft, optId);
+	element->width = 100;
+	element->height = 20;
+
+	std::string itemLabel = I18n::get(minecraft->options.getOpt(optId)->getStringId());
 	OptionsItem* item = new OptionsItem(itemLabel, element);
 	addChild(item);
 	setupPositions();
 }
 
-void OptionsGroup::createProgressSlider( const Options::Option* option, Minecraft* minecraft ) {
-	Slider* element = new Slider(minecraft,
-									option,
-									minecraft->options.getProgrssMin(option),
-									minecraft->options.getProgrssMax(option));
+void OptionsGroup::createStepSlider(OptionId optId, Minecraft* minecraft ) {
+	Slider* element = new SliderInt(minecraft, optId);
 	element->width = 100;
 	element->height = 20;
-	std::string itemLabel = I18n::get(option->getCaptionId());
+	std::string itemLabel = I18n::get(minecraft->options.getOpt(optId)->getStringId());
 	OptionsItem* item = new OptionsItem(itemLabel, element);
 	addChild(item);
 	setupPositions();
 }
 
-void OptionsGroup::createStepSlider( const Options::Option* option, Minecraft* minecraft ) {
-	// integer-valued option; use step slider
-	std::vector<int> steps;
-	// render distance was removed; fall through to other cases
-	if(option == &Options::Option::DIFFICULTY) {
-		steps.push_back(0);
-		steps.push_back(1);
-		steps.push_back(2);
-		steps.push_back(3);
-	} else if(option == &Options::Option::GUI_SCALE) {
-		// slider order: small,normal,large,larger,auto
-		steps.push_back(1);
-		steps.push_back(2);
-		steps.push_back(3);
-		steps.push_back(4);
-		steps.push_back(0);
-	} else {
-		// fallback: use single value; duplicate so numSteps>1 and avoid divide-by-zero
-		steps.push_back(0);
-		steps.push_back(0);
-	}
-	Slider* element = new Slider(minecraft, option, steps);
+void OptionsGroup::createTextbox(OptionId optId, Minecraft* minecraft) {
+	TextBox* element = new TextOption(minecraft, optId);
 	element->width = 100;
 	element->height = 20;
-	std::string itemLabel = I18n::get(option->getCaptionId());
+
+	std::string itemLabel = I18n::get(minecraft->options.getOpt(optId)->getStringId());
+	OptionsItem* item = new OptionsItem(itemLabel, element);
+	addChild(item);
+	setupPositions();
+}
+
+void OptionsGroup::createKey(OptionId optId, Minecraft* minecraft) {
+	KeyOption* element = new KeyOption(minecraft, optId);
+	element->width = 50;
+	element->height = 20;
+
+	std::string itemLabel = I18n::get(minecraft->options.getOpt(optId)->getStringId());
 	OptionsItem* item = new OptionsItem(itemLabel, element);
 	addChild(item);
 	setupPositions();

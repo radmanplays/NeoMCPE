@@ -4,7 +4,6 @@
 //package net.minecraft.client.gui;
 
 #include "../Screen.h"
-#include "../components/SmallButton.h"
 #include <string>
 
 class ConfirmScreen: public Screen

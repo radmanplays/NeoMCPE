@@ -26,7 +26,10 @@ void SoundEngine::init( Minecraft* mc, Options* options )
 	this->mc = mc;
 	this->options = options;
 
-	if (/*!loaded && */(options == NULL || (options->sound != 0 || options->music != 0))) {
+	if (/*!loaded && */(options == NULL || 
+		(options->getProgressValue(OPTIONS_SOUND_VOLUME) != 0.f || 
+		options->getProgressValue(OPTIONS_MUSIC_VOLUME) != 0.f))) 
+	{
 		loadLibrary();
 	}
 
@@ -165,7 +168,7 @@ void SoundEngine::destroy()
 
 void SoundEngine::update( Mob* player, float a )
 {
-	if (/*!loaded || */options->sound == 0) return;
+	if (/*!loaded || */options->getProgressValue(OPTIONS_SOUND_VOLUME) == 0) return;
 	if (player == NULL) return;
 
 	_x = player->xo + (player->x - player->xo) * a;
@@ -190,20 +193,20 @@ float SoundEngine::_getVolumeMult( float x, float y, float z )
 #if defined(PRE_ANDROID23)
 void SoundEngine::play(const std::string& name, float x, float y, float z, float volume, float pitch) {
 	//volume *= (2.0f * _getVolumeMult(x, y, z))
-	if ((volume *= options->sound) <= 0) return;
+	if ((volume *= options->getProgressValue(OPTIONS_SOUND_VOLUME)) <= 0) return;
 
 	volume *= _getVolumeMult(x, y, z);
 	mc->platform()->playSound(name, volume, pitch);
 }
 void SoundEngine::playUI(const std::string& name, float volume, float pitch) {
-	if ((volume *= options->sound) <= 0) return;
+	if ((volume *= options->getProgressValue(OPTIONS_SOUND_VOLUME)) <= 0) return;
 
 	//volume *= 2.0f;
 	mc->platform()->playSound(name, volume, pitch);
 }
 #elif defined(__APPLE__)
 void SoundEngine::play(const std::string& name, float x, float y, float z, float volume, float pitch) {
-	if ((volume *= options->sound) <= 0) return;
+	if ((volume *= options->getProgressValue(OPTIONS_SOUND_VOLUME)) <= 0) return;
 
 	volume = Mth::clamp(volume, 0.0f, 1.0f);
 
@@ -213,10 +216,10 @@ void SoundEngine::play(const std::string& name, float x, float y, float z, float
 	}
 }
 void SoundEngine::playUI(const std::string& name, float volume, float pitch) {
-	if ((volume *= options->sound) <= 0) return;
+	if ((volume *= options->getProgressValue(OPTIONS_SOUND_VOLUME)) <= 0) return;
 
 	volume = Mth::clamp(volume, 0.0f, 1.0f);
-	if (/*!loaded || */options->sound == 0 || volume <= 0) return;
+	if (/*!loaded || */options->getProgressValue(OPTIONS_SOUND_VOLUME) == 0 || volume <= 0) return;
 
 	SoundDesc sound;
 	if (sounds.get(name, sound)) {
@@ -228,10 +231,10 @@ void SoundEngine::play(const std::string& name, float x, float y, float z, float
 void SoundEngine::playUI(const std::string& name, float volume, float pitch) {}
 #else
 void SoundEngine::play(const std::string& name, float x, float y, float z, float volume, float pitch) {
-	if ((volume *= options->sound) <= 0) return;
+	if ((volume *= options->getProgressValue(OPTIONS_SOUND_VOLUME)) <= 0) return;
 
 	volume = Mth::clamp( volume * _getVolumeMult(x, y, z), 0.0f, 1.0f);
-	if (/*!loaded || */options->sound == 0 || volume <= 0) return;
+	if (/*!loaded || */options->getProgressValue(OPTIONS_SOUND_VOLUME) == 0 || volume <= 0) return;
 
 	SoundDesc sound;
 	if (sounds.get(name, sound)) {
@@ -241,10 +244,10 @@ void SoundEngine::play(const std::string& name, float x, float y, float z, float
 	}
 }
 void SoundEngine::playUI(const std::string& name, float volume, float pitch) {
-	if ((volume *= options->sound) <= 0) return;
+	if ((volume *= options->getProgressValue(OPTIONS_SOUND_VOLUME)) <= 0) return;
 
 	volume = Mth::clamp(volume, 0.0f, 1.0f);
-	if (/*!loaded || */options->sound == 0 || volume <= 0) return;
+	if (/*!loaded || */options->getProgressValue(OPTIONS_SOUND_VOLUME) == 0 || volume <= 0) return;
 
 	SoundDesc sound;
 	if (sounds.get(name, sound)) {

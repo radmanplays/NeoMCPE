@@ -3,6 +3,7 @@
 
 #include "../Screen.h"
 #include "../components/Button.h"
+#include "../components/OptionsGroup.h"
 
 class ImageButton;
 class OptionsPane;
@@ -26,19 +27,21 @@ public:
 
 	virtual void mouseClicked(int x, int y, int buttonNum);
 	virtual void mouseReleased(int x, int y, int buttonNum);
+	virtual void keyPressed(int eventKey);
+	virtual void charPressed(char inputChar);
+	
 	virtual void tick();
 
 private:
 	Touch::THeader* bHeader;
 	ImageButton* btnClose;
 
-	Button* btnChangeUsername;
 	Button* btnCredits;   // <-- ADD THIS
 
 	std::vector<Touch::TButton*> categoryButtons;
-	std::vector<OptionsPane*> optionPanes;
+	std::vector<OptionsGroup*> optionPanes;
 
-	OptionsPane* currentOptionPane;
+	OptionsGroup* currentOptionsGroup;
 
 	int selectedCategory;
 };

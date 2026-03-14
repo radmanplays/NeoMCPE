@@ -20,7 +20,7 @@ public:
 	void render(int xm, int ym, float a);
 	virtual void lostFocus();
 	virtual void keyPressed(int eventKey);
-	virtual void keyboardNewChar(char inputChar);
+	virtual void charPressed(char inputChar);
 	void setupPositions();
 	void buttonClicked(Button* button);
 protected:

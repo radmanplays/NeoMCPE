@@ -119,7 +119,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 #if defined(RPI)
 	renderDebugInfo();
 #elif defined(PLATFORM_DESKTOP)
-	if (minecraft->options.renderDebug)
+	if (minecraft->options.getBooleanValue(OPTIONS_RENDER_DEBUG))
 		renderDebugInfo();
 #endif
 
@@ -219,7 +219,7 @@ void Gui::handleKeyPressed(int key)
 	{
 		minecraft->screenChooser.setScreen(SCREEN_BLOCKSELECTION);
 	}
-	else if (key == minecraft->options.keyDrop.key) 
+	else if (key == minecraft->options.getIntValue(OPTIONS_KEY_DROP)) 
 	{
 		minecraft->player->inventory->dropSlot(minecraft->player->inventory->selected, false);
 	}
@@ -402,7 +402,7 @@ void Gui::onConfigChanged( const Config& c ) {
 	if (c.minecraft->useTouchscreen()) {
 		// I'll bump this up to 6.
 		int num = 6; // without "..." dots
-		if (!c.minecraft->options.isJoyTouchArea && c.width > 480) {
+		if (!c.minecraft->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA) && c.width > 480) {
 			while (num < Inventory::MAX_SELECTION_SIZE - 1) {
 				int x0, x1, y;
 				getSlotPos(0, x0, y);
@@ -516,7 +516,7 @@ void Gui::renderProgressIndicator( const bool isTouchInterface, const int screen
 	ItemInstance* currentItem = minecraft->player->inventory->getSelected();
 	bool bowEquipped = currentItem != NULL ? currentItem->getItem() == Item::bow : false;
 	bool itemInUse = currentItem != NULL ? currentItem->getItem() == minecraft->player->getUseItem()->getItem() : false;
-	if (!isTouchInterface || minecraft->options.isJoyTouchArea || (bowEquipped && itemInUse)) {
+	if (!isTouchInterface || minecraft->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA) || (bowEquipped && itemInUse)) {
 		minecraft->textures->loadAndBindTexture("gui/icons.png");
 		glEnable(GL_BLEND);
 		glBlendFunc2(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);

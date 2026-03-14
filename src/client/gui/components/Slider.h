@@ -3,38 +3,45 @@
 
 #include "GuiElement.h"
 #include "../../../client/Options.h"
-enum SliderType {
-	SliderProgress, // Sets slider between {0..1}
-	SliderStep // Uses the closest step
-};
+#include <client/Option.h>
+
 class Slider : public GuiElement {
 	typedef GuiElement super;
 public:
-	// Creates a progress slider with no steps
-	Slider(Minecraft* minecraft, const Options::Option* option, float progressMin, float progressMax);
-	Slider(Minecraft* minecraft, const Options::Option* option, const std::vector<int>& stepVec);
 	virtual void render( Minecraft* minecraft, int xm, int ym );
-
 	virtual void mouseClicked( Minecraft* minecraft, int x, int y, int buttonNum );
-
 	virtual void mouseReleased( Minecraft* minecraft, int x, int y, int buttonNum );
-
 	virtual void tick(Minecraft* minecraft);
-	
-private:
-	virtual void setOption(Minecraft* minecraft);
 
-private:
-	SliderType sliderType;
-	std::vector<int> sliderSteps;
-	bool mouseDownOnElement;
-	float percentage;
-	int curStepValue;
-	int curStep;
-	int numSteps;
-	float progressMin;
-	float progressMax;
-	const Options::Option* option;
+protected:
+	Slider(OptionId optId);
+
+	OptionId m_optId;
+
+	bool m_mouseDownOnElement;
+	float m_percentage;
+	int m_numSteps;
+};
+
+class SliderFloat : public Slider {
+public:
+	SliderFloat(Minecraft* minecraft, OptionId option);
+
+	virtual void mouseReleased( Minecraft* minecraft, int x, int y, int buttonNum ) override;	
+
+protected:
+	OptionFloat* m_option;
+};
+
+
+class SliderInt : public Slider {
+public:
+	SliderInt(Minecraft* minecraft, OptionId option);
+
+	virtual void mouseReleased( Minecraft* minecraft, int x, int y, int buttonNum ) override;
+
+protected:
+	OptionInt* m_option;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_COMPONENTS__Slider_H__*/

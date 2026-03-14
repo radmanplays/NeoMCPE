@@ -12,6 +12,8 @@
 
 #include "../../Minecraft.h"
 
+#include <client/gui/screens/UsernameScreen.h>
+
 Screen* ScreenChooser::createScreen( ScreenId id )
 {
 	Screen* screen = NULL;

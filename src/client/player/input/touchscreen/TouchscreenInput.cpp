@@ -134,7 +134,7 @@ void TouchscreenInput_TestFps::onConfigChanged(const Config& c) {
 	float yy;
 
 	const float BaseY = -8 + h - 3.0f * Bh;
-	const float BaseX = _options->isLeftHanded? -8 + w - 3 * Bw
+	const float BaseX = _options->getBooleanValue(OPTIONS_IS_LEFT_HANDED)? -8 + w - 3 * Bw
 											:	8 + 0;
 	// Setup the bounding rectangle
 	_boundingRectangle = RectangleArea(BaseX, BaseY, BaseX + 3 * Bw, BaseY + 3 * Bh);
@@ -418,7 +418,7 @@ const RectangleArea& TouchscreenInput_TestFps::getPauseRectangleArea()
 }
 
 void TouchscreenInput_TestFps::rebuild() {
-    if (_options->hideGui)
+    if (_options->getBooleanValue(OPTIONS_HIDEGUI))
         return;
     
 	Tesselator& t = Tesselator::instance;

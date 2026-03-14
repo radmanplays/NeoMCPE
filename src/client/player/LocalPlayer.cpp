@@ -72,22 +72,24 @@ LocalPlayer::~LocalPlayer() {
 
 /*private*/
 void LocalPlayer::calculateFlight(float xa, float ya, float za) {
+	float flySpeed = minecraft->options.getProgressValue(OPTIONS_FLY_SPEED);
+	float sensivity = minecraft->options.getProgressValue(OPTIONS_SENSITIVITY);
 
-    xa = xa * minecraft->options.flySpeed;
+    xa = xa * flySpeed;
     ya = 0;
-    za = za * minecraft->options.flySpeed;
+    za = za * flySpeed;
 
 #ifdef ANDROID
     if (Keyboard::isKeyDown(103)) ya = .2f * minecraft->options.flySpeed;
     if (Keyboard::isKeyDown(102)) ya = -.2f * minecraft->options.flySpeed;
 #else
-    if (Keyboard::isKeyDown(Keyboard::KEY_E)) ya = .2f * minecraft->options.flySpeed;
-    if (Keyboard::isKeyDown(Keyboard::KEY_Q)) ya = -.2f * minecraft->options.flySpeed;
+    if (Keyboard::isKeyDown(Keyboard::KEY_E)) ya = .2f * flySpeed;
+    if (Keyboard::isKeyDown(Keyboard::KEY_Q)) ya = -.2f * flySpeed;
 #endif
 
-    flyX = 10 * smoothFlyX.getNewDeltaValue(xa, .35f * minecraft->options.sensitivity);
-    flyY = 10 * smoothFlyY.getNewDeltaValue(ya, .35f * minecraft->options.sensitivity);
-    flyZ = 10 * smoothFlyZ.getNewDeltaValue(za, .35f * minecraft->options.sensitivity);
+    flyX = 10 * smoothFlyX.getNewDeltaValue(xa, .35f * sensivity);
+    flyY = 10 * smoothFlyY.getNewDeltaValue(ya, .35f * sensivity);
+    flyZ = 10 * smoothFlyZ.getNewDeltaValue(za, .35f * sensivity);
 }
 
 bool LocalPlayer::isSolidTile(int x, int y, int z) {
@@ -152,7 +154,7 @@ void LocalPlayer::tick() {
 
         printf("armor %d: %d\n", i, a->getAuxValue());
     }
-/**/
+*/
 
 	updateArmorTypeHash();
 #ifndef STANDALONE_SERVER
@@ -251,7 +253,7 @@ void LocalPlayer::closeContainer() {
 //@Override
 void LocalPlayer::move(float xa, float ya, float za) {
     //@note: why is this == minecraft->player needed?
-    if (this == minecraft->player && minecraft->options.isFlying) {
+    if (this == minecraft->player  && minecraft->options.getBooleanValue(OPTIONS_IS_FLYING)) {
         noPhysics = true;
         float tmp = walkDist; // update
         calculateFlight((float) xa, (float) ya, (float) za);

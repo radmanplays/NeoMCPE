@@ -12,14 +12,12 @@ KeyboardInput::KeyboardInput( Options* options )
 void KeyboardInput::setKey( int key, bool state )
 {
 	int id = -1;
-	if (key == options->keyUp.key) id = KEY_UP;
-	if (key == options->keyDown.key) id = KEY_DOWN;
-	if (key == options->keyLeft.key) id = KEY_LEFT;
-	if (key == options->keyRight.key) id = KEY_RIGHT;
-	if (key == options->keyJump.key) id = KEY_JUMP;
-	if (key == options->keySneak.key) id = KEY_SNEAK;
-	if (key == options->keyCraft.key) id = KEY_CRAFT;
-	//printf("key: %d\n", id);
+	if (key == options->getIntValue(OPTIONS_KEY_FORWARD)) id = KEY_UP;
+	if (key == options->getIntValue(OPTIONS_KEY_BACK)) id = KEY_DOWN;
+	if (key == options->getIntValue(OPTIONS_KEY_LEFT)) id = KEY_LEFT;
+	if (key == options->getIntValue(OPTIONS_KEY_RIGHT)) id = KEY_RIGHT;
+	if (key == options->getIntValue(OPTIONS_KEY_JUMP)) id = KEY_JUMP;
+	if (key == options->getIntValue(OPTIONS_KEY_SNEAK)) id = KEY_SNEAK;
 	if (id >= 0) {
 		keys[id] = state;
 	}

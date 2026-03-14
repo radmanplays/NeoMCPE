@@ -89,9 +89,9 @@ void renderCursor(float x, float y, Minecraft* minecraft) {
 
 /*private*/
 void GameRenderer::setupCamera(float a, int eye) {
-    renderDistance = (float) (16 * 16 >> (mc->options.viewDistance));
+    renderDistance = (float) (16 * 16 >> (mc->options.getIntValue(OPTIONS_VIEW_DISTANCE)));
 #if defined(ANDROID)
-    if (mc->isPowerVR() && mc->options.viewDistance <= 2)
+    if (mc->isPowerVR() && mc->options.getIntValue(OPTIONS_VIEW_DISTANCE) <= 2)
 		renderDistance *= 0.8f;
 #endif
 
@@ -99,7 +99,7 @@ void GameRenderer::setupCamera(float a, int eye) {
     glLoadIdentity2();
 
     float stereoScale = 0.07f;
-    if (mc->options.anaglyph3d) glTranslatef2(-(eye * 2 - 1) * stereoScale, 0, 0);
+    if (mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) glTranslatef2(-(eye * 2 - 1) * stereoScale, 0, 0);
     if (zoom != 1) {
         glTranslatef2((float) zoom_x, (float) -zoom_y, 0);
 		glScalef2(zoom, zoom, 1);
@@ -110,10 +110,10 @@ void GameRenderer::setupCamera(float a, int eye) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity2();
-    if (mc->options.anaglyph3d) glTranslatef2((eye * 2 - 1) * 0.10f, 0, 0);
+    if (mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) glTranslatef2((eye * 2 - 1) * 0.10f, 0, 0);
 
     bobHurt(a);
-    if (mc->options.bobView) bobView(a);
+    if (mc->options.getBooleanValue(OPTIONS_VIEW_BOBBING)) bobView(a);
 	 
 	moveCameraToPlayer(a);
 }
@@ -127,7 +127,7 @@ void GameRenderer::render(float a) {
         mc->mouseHandler.poll();
         //printf("Controller.x,y : %f,%f\n", Controller::getX(0), Controller::getY(0));
 
-        float ss = mc->options.sensitivity * 0.6f + 0.2f;
+        float ss = mc->options.getProgressValue(OPTIONS_SENSITIVITY) * 0.6f + 0.2f;
         float sens = (ss * ss * ss) * 8;
         float xo = mc->mouseHandler.xd * sens * 4.f;
         float yo = mc->mouseHandler.yd * sens * 4.f;
@@ -141,7 +141,7 @@ void GameRenderer::render(float a) {
 		_rotY += yo;
 
         int yAxis = -1;
-        if (mc->options.invertYMouse) yAxis = 1;
+        if (mc->options.getBooleanValue(OPTIONS_INVERT_Y_MOUSE)) yAxis = 1;
 
 		bool screenCovering = mc->screen && !mc->screen->passEvents;
 		if (!screenCovering)
@@ -181,7 +181,7 @@ void GameRenderer::render(float a) {
 			renderLevel(a);
 			hasClearedColorBuffer = true;
 
-			if (!mc->options.hideGui) {
+			if (!mc->options.getBooleanValue(OPTIONS_HIDEGUI)) {
 				TIMER_POP_PUSH("gui");
 				setupGuiScreen(false);
 				hasSetupGuiScreen = true;
@@ -248,7 +248,7 @@ void GameRenderer::renderLevel(float a) {
     float zOff = cameraEntity->zOld + (cameraEntity->z - cameraEntity->zOld) * a;
 
     for (int i = 0; i < 2; i++) {
-        if (mc->options.anaglyph3d) {
+        if (mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) {
             if (i == 0) glColorMask(false, true, true, false);
             else glColorMask(true, false, false, false);
         }
@@ -270,7 +270,7 @@ void GameRenderer::renderLevel(float a) {
 						screenScissorArea.w, screenScissorArea.h);
 		}
 		
-        if(mc->options.fancyGraphics) {
+        if(mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)) {
 			setupFog(-1);
 			TIMER_POP_PUSH("sky");
 			glFogf(GL_FOG_START, renderDistance  * 0.2f);
@@ -282,7 +282,7 @@ void GameRenderer::renderLevel(float a) {
         glEnable2(GL_FOG);
         setupFog(1);
 
-        if (mc->options.ambientOcclusion) {
+        if (mc->options.getBooleanValue(OPTIONS_AMBIENT_OCCLUSION)) {
             glShadeModel2(GL_SMOOTH);
 		}
         
@@ -294,7 +294,7 @@ void GameRenderer::renderLevel(float a) {
         mc->levelRenderer->cull(&frustum, a);
         mc->levelRenderer->updateDirtyChunks(cameraEntity, false);
 
-		if(mc->options.fancyGraphics) {
+		if(mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)) {
 			prepareAndRenderClouds(levelRenderer, a);
 		}
 
@@ -379,7 +379,7 @@ void GameRenderer::renderLevel(float a) {
             renderItemInHand(a, i);
         }
 
-        if (!mc->options.anaglyph3d) {
+        if (!mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) {
 			TIMER_POP();
             return;
         }
@@ -431,7 +431,7 @@ void GameRenderer::moveCameraToPlayer(float a) {
 	if(player->isPlayer() && ((Player*)player)->isSleeping()) {
 		heightOffset += 1.0;
 		glTranslatef(0.0f, 0.3f, 0);
-		if (!mc->options.fixedCamera) {
+		if (!mc->options.getBooleanValue(OPTIONS_FIXED_CAMERA)) {
 			int t = mc->level->getTile(Mth::floor(player->x), Mth::floor(player->y), Mth::floor(player->z));
 			if (t == Tile::bed->id) {
 				int data = mc->level->getData(Mth::floor(player->x), Mth::floor(player->y), Mth::floor(player->z));
@@ -442,10 +442,10 @@ void GameRenderer::moveCameraToPlayer(float a) {
 			glRotatef(player->yRotO + (player->yRot - player->yRotO) * a + 180, 0, -1, 0);
 			glRotatef(player->xRotO + (player->xRot - player->xRotO) * a, -1, 0, 0);
 		}
-	} else if (mc->options.thirdPersonView/* || (player->isPlayer() && !player->isAlive())*/) {
+	} else if (mc->options.getBooleanValue(OPTIONS_THIRD_PERSON_VIEW)/* || (player->isPlayer() && !player->isAlive())*/) {
         float cameraDist = thirdDistanceO + (thirdDistance - thirdDistanceO) * a;
 
-        if (mc->options.fixedCamera) {
+        if (mc->options.getBooleanValue(OPTIONS_FIXED_CAMERA)) {
 
             float rotationY = thirdRotationO + (thirdRotation - thirdRotationO) * a;
             float xRot = thirdTiltO + (thirdTilt - thirdTiltO) * a;
@@ -488,7 +488,7 @@ void GameRenderer::moveCameraToPlayer(float a) {
         glTranslatef2(0, 0, -0.1f);
     }
 
-    if (!mc->options.fixedCamera) {
+    if (!mc->options.getBooleanValue(OPTIONS_FIXED_CAMERA)) {
         glRotatef2(player->xRotO + (player->xRot - player->xRotO) * a, 1.0f, 0.0f, 0.0f);
         glRotatef2(player->yRotO + (player->yRot - player->yRotO) * a + 180, 0, 1, 0);
 		//if (_t_keepPic > 0)
@@ -609,7 +609,7 @@ bool GameRenderer::updateFreeformPickDirection(float a, Vec3& outDir) {
 
     Vec3 c = mc->cameraTargetPlayer->getPos(a);
 
-    bool firstPerson = !mc->options.thirdPersonView;
+    bool firstPerson = !mc->options.getBooleanValue(OPTIONS_THIRD_PERSON_VIEW);
     const float PickingDistance = firstPerson? 6.0f : 12.0f;
 
     _shTicks = -1;
@@ -785,7 +785,7 @@ void GameRenderer::tick(int nTick, int maxTick) {
 											Mth::floor(mc->cameraTargetPlayer->y),
 											Mth::floor(mc->cameraTargetPlayer->z));
 
-	float whiteness = (3 - mc->options.viewDistance) / 3.0f;
+	float whiteness = (3 - mc->options.getIntValue(OPTIONS_VIEW_DISTANCE)) / 3.0f;
     float fogBrT = brr * (1 - whiteness) + whiteness;
     fogBr += (fogBrT - fogBr) * 0.1f;
 
@@ -800,7 +800,7 @@ void GameRenderer::setupClearColor(float a) {
     Level* level = mc->level;
     Mob* player = mc->cameraTargetPlayer;
 
-    float whiteness = 1.0f / (4 - mc->options.viewDistance);
+    float whiteness = 1.0f / (4 - mc->options.getIntValue(OPTIONS_VIEW_DISTANCE));
     whiteness = 1 - (float) pow(whiteness, 0.25f);
 
     Vec3 skyColor = level->getSkyColor(mc->cameraTargetPlayer, a);
@@ -832,7 +832,7 @@ void GameRenderer::setupClearColor(float a) {
     fg *= brr;
     fb *= brr;
 
-    if (mc->options.anaglyph3d) {
+    if (mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) {
         float frr = (fr * 30 + fg * 59 + fb * 11) / 100;
         float fgg = (fr * 30 + fg * 70) / (100);
         float fbb = (fr * 30 + fb * 70) / (100);
@@ -878,14 +878,14 @@ void GameRenderer::setupGuiScreen( bool clearColorBuffer )
 /*private*/
 void GameRenderer::renderItemInHand(float a, int eye) {
     glLoadIdentity2();
-    if (mc->options.anaglyph3d) glTranslatef2((eye * 2 - 1) * 0.10f, 0, 0);
+    if (mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) glTranslatef2((eye * 2 - 1) * 0.10f, 0, 0);
 
     glPushMatrix2();
     bobHurt(a);
-    if (mc->options.bobView) bobView(a);
+    if (mc->options.getBooleanValue(OPTIONS_VIEW_BOBBING)) bobView(a);
 
-    if (!mc->options.thirdPersonView && (mc->cameraTargetPlayer->isPlayer() && !((Player*)mc->cameraTargetPlayer)->isSleeping())) {
-        if (!mc->options.hideGui) {
+    if (!mc->options.getBooleanValue(OPTIONS_THIRD_PERSON_VIEW) && (mc->cameraTargetPlayer->isPlayer() && !((Player*)mc->cameraTargetPlayer)->isSleeping())) {
+        if (!mc->options.getBooleanValue(OPTIONS_HIDEGUI)) {
 			float fov = getFov(a, false);
 			if (fov != _setupCameraFov) {
 				glMatrixMode(GL_PROJECTION);
@@ -898,11 +898,11 @@ void GameRenderer::renderItemInHand(float a, int eye) {
     }
 
     glPopMatrix2();
-    if (!mc->options.thirdPersonView && (mc->cameraTargetPlayer->isPlayer() && !((Player*)mc->cameraTargetPlayer)->isSleeping())) {
+    if (!mc->options.getBooleanValue(OPTIONS_THIRD_PERSON_VIEW) && (mc->cameraTargetPlayer->isPlayer() && !((Player*)mc->cameraTargetPlayer)->isSleeping())) {
         itemInHandRenderer->renderScreenEffect(a);
         bobHurt(a);
     }
-    if (mc->options.bobView) bobView(a);
+    if (mc->options.getBooleanValue(OPTIONS_VIEW_BOBBING)) bobView(a);
 }
 
 void GameRenderer::onGraphicsReset()

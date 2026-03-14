@@ -415,7 +415,7 @@ void ServerSideNetworkHandler::levelGenerated( Level* level )
 	
 	level->addListener(this);
 #ifndef STANDALONE_SERVER
-	allowIncomingConnections(minecraft->options.serverVisible);
+	allowIncomingConnections(minecraft->options.getBooleanValue(OPTIONS_SERVER_VISIBLE));
 #else
 	allowIncomingConnections(true);
 #endif
@@ -672,7 +672,7 @@ void ServerSideNetworkHandler::handle( const RakNet::RakNetGUID& source, SignUpd
 void ServerSideNetworkHandler::allowIncomingConnections( bool doAllow )
 {
 	if (doAllow) {
-		raknetInstance->announceServer(minecraft->options.username);
+		raknetInstance->announceServer(minecraft->options.getStringValue(OPTIONS_USERNAME));
 	} else {
 		raknetInstance->announceServer("");
 	}

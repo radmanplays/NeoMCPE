@@ -4,6 +4,7 @@
 #include "../../../platform/log.h"
 #include "../../../util/Mth.h"
 #include "../../renderer/Textures.h"
+#include <client/Option.h>
 
 
 ImageButton::ImageButton(int id, const std::string& msg)
@@ -112,43 +113,17 @@ void ImageButton::render(Minecraft* minecraft, int xm, int ym) {
 //
 // A toggleable Button
 //
-OptionButton::OptionButton(const Options::Option* option)
-:	_option(option),
-	_isFloat(false),
-	super(ButtonId, "")
-{
-}
-
-OptionButton::OptionButton(const Options::Option* option, float onValue, float offValue)
-:	_option(option),
-	_isFloat(true),
-	_onValue(onValue),
-	_offValue(offValue),
-	super(ButtonId, "")
-{
-}
-
-bool OptionButton::isSecondImage(bool hovered) {
-	return _secondImage;
-}
+OptionButton::OptionButton(OptionId option) : m_optId(option), super(ButtonId, "") {}
 
 void OptionButton::toggle(Options* options) {
-	if (_isFloat) {
-		options->set(_option, (Mth::abs(_current - _onValue) < 0.01f) ? _offValue : _onValue);
-	} else {
-		options->toggle(_option, 1);
-	}
+	options->toggle(m_optId);
+
 	// Update graphics here
 	updateImage(options);
 }
 
 void OptionButton::updateImage(Options* options) {
-	if (_isFloat) {
-		_current = options->getProgressValue(_option);
-		_secondImage = Mth::abs(_current - _onValue) < 0.01f;
-	} else {
-		_secondImage = options->getBooleanValue(_option);
-	}
+	_secondImage = options->getBooleanValue(m_optId);
 }
 
 void OptionButton::mouseClicked( Minecraft* minecraft, int x, int y, int buttonNum ) {

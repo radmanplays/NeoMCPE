@@ -5,6 +5,7 @@
 
 #include <string>
 #include "GuiElementContainer.h"
+#include "ScrollingPane.h"
 #include "../../Options.h"
 
 class Font;
@@ -16,11 +17,15 @@ public:
 	OptionsGroup(std::string labelID);
 	virtual void setupPositions();
 	virtual void render(Minecraft* minecraft, int xm, int ym);
-	virtual OptionsGroup& addOptionItem(const Options::Option* option, Minecraft* minecraft);
+	OptionsGroup& addOptionItem(OptionId optId, Minecraft* minecraft);
 protected:
-	virtual void createToggle(const Options::Option* option, Minecraft* minecraft);
-	virtual void createProgressSlider(const Options::Option* option, Minecraft* minecraft);
-	virtual void createStepSlider(const Options::Option* option, Minecraft* minecraft);
+
+	void createToggle(OptionId optId, Minecraft* minecraft);
+	void createProgressSlider(OptionId optId, Minecraft* minecraft);
+	void createStepSlider(OptionId optId, Minecraft* minecraft);
+	void createTextbox(OptionId optId, Minecraft* minecraft);
+	void createKey(OptionId optId, Minecraft* minecraft);
+
 	std::string label;
 };
 

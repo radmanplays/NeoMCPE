@@ -63,30 +63,6 @@ void UsernameScreen::keyPressed(int eventKey)
     Screen::keyPressed(eventKey);
 }
 
-void UsernameScreen::keyboardNewChar(char inputChar)
-{
-    for (auto* tb : textBoxes) tb->handleChar(inputChar);
-}
-
-void UsernameScreen::mouseClicked(int x, int y, int button)
-{
-    int lvlTop = tUsername.y - (Font::DefaultLineHeight + 4);
-    int lvlBottom = tUsername.y + tUsername.height;
-    int lvlLeft = tUsername.x;
-    int lvlRight = tUsername.x + tUsername.width;
-    bool clickedLevel = x >= lvlLeft && x < lvlRight && y >= lvlTop && y < lvlBottom;
-
-    if (clickedLevel) {
-        tUsername.setFocus(minecraft);
-    } else {
-        // click outside both fields -> blur both
-        tUsername.loseFocus(minecraft);
-    }
-
-    // also let the parent class handle button presses/etc.
-    Screen::mouseClicked(x, y, button);
-}
-
 void UsernameScreen::removed()
 {
     minecraft->platform()->hideKeyboard();
@@ -95,7 +71,7 @@ void UsernameScreen::removed()
 void UsernameScreen::buttonClicked(Button* button)
 {
     if (button == &_btnDone && !tUsername.text.empty()) {
-        minecraft->options.username = tUsername.text;
+        minecraft->options.set(OPTIONS_USERNAME, tUsername.text);
         minecraft->options.save();
         minecraft->user->name = tUsername.text;
         minecraft->setScreen(NULL); // goes to StartMenuScreen

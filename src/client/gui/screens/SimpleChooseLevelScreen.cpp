@@ -223,12 +223,6 @@ void SimpleChooseLevelScreen::keyPressed(int eventKey)
     Screen::keyPressed(eventKey);
 }
 
-void SimpleChooseLevelScreen::keyboardNewChar(char inputChar)
-{
-    // forward character input to focused textbox(s)
-    for (auto* tb : textBoxes) tb->handleChar(inputChar);
-}
-
 bool SimpleChooseLevelScreen::handleBackEvent(bool isDown) {
 	if (!isDown)
 		minecraft->screenChooser.setScreen(SCREEN_STARTMENU);

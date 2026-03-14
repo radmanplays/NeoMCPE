@@ -7,14 +7,12 @@
 #include "../../../AppPlatform.h"
 #include "CreditsScreen.h"
 
-#include "../components/OptionsPane.h"
 #include "../components/ImageButton.h"
 #include "../components/OptionsGroup.h"
 
 OptionsScreen::OptionsScreen()
 	: btnClose(NULL),
 	bHeader(NULL),
-	btnChangeUsername(NULL),
 	btnCredits(NULL),
 	selectedCategory(0) {
 }
@@ -31,11 +29,6 @@ OptionsScreen::~OptionsScreen() {
 		bHeader = NULL;
 	}
 
-	if (btnChangeUsername != NULL) {
-		delete btnChangeUsername;
-		btnChangeUsername = NULL;
-	}
-
 	if (btnCredits != NULL) {
 		delete btnCredits;
 		btnCredits = NULL;
@@ -48,7 +41,7 @@ OptionsScreen::~OptionsScreen() {
 		}
 	}
 
-	for (std::vector<OptionsPane*>::iterator it = optionPanes.begin(); it != optionPanes.end(); ++it) {
+	for (std::vector<OptionsGroup*>::iterator it = optionPanes.begin(); it != optionPanes.end(); ++it) {
 		if (*it != NULL) {
 			delete* it;
 			*it = NULL;
@@ -72,17 +65,15 @@ void OptionsScreen::init() {
 	def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
 	btnClose->setImageDef(def, true);
 
-	categoryButtons.push_back(new Touch::TButton(2, "Login"));
+	categoryButtons.push_back(new Touch::TButton(2, "General"));
 	categoryButtons.push_back(new Touch::TButton(3, "Game"));
 	categoryButtons.push_back(new Touch::TButton(4, "Controls"));
 	categoryButtons.push_back(new Touch::TButton(5, "Graphics"));
 
-	btnChangeUsername = new Touch::TButton(10, "Username");
 	btnCredits = new Touch::TButton(11, "Credits");
 
 	buttons.push_back(bHeader);
 	buttons.push_back(btnClose);
-	buttons.push_back(btnChangeUsername);
 	buttons.push_back(btnCredits);
 
 	for (std::vector<Touch::TButton*>::iterator it = categoryButtons.begin(); it != categoryButtons.end(); ++it) {
@@ -118,27 +109,13 @@ void OptionsScreen::setupPositions() {
 	bHeader->width = width - btnClose->width;
 	bHeader->height = btnClose->height;
 
-	// Username button (bottom-left)
-	if (btnChangeUsername != NULL) {
-
-		btnChangeUsername->width = categoryButtons.empty() ? 80 : categoryButtons[0]->width;
-		btnChangeUsername->height = btnClose->height;
-
-		btnChangeUsername->x = 0;
-		btnChangeUsername->y = height - btnChangeUsername->height;
-	}
-
 	// Credits button (bottom-right)
 	if (btnCredits != NULL) {
-
-		btnCredits->width = btnChangeUsername->width;
-		btnCredits->height = btnChangeUsername->height;
-
 		btnCredits->x = width - btnCredits->width;
 		btnCredits->y = height - btnCredits->height;
 	}
 
-	for (std::vector<OptionsPane*>::iterator it = optionPanes.begin(); it != optionPanes.end(); ++it) {
+	for (std::vector<OptionsGroup*>::iterator it = optionPanes.begin(); it != optionPanes.end(); ++it) {
 
 		if (categoryButtons.size() > 0 && categoryButtons[0] != NULL) {
 
@@ -158,13 +135,13 @@ void OptionsScreen::render(int xm, int ym, float a) {
 
 	renderBackground();
 
-	super::render(xm, ym, a);
-
 	int xmm = xm * width / minecraft->width;
 	int ymm = ym * height / minecraft->height - 1;
 
-	if (currentOptionPane != NULL)
-		currentOptionPane->render(minecraft, xmm, ymm);
+	if (currentOptionsGroup != NULL)
+		currentOptionsGroup->render(minecraft, xmm, ymm);
+	
+	super::render(xm, ym, a);
 }
 
 void OptionsScreen::removed() {
@@ -173,15 +150,8 @@ void OptionsScreen::removed() {
 void OptionsScreen::buttonClicked(Button* button) {
 
 	if (button == btnClose) {
-
 		minecraft->options.save();
 		minecraft->screenChooser.setScreen(SCREEN_STARTMENU);
-
-	}
-	else if (button == btnChangeUsername) {
-
-		minecraft->options.save();
-		minecraft->setScreen(new UsernameScreen());
 
 	}
 	else if (button->id > 1 && button->id < 7) {
@@ -212,63 +182,88 @@ void OptionsScreen::selectCategory(int index) {
 	}
 
 	if (index < (int)optionPanes.size())
-		currentOptionPane = optionPanes[index];
+		currentOptionsGroup = optionPanes[index];
 }
 
 void OptionsScreen::generateOptionScreens() {
+	// how the fuck it works
 
-	optionPanes.push_back(new OptionsPane());
-	optionPanes.push_back(new OptionsPane());
-	optionPanes.push_back(new OptionsPane());
-	optionPanes.push_back(new OptionsPane());
+	optionPanes.push_back(new OptionsGroup("options.group.general"));
+	optionPanes.push_back(new OptionsGroup("options.group.game"));
+	optionPanes.push_back(new OptionsGroup("options.group.control"));
+	optionPanes.push_back(new OptionsGroup("options.group.graphics"));
 
-	// Login Pane
-	optionPanes[0]->createOptionsGroup("options.group.mojang")
-		.addOptionItem(&Options::Option::SENSITIVITY, minecraft);
+	// General Pane
+	optionPanes[0]->addOptionItem(OPTIONS_USERNAME, minecraft)
+		.addOptionItem(OPTIONS_SENSITIVITY, minecraft);
 
 	// Game Pane
-	optionPanes[1]->createOptionsGroup("options.group.game")
-		.addOptionItem(&Options::Option::DIFFICULTY, minecraft)
-		.addOptionItem(&Options::Option::SERVER_VISIBLE, minecraft)
-		.addOptionItem(&Options::Option::THIRD_PERSON, minecraft)
-		.addOptionItem(&Options::Option::GUI_SCALE, minecraft);
+	optionPanes[1]->addOptionItem(OPTIONS_DIFFICULTY, minecraft)
+		.addOptionItem(OPTIONS_SERVER_VISIBLE, minecraft)
+		.addOptionItem(OPTIONS_THIRD_PERSON_VIEW, minecraft)
+		.addOptionItem(OPTIONS_GUI_SCALE, minecraft)
+		.addOptionItem(OPTIONS_SENSITIVITY, minecraft)
+		.addOptionItem(OPTIONS_MUSIC_VOLUME, minecraft)
+		.addOptionItem(OPTIONS_SOUND_VOLUME, minecraft)
+		.addOptionItem(OPTIONS_SMOOTH_CAMERA, minecraft)
+		.addOptionItem(OPTIONS_DESTROY_VIBRATION, minecraft)
+		.addOptionItem(OPTIONS_IS_LEFT_HANDED, minecraft);
 
-	// Controls Pane
-	optionPanes[2]->createOptionsGroup("options.group.controls")
-		.addOptionItem(&Options::Option::INVERT_MOUSE, minecraft);
+	// // Controls Pane
+	optionPanes[2]->addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
+		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft);
 
-	// Graphics Pane
-	optionPanes[3]->createOptionsGroup("options.group.graphics")
-		.addOptionItem(&Options::Option::GRAPHICS, minecraft)
-		.addOptionItem(&Options::Option::VIEW_BOBBING, minecraft)
-		.addOptionItem(&Options::Option::AMBIENT_OCCLUSION, minecraft)
-		.addOptionItem(&Options::Option::ANAGLYPH, minecraft)
-		.addOptionItem(&Options::Option::LIMIT_FRAMERATE, minecraft)
-		.addOptionItem(&Options::Option::VSYNC, minecraft)
-		.addOptionItem(&Options::Option::MUSIC, minecraft)
-		.addOptionItem(&Options::Option::SOUND, minecraft);
+	for (int i = OPTIONS_KEY_FORWARD; i <= OPTIONS_KEY_USE; i++) {
+		optionPanes[2]->addOptionItem((OptionId)i, minecraft);
+	}
+
+	// // Graphics Pane
+	optionPanes[3]->addOptionItem(OPTIONS_FANCY_GRAPHICS, minecraft)
+		// .addOptionItem(&Options::Option::VIEW_BOBBING, minecraft)
+		// .addOptionItem(&Options::Option::AMBIENT_OCCLUSION, minecraft)
+		// .addOptionItem(&Options::Option::ANAGLYPH, minecraft)
+		.addOptionItem(OPTIONS_LIMIT_FRAMERATE, minecraft)
+		.addOptionItem(OPTIONS_VSYNC, minecraft)
+		.addOptionItem(OPTIONS_RENDER_DEBUG, minecraft)
+		.addOptionItem(OPTIONS_ANAGLYPH_3D, minecraft)
+		.addOptionItem(OPTIONS_VIEW_BOBBING, minecraft)
+		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft);
 }
 
 void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {
 
-	if (currentOptionPane != NULL)
-		currentOptionPane->mouseClicked(minecraft, x, y, buttonNum);
+	if (currentOptionsGroup != NULL)
+		currentOptionsGroup->mouseClicked(minecraft, x, y, buttonNum);
 
 	super::mouseClicked(x, y, buttonNum);
 }
 
 void OptionsScreen::mouseReleased(int x, int y, int buttonNum) {
 
-	if (currentOptionPane != NULL)
-		currentOptionPane->mouseReleased(minecraft, x, y, buttonNum);
+	if (currentOptionsGroup != NULL)
+		currentOptionsGroup->mouseReleased(minecraft, x, y, buttonNum);
 
 	super::mouseReleased(x, y, buttonNum);
 }
 
+void OptionsScreen::keyPressed(int eventKey) {
+	if (currentOptionsGroup != NULL)
+		currentOptionsGroup->keyPressed(minecraft, eventKey);
+
+	super::keyPressed(eventKey);
+}
+
+void OptionsScreen::charPressed(char inputChar) {
+	if (currentOptionsGroup != NULL)
+		currentOptionsGroup->charPressed(minecraft, inputChar);
+
+	super::keyPressed(inputChar);
+}
+
 void OptionsScreen::tick() {
 
-	if (currentOptionPane != NULL)
-		currentOptionPane->tick(minecraft);
+	if (currentOptionsGroup != NULL)
+		currentOptionsGroup->tick(minecraft);
 
 	super::tick();
 }

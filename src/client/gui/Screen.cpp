@@ -104,7 +104,7 @@ void Screen::keyboardEvent()
 }
 void Screen::keyboardTextEvent()
 {
-	keyboardNewChar(Keyboard::getChar());
+	charPressed(Keyboard::getChar());
 }
 void Screen::renderBackground()
 {
@@ -166,7 +166,7 @@ void Screen::keyPressed( int eventKey )
 
 	// pass key events to any text boxes first
 	for (auto& textbox : textBoxes) {
-		textbox->handleKey(eventKey);
+		textbox->keyPressed(minecraft, eventKey);
 	}
 
 	if (minecraft->useTouchscreen())
@@ -178,11 +178,11 @@ void Screen::keyPressed( int eventKey )
 		return;
 
 	Options& o = minecraft->options;
-	if (eventKey == o.keyMenuNext.key)
+	if (eventKey == o.getIntValue(OPTIONS_KEY_MENU_NEXT))
 		if (++tabButtonIndex == tabButtonCount) tabButtonIndex = 0;
-	if (eventKey == o.keyMenuPrevious.key)
+	if (eventKey == o.getIntValue(OPTIONS_KEY_MENU_PREV))
 		if (--tabButtonIndex == -1) tabButtonIndex = tabButtonCount-1;
-	if (eventKey == o.keyMenuOk.key) {
+	if (eventKey == o.getIntValue(OPTIONS_KEY_MENU_OK)) {
 		Button* button = tabButtons[tabButtonIndex];
 		if (button->active) {
 			minecraft->soundEngine->playUI("random.click", 1, 1);
@@ -191,6 +191,12 @@ void Screen::keyPressed( int eventKey )
 	}
 
 	updateTabButtonSelection();
+}
+
+void Screen::charPressed(char inputChar) {
+	for (auto& textbox : textBoxes) {
+		textbox->charPressed(minecraft, inputChar);
+	}
 }
 
 void Screen::updateTabButtonSelection()

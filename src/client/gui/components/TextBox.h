@@ -26,8 +26,8 @@ public:
 
 	virtual void render(Minecraft* minecraft, int xm, int ym);
 
-	virtual void handleKey(int key);
-	virtual void handleChar(char c);
+	virtual void keyPressed(Minecraft* minecraft, int key);
+	virtual void charPressed(Minecraft* minecraft, char c);
 	virtual void tick(Minecraft* minecraft);
 	
 public:

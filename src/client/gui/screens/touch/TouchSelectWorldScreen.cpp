@@ -552,9 +552,9 @@ bool SelectWorldScreen::isInGameScreen() { return true;  }
 void SelectWorldScreen::keyPressed( int eventKey )
 {
 	if (bWorldView.selected) {
-		if (eventKey == minecraft->options.keyLeft.key)
+		if (eventKey == minecraft->options.getIntValue(OPTIONS_KEY_LEFT))
 			worldsList->stepLeft();
-		if (eventKey == minecraft->options.keyRight.key)
+		if (eventKey == minecraft->options.getIntValue(OPTIONS_KEY_RIGHT))
 			worldsList->stepRight();
 	}
 

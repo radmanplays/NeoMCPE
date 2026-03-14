@@ -3,7 +3,6 @@
 
 #include "../Screen.h"
 #include "../components/Button.h"
-#include "../components/SmallButton.h"
 #include "../components/ScrolledSelectionList.h"
 #include "../../Minecraft.h"
 #include "../../../network/RakNetInstance.h"

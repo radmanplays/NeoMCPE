@@ -149,9 +149,11 @@ void LevelRenderer::allChanged()
 {
 	deleteChunks();
 
-	Tile::leaves->setFancy(mc->options.fancyGraphics);
-	Tile::leaves_carried->setFancy(mc->options.fancyGraphics);
-	lastViewDistance = mc->options.viewDistance;
+	bool fancy = mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS);
+
+	Tile::leaves->setFancy(fancy);
+	Tile::leaves_carried->setFancy(fancy);
+	lastViewDistance = mc->options.getIntValue(OPTIONS_VIEW_DISTANCE);
 
 	int dist = (512 >> 3) << (3 - lastViewDistance);
 	if (lastViewDistance <= 2 && mc->isPowerVR())
@@ -295,7 +297,7 @@ void LevelRenderer::resortChunks( int xc, int yc, int zc )
 
 int LevelRenderer::render( Mob* player, int layer, float alpha )
 {
-	if (mc->options.viewDistance != lastViewDistance) {
+	if (mc->options.getIntValue(OPTIONS_VIEW_DISTANCE) != lastViewDistance) {
 		allChanged();
 	}
 
@@ -334,7 +336,7 @@ int LevelRenderer::render( Mob* player, int layer, float alpha )
 	}
 
 	int count = 0;
-	if (occlusionCheck && !mc->options.anaglyph3d && layer == 0) {
+	if (occlusionCheck && !mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D) && layer == 0) {
 		int from = 0;
 		int to = 16;
 		//checkQueryResults(from, to);
@@ -938,10 +940,12 @@ void LevelRenderer::renderEntities(Vec3 cam, Culler* culler, float a) {
 		for (int i = 0; i < totalEntities; i++) {
 			Entity* entity = entities[i];
 
+			bool thirdPerson = mc->options.getBooleanValue(OPTIONS_THIRD_PERSON_VIEW);
+
 			if (entity->shouldRender(cam) && culler->isVisible(entity->bb))
 			{
-				if (entity == mc->cameraTargetPlayer && mc->options.thirdPersonView == 0 && mc->cameraTargetPlayer->isPlayer() && !((Player*)mc->cameraTargetPlayer)->isSleeping()) continue;
-				if (entity == mc->cameraTargetPlayer && !mc->options.thirdPersonView)
+				if (entity == mc->cameraTargetPlayer && thirdPerson == 0 && mc->cameraTargetPlayer->isPlayer() && !((Player*)mc->cameraTargetPlayer)->isSleeping()) continue;
+				if (entity == mc->cameraTargetPlayer && !thirdPerson)
 					continue;
 				if (!level->hasChunkAt(Mth::floor(entity->x), Mth::floor(entity->y), Mth::floor(entity->z)))
 					continue;
@@ -996,7 +1000,7 @@ void LevelRenderer::renderSky(float alpha) {
     float sg = (float) sc.y;
     float sb = (float) sc.z;// + 0.5f;
 
-    if (mc->options.anaglyph3d) {
+    if (mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) {
         float srr = (sr * 30.0f + sg * 59.0f + sb * 11.0f) / 100.0f;
         float sgg = (sr * 30.0f + sg * 70.0f) / (100.0f);
         float sbb = (sr * 30.0f + sb * 70.0f) / (100.0f);
@@ -1258,20 +1262,20 @@ void LevelRenderer::takePicture( TripodCamera* cam, Entity* entity )
 {
 	// Push old values
 	Mob* oldCameraEntity = mc->cameraTargetPlayer;
-	bool hideGui = mc->options.hideGui;
-	bool thirdPerson = mc->options.thirdPersonView;
+	bool hideGui = mc->options.getBooleanValue(OPTIONS_HIDEGUI);
+	bool thirdPerson = mc->options.getBooleanValue(OPTIONS_THIRD_PERSON_VIEW);
 
 	// @huge @attn: This is highly illegal, super temp!
 	mc->cameraTargetPlayer = (Mob*)cam;
-	mc->options.hideGui = true;
-	mc->options.thirdPersonView = false;
+	mc->options.set(OPTIONS_HIDEGUI, true);
+	mc->options.set(OPTIONS_THIRD_PERSON_VIEW, false);
 
 	mc->gameRenderer->renderLevel(0);
 
 	// Pop values back
 	mc->cameraTargetPlayer = oldCameraEntity;
-	mc->options.hideGui = hideGui;
-	mc->options.thirdPersonView = thirdPerson;
+	mc->options.set(OPTIONS_HIDEGUI, hideGui);
+	mc->options.set(OPTIONS_THIRD_PERSON_VIEW, thirdPerson);
 
 	_t_keepPic = -1;
 

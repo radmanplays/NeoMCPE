@@ -132,7 +132,7 @@ void TextEditScreen::keyPressed( int eventKey ) {
 	}
 }
 
-void TextEditScreen::keyboardNewChar( char inputChar ) {
+void TextEditScreen::charPressed( char inputChar ) {
 	std::string fullstring = sign->messages[line] + inputChar;
 	if(fullstring.length() < 16) {
 		sign->messages[line] = fullstring;

@@ -89,7 +89,7 @@ public:
 	}
 
 	virtual void onConfigChanged(const Config& c) {
-		if (false && _options->isJoyTouchArea) {
+		if (false && _options->getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA)) {
 			int touchWidth = c.width - (int)inventoryArea._x1;
 			if (touchWidth > (int)c.minecraft->pixelCalc.millimetersToPixels(60))
 				touchWidth = (int)c.minecraft->pixelCalc.millimetersToPixels(60);
@@ -293,7 +293,7 @@ public:
 	}
 
 	void render(float alpha) {
-		if (_options->isJoyTouchArea) {
+		if (_options->getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA)) {
 			fill(	(int) (Gui::InvGuiScale * joyTouchArea._x0),
 					(int) (Gui::InvGuiScale * joyTouchArea._y0),
 					(int) (Gui::InvGuiScale * joyTouchArea._x1),
@@ -429,8 +429,8 @@ public:
 #ifdef __APPLE__
 		_turnBuild.pauseArea = _move.getPauseRectangleArea();
 #endif
-		_turnBuild.inventoryArea = _mc->gui.getRectangleArea( _mc->options.isLeftHanded? 1 : -1 );
-		_turnBuild.setSensitivity(c.options->isJoyTouchArea? 1.8f : 1.0f);
+		_turnBuild.inventoryArea = _mc->gui.getRectangleArea( _mc->options.getBooleanValue(OPTIONS_IS_LEFT_HANDED)? 1 : -1 );
+		_turnBuild.setSensitivity(c.options->getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA)? 1.8f : 1.0f);
 		((ITurnInput*)&_turnBuild)->onConfigChanged(c);
 	}
 

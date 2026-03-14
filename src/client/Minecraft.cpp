@@ -188,7 +188,7 @@ Minecraft::Minecraft()
 	_powerVr(false),
 	commandPort(4711),
 	reserved_d1(0),reserved_d2(0),
-	reserved_f1(0),reserved_f2(0)
+	reserved_f1(0),reserved_f2(0), options(this)
 {
 //#ifdef ANDROID
 
@@ -490,7 +490,7 @@ void Minecraft::update() {
 #ifndef STANDALONE_SERVER
 	checkGlError("Update finished");
 
-	if (options.renderDebug) {
+	if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
 #ifndef PLATFORM_DESKTOP
 		if (!PerfTimer::enabled) {
 			PerfTimer::reset();
@@ -558,7 +558,7 @@ void Minecraft::tick(int nTick, int maxTick) {
 			TIMER_POP_PUSH("levelRenderer");
 			levelRenderer->tick();
 #endif
-			level->difficulty = options.difficulty;
+			level->difficulty = options.getIntValue(OPTIONS_DIFFICULTY);
 			if (level->isClientSide) level->difficulty = Difficulty::EASY;
 
 			TIMER_POP_PUSH("level");
@@ -733,7 +733,7 @@ void Minecraft::tickInput() {
 				}
 
 				if (key == Keyboard::KEY_F5) {
-					options.thirdPersonView = !options.thirdPersonView;
+					options.toggle(OPTIONS_THIRD_PERSON_VIEW);
 					/*
 					ImprovedNoise noise;
 					for (int i = 0; i < 16; ++i)
@@ -1102,21 +1102,19 @@ bool Minecraft::useTouchscreen() {
 #ifdef RPI
 	return false;
 #endif
-	return options.useTouchScreen || !_supportsNonTouchscreen;
+	return options.getBooleanValue(OPTIONS_USE_TOUCHSCREEN) || !_supportsNonTouchscreen;
 }
 bool Minecraft::supportNonTouchScreen() {
 	return _supportsNonTouchscreen;
 }
 void Minecraft::init()
 {
-	options.minecraft = this;
-	options.initDefaultValues();
 #ifndef STANDALONE_SERVER
 	checkGlError("Init enter");
 
 	_supportsNonTouchscreen = !platform()->supportsTouchscreen();
 
-	LOGI("IS TOUCHSCREEN? %d\n", options.useTouchScreen);
+	LOGI("IS TOUCHSCREEN? %d\n", options.getBooleanValue(OPTIONS_USE_TOUCHSCREEN));
 
 	textures = new Textures(&options, platform());
 	textures->addDynamicTexture(new WaterTexture());
@@ -1148,10 +1146,12 @@ void Minecraft::setSize(int w, int h) {
 	width  = w;
 	height = h;
 
+	int guiScale = options.getIntValue(OPTIONS_GUI_SCALE);
+
 	// determine gui scale, optionally overriding auto
-	if (options.guiScale != 0) {
+	if (guiScale != 0) {
 		// manual selection: 1->small, 2->normal, 3->large, 4->larger
-		switch (options.guiScale) {
+		switch (guiScale) {
 		case 1: Gui::GuiScale = 2.0f; break;
 		case 2: Gui::GuiScale = 3.0f; break;
 		case 3: Gui::GuiScale = 4.0f; break;
@@ -1184,11 +1184,11 @@ void Minecraft::setSize(int w, int h) {
 	int screenWidth  = (int)(width  * Gui::InvGuiScale);
 	int screenHeight = (int)(height * Gui::InvGuiScale);
 
-	if (platform()) {
-		float pixelsPerMillimeter = options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
-		pixelCalc.setPixelsPerMillimeter(pixelsPerMillimeter);
-		pixelCalcUi.setPixelsPerMillimeter(pixelsPerMillimeter * Gui::InvGuiScale);
-	}
+	// if (platform()) {
+	// 	float pixelsPerMillimeter = options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
+	// 	pixelCalc.setPixelsPerMillimeter(pixelsPerMillimeter);
+	// 	pixelCalcUi.setPixelsPerMillimeter(pixelsPerMillimeter * Gui::InvGuiScale);
+	// }
 
 	Config config = createConfig(this);
 	gui.onConfigChanged(config);
@@ -1209,16 +1209,16 @@ void Minecraft::setSize(int w, int h) {
 }
 
 void Minecraft::reloadOptions() {
-	options.update();
 	options.save();
-	bool wasTouchscreen = options.useTouchScreen;
-	options.useTouchScreen = useTouchscreen();
+	bool wasTouchscreen = options.getBooleanValue(OPTIONS_USE_TOUCHSCREEN);
+	options.set(OPTIONS_USE_TOUCHSCREEN, useTouchscreen());
 	options.save();
 
-	if ((wasTouchscreen != options.useTouchScreen) || (inputHolder == 0))
+	if ((wasTouchscreen != useTouchscreen()) || (inputHolder == 0))
 		_reloadInput();
 
-	user->name = options.username;
+	// TODO:
+	// user->name = options.username;
 
 	LOGI("Reloading-options\n");
 
@@ -1523,24 +1523,24 @@ ICreator* Minecraft::getCreator()
 #endif
 }
 
-void Minecraft::optionUpdated( const Options::Option* option, bool value ) {
-	if(netCallback != NULL && option == &Options::Option::SERVER_VISIBLE) {
+void Minecraft::optionUpdated(OptionId option, bool value ) {
+	if(netCallback != NULL && option == OPTIONS_SERVER_VISIBLE) {
 		ServerSideNetworkHandler* ss = (ServerSideNetworkHandler*) netCallback;
 		ss->allowIncomingConnections(value);
 	}
 }
 
-void Minecraft::optionUpdated( const Options::Option* option, float value ) {
-#ifndef STANDALONE_SERVER
-	if(option == &Options::Option::PIXELS_PER_MILLIMETER) {
-		pixelCalcUi.setPixelsPerMillimeter(value * Gui::InvGuiScale);
-		pixelCalc.setPixelsPerMillimeter(value);
-	}
-#endif
+void Minecraft::optionUpdated(OptionId option, float value ) {
+// #ifndef STANDALONE_SERVER
+// 	if(option == OPTIONS_PIXELS_PER_MILLIMETER) {
+// 		pixelCalcUi.setPixelsPerMillimeter(value * Gui::InvGuiScale);
+// 		pixelCalc.setPixelsPerMillimeter(value);
+// 	}
+// #endif
 }
 
-void Minecraft::optionUpdated( const Options::Option* option, int value ) {
-    if(option == &Options::Option::GUI_SCALE) {
+void Minecraft::optionUpdated(OptionId option, int value ) {
+    if(option == OPTIONS_GUI_SCALE) {
         // reapply screen scaling using current window size
         setSize(width, height);
     }

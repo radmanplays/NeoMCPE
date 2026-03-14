@@ -77,28 +77,20 @@ class OptionButton: public ImageButton
 {
 	typedef ImageButton super;
 public:
-	OptionButton(const Options::Option* option);
-	OptionButton(const Options::Option* option, float onValue, float offValue);
+	OptionButton(OptionId optId);
 
 	void toggle(Options* options);
 	void updateImage(Options* options);
 
 	static const int ButtonId = 9999999;
 protected:
-	bool isSecondImage(bool hovered);
+	bool isSecondImage(bool hovered) { return _secondImage; }
 
 	virtual void mouseClicked( Minecraft* minecraft, int x, int y, int buttonNum );
 
 private:
-
-	const Options::Option* _option;
+	OptionId m_optId;
 	bool _secondImage;
-
-	// If not float, it's considered to be a boolean value
-	bool _isFloat;
-	float _onValue;
-	float _offValue;
-	float _current;
 };
 
 

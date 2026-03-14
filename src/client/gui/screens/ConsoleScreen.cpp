@@ -48,7 +48,7 @@ void ConsoleScreen::keyPressed(int eventKey)
     }
 }
 
-void ConsoleScreen::keyboardNewChar(char inputChar)
+void ConsoleScreen::charPressed(char inputChar)
 {
     if (inputChar >= 32 && inputChar < 127)
         _input += inputChar;
