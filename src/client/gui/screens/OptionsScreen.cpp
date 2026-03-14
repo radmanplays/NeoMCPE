@@ -191,7 +191,7 @@ void OptionsScreen::generateOptionScreens() {
 
 	optionPanes.push_back(new OptionsGroup("options.group.general"));
 	optionPanes.push_back(new OptionsGroup("options.group.game"));
-	optionPanes.push_back(new OptionsGroup("options.group.control"));
+	optionPanes.push_back(new OptionsGroup("options.group.controls"));
 	optionPanes.push_back(new OptionsGroup("options.group.graphics"));
 	optionPanes.push_back(new OptionsGroup("options.group.tweaks"));
 
