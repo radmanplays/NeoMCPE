@@ -25,7 +25,7 @@
 StartMenuScreen::StartMenuScreen()
 :	bHost(    2, 0, 0, 160, 24, "Start Game"),
 	bJoin(    3, 0, 0, 160, 24, "Join Game"),
-	bOptions( 4, 0, 0,  78, 22, "Options"),
+	bOptions( 4, 0, 0, 160, 24, "Options"),
 	bQuit(    5, "")
 {
 }
@@ -36,7 +36,6 @@ StartMenuScreen::~StartMenuScreen()
 
 void StartMenuScreen::init()
 {
-
 	bJoin.active = bHost.active = bOptions.active = true;
 
 	if (minecraft->options.getStringValue(OPTIONS_USERNAME).empty()) {
@@ -91,28 +90,19 @@ void StartMenuScreen::init()
 			version = versionString;
 		#endif
 	#endif
-
-	bJoin.active = bHost.active = bOptions.active = false;
 }
 
 void StartMenuScreen::setupPositions() {
-	int yBase = height / 2 + 25;
+	int yBase = height / 2;
 
-	//#ifdef ANDROID
-	bHost.y =	 yBase - 28;
-#ifdef RPI
-	bJoin.y =	 yBase + 4;
-#else
-	bJoin.y =	 yBase;
-#endif
-
-	bOptions.y = yBase + 28 + 2;
-	//#endif
+	bHost.y =	 yBase;
+	bJoin.y =	 bHost.y + 24 + 4;
+	bOptions.y = bJoin.y + 24 + 4;
 
 	// Center buttons
 	bHost.x = (width - bHost.width) / 2;
 	bJoin.x = (width - bJoin.width) / 2;
-	bOptions.x = (width - bJoin.width) / 2;
+	bOptions.x = (width - bOptions.width) / 2;
 
     // position quit icon at top-right (use image-defined size)
     bQuit.x = width - bQuit.width;
@@ -120,10 +110,6 @@ void StartMenuScreen::setupPositions() {
 }
 
 void StartMenuScreen::tick() {
-	if (minecraft->options.getStringValue(OPTIONS_USERNAME).empty()) {
-		minecraft->setScreen(new UsernameScreen());
-		return;
-	}
 }
 
 void StartMenuScreen::buttonClicked(Button* button) {
@@ -171,7 +157,7 @@ void StartMenuScreen::render( int xm, int ym, float a )
 		minecraft->textures->bind(id);
 
 		const float x = (float)width / 2;
-		const float y = 4;
+		const float y = height/16;
 		//const float scale = Mth::Min(
 		const float wh = Mth::Min((float)width/2.0f, (float)data->w / 2);
 		const float scale = 2.0f * wh / (float)data->w;
@@ -193,14 +179,14 @@ void StartMenuScreen::render( int xm, int ym, float a )
 		blit(0, height - 12, 0, 0, 43, 12, 256, 72+72);
 #endif
 
-	drawString(font, version, versionPosX, 62, /*50,*/ 0xffcccccc);//0x666666);
-	drawString(font, copyright, copyrightPosX, height - 10, 0xffffff);
+	drawString(font, version, width - font->width(version) - 2, height - 10, 0xffcccccc);//0x666666);
+	drawString(font, copyright, 2, height - 20, 0xffffff);
 	glEnable2(GL_BLEND);
 	glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f2(1, 1, 1, 1);
 	if (Textures::isTextureIdValid(minecraft->textures->loadAndBindTexture("gui/logo/github.png")))
 		blit(2, height - 10, 0, 0, 8, 8, 256, 256);
-{
+	{
 			std::string txt = "Kolyah35/minecraft-pe-0.6.1";
 			float wtxt = font->width(txt);
 			Gui::drawColoredString(font, txt, 12, height - 10, 255);
@@ -208,6 +194,9 @@ void StartMenuScreen::render( int xm, int ym, float a )
 			float y0 = height - 10 + font->lineHeight - 1;
 			this->fill(12, (int)y0, 12 + (int)wtxt, (int)(y0 + 1), 0xffffffff);
     }
+
+	
+	Screen::render(xm, ym, a);
 }
 
 void StartMenuScreen::mouseClicked(int x, int y, int buttonNum) {
