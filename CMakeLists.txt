@@ -241,6 +241,19 @@ if(PLATFORM STREQUAL "PLATFORM_GLFW")
     list(APPEND CLIENT_SOURCES "src/AppPlatform_glfw.cpp")
 endif()
 
+# Server
+add_executable("${PROJECT_NAME}-server" ${SERVER_SOURCES})
+
+target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER" "SERVER_PROFILER")
+
+target_include_directories("${PROJECT_NAME}-server" PUBLIC 
+   "${CMAKE_SOURCE_DIR}/src/"
+   "project/lib_projects/raknet/jni/RaknetSources"
+)
+
+target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT} png_shared)
+
+
 add_executable(${PROJECT_NAME} 
     ${CLIENT_SOURCES}
     "glad/src/glad.c"
@@ -256,6 +269,7 @@ if(PLATFORM STREQUAL "PLATFORM_WIN32" OR PLATFORM STREQUAL "PLATFORM_GLFW")
 endif()
 
 
+
 target_include_directories(${PROJECT_NAME} PUBLIC 
     "${CMAKE_SOURCE_DIR}/glad/include/"
     "${CMAKE_SOURCE_DIR}/src"
@@ -263,18 +277,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     "${glfw_SOURCE_DIR}/include"
     "lib/include"
 )
-
-# Server
-add_executable("${PROJECT_NAME}-server" ${SERVER_SOURCES})
-
-target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER" "SERVER_PROFILER")
-
-target_include_directories("${PROJECT_NAME}-server" PUBLIC 
-   "${CMAKE_SOURCE_DIR}/src/"
-   "project/lib_projects/raknet/jni/RaknetSources"
-)
-
-target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT} png_shared)
 
 # Client
 target_compile_definitions(${PROJECT_NAME} PUBLIC "OPENGL_ES" "NO_EGL" ${PLATFORM})

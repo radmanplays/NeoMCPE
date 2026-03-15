@@ -79,6 +79,8 @@ OptionInt keyMenuCancel("key.menu.cancel", 8);
 
 OptionBool firstLaunch("firstLaunch", true);
 
+OptionString lastIp("lastip");
+
 void Options::initTable() {
     m_options[OPTIONS_DIFFICULTY] = &difficulty;
     m_options[OPTIONS_HIDEGUI] = &hidegui;
@@ -158,6 +160,7 @@ void Options::initTable() {
 	m_options[OPTIONS_ALLOW_SPRINT] = &allowSprint;
 
 	m_options[OPTIONS_AUTOJUMP] = &autoJump;
+	m_options[OPTIONS_LAST_IP] = &lastIp;
 }
 
 void Options::set(OptionId key, const std::string& value) {

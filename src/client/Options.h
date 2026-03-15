@@ -81,6 +81,7 @@ enum OptionId {
     OPTIONS_KEY_MENU_CANCEL,
 
     OPTIONS_FIRST_LAUNCH,
+    OPTIONS_LAST_IP,
 
 	// Should be last!
 	OPTIONS_COUNT

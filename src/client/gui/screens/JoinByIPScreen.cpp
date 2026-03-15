@@ -5,6 +5,8 @@
 #include "ProgressScreen.h"
 #include "../Font.h"
 #include "../../../network/RakNetInstance.h"
+#include "client/Options.h"
+#include "client/gui/Screen.h"
 #include "client/gui/components/TextBox.h"
 #include "network/ClientSideNetworkHandler.h"
 
@@ -31,7 +33,7 @@ void JoinByIPScreen::buttonClicked(Button* button)
 
         minecraft->joinMultiplayerFromString(tIP.text);
         {
-
+			minecraft->options.set(OPTIONS_LAST_IP, tIP.text);
             bJoin.active = false;
             bBack.active = false;
             minecraft->setScreen(new ProgressScreen());
@@ -55,6 +57,7 @@ bool JoinByIPScreen::handleBackEvent(bool isDown)
 
 void JoinByIPScreen::tick()
 {
+	Screen::tick();
 	bJoin.active = !tIP.text.empty();
 }
 
@@ -78,6 +81,8 @@ void JoinByIPScreen::init()
 	tabButtons.push_back(&bBack);
     tabButtons.push_back(&bHeader);
 #endif
+
+	tIP.text = minecraft->options.getStringValue(OPTIONS_LAST_IP);
 }
 
 void JoinByIPScreen::setupPositions() {
