@@ -47,6 +47,7 @@
 #include "../../network/packet/PlayerArmorEquipmentPacket.h"
 
 namespace {
+#ifndef STANDALONE_SERVER
 
 static bool isBase64(unsigned char c) {
     return (std::isalnum(c) || (c == '+') || (c == '/'));
@@ -177,6 +178,8 @@ static std::string getCapeUrlForUsername(const std::string& username) {
     return getTextureUrlForUsername(username, "CAPE");
 }
 
+#endif
+
 static bool ensureDirectoryExists(const std::string& path) {
 #if defined(_WIN32)
     return _mkdir(path.c_str()) == 0 || errno == EEXIST;
@@ -199,6 +202,8 @@ static bool fileExists(const std::string& path) {
     return S_ISREG(st.st_mode);
 #endif
 }
+
+#ifndef STANDALONE_SERVER
 
 static void* fetchSkinForPlayer(void* param) {
     LocalPlayer* player = (LocalPlayer*)param;
@@ -290,6 +295,8 @@ static void* fetchCapeForPlayer(void* param) {
     return NULL;
 }
 
+#endif
+
 //@note: doesn't work completely, since it doesn't care about stairs rotation
 static bool isJumpable(int tileId) {
 	return tileId != Tile::fence->id
@@ -318,12 +325,14 @@ LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, User* user, int dim
 	this->dimension = dimension;
 	_init();
 
+#ifndef STANDALONE_SERVER
 	if (user != NULL && !user->name.empty()) {
 		this->name = user->name;
 		// Fetch user skin and cape from Mojang servers in the background (avoids blocking the main thread)
 		new CThread(fetchSkinForPlayer, this);
 		new CThread(fetchCapeForPlayer, this);
 	}
+#endif
 }
 
 LocalPlayer::~LocalPlayer() {

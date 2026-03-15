@@ -9,7 +9,9 @@ set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "-Wno-c++11-narrowing -Wno-narrowing -Wno-invalid-source-encoding -Wno-reserved-user-defined-literal")
 endif()
+
 find_package(Threads REQUIRED)
+
 CPMAddPackage("gh:madler/zlib@1.3.2")
 CPMAddPackage(
     NAME "libpng"
@@ -44,8 +46,10 @@ CPMAddPackage(
         "GLFW_BUILD_DOCS OFF"
         "BUILD_SHARED_LIBS ON"
 )
+
 # TODO: Clear this paths with *
 file(GLOB SERVER_SOURCES
+    "project/lib_projects/raknet/jni/RaknetSources/*.cpp"
     "src/NinecraftApp.cpp"
     "src/Performance.cpp"
     "src/SharedConstants.cpp"
@@ -53,8 +57,10 @@ file(GLOB SERVER_SOURCES
     "src/client/IConfigListener.cpp"
     "src/client/Minecraft.cpp"
     "src/client/OptionStrings.cpp"
+    "src/client/Option.cpp"
     "src/client/Options.cpp"
     "src/client/OptionsFile.cpp"
+    "src/client/ServerProfiler.cpp"
 
     "src/client/gamemode/CreativeMode.cpp"
     "src/client/gamemode/GameMode.cpp"
@@ -99,38 +105,15 @@ file(GLOB SERVER_SOURCES
 
     "src/world/Direction.cpp"
 
-    "src/world/entity/AgableMob.cpp"
-    "src/world/entity/Entity.cpp"
-    "src/world/entity/EntityFactory.cpp"
-    "src/world/entity/FlyingMob.cpp"
-    "src/world/entity/HangingEntity.cpp"
-    "src/world/entity/Mob.cpp"
-    "src/world/entity/MobCategory.cpp"
-    "src/world/entity/Motive.cpp"
-    "src/world/entity/Painting.cpp"
-    "src/world/entity/PathfinderMob.cpp"
-    "src/world/entity/SynchedEntityData.cpp"
+    "src/world/entity/*.cpp"
 
     "src/world/entity/ai/control/MoveControl.cpp"
 
-    "src/world/entity/animal/Animal.cpp"
-    "src/world/entity/animal/Chicken.cpp"
-    "src/world/entity/animal/Cow.cpp"
-    "src/world/entity/animal/Pig.cpp"
-    "src/world/entity/animal/Sheep.cpp"
-    "src/world/entity/animal/WaterAnimal.cpp"
+    "src/world/entity/animal/*.cpp"
 
-    "src/world/entity/item/FallingTile.cpp"
-    "src/world/entity/item/ItemEntity.cpp"
-    "src/world/entity/item/PrimedTnt.cpp"
-    "src/world/entity/item/TripodCamera.cpp"
+    "src/world/entity/item/*.cpp"
 
-    "src/world/entity/monster/Creeper.cpp"
-    "src/world/entity/monster/Monster.cpp"
-    "src/world/entity/monster/PigZombie.cpp"
-    "src/world/entity/monster/Skeleton.cpp"
-    "src/world/entity/monster/Spider.cpp"
-    "src/world/entity/monster/Zombie.cpp"
+    "src/world/entity/monster/*.cpp"
 
     "src/world/entity/player/Inventory.cpp"
     "src/world/entity/player/Player.cpp"
@@ -140,39 +123,11 @@ file(GLOB SERVER_SOURCES
 
     "src/world/food/SimpleFoodData.cpp"
 
-    "src/world/inventory/BaseContainerMenu.cpp"
-    "src/world/inventory/ContainerMenu.cpp"
-    "src/world/inventory/FillingContainer.cpp"
-    "src/world/inventory/FurnaceMenu.cpp"
+    "src/world/inventory/*.cpp"
+    "src/world/item/*.cpp"
+    "src/world/item/crafting/*.cpp"
+    "src/world/level/*.cpp"
 
-    "src/world/item/ArmorItem.cpp"
-    "src/world/item/BedItem.cpp"
-    "src/world/item/DyePowderItem.cpp"
-    "src/world/item/HangingEntityItem.cpp"
-    "src/world/item/HatchetItem.cpp"
-    "src/world/item/HoeItem.cpp"
-    "src/world/item/Item.cpp"
-    "src/world/item/ItemInstance.cpp"
-    "src/world/item/PickaxeItem.cpp"
-    "src/world/item/ShovelItem.cpp"
-
-    "src/world/item/crafting/ArmorRecipes.cpp"
-    "src/world/item/crafting/FurnaceRecipes.cpp"
-    "src/world/item/crafting/OreRecipes.cpp"
-    "src/world/item/crafting/Recipe.cpp"
-    "src/world/item/crafting/Recipes.cpp"
-    "src/world/item/crafting/StructureRecipes.cpp"
-    "src/world/item/crafting/ToolRecipes.cpp"
-    "src/world/item/crafting/WeaponRecipes.cpp"
-
-    "src/world/level/Explosion.cpp"
-    "src/world/level/Level.cpp"
-    "src/world/level/LightLayer.cpp"
-    "src/world/level/LightUpdate.cpp"
-    "src/world/level/MobSpawner.cpp"
-    "src/world/level/Region.cpp"
-    "src/world/level/TickNextTickData.cpp"
- 
     "src/world/level/biome/Biome.cpp"
     "src/world/level/biome/BiomeSource.cpp"
 
@@ -180,54 +135,21 @@ file(GLOB SERVER_SOURCES
 
     "src/world/level/dimension/Dimension.cpp"
 
-    "src/world/level/levelgen/CanyonFeature.cpp"
-    "src/world/level/levelgen/DungeonFeature.cpp"
-    "src/world/level/levelgen/LargeCaveFeature.cpp"
-    "src/world/level/levelgen/LargeFeature.cpp"
-    "src/world/level/levelgen/RandomLevelSource.cpp"
+    "src/world/level/levelgen/*.cpp"
     "src/world/level/levelgen/feature/Feature.cpp"
-    "src/world/level/levelgen/synth/ImprovedNoise.cpp"
-    "src/world/level/levelgen/synth/PerlinNoise.cpp"
-    "src/world/level/levelgen/synth/Synth.cpp"
+    "src/world/level/levelgen/synth/*.cpp"
 
     "src/world/level/material/Material.cpp"
 
     "src/world/level/pathfinder/Path.cpp"
 
-    "src/world/level/storage/ExternalFileLevelStorage.cpp"
-    "src/world/level/storage/ExternalFileLevelStorageSource.cpp"
-    "src/world/level/storage/FolderMethods.cpp"
-    "src/world/level/storage/LevelData.cpp"
-    "src/world/level/storage/LevelStorageSource.cpp"
-    "src/world/level/storage/RegionFile.cpp"
-
-    "src/world/level/tile/BedTile.cpp"
-    "src/world/level/tile/ChestTile.cpp"
-    "src/world/level/tile/CropTile.cpp"
-    "src/world/level/tile/DoorTile.cpp"
-    "src/world/level/tile/EntityTile.cpp"
-    "src/world/level/tile/FurnaceTile.cpp"
-    "src/world/level/tile/GrassTile.cpp"
-    "src/world/level/tile/HeavyTile.cpp"
-    "src/world/level/tile/LightGemTile.cpp"
-    "src/world/level/tile/MelonTile.cpp"
-    "src/world/level/tile/Mushroom.cpp"
-    "src/world/level/tile/NetherReactor.cpp"
-    "src/world/level/tile/NetherReactorPattern.cpp"
-    "src/world/level/tile/StairTile.cpp"
-    "src/world/level/tile/StemTile.cpp"
-    "src/world/level/tile/StoneSlabTile.cpp"
-    "src/world/level/tile/TallGrass.cpp"
-    "src/world/level/tile/Tile.cpp"
-    "src/world/level/tile/TrapDoorTile.cpp"
-    "src/world/level/tile/entity/ChestTileEntity.cpp"
-    "src/world/level/tile/entity/FurnaceTileEntity.cpp"
-    "src/world/level/tile/entity/NetherReactorTileEntity.cpp"
-    "src/world/level/tile/entity/SignTileEntity.cpp"
-    "src/world/level/tile/entity/TileEntity.cpp"
+    "src/world/level/storage/*.cpp"
+    "src/world/level/tile/*.cpp"
+    "src/world/level/tile/entity/*.cpp"
 
     "src/world/phys/HitResult.cpp"
 ) 
+
 file(GLOB CLIENT_SOURCES 
     "src/client/*.cpp"
 
@@ -324,10 +246,6 @@ add_executable(${PROJECT_NAME}
     "glad/src/glad.c"
 )
 
-#add_executable("${PROJECT_NAME}-server"
-#    ${SERVER_SOURCES} 
-#)
-
 if(WIN32)
     set(EXTRA_LIBS "ws2_32")
     target_compile_definitions(${PROJECT_NAME} PUBLIC "_CRT_SECURE_NO_WARNINGS")
@@ -347,13 +265,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 # Server
-#target_link_libraries("${PROJECT_NAME}-server"     PRIVATE
-#    raknet ${CMAKE_THREAD_LIBS_INIT})
-#target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER")
+add_executable("${PROJECT_NAME}-server" ${SERVER_SOURCES})
 
-#target_include_directories("${PROJECT_NAME}-server" PUBLIC 
-#    "${CMAKE_SOURCE_DIR}/src/"
-#)
+target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER" "SERVER_PROFILER")
+
+target_include_directories("${PROJECT_NAME}-server" PUBLIC 
+   "${CMAKE_SOURCE_DIR}/src/"
+   "project/lib_projects/raknet/jni/RaknetSources"
+)
+
+target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT} png_shared)
 
 # Client
 target_compile_definitions(${PROJECT_NAME} PUBLIC "OPENGL_ES" "NO_EGL" ${PLATFORM})

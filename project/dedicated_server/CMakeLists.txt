@@ -19,6 +19,7 @@ set(CompileFiles ../../src/main.cpp
 ../../src/client/IConfigListener.cpp
 ../../src/client/Minecraft.cpp
 ../../src/client/Options.cpp
+../../src/client/Option.cpp
 ../../src/client/OptionsFile.cpp
 ../../src/client/OptionStrings.cpp
 ../../src/client/gamemode/GameMode.cpp

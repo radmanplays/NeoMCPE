@@ -18,19 +18,14 @@
 #include "../network/ServerSideNetworkHandler.h"
 //#include "../network/Packet.h"
 #include "../world/entity/player/Inventory.h"
-#include "../world/level/chunk/ChunkCache.h"
 #include "../world/level/tile/Tile.h"
 #include "../world/level/storage/LevelStorageSource.h"
 #include "../world/level/storage/LevelStorage.h"
 #include "player/input/KeyboardInput.h"
+#include "world/level/chunk/ChunkSource.h"
+
 #ifndef STANDALONE_SERVER
 #include "player/input/touchscreen/TouchInputHolder.h"
-#endif
-#include "player/LocalPlayer.h"
-#include "gamemode/CreativeMode.h"
-#include "gamemode/SurvivalMode.h"
-#include "player/LocalPlayer.h"
-#ifndef STANDALONE_SERVER
 #include "particle/ParticleEngine.h"
 #include "gui/Screen.h"
 #include "gui/Font.h"
@@ -38,65 +33,14 @@
 #include "gui/screens/ConsoleScreen.h"
 #include "gui/screens/ChatScreen.h"
 #include "sound/SoundEngine.h"
-#endif
-#include "../platform/CThread.h"
-#include "../platform/input/Mouse.h"
-#include "../AppPlatform.h"
-#include "../Performance.h"
-#include "../LicenseCodes.h"
-#include "../util/PerfTimer.h"
-#include "../util/PerfRenderer.h"
-#include "player/input/MouseBuildInput.h"
-
-#include "../world/Facing.h"
-
-#include "../network/packet/PlaceBlockPacket.h"
-
-#include "player/input/IInputHolder.h"
-#ifndef STANDALONE_SERVER
 #include "player/input/touchscreen/TouchscreenInput.h"
-
-#include "player/input/ControllerTurnInput.h"
-#include "player/input/XperiaPlayInput.h"
-
-#endif
-
 #include "renderer/Chunk.h"
-#include "player/input/MouseTurnInput.h"
-#include "../world/entity/MobFactory.h"
-#include "../world/level/MobSpawner.h"
-#include "../util/Mth.h"
-#include "../network/packet/InteractPacket.h"
-#ifndef STANDALONE_SERVER
 #include "gui/screens/PrerenderTilesScreen.h"
 #include "renderer/Textures.h"
 #include "gui/screens/DeathScreen.h"
-#endif
-
-#include "../network/packet/RespawnPacket.h"
-#include "IConfigListener.h"
-#include "../world/entity/MobCategory.h"
-#ifndef STANDALONE_SERVER
 #include "gui/screens/FurnaceScreen.h"
-#endif
-#include "../world/Difficulty.h"
-#include "../server/ServerLevel.h"
-#ifdef CREATORMODE
-#include "../server/CreatorLevel.h"
-#endif
-#include "../network/packet/AdventureSettingsPacket.h"
-#include "../network/packet/SetSpawnPositionPacket.h"
-#include "../network/command/CommandServer.h"
-#include "gamemode/CreatorMode.h"
-#ifndef STANDALONE_SERVER
 #include "gui/screens/ArmorScreen.h"
-#endif
-#include "../world/level/levelgen/synth/ImprovedNoise.h"
-#ifndef STANDALONE_SERVER
 #include "renderer/tileentity/TileEntityRenderDispatcher.h"
-#endif
-
-#ifndef STANDALONE_SERVER
 #include "renderer/ptexture/DynamicTexture.h"
 #include "renderer/GameRenderer.h"
 #include "renderer/ItemInHandRenderer.h"
@@ -106,7 +50,39 @@
 #include "gui/Font.h"
 #include "gui/screens/RenameMPLevelScreen.h"
 #include "sound/SoundEngine.h"
+#endif // STANDALONE_SERVER
+
+#include "player/LocalPlayer.h"
+#include "gamemode/CreativeMode.h"
+#include "gamemode/SurvivalMode.h"
+#include "player/LocalPlayer.h"
+#include "../platform/CThread.h"
+#include "../platform/input/Mouse.h"
+#include "../AppPlatform.h"
+#include "../LicenseCodes.h"
+#include "../util/PerfTimer.h"
+#include "../util/PerfRenderer.h"
+#include "player/input/MouseBuildInput.h"
+
+#include "player/input/IInputHolder.h"
+
+#include "player/input/MouseTurnInput.h"
+#include "../world/entity/MobFactory.h"
+#include "../world/level/MobSpawner.h"
+#include "../util/Mth.h"
+#include "../network/packet/InteractPacket.h"
+#include "../network/packet/RespawnPacket.h"
+#include "IConfigListener.h"
+#include "../world/entity/MobCategory.h"
+#include "../world/Difficulty.h"
+#include "../server/ServerLevel.h"
+
+#ifdef CREATORMODE
+#include "../server/CreatorLevel.h"
 #endif
+
+#include "../network/command/CommandServer.h"
+#include "gamemode/CreatorMode.h"
 
 static void checkGlError(const char* tag) {
 #ifdef GLDEBUG
@@ -118,7 +94,7 @@ static void checkGlError(const char* tag) {
 	}
 #endif /*GLDEBUG*/
 }
-#include <fstream>
+
 /*static*/
 const char* Minecraft::progressMessages[] = {
 	"Locating server",

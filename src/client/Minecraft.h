@@ -4,13 +4,12 @@
 #include "Options.h"
 #ifndef STANDALONE_SERVER
 #include "MouseHandler.h"
-#endif
-#include "Timer.h"
-#include "player/input/ITurnInput.h"
-#ifndef STANDALONE_SERVER
 #include "gui/Gui.h"
 #include "gui/screens/ScreenChooser.h"
 #endif
+
+#include "Timer.h"
+
 //#include "../network/RakNetInstance.h"
 #include "../world/phys/HitResult.h"
 
