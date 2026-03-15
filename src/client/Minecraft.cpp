@@ -755,12 +755,7 @@ void Minecraft::tickInput() {
 				if (key == Keyboard::KEY_F3) {
 					options.toggle(OPTIONS_RENDER_DEBUG);
 				}
-				if (key == Keyboard::KEY_F4) {
-					player->inventory->add(new ItemInstance(Tile::goldBlock));
-					player->inventory->add(new ItemInstance(Tile::netherReactor));
-					player->inventory->add(new ItemInstance(Tile::stoneBrick));
-
-				}
+	
 				if (key == Keyboard::KEY_F5) {
 					options.toggle(OPTIONS_THIRD_PERSON_VIEW);
 					/*
