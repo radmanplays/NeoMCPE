@@ -12,6 +12,11 @@ endif()
 
 find_package(Threads REQUIRED)
 
+find_package(OpenSSL)
+if (OpenSSL_FOUND)
+    message(STATUS "found openssl ${OPENSSL_VERSION}")
+endif()
+
 CPMAddPackage("gh:madler/zlib@1.3.2")
 CPMAddPackage(
     NAME "libpng"
@@ -281,6 +286,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # Client
 target_compile_definitions(${PROJECT_NAME} PUBLIC "OPENGL_ES" "NO_EGL" ${PLATFORM})
 target_link_libraries(${PROJECT_NAME} zlib png_shared alsoft.common OpenAL::OpenAL glfw ${EXTRA_LIBS})
+
+if (OpenSSL_FOUND)
+    target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC HTTPCLIENT_USE_OPENSSL)
+endif()
 
 if (NOT UNIX)
 add_custom_command(
