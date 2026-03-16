@@ -50,6 +50,7 @@ MinSizeRel/
 *.xcworkspace
 xcuserdata/
 *.xccheckout
+*.xcuserstate
 *.moved-aside
 DerivedData/
 *.hmap
