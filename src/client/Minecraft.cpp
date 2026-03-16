@@ -1,4 +1,5 @@
 #include "Minecraft.h"
+#include "client/Options.h"
 #include "client/player/input/IBuildInput.h"
 #include "platform/input/Keyboard.h"
 #include "world/item/Item.h"
@@ -1139,7 +1140,7 @@ void Minecraft::init()
 	checkGlError("Init complete");
 #endif
 
-	user = new User("TestUser", "");
+	user = new User(options.getStringValue(OPTIONS_USERNAME), "");
 	setIsCreativeMode(false); // false means it's Survival Mode
 	reloadOptions();
 

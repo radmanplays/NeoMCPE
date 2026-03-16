@@ -150,8 +150,4 @@ public:
 
 private:
 };
-
-void* winGLLoader(const char* name);
-void glPatchDesktopCompat();
-
 #endif /*APPPLATFORM_GLFW_H__*/
