@@ -335,6 +335,7 @@ void Minecraft::leaveGame(bool renameLevel /*=false*/)
 
 	_running = false;
 #ifndef STANDALONE_SERVER
+	gui.clearMessages();
 	if (renameLevel) {
 		setScreen(new RenameMPLevelScreen(LevelStorageSource::TempLevelId));
 	}

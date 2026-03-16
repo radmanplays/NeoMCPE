@@ -334,6 +334,11 @@ void Gui::addMessage(const std::string& _string) {
 	}
 }
 
+void Gui::clearMessages() {
+	guiMessages.clear();
+	chatScrollOffset = 0;
+}
+
 void Gui::setNowPlaying(const std::string& string) {
 	overlayMessageString = "Now playing: " + string;
 	overlayMessageTime = 20 * 3;
