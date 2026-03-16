@@ -1,4 +1,7 @@
 # MinecraftPE
+> [!Warning]
+> Github repository **isnt main**. All issues and pull requests should be send in [Gitea Repository](https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1).
+
 > [!Important]
 > We have a discord server, where you can report bugs or send feedback https://discord.gg/c58YesBxve
 
@@ -32,7 +35,7 @@ This project aims to preserve and improve this early version of Minecraft PE.
 
 (Debian-like)
 
-``sudo apt install build-essentials git cmake libgl-dev libwayland-dev xorg-dev libxkbcommon-dev``
+``sudo apt install build-essential git cmake libgl-dev libwayland-dev xorg-dev libxkbcommon-dev``
 
 (Arch-like)
 
