@@ -135,10 +135,14 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 #endif
 #if defined(RPI)
 	renderDebugInfo();
-#elif defined(PLATFORM_DESKTOP)
+#endif
+
+	if (Keyboard::isKeyDown(Keyboard::KEY_TAB)) {
+		renderPlayerList(font, screenWidth, screenHeight);
+	}
+
 	if (minecraft->options.getBooleanValue(OPTIONS_RENDER_DEBUG))
 		renderDebugInfo();
-#endif
 	}
 
     glDisable(GL_BLEND);
@@ -797,6 +801,83 @@ void Gui::renderDebugInfo() {
 		font->draw(ln[i], MGN, y, col);
 	}
 	t.endOverrideAndDraw();
+}
+
+void Gui::renderPlayerList(Font* font, int screenWidth, int screenHeight) {
+	// only show when in game, no other screen
+	// if (!minecraft->level) return;
+
+	// only show the overlay while connected to a multiplayer server
+	Level* level = minecraft->level;
+	if (!level) return;
+	if (!level->isClientSide) return;
+
+	std::vector<std::string> playerNames;
+	playerNames.reserve(level->players.size());
+
+	for (Player* player : level->players) {
+		if (!player) continue;
+		playerNames.push_back(player->name);
+	}
+
+	// is this check needed? if there are no players, the box won't render at all since height will be 0, 
+	// but maybe we want to skip rendering entirely in that case
+	// if (playerNames.empty())
+	// 	return;
+
+	std::sort(playerNames.begin(), playerNames.end());
+
+	float maxNameWidth = 0.0f;
+	// find the longest name so we can size the box accordingly
+	for (const std::string& name : playerNames) {
+		float nameWidth = font->width(name);
+		if (nameWidth > maxNameWidth)
+			maxNameWidth = nameWidth;
+	}
+
+	// player count title
+	std::string titleText = "Players (" + std::to_string(playerNames.size()) + ")";
+	float titleWidth = font->width(titleText);
+
+	if (titleWidth > maxNameWidth)
+		maxNameWidth = titleWidth;
+
+	const float padding = 4.0f;
+	const float lineHeight = (float)Font::DefaultLineHeight;
+
+	const float boxWidth = maxNameWidth + padding * 2;
+	const float boxHeight = (playerNames.size() + 1) * lineHeight + padding * 2;
+
+	const float boxLeft = (screenWidth - boxWidth) / 2.0f;
+	const float boxTop = 10.0f;
+	const float boxRight = boxLeft + boxWidth;
+	const float boxBottom = boxTop + boxHeight;
+
+	fill(boxLeft, boxTop, boxRight, boxBottom, 0x90000000);
+
+	float titleX = (screenWidth - titleWidth) / 2.0f;
+	float titleY = boxTop + padding;
+
+	// scale the text down slightly
+	// i think the gl scaling is the best for this
+	// oh my god this looks really bad OH GOD
+	//const float textScale = 0.8f;
+	//const float invTextScale = 1.0f / textScale;
+	//glPushMatrix2();
+	//glScalef2(textScale, textScale, 1);
+
+	// draw title
+	//font->draw(titleText, titleX * invTextScale, titleY * invTextScale, 0xFFFFFFFF);
+	font->draw(titleText, titleX, titleY, 0xFFFFFFFF);
+
+	// draw player names
+	// we should add ping icons here eventually, but for now just show names
+	float currentY = boxTop + padding + lineHeight;
+	for (const std::string& name : playerNames) {
+		font->draw(name, (boxLeft + padding), currentY, 0xFFDDDDDD);
+		currentY += lineHeight;
+	}
+	//glPopMatrix2();
 }
 
 void Gui::renderSleepAnimation( const int screenWidth, const int screenHeight ) {

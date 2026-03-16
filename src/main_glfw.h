@@ -24,6 +24,7 @@ int transformKey(int glfwkey) {
 
 	switch (glfwkey) {
 		case GLFW_KEY_ESCAPE: return Keyboard::KEY_ESCAPE;
+		case GLFW_KEY_TAB: return Keyboard::KEY_TAB;
 		case GLFW_KEY_BACKSPACE: return Keyboard::KEY_BACKSPACE;
 		case GLFW_KEY_LEFT_SHIFT: return Keyboard::KEY_LSHIFT;
 		case GLFW_KEY_ENTER: return Keyboard::KEY_RETURN;
