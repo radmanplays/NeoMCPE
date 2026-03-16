@@ -250,6 +250,7 @@ if(PLATFORM STREQUAL "PLATFORM_GLFW")
 endif()
 
 # Server
+if(UNIX)
 add_executable("${PROJECT_NAME}-server" ${SERVER_SOURCES})
 
 target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER" "SERVER_PROFILER")
@@ -260,7 +261,7 @@ target_include_directories("${PROJECT_NAME}-server" PUBLIC
 )
 
 target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT} png_shared)
-
+endif()
 
 add_executable(${PROJECT_NAME} 
     ${CLIENT_SOURCES}
