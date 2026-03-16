@@ -167,16 +167,16 @@ void HumanoidMobRenderer::additionalRendering(Mob* mob, float a) {
             const float depth = 1.0f;
 
             // Front
-            t.tex(u0, vTop);    t.vertex(-halfW, 0.0f, 0.0f);
-            t.tex(u1, vTop);    t.vertex(halfW, 0.0f, 0.0f);
-            t.tex(u1, vBottom); t.vertex(halfW, height, 0.0f);
-            t.tex(u0, vBottom); t.vertex(-halfW, height, 0.0f);
+            t.tex(u2, vTop);    t.vertex(-halfW, 0.0f, 0.0f);
+            t.tex(u3, vTop);    t.vertex(halfW, 0.0f, 0.0f);
+            t.tex(u3, vBottom); t.vertex(halfW, height, 0.0f);
+            t.tex(u2, vBottom); t.vertex(-halfW, height, 0.0f);
 
-            // Back
-            t.tex(u2, vTop);    t.vertex(halfW, 0.0f, depth);
-            t.tex(u3, vTop);    t.vertex(-halfW, 0.0f, depth);
-            t.tex(u3, vBottom); t.vertex(-halfW, height, depth);
-            t.tex(u2, vBottom); t.vertex(halfW, height, depth);
+            // Back 
+            t.tex(u0, vTop);    t.vertex(halfW, 0.0f, depth);
+            t.tex(u1, vTop);    t.vertex(-halfW, 0.0f, depth);
+            t.tex(u1, vBottom); t.vertex(-halfW, height, depth);
+            t.tex(u0, vBottom); t.vertex(halfW, height, depth);
 
             // Left
             t.tex(uL0, vTop);    t.vertex(-halfW, 0.0f, depth);

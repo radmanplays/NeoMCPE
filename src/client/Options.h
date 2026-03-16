@@ -97,6 +97,8 @@ public:
 
     Options(Minecraft* minecraft, const std::string& workingDirectory = "") 
 	: minecraft(minecraft) {
+        // elements werent initialized so i was getting a garbage pointer and a crash
+        m_options.fill(nullptr);
         initTable();
 		load();
     }

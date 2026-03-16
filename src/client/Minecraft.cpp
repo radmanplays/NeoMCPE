@@ -73,6 +73,8 @@
 #include "../util/Mth.h"
 #include "../network/packet/InteractPacket.h"
 #include "../network/packet/RespawnPacket.h"
+#include "../network/packet/AdventureSettingsPacket.h"
+#include "../network/packet/SetSpawnPositionPacket.h"
 #include "IConfigListener.h"
 #include "../world/entity/MobCategory.h"
 #include "../world/Difficulty.h"
