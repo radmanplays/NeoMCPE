@@ -170,22 +170,31 @@ void TouchscreenInput_TestFps::onConfigChanged(const Config& c) {
 	//rebuild();
 }
 
-void TouchscreenInput_TestFps::setKey( int key, bool state )
+void TouchscreenInput_TestFps::setKey(int key, bool state)
 {
 	#ifdef WIN32
-        //LOGI("key: %d, %d\n", key, state);
+		//LOGI("key: %d, %d\n", key, state);
 
 		int id = -1;
-		if (key == _options->keyUp.key) id = KEY_UP;
-		if (key == _options->keyDown.key) id = KEY_DOWN;
-		if (key == _options->keyLeft.key) id = KEY_LEFT;
-		if (key == _options->keyRight.key) id = KEY_RIGHT;
-		if (key == _options->keyJump.key) id = KEY_JUMP;
-		if (key == _options->keySneak.key) id = KEY_SNEAK;
-		if (key == _options->keyCraft.key) id = KEY_CRAFT;
-		if (id >= 0) {
-			_keys[id] = state;
-		}
+		// theres no keyUp etc???
+		//if (key == _options->keyUp.key) id = KEY_UP;
+		//if (key == _options->keyDown.key) id = KEY_DOWN;
+		//if (key == _options->keyLeft.key) id = KEY_LEFT;
+		//if (key == _options->keyRight.key) id = KEY_RIGHT;
+		//if (key == _options->keyJump.key) id = KEY_JUMP;
+		//if (key == _options->keySneak.key) id = KEY_SNEAK;
+		//if (key == _options->keyCraft.key) id = KEY_CRAFT;
+		//if (id >= 0) {
+		//	_keys[id] = state;
+		//}
+
+		if (key == _options->getIntValue(OPTIONS_KEY_FORWARD)) id = KEY_UP;
+		if (key == _options->getIntValue(OPTIONS_KEY_BACK)) id = KEY_DOWN;
+		if (key == _options->getIntValue(OPTIONS_KEY_LEFT)) id = KEY_LEFT;
+		if (key == _options->getIntValue(OPTIONS_KEY_RIGHT)) id = KEY_RIGHT;
+		if (key == _options->getIntValue(OPTIONS_KEY_JUMP)) id = KEY_JUMP;
+		if (key == _options->getIntValue(OPTIONS_KEY_SNEAK)) id = KEY_SNEAK;
+		//if (key == _options->getIntValue(OPTIONS_KEY_CRAFT)) id = KEY_CRAFT;
 	#endif
 }
 

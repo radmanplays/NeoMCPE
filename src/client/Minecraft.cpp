@@ -73,6 +73,8 @@
 #include "../util/Mth.h"
 #include "../network/packet/InteractPacket.h"
 #include "../network/packet/RespawnPacket.h"
+#include "../network/packet/AdventureSettingsPacket.h"
+#include "../network/packet/SetSpawnPositionPacket.h"
 #include "IConfigListener.h"
 #include "../world/entity/MobCategory.h"
 #include "../world/Difficulty.h"
@@ -333,6 +335,7 @@ void Minecraft::leaveGame(bool renameLevel /*=false*/)
 
 	_running = false;
 #ifndef STANDALONE_SERVER
+	gui.clearMessages();
 	if (renameLevel) {
 		setScreen(new RenameMPLevelScreen(LevelStorageSource::TempLevelId));
 	}
@@ -725,10 +728,6 @@ void Minecraft::tickInput() {
 					setScreen(new ConsoleScreen());
 				}
 
-				if (!screen && key == Keyboard::KEY_O || key == 250) {
-					releaseMouse();
-				}
-
 				if (key == Keyboard::KEY_F3) {
 					options.toggle(OPTIONS_RENDER_DEBUG);
 				}
@@ -742,92 +741,96 @@ void Minecraft::tickInput() {
 					*/
 				}
 
+				if (!screen && key == Keyboard::KEY_O || key == 250) {
+					releaseMouse();
+				}
 
-				if (key == Keyboard::KEY_L) {
+				if (key == Keyboard::KEY_F) {
 					int dst = options.getIntValue(OPTIONS_VIEW_DISTANCE);
 					options.set(OPTIONS_VIEW_DISTANCE, (dst + 1) % 4);
 				}
-
-				if (key == Keyboard::KEY_U) {
-					onGraphicsReset();
-					player->heal(100);
-				}
-
-				if (key == Keyboard::KEY_B || key == 108) // Toggle the game mode
-					setIsCreativeMode(!isCreativeMode());
-
-				if (key == Keyboard::KEY_P) // Step forward in time
-					level->setTime( level->getTime() + 1000);
-
-				if (key == Keyboard::KEY_G) {
-					setScreen(new ArmorScreen());
-					/*
-					std::vector<AABB>& boxs = level->getCubes(NULL, AABB(128.1f, 73, 128.1f, 128.9f, 74.9f, 128.9f));
-					LOGI("boxes: %d\n", (int)boxs.size());
-					*/
-				}
-
-				if (key == Keyboard::KEY_Y) {
-					textures->reloadAll();
-					player->hurtTo(2);
-				}
-				if (key == Keyboard::KEY_Z || key == 108) {
-					for (int i = 0; i < 1; ++i) {
-						Mob* mob = NULL;
-						int forceId = 0;//MobTypes::Sheep;
-
-						int types[] = {
-							MobTypes::Sheep,
-							MobTypes::Pig,
-							MobTypes::Chicken,
-							MobTypes::Cow,
-						};
-
-						int mobType = (forceId > 0)? forceId : types[Mth::random(sizeof(types) / sizeof(int))];
-						mob = MobFactory::CreateMob(mobType, level);
-
-						//((Animal*)mob)->setAge(-1000);
-						float dx = 4 - 8 * Mth::random() + 4 * Mth::sin(Mth::DEGRAD * player->yRot);
-						float dz = 4 - 8 * Mth::random() + 4 * Mth::cos(Mth::DEGRAD * player->yRot);
-						if (mob && !MobSpawner::addMob(level, mob, player->x + dx, player->y, player->z + dz, Mth::random()*360, 0, true))
-							delete mob;
+				#ifdef CHEATS
+					if (key == Keyboard::KEY_U) {
+						onGraphicsReset();
+						player->heal(100);
 					}
-				}
 
-				if (key == Keyboard::KEY_X) {
-					const EntityList& entities = level->getAllEntities();
-					for (int i = entities.size()-1; i >= 0; --i) {
-						Entity* e = entities[i];
-						if (!e->isPlayer())
-							level->removeEntity(e);
+					if (key == Keyboard::KEY_B || key == 108) // Toggle the game mode
+						setIsCreativeMode(!isCreativeMode());
+
+					if (key == Keyboard::KEY_P) // Step forward in time
+						level->setTime( level->getTime() + 1000);
+
+					if (key == Keyboard::KEY_G) {
+						setScreen(new ArmorScreen());
+						/*
+						std::vector<AABB>& boxs = level->getCubes(NULL, AABB(128.1f, 73, 128.1f, 128.9f, 74.9f, 128.9f));
+						LOGI("boxes: %d\n", (int)boxs.size());
+						*/
 					}
-				}
 
-				if (key == Keyboard::KEY_C /*|| key == 4*/) {
-					player->inventory->clearInventoryWithDefault();
-					// @todo: Add saving here for benchmarking
-				}
-				if (key == Keyboard::KEY_H) {
-					setScreen( new PrerenderTilesScreen() );
-				}
-
-				if (key == Keyboard::KEY_O) {
-					for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
-						if (player->inventory->getItem(i))
-							player->inventory->dropSlot(i, false);
-				}
-				if (key == Keyboard::KEY_M) {
-					Difficulty difficulty = (Difficulty)options.getIntValue(OPTIONS_DIFFICULTY);
-					options.set(OPTIONS_DIFFICULTY, (difficulty == Difficulty::PEACEFUL)?
-						Difficulty::NORMAL : Difficulty::PEACEFUL);
-					//setIsCreativeMode( !isCreativeMode() );
-				}
-
-				if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
-					if (key >= '0' && key <= '9') {
-						_perfRenderer->debugFpsMeterKeyPress(key - '0');
+					if (key == Keyboard::KEY_Y) {
+						textures->reloadAll();
+						player->hurtTo(2);
 					}
-				}
+					if (key == Keyboard::KEY_Z || key == 108) {
+						for (int i = 0; i < 1; ++i) {
+							Mob* mob = NULL;
+							int forceId = 0;//MobTypes::Sheep;
+
+							int types[] = {
+								MobTypes::Sheep,
+								MobTypes::Pig,
+								MobTypes::Chicken,
+								MobTypes::Cow,
+							};
+
+							int mobType = (forceId > 0)? forceId : types[Mth::random(sizeof(types) / sizeof(int))];
+							mob = MobFactory::CreateMob(mobType, level);
+
+							//((Animal*)mob)->setAge(-1000);
+							float dx = 4 - 8 * Mth::random() + 4 * Mth::sin(Mth::DEGRAD * player->yRot);
+							float dz = 4 - 8 * Mth::random() + 4 * Mth::cos(Mth::DEGRAD * player->yRot);
+							if (mob && !MobSpawner::addMob(level, mob, player->x + dx, player->y, player->z + dz, Mth::random()*360, 0, true))
+								delete mob;
+						}
+					}
+
+					if (key == Keyboard::KEY_X) {
+						const EntityList& entities = level->getAllEntities();
+						for (int i = entities.size()-1; i >= 0; --i) {
+							Entity* e = entities[i];
+							if (!e->isPlayer())
+								level->removeEntity(e);
+						}
+					}
+
+					if (key == Keyboard::KEY_C /*|| key == 4*/) {
+						player->inventory->clearInventoryWithDefault();
+						// @todo: Add saving here for benchmarking
+					}
+					if (key == Keyboard::KEY_H) {
+						setScreen( new PrerenderTilesScreen() );
+					}
+
+					if (key == Keyboard::KEY_O) {
+						for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
+							if (player->inventory->getItem(i))
+								player->inventory->dropSlot(i, false);
+					}
+					if (key == Keyboard::KEY_M) {
+						Difficulty difficulty = (Difficulty)options.getIntValue(OPTIONS_DIFFICULTY);
+						options.set(OPTIONS_DIFFICULTY, (difficulty == Difficulty::PEACEFUL)?
+							Difficulty::NORMAL : Difficulty::PEACEFUL);
+						//setIsCreativeMode( !isCreativeMode() );
+					}
+
+					if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
+						if (key >= '0' && key <= '9') {
+							_perfRenderer->debugFpsMeterKeyPress(key - '0');
+						}
+					}
+				#endif
 			#endif
 
 			#ifndef PLATFORM_DESKTOP

@@ -27,15 +27,36 @@ This project aims to preserve and improve this early version of Minecraft PE.
 # Build
 
 ## CMake
+### Linux 
+1. Install dependiences
+
+(Debian-like)
+
+``sudo apt install build-essentials git cmake libgl-dev libwayland-dev xorg-dev libxkbcommon-dev``
+
+(Arch-like)
+
+``sudo pacman -S base-devel git cmake libglvnd wayland xorg-server-devel xorgproto libxkbcommon``
+
+2. Create build folder
+``mkdir build && cd build``
+
+3. Generate CMake cache and build the project
 ```
-mkdir build && cd build
 cmake .. -B .
-make -j4
+cmake --build .
 ```
-or
+
+### Windows
+1. Install [Visual studio Build Tools](https://aka.ms/vs/stable/vs_BuildTools.exe) and [CMake](https://github.com/Kitware/CMake/releases/download/v4.3.0-rc3/cmake-4.3.0-rc3-windows-x86_64.msi)
+
+2. Create build folder
+``mkdir build && cd build``
+
+3. Generate CMake cache and build the project
 ```
-mkdir build && cd build
-cmake --build . --config Release -j 10
+cmake ..
+cmake --build .
 ```
 
 ## Visual Studio

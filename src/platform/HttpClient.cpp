@@ -23,39 +23,57 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+// if cmake detected opensll, we define HTTPCLIENT_USE_OPENSSL and include the openssl headers
+// most linux distros should have openssl right
+#if defined(HTTPCLIENT_USE_OPENSSL)
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#endif
 #endif
 
 namespace {
-
-bool startsWith(const std::string& s, const std::string& prefix) {
-    return s.size() >= prefix.size() && std::equal(prefix.begin(), prefix.end(), s.begin());
+bool stringStartsWith(const std::string& str, const std::string& prefix) {
+    return str.size() >= prefix.size() && std::equal(prefix.begin(), prefix.end(), str.begin());
 }
 
-bool parseUrl(const std::string& url, std::string& scheme, std::string& host, int& port, std::string& path);
+bool parseUrl(const std::string& url, std::string& schemeOut, std::string& hostOut, int& portOut, std::string& pathOut);
+
+// forward declarations for helper functions used by https implementation
+bool resolveAndConnect(const std::string& host, int port, int& outSocket);
+bool extractStatusCode(const std::string& headers, int& outStatus);
 
 #if defined(_WIN32)
 
-bool downloadHttpsWinHttp(const std::string& url, std::vector<unsigned char>& outBody) {
-    outBody.clear();
+// download an https url using windows winhttp 
+// this is only used on windows because the rest of the code is a simple raw tcp http client
+bool downloadHttpsWinHttp(const std::string& url, std::vector<unsigned char>& outputBody) {
+    // gotta start clear
+    outputBody.clear();
 
-    std::string scheme, host, path;
+    std::string scheme;
+    std::string host;
+    std::string path;
     int port = 0;
-    if (!parseUrl(url, scheme, host, port, path))
-        return false;
 
-    // WinHTTP expects the path to include the leading '/'.
-    HINTERNET hSession = WinHttpOpen(L"MinecraftPE/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-    if (!hSession)
-        return false;
-
-    HINTERNET hConnect = WinHttpConnect(hSession, std::wstring(host.begin(), host.end()).c_str(), port, 0);
-    if (!hConnect) {
-        WinHttpCloseHandle(hSession);
+    // split into scheme/host/port/path
+    if (!parseUrl(url, scheme, host, port, path)) {
         return false;
     }
 
-    HINTERNET hRequest = WinHttpOpenRequest(
-        hConnect,
+    // creating an http session
+    HINTERNET session = WinHttpOpen(L"MinecraftPE/0.6.1", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+    if (!session) {
+        return false;
+    }
+    HINTERNET connectHandle = WinHttpConnect(session, std::wstring(host.begin(), host.end()).c_str(), port, 0);
+    if (!connectHandle) {
+        WinHttpCloseHandle(session);
+        return false;
+    }
+
+    HINTERNET requestHandle = WinHttpOpenRequest(
+        connectHandle,
         L"GET",
         std::wstring(path.begin(), path.end()).c_str(),
         NULL,
@@ -64,109 +82,245 @@ bool downloadHttpsWinHttp(const std::string& url, std::vector<unsigned char>& ou
         WINHTTP_FLAG_SECURE
     );
 
-    if (!hRequest) {
-        WinHttpCloseHandle(hConnect);
-        WinHttpCloseHandle(hSession);
+    if (!requestHandle) {
+        WinHttpCloseHandle(connectHandle);
+        WinHttpCloseHandle(session);
         return false;
     }
 
     DWORD redirectPolicy = WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS;
-    WinHttpSetOption(hRequest, WINHTTP_OPTION_REDIRECT_POLICY, &redirectPolicy, sizeof(redirectPolicy));
+    WinHttpSetOption(requestHandle, WINHTTP_OPTION_REDIRECT_POLICY, &redirectPolicy, sizeof(redirectPolicy));
 
-    BOOL result = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
-    if (!result) {
-        WinHttpCloseHandle(hRequest);
-        WinHttpCloseHandle(hConnect);
-        WinHttpCloseHandle(hSession);
+    BOOL sendResult = WinHttpSendRequest(requestHandle, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    if (!sendResult) {
+        WinHttpCloseHandle(requestHandle);
+        WinHttpCloseHandle(connectHandle);
+        WinHttpCloseHandle(session);
         return false;
     }
 
-    result = WinHttpReceiveResponse(hRequest, NULL);
-    if (!result) {
-        WinHttpCloseHandle(hRequest);
-        WinHttpCloseHandle(hConnect);
-        WinHttpCloseHandle(hSession);
+    BOOL receiveResult = WinHttpReceiveResponse(requestHandle, NULL);
+    if (!receiveResult) {
+        WinHttpCloseHandle(requestHandle);
+        WinHttpCloseHandle(connectHandle);
+        WinHttpCloseHandle(session);
         return false;
     }
 
     DWORD bytesAvailable = 0;
-    while (WinHttpQueryDataAvailable(hRequest, &bytesAvailable) && bytesAvailable > 0) {
+    while (WinHttpQueryDataAvailable(requestHandle, &bytesAvailable) && bytesAvailable > 0) {
         std::vector<unsigned char> buffer(bytesAvailable);
         DWORD bytesRead = 0;
-        if (!WinHttpReadData(hRequest, buffer.data(), bytesAvailable, &bytesRead) || bytesRead == 0)
+        if (!WinHttpReadData(requestHandle, buffer.data(), bytesAvailable, &bytesRead) || bytesRead == 0)
             break;
-        outBody.insert(outBody.end(), buffer.begin(), buffer.begin() + bytesRead);
+        outputBody.insert(outputBody.end(), buffer.begin(), buffer.begin() + bytesRead);
     }
 
-    WinHttpCloseHandle(hRequest);
-    WinHttpCloseHandle(hConnect);
-    WinHttpCloseHandle(hSession);
+    WinHttpCloseHandle(requestHandle);
+    WinHttpCloseHandle(connectHandle);
+    WinHttpCloseHandle(session);
 
-    return !outBody.empty();
+    return !outputBody.empty();
 }
 
 #endif
 
-std::string toLower(const std::string& s) {
-    std::string out = s;
-    std::transform(out.begin(), out.end(), out.begin(), ::tolower);
-    return out;
+#if defined(HTTPCLIENT_USE_OPENSSL) && !defined(_WIN32)
+bool downloadHttpsOpenSSL(const std::string& url, std::vector<unsigned char>& outputBody) {
+    outputBody.clear();
+
+    std::string scheme;
+    std::string host;
+    std::string path;
+    int port = 0;
+
+    // split into scheme/host/port/path
+    if (!parseUrl(url, scheme, host, port, path)) {
+        return false;
+    }
+
+    int socketFd = -1;
+    if (!resolveAndConnect(host, port, socketFd)) {
+        return false;
+    }
+
+    SSL_library_init();
+    SSL_load_error_strings();
+    OpenSSL_add_all_algorithms();
+
+    SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
+    if (!ctx) {
+        close(socketFd);
+        return false;
+    }
+
+    // do not validate certificates we donst ship ca roots.
+    SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, nullptr);
+
+    SSL* ssl = SSL_new(ctx);
+    if (!ssl) {
+        SSL_CTX_free(ctx);
+        close(socketFd);
+        return false;
+    }
+
+    SSL_set_fd(ssl, socketFd);
+    SSL_set_tlsext_host_name(ssl, host.c_str());
+
+    if (SSL_connect(ssl) != 1) {
+        SSL_free(ssl);
+        SSL_CTX_free(ctx);
+        close(socketFd);
+        return false;
+    }
+
+    std::string httpRequest;
+    httpRequest += "GET ";
+    httpRequest += path;
+    httpRequest += " HTTP/1.1\r\n";
+    httpRequest += "Host: ";
+    httpRequest += host;
+    httpRequest += "\r\n";
+    httpRequest += "User-Agent: MinecraftPE\r\n";
+    httpRequest += "Connection: close\r\n";
+    httpRequest += "\r\n";
+
+    if (SSL_write(ssl, httpRequest.data(), (int)httpRequest.size()) <= 0) {
+        SSL_shutdown(ssl);
+        SSL_free(ssl);
+        SSL_CTX_free(ctx);
+        close(socketFd);
+        return false;
+    }
+
+    std::vector<unsigned char> rawResponse;
+
+    const int BUFFER_SIZE = 4096;
+    unsigned char buffer[BUFFER_SIZE];
+    while (true) {
+        int bytesRead = SSL_read(ssl, buffer, BUFFER_SIZE);
+        if (bytesRead <= 0)
+            break;
+        rawResponse.insert(rawResponse.end(), buffer, buffer + bytesRead);
+    }
+
+    SSL_shutdown(ssl);
+    SSL_free(ssl);
+    SSL_CTX_free(ctx);
+    close(socketFd);
+
+    if (rawResponse.empty()) {
+        return false;
+    }
+
+    const std::string headerDelimiter = "\r\n\r\n";
+    auto headerEndIt = std::search(rawResponse.begin(), rawResponse.end(), headerDelimiter.begin(), headerDelimiter.end());
+    if (headerEndIt == rawResponse.end()) {
+        return false;
+    }
+
+    size_t headerLength = headerEndIt - rawResponse.begin();
+    std::string headers(reinterpret_cast<const char*>(rawResponse.data()), headerLength);
+    size_t bodyStartIndex = headerLength + headerDelimiter.size();
+
+    int statusCode = 0;
+    if (!extractStatusCode(headers, statusCode)) {
+        return false;
+    }
+
+    if (statusCode != 200) {
+        std::string bodySnippet;
+        size_t len = rawResponse.size() < 1024 ? rawResponse.size() : 1024;
+        bodySnippet.assign(rawResponse.begin(), rawResponse.begin() + len);
+        LOGW("[HttpClient] HTTP status %d for %s\n", statusCode, url.c_str());
+        LOGW("[HttpClient] Headers:\n%s\n", headers.c_str());
+        LOGW("[HttpClient] Body (up to 1024 bytes):\n%s\n", bodySnippet.c_str());
+        return false;
+    }
+
+    outputBody.assign(rawResponse.begin() + bodyStartIndex, rawResponse.end());
+    return true;
+}
+#endif
+
+std::string toLower(const std::string& input) {
+    std::string output = input;
+    std::transform(output.begin(), output.end(), output.begin(), ::tolower);
+    return output;
 }
 
-bool parseUrl(const std::string& url, std::string& scheme, std::string& host, int& port, std::string& path) {
-    scheme.clear();
-    host.clear();
-    path.clear();
-    port = 0;
+bool parseUrl(const std::string& url, std::string& schemeOut, std::string& hostOut, int& portOut, std::string& pathOut) {
+    schemeOut.clear();
+    hostOut.clear();
+    pathOut.clear();
+    portOut = 0;
 
-    // Very simple URL parser.
-    // url format: scheme://host[:port]/path
-    auto pos = url.find("://");
-    if (pos == std::string::npos) return false;
-    scheme = toLower(url.substr(0, pos));
-    size_t start = pos + 3;
+    size_t schemeSep = url.find("://");
+    if (schemeSep == std::string::npos) {
+        return false;
+    }
 
-    size_t slash = url.find('/', start);
-    std::string hostPort = (slash == std::string::npos) ? url.substr(start) : url.substr(start, slash - start);
-    path = (slash == std::string::npos) ? "/" : url.substr(slash);
+    schemeOut = toLower(url.substr(0, schemeSep));
+    size_t hostStart = schemeSep + 3;
 
-    size_t colon = hostPort.find(':');
-    if (colon != std::string::npos) {
-        host = hostPort.substr(0, colon);
-        port = atoi(hostPort.c_str() + colon + 1);
+    // split host/port from the path
+    size_t pathStart = url.find('/', hostStart);
+    std::string hostPort;
+    if (pathStart == std::string::npos) {
+        // no path part, so just use / as the default
+        hostPort = url.substr(hostStart);
+        pathOut = "/";
     } else {
-        host = hostPort;
+        hostPort = url.substr(hostStart, pathStart - hostStart);
+        pathOut = url.substr(pathStart);
     }
 
-    if (scheme == "http") {
-        if (port == 0) port = 80;
-    } else if (scheme == "https") {
-        if (port == 0) port = 443;
+    // if the host includes a ":port", split it out
+    size_t portSep = hostPort.find(':');
+    if (portSep != std::string::npos) {
+        hostOut = hostPort.substr(0, portSep);
+        portOut = atoi(hostPort.c_str() + portSep + 1);
+    } else {
+        hostOut = hostPort;
     }
 
-    return !host.empty() && !scheme.empty();
+    // fill in default ports for known schemes
+    if (schemeOut == "http") {
+        if (portOut == 0) portOut = 80;
+    } else if (schemeOut == "https") {
+        if (portOut == 0) portOut = 443;
+    }
+
+    // return success only if we got at a scheme and host
+    return !hostOut.empty() && !schemeOut.empty();
 }
 
-bool readAll(int sockfd, std::vector<unsigned char>& out) {
-    const int BUF_SIZE = 4096;
-    unsigned char buffer[BUF_SIZE];
+// read all available data from a tcp socket until the connection is closed
+// data is appended to outData
+bool readAll(int socketFd, std::vector<unsigned char>& outData) {
+    const int BUFFER_SIZE = 4096;
+    unsigned char buffer[BUFFER_SIZE];
 
     while (true) {
-        int received = recv(sockfd, (char*)buffer, BUF_SIZE, 0);
-        if (received <= 0)
+        int bytesRead = recv(socketFd, (char*)buffer, BUFFER_SIZE, 0);
+        if (bytesRead <= 0)
             break;
-        out.insert(out.end(), buffer, buffer + received);
+        outData.insert(outData.end(), buffer, buffer + bytesRead);
     }
+
     return true;
 }
 
-bool resolveAndConnect(const std::string& host, int port, int& outSock) {
+// resolve a hostname and connect a tcp socket to the given host:port
+// on windows this also makes sure winsock is initialized
+// if successful, outSocket will contain a connected socket descriptor
+bool resolveAndConnect(const std::string& host, int port, int& outSocket) {
 #if defined(_WIN32)
-    static bool initialized = false;
-    if (!initialized) {
+    static bool wsaStarted = false;
+    if (!wsaStarted) {
         WSADATA wsaData;
         WSAStartup(MAKEWORD(2, 2), &wsaData);
-        initialized = true;
+        wsaStarted = true;
     }
 #endif
 
@@ -174,60 +328,95 @@ bool resolveAndConnect(const std::string& host, int port, int& outSock) {
     struct addrinfo* result = NULL;
 
     memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_UNSPEC;   // ipv4 ipv6
+    hints.ai_socktype = SOCK_STREAM; // tcp
 
+    // getaddrinfo expects strings for port and host
     std::ostringstream portStream;
     portStream << port;
-    const std::string portStr = portStream.str();
-    if (getaddrinfo(host.c_str(), portStr.c_str(), &hints, &result) != 0)
+    const std::string portString = portStream.str();
+
+    if (getaddrinfo(host.c_str(), portString.c_str(), &hints, &result) != 0) {
         return false;
+    }
 
-    int sock = -1;
-    for (struct addrinfo* rp = result; rp != NULL; rp = rp->ai_next) {
-        sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-        if (sock < 0) continue;
-        if (connect(sock, rp->ai_addr, (int)rp->ai_addrlen) == 0)
-            break; // success
+    int socketFd = -1;
 
+    // try each resolved address until we successfully connect
+    for (struct addrinfo* addr = result; addr != NULL; addr = addr->ai_next) {
+        socketFd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        if (socketFd < 0) {
+            continue;
+        }
+
+        if (connect(socketFd, addr->ai_addr, (int)addr->ai_addrlen) == 0) {
+            // connected! yay!
+            break;
+        }
+
+        // failed to connect, try next
 #if defined(_WIN32)
-        closesocket(sock);
+        closesocket(socketFd);
 #else
-        close(sock);
+        close(socketFd);
 #endif
-        sock = -1;
+        socketFd = -1;
     }
 
     freeaddrinfo(result);
 
-    if (sock < 0)
+    if (socketFd < 0) {
         return false;
+    }
 
-    outSock = sock;
+    outSocket = socketFd;
     return true;
 }
 
 std::string getHeaderValue(const std::string& headers, const std::string& key) {
-    std::string lower = toLower(headers);
-    std::string lowerKey = toLower(key);
-    size_t pos = lower.find(lowerKey);
-    if (pos == std::string::npos) return "";
-    size_t colon = lower.find(':', pos + lowerKey.size());
-    if (colon == std::string::npos) return "";
-    size_t start = colon + 1;
-    while (start < lower.size() && (lower[start] == ' ' || lower[start] == '\t')) start++;
-    size_t end = lower.find('\r', start);
-    if (end == std::string::npos) end = lower.find('\n', start);
-    if (end == std::string::npos) end = lower.size();
-    return headers.substr(start, end - start);
+    std::string headersLower = toLower(headers);
+    std::string keyLower = toLower(key);
+
+    size_t pos = headersLower.find(keyLower);
+    if (pos == std::string::npos) {
+        return "";
+    }
+
+    size_t colonPos = headersLower.find(':', pos + keyLower.size());
+    if (colonPos == std::string::npos) {
+        return "";
+    }
+
+    size_t valueStart = colonPos + 1;
+    while (valueStart < headersLower.size() && (headersLower[valueStart] == ' ' || headersLower[valueStart] == '\t')) {
+        valueStart++;
+    }
+
+    size_t valueEnd = headersLower.find('\r', valueStart);
+    if (valueEnd == std::string::npos) {
+        valueEnd = headersLower.find('\n', valueStart);
+    }
+    if (valueEnd == std::string::npos) {
+        valueEnd = headersLower.size();
+    }
+
+    return headers.substr(valueStart, valueEnd - valueStart);
 }
 
+// wxtract the http status code from the first response line (foex example "HTTP/1.1 200 OK")
+// returns false on malformed responses.
 bool extractStatusCode(const std::string& headers, int& outStatus) {
-    size_t pos = headers.find(" ");
-    if (pos == std::string::npos) return false;
-    size_t pos2 = headers.find(" ", pos + 1);
-    if (pos2 == std::string::npos) return false;
-    std::string code = headers.substr(pos + 1, pos2 - pos - 1);
+    size_t firstSpace = headers.find(' ');
+    if (firstSpace == std::string::npos) {
+        return false;
+    }
+
+    size_t secondSpace = headers.find(' ', firstSpace + 1);
+    if (secondSpace == std::string::npos) {
+        return false;
+    }
+
+    std::string code = headers.substr(firstSpace + 1, secondSpace - firstSpace - 1);
     outStatus = atoi(code.c_str());
     return true;
 }
@@ -239,96 +428,121 @@ namespace HttpClient {
 bool download(const std::string& url, std::vector<unsigned char>& outBody) {
     outBody.clear();
 
-    std::string currentUrl = url;
-    for (int redirect = 0; redirect < 3; ++redirect) {
-        std::string scheme, host, path;
-        int port = 0;
-        if (!parseUrl(currentUrl, scheme, host, port, path)) {
-            LOGW("[HttpClient] parseUrl failed for '%s'\n", currentUrl.c_str());
+    // keep a copy of the current url so we can follow redirects
+    std::string urlToDownload = url;
+
+    // follow up to 3 redirects (301/302/307/308)
+    // if a redirect is encountered we loop again with the new loaction url
+    for (int redirectCount = 0; redirectCount < 3; ++redirectCount) {
+        std::string urlScheme;
+        std::string urlHost;
+        std::string urlPath;
+        int urlPort = 0;
+
+        // parse the url into its components so we can open a socket/start an https request
+        if (!parseUrl(urlToDownload, urlScheme, urlHost, urlPort, urlPath)) {
+            LOGW("[HttpClient] parseUrl failed for '%s'\n", urlToDownload.c_str());
             return false;
         }
 
-        if (scheme == "https") {
+        // for https we delegate to winhttp on windows, since this simple client
+        // only supports plain http over raw sockets
+        if (urlScheme == "https") {
 #if defined(_WIN32)
-            LOGI("[HttpClient] using WinHTTP for HTTPS URL %s\n", currentUrl.c_str());
-            return downloadHttpsWinHttp(currentUrl, outBody);
+            LOGI("[HttpClient] using WinHTTP for HTTPS URL %s\n", urlToDownload.c_str());
+            return downloadHttpsWinHttp(urlToDownload, outBody);
+#elif defined(HTTPCLIENT_USE_OPENSSL)
+            LOGI("[HttpClient] using OpenSSL for HTTPS URL %s\n", urlToDownload.c_str());
+            return downloadHttpsOpenSSL(urlToDownload, outBody);
 #else
-            LOGW("[HttpClient] HTTPS not supported on this platform: %s\n", currentUrl.c_str());
+            LOGW("[HttpClient] HTTPS not supported on this platform: %s\n", urlToDownload.c_str());
             return false;
 #endif
         }
 
-        if (scheme != "http") {
-            LOGW("[HttpClient] unsupported scheme '%s' for URL '%s'\n", scheme.c_str(), currentUrl.c_str());
+        // we only support plain http for all non-windows platforms for nw
+        if (urlScheme != "http") {
+            LOGW("[HttpClient] unsupported scheme '%s' for URL '%s'\n", urlScheme.c_str(), urlToDownload.c_str());
             return false;
         }
 
-        int sock = -1;
-        if (!resolveAndConnect(host, port, sock)) {
-            LOGW("[HttpClient] resolve/connect failed for %s:%d\n", host.c_str(), port);
+        int socketFd = -1;
+        if (!resolveAndConnect(urlHost, urlPort, socketFd)) {
+            LOGW("[HttpClient] resolve/connect failed for %s:%d\n", urlHost.c_str(), urlPort);
             return false;
         }
 
-        std::string request = "GET " + path + " HTTP/1.1\r\n";
-        request += "Host: " + host + "\r\n";
-        request += "User-Agent: MinecraftPE\r\n";
-        request += "Connection: close\r\n";
-        request += "\r\n";
+        std::string httpRequest;
+        httpRequest += "GET ";
+        httpRequest += urlPath;
+        httpRequest += " HTTP/1.1\r\n";
+        httpRequest += "Host: ";
+        httpRequest += urlHost;
+        httpRequest += "\r\n";
+        httpRequest += "User-Agent: MinecraftPE\r\n";
+        httpRequest += "Connection: close\r\n";
+        httpRequest += "\r\n";
 
-        send(sock, request.c_str(), (int)request.size(), 0);
+        send(socketFd, httpRequest.c_str(), (int)httpRequest.size(), 0);
 
-        std::vector<unsigned char> raw;
-        readAll(sock, raw);
+        std::vector<unsigned char> rawResponse;
+        readAll(socketFd, rawResponse);
 
 #if defined(_WIN32)
-        closesocket(sock);
+        closesocket(socketFd);
 #else
-        close(sock);
+        close(socketFd);
 #endif
 
-        if (raw.empty()) {
-            LOGW("[HttpClient] no response data from %s\n", currentUrl.c_str());
+        if (rawResponse.empty()) {
+            LOGW("[HttpClient] no response data from %s\n", urlToDownload.c_str());
             return false;
         }
 
-        // split headers and body
-        const std::string delim = "\r\n\r\n";
-        auto it = std::search(raw.begin(), raw.end(), delim.begin(), delim.end());
-        if (it == raw.end())
+        // find the end of the headers (\r\n\r\n) so we can split headers and body
+        const std::string headerDelimiter = "\r\n\r\n";
+        auto headerEndIt = std::search(rawResponse.begin(), rawResponse.end(), headerDelimiter.begin(), headerDelimiter.end());
+        if (headerEndIt == rawResponse.end()) {
+            // we didn't find the end of headers :(
             return false;
+        }
 
-        size_t headerLen = it - raw.begin();
-        std::string headers(reinterpret_cast<const char*>(raw.data()), headerLen);
-        size_t bodyStart = headerLen + delim.size();
+        // extract the header block as a string so we can inspect it
+        size_t headerLength = headerEndIt - rawResponse.begin();
+        std::string headers(reinterpret_cast<const char*>(rawResponse.data()), headerLength);
+        size_t bodyStartIndex = headerLength + headerDelimiter.size();
 
-        int status = 0;
-        if (!extractStatusCode(headers, status))
+        int statusCode = 0;
+        if (!extractStatusCode(headers, statusCode)) {
             return false;
+        }
 
-        if (status == 301 || status == 302 || status == 307 || status == 308) {
+        if (statusCode == 301 || statusCode == 302 || statusCode == 307 || statusCode == 308) {
             std::string location = getHeaderValue(headers, "Location");
             if (location.empty()) {
-                LOGW("[HttpClient] redirect without Location header for %s\n", currentUrl.c_str());
+                LOGW("[HttpClient] redirect without Location header for %s\n", urlToDownload.c_str());
                 return false;
             }
-            LOGI("[HttpClient] redirect %s -> %s\n", currentUrl.c_str(), location.c_str());
-            currentUrl = location;
+            LOGI("[HttpClient] redirect %s -> %s\n", urlToDownload.c_str(), location.c_str());
+            urlToDownload = location;
             continue;
         }
 
-        if (status != 200) {
+        if (statusCode != 200) {
+            // if we got any status other than 200 OK, log what happened
             std::string bodySnippet;
             if (!outBody.empty()) {
                 size_t len = outBody.size() < 1024 ? outBody.size() : 1024;
                 bodySnippet.assign(outBody.begin(), outBody.begin() + len);
             }
-            LOGW("[HttpClient] HTTP status %d for %s\n", status, currentUrl.c_str());
+            LOGW("[HttpClient] HTTP status %d for %s\n", statusCode, urlToDownload.c_str());
             LOGW("[HttpClient] Headers:\n%s\n", headers.c_str());
             LOGW("[HttpClient] Body (up to 1024 bytes):\n%s\n", bodySnippet.c_str());
             return false;
         }
 
-        outBody.assign(raw.begin() + bodyStart, raw.end());
+        // everything looks good! copy just the body bytes (after the headers) into outBody.
+        outBody.assign(rawResponse.begin() + bodyStartIndex, rawResponse.end());
         return true;
     }
 
