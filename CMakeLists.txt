@@ -334,6 +334,13 @@ set(GIT_REPO "https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1")
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
 
+if(NOT UNIX)
+install(FILES
+        $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>
+        DESTINATION .
+)
+endif()
+
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/data" DESTINATION .)
 
 string(TIMESTAMP CURRENT_DATE "%Y-%m-%d")

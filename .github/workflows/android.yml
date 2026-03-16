@@ -1,0 +1,36 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Android NDK r14b
+        shell: powershell
+        run: |
+          Invoke-WebRequest `
+            -Uri "http://dl.google.com/android/repository/android-ndk-r14b-windows-x86_64.zip" `
+            -OutFile "ndk.zip"
+
+      - name: Extract NDK
+        shell: powershell
+        run: |
+          Expand-Archive ndk.zip C:\
+
+      - name: Verify NDK path
+        shell: powershell
+        run: |
+          Test-Path "C:\android-ndk-r14b"
+
+      - name: Run build script
+        shell: powershell
+        run: |
+          ./build.ps1
