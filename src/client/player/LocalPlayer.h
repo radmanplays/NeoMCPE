@@ -4,8 +4,6 @@
 //package net.minecraft.client.player;
 
 #include "input/IMoveInput.h"
-#include "../User.h"
-#include "../../platform/input/Keyboard.h"
 #include "../../util/SmoothFloat.h"
 #include "../../world/entity/player/Player.h"
 
@@ -17,7 +15,7 @@ class LocalPlayer: public Player
 {
 	typedef Player super;
 public:
-	LocalPlayer(Minecraft* minecraft, Level* level, User* user, int dimension, bool isCreative);
+	LocalPlayer(Minecraft* minecraft, Level* level, const std::string& username, int dimension, bool isCreative);
 	~LocalPlayer();
 
 	void _init();

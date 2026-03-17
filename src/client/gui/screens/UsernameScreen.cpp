@@ -1,7 +1,6 @@
 #include "UsernameScreen.h"
 #include "StartMenuScreen.h"
 #include "../../Minecraft.h"
-#include "../../User.h"
 #include "../Font.h"
 #include "../components/Button.h"
 #include "../../../platform/input/Keyboard.h"
@@ -75,7 +74,6 @@ void UsernameScreen::buttonClicked(Button* button)
     if (button == &_btnDone && !tUsername.text.empty()) {
         minecraft->options.set(OPTIONS_USERNAME, tUsername.text);
         minecraft->options.save();
-        minecraft->user->name = tUsername.text;
         minecraft->setScreen(NULL); // goes to StartMenuScreen
     }
 }

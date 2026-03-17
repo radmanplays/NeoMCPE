@@ -242,11 +242,12 @@ static void* fetchSkinForPlayer(void* param) {
         fwrite(skinData.data(), 1, skinData.size(), fp);
         fclose(fp);
         LOGI("[Skin] cached skin to %s\n", cacheFile.c_str());
-    } else {
+
+		player->setTextureName("skins/" + player->name + ".png");
+	} else {
         LOGW("[Skin] failed to write skin cache %s\n", cacheFile.c_str());
     }
 
-    player->setTextureName("skins/" + player->name + ".png");
     return NULL;
 }
 
@@ -287,11 +288,12 @@ static void* fetchCapeForPlayer(void* param) {
         fwrite(capeData.data(), 1, capeData.size(), fp);
         fclose(fp);
         LOGI("[Cape] cached cape to %s\n", cacheFile.c_str());
+
+		player->setCapeTextureName("capes/" + player->name + ".png");
     } else {
         LOGW("[Cape] failed to write cape cache %s\n", cacheFile.c_str());
     }
 
-    player->setCapeTextureName("capes/" + player->name + ".png");
     return NULL;
 }
 
@@ -310,7 +312,7 @@ static bool isJumpable(int tileId) {
 
 } // anonymous namespace
 
-LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, User* user, int dimension, bool isCreative)
+LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, const std::string& username, int dimension, bool isCreative)
 :	Player(level, isCreative),
 	minecraft(minecraft),
 	input(NULL),
@@ -326,9 +328,10 @@ LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, User* user, int dim
 	_init();
 
 #ifndef STANDALONE_SERVER
-	if (user != NULL && !user->name.empty()) {
-		this->name = user->name;
+	if (!name.empty()) {
+		this->name = name;
 		// Fetch user skin and cape from Mojang servers in the background (avoids blocking the main thread)
+		// TODO: Fix this memory leak
 		new CThread(fetchSkinForPlayer, this);
 		new CThread(fetchCapeForPlayer, this);
 	}

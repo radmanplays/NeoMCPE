@@ -13,7 +13,6 @@
 //#include "../network/RakNetInstance.h"
 #include "../world/phys/HitResult.h"
 
-class User;
 class Level;
 class LocalPlayer;
 class IInputHolder;
@@ -165,7 +164,6 @@ public:
 	int lastTickTime;
 	float ticksSinceLastUpdate;
 
-	User*  user;
 	Level* level;
 
 	LocalPlayer*	player;

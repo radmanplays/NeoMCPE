@@ -5,6 +5,7 @@
 #include "../../world/level/Level.h"
 #include "../../world/item/ItemInstance.h"
 #include "../player/LocalPlayer.h"
+#include "client/Options.h"
 #ifndef STANDALONE_SERVER
 #include "../sound/SoundEngine.h"
 #include "../particle/ParticleEngine.h"
@@ -27,7 +28,7 @@ GameMode::GameMode( Minecraft* minecraft)
 
 /*virtual*/
 Player* GameMode::createPlayer(Level* level) {
-    return new LocalPlayer(minecraft, level, minecraft->user, level->dimension->id, isCreativeType());
+    return new LocalPlayer(minecraft, level, minecraft->options.getStringValue(OPTIONS_USERNAME), level->dimension->id, isCreativeType());
 }
 
 /*virtual*/

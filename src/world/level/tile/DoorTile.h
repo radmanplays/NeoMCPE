@@ -25,38 +25,38 @@ public:
 	static const int C_RIGHT_HINGE_MASK = 16;
 
 	DoorTile(int id, const Material* material);
-	int getTexture(LevelSource* level, int x, int y, int z, int face);
+	int getTexture(LevelSource* level, int x, int y, int z, int face) override;
 
 	bool blocksLight();
-    bool isSolidRender();
-    bool isCubeShaped();
-    int getRenderShape();
-	int getRenderLayer();
+    bool isSolidRender() override;
+    bool isCubeShaped() override;
+    int getRenderShape() override;
+	int getRenderLayer() override;
 
-	AABB getTileAABB(Level* level, int x, int y, int z);
-    AABB* getAABB(Level* level, int x, int y, int z);
+	AABB getTileAABB(Level* level, int x, int y, int z) override;
+    AABB* getAABB(Level* level, int x, int y, int z) override;
 
-    void updateShape(LevelSource* level, int x, int y, int z);
+    void updateShape(LevelSource* level, int x, int y, int z) override;
     void setShape(int compositeData);
 
-    void attack(Level* level, int x, int y, int z, Player* player);
-    bool use(Level* level, int x, int y, int z, Player* player);
+    void attack(Level* level, int x, int y, int z, Player* player) override;
+    bool use(Level* level, int x, int y, int z, Player* player) override;
 
     void setOpen(Level* level, int x, int y, int z, bool shouldOpen);
 	static bool isOpen(LevelSource* level, int x, int y, int z);
 
-	void neighborChanged(Level* level, int x, int y, int z, int type);
+	void neighborChanged(Level* level, int x, int y, int z, int type) override;
 
-    int getResource(int data, Random* random);
+    int getResource(int data, Random* random) override;
 
     // override to avoid duplicate drops when upper half is mined directly
     void playerDestroy(Level* level, Player* player, int x, int y, int z, int data) override;
 
-    HitResult clip(Level* level, int xt, int yt, int zt, const Vec3& a, const Vec3& b);
+    HitResult clip(Level* level, int xt, int yt, int zt, const Vec3& a, const Vec3& b) override;
 
     int getDir(LevelSource* level, int x, int y, int z);
 
-    bool mayPlace(Level* level, int x, int y, int z, unsigned char face);
+    bool mayPlace(Level* level, int x, int y, int z, unsigned char face) override;
 
 	static int getCompositeData(LevelSource* level, int x, int y, int z);
 };

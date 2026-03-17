@@ -1,5 +1,6 @@
 
 #include "ClientSideNetworkHandler.h"
+#include "client/Options.h"
 #include "packet/PacketInclude.h"
 #include "RakNetInstance.h"
 #include "../world/level/chunk/ChunkSource.h"
@@ -85,7 +86,7 @@ void ClientSideNetworkHandler::onConnect(const RakNet::RakNetGUID& hostGuid)
 	serverGuid = hostGuid;
 
 	clearChunksLoaded();
-	LoginPacket packet(minecraft->user->name.c_str(), SharedConstants::NetworkProtocolVersion);
+	LoginPacket packet(minecraft->options.getStringValue(OPTIONS_USERNAME).c_str(), SharedConstants::NetworkProtocolVersion);
 	raknetInstance->send(packet);
 }
 
@@ -157,7 +158,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& source, StartGam
 	level->isClientSide = true;
 
 	bool isCreative = (packet->gameType == GameType::Creative);
-	LocalPlayer* player = new LocalPlayer(minecraft, level, minecraft->user, level->dimension->id, isCreative);
+	LocalPlayer* player = new LocalPlayer(minecraft, level, minecraft->options.getStringValue(OPTIONS_USERNAME), level->dimension->id, isCreative);
 	player->owner = rakPeer->GetMyGUID();
 	player->entityId = packet->entityId;
 	player->moveTo(packet->x, packet->y, packet->z, player->yRot, player->xRot);

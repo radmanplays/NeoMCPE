@@ -116,8 +116,7 @@ int Minecraft::customDebugId = Minecraft::CDI_NONE;
 
 bool Minecraft::useAmbientOcclusion = false;
 
-Minecraft::Minecraft()
-:	user(NULL),
+Minecraft::Minecraft() :	
 	level(NULL),
 	player(NULL),
 	cameraTargetPlayer(NULL),
@@ -222,7 +221,6 @@ Minecraft::~Minecraft()
 	}
 
 	//delete player;
-	delete user;
 	delete inputHolder;
 
 	delete storageSource;
@@ -1145,10 +1143,8 @@ void Minecraft::init()
 	checkGlError("Init complete");
 #endif
 
-	user = new User(options.getStringValue(OPTIONS_USERNAME), "");
 	setIsCreativeMode(false); // false means it's Survival Mode
 	reloadOptions();
-
 }
 
 void Minecraft::setSize(int w, int h) {
@@ -1334,9 +1330,9 @@ void Minecraft::hostMultiplayer(int port) {
 #if !defined(NO_NETWORK)
 	netCallback = new ServerSideNetworkHandler(this, raknetInstance);
     #ifdef STANDALONE_SERVER
-        raknetInstance->host(user->name, port, 16);
+        raknetInstance->host(options.getStringValue(OPTIONS_USERNAME), port, 16);
     #else
-        raknetInstance->host(user->name, port);
+        raknetInstance->host(options.getStringValue(OPTIONS_USERNAME), port);
     #endif
 #endif
 }
@@ -1393,8 +1389,10 @@ void Minecraft::_levelGenerated()
 
 	this->cameraTargetPlayer = player;
 
+	std::string serverName = options.getStringValue(OPTIONS_USERNAME) + " - " + level->getLevelData()->levelName;
+
 	if (raknetInstance->isServer())
-		raknetInstance->announceServer(user->name);
+		raknetInstance->announceServer(serverName);
 
 	if (netCallback) {
 		netCallback->levelGenerated(level);
