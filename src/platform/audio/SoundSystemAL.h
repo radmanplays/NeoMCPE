@@ -3,8 +3,14 @@
 
 #include "SoundSystem.h"
 
-#include <AL/al.h>
-#include <AL/alc.h>
+// If audio breaks for other platforms, this is probably why. Here, I'm just calling where Apple's OpenAL headers live (they arent in just "AL"
+#if defined(__APPLE__)
+    #include <OpenAL/al.h>
+    #include <OpenAL/alc.h>
+#else
+    #include <AL/al.h>
+    #include <AL/alc.h>
+#endif
 
 #include <vector>
 #include <list>
