@@ -1,5 +1,8 @@
 #include "Option.h"
 #include <sstream>
+#include <cstdio>
+
+Option::~Option() {}
 
 bool Option::parse_bool_like(const std::string& value, bool& out) {
     if (value == "true" || value == "YES") {
@@ -23,7 +26,7 @@ bool OptionFloat::parse(const std::string& value) {
         return true;
     }
 
-    return std::sscanf(value.c_str(), "%f", &m_value) == 1;
+    return sscanf(value.c_str(), "%f", &m_value) == 1;
 }
 bool OptionInt::parse(const std::string& value) {
     bool b;
@@ -32,7 +35,7 @@ bool OptionInt::parse(const std::string& value) {
         return true;
     }
 
-    return std::sscanf(value.c_str(), "%d", &m_value) == 1;
+    return sscanf(value.c_str(), "%d", &m_value) == 1;
 }
 bool OptionBool::parse(const std::string& value) {
     if (value == "0") {

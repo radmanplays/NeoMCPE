@@ -655,7 +655,7 @@ void GameRenderer::pick(float a) {
     float range = mc->gameMode->getPickRange();
     bool isPicking = true;
 #ifndef PLATFORM_DESKTOP
-    bool freeform = mc->useTouchscreen()  && !mc->options.isJoyTouchArea;
+    bool freeform = mc->useTouchscreen()  && !mc->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA);
 #else 
     bool freeform = false;
 #endif

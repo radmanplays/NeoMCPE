@@ -350,8 +350,8 @@ void LocalPlayer::calculateFlight(float xa, float ya, float za) {
     za = za * flySpeed;
 
 #ifdef ANDROID
-    if (Keyboard::isKeyDown(103)) ya = .2f * minecraft->options.flySpeed;
-    if (Keyboard::isKeyDown(102)) ya = -.2f * minecraft->options.flySpeed;
+    if (Keyboard::isKeyDown(103)) ya = .2f * flySpeed;
+    if (Keyboard::isKeyDown(102)) ya = -.2f * flySpeed;
 #else
     if (Keyboard::isKeyDown(Keyboard::KEY_E)) ya = .2f * flySpeed;
     if (Keyboard::isKeyDown(Keyboard::KEY_Q)) ya = -.2f * flySpeed;

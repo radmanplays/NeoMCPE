@@ -24,6 +24,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/Options.cpp \
 ../../../src/client/OptionsFile.cpp \
 ../../../src/client/OptionStrings.cpp \
+../../../src/client/Option.cpp \
 ../../../src/client/gamemode/GameMode.cpp \
 ../../../src/client/gamemode/CreativeMode.cpp \
 ../../../src/client/gamemode/SurvivalMode.cpp \
@@ -37,14 +38,14 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/gui/components/NinePatch.cpp \
 ../../../src/client/gui/components/OptionsGroup.cpp \
 ../../../src/client/gui/components/OptionsItem.cpp \
-../../../src/client/gui/components/OptionsPane.cpp \
+../../../src/client/gui/components/KeyOption.cpp \
+../../../src/client/gui/components/TextOption.cpp \
 ../../../src/client/gui/components/RolledSelectionListH.cpp \
 ../../../src/client/gui/components/RolledSelectionListV.cpp \
 ../../../src/client/gui/components/ScrolledSelectionList.cpp \
 ../../../src/client/gui/components/ScrollingPane.cpp \
 ../../../src/client/gui/components/Slider.cpp \
 ../../../src/client/gui/components/TextBox.cpp \
-../../../src/client/gui/components/SmallButton.cpp \
 ../../../src/client/gui/Font.cpp \
 ../../../src/client/gui/Gui.cpp \
 ../../../src/client/gui/GuiComponent.cpp \
@@ -256,7 +257,8 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/world/phys/HitResult.cpp
 
 LOCAL_CFLAGS := -DPLATFORM_ANDROID -DPRE_ANDROID23 -Wno-narrowing $(LOCAL_CFLAGS)
-LOCAL_CPPFLAGS := -std=c++11
+LOCAL_CPPFLAGS := -std=c++14 -frtti
+LOCAL_CPPFLAGS += -frtti
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../src
 
 #LOCAL_CFLAGS := -DANDROID_PUBLISH -DDEMO_MODE $(LOCAL_CFLAGS)

@@ -21,7 +21,7 @@ template<> struct is_min_max_option<float> : std::true_type {};
 class Option {
 public:
     Option(const std::string& key) : m_key("options." + key) {}
-    virtual ~Option() = default;
+    virtual ~Option();
 
     const std::string& getStringId() { return m_key; }
 

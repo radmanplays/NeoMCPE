@@ -27,6 +27,7 @@
 #include "../../platform/time.h"
 #include <cmath>
 #include <algorithm>
+#include <sstream>
 
 float Gui::InvGuiScale = 1.0f / 3.0f;
 float Gui::GuiScale = 1.0f / Gui::InvGuiScale;
@@ -841,7 +842,9 @@ void Gui::renderPlayerList(Font* font, int screenWidth, int screenHeight) {
 	}
 
 	// player count title
-	std::string titleText = "Players (" + std::to_string(playerNames.size()) + ")";
+	std::ostringstream titleStream;
+	titleStream << "Players (" << playerNames.size() << ")";
+	std::string titleText = titleStream.str();
 	float titleWidth = font->width(titleText);
 
 	if (titleWidth > maxNameWidth)
