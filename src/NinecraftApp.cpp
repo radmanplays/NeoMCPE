@@ -117,7 +117,6 @@ void NinecraftApp::init()
 		setScreen(new UsernameScreen());
 	}
 #else
-	user->name = "Server";
 	hostMultiplayer();
 #endif
 }

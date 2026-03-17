@@ -48,7 +48,7 @@ private:
 	void setContainerMenu( BaseContainerMenu* menu );
 
 	Minecraft* _mc;
-    int _sentHealth;
+    int _prevHealth;
 	int _containerCounter;
 };
 

@@ -23,7 +23,7 @@
 ServerPlayer::ServerPlayer( Minecraft* minecraft, Level* level )
 :   super(level, minecraft->isCreativeMode()),
 	_mc(minecraft),
-	_sentHealth(-999),
+	_prevHealth(-999),
 	_containerCounter(0)
 {
 	hasFakeInventory = true;
@@ -58,8 +58,8 @@ void ServerPlayer::tick() {
 	if (containerMenu)
 		containerMenu->broadcastChanges();
 
-	if (health != _sentHealth) {
-		_sentHealth = health;
+	if (health != _prevHealth) {
+		_prevHealth = health;
 		SetHealthPacket packet(health);
 		_mc->raknetInstance->send(owner, packet);
 	}

@@ -1330,7 +1330,7 @@ void Minecraft::hostMultiplayer(int port) {
 #if !defined(NO_NETWORK)
 	netCallback = new ServerSideNetworkHandler(this, raknetInstance);
     #ifdef STANDALONE_SERVER
-        raknetInstance->host(options.getStringValue(OPTIONS_USERNAME), port, 16);
+        raknetInstance->host("Server", port, 16);
     #else
         raknetInstance->host(options.getStringValue(OPTIONS_USERNAME), port);
     #endif
