@@ -4,6 +4,8 @@
 //package net.minecraft.client.player;
 
 #include "KeyboardInput.h"
+#include "platform/input/Controller.h"
+#include "world/entity/player/Player.h"
 
 // @note: This is just copy-pasted from KeyboardInput right now.
 class XperiaPlayInput: public KeyboardInput

@@ -23,6 +23,8 @@
 #include "../world/level/storage/LevelStorageSource.h"
 #include "../world/level/storage/LevelStorage.h"
 #include "player/input/KeyboardInput.h"
+#include "player/input/ControllerTurnInput.h"
+#include "player/input/XperiaPlayInput.h"
 #include "world/level/chunk/ChunkSource.h"
 
 #ifndef STANDALONE_SERVER

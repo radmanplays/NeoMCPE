@@ -17,9 +17,9 @@ This project aims to preserve and improve this early version of Minecraft PE.
     - [ ] Screen fixes
 - [ ] Rewrite platform logic
 - [x] Fix sound
-- [ ] Do a server connection GUI
+- [x] Do a server connection GUI
 - [ ] Controller support
-- [ ] Minecraft server hosting
+- [x] Minecraft server hosting
 - [x] Screen fixess
 - [x] Fix fog
 - [x] Add sprinting
@@ -70,7 +70,7 @@ cmake --build .
 4. Press **Run** (or F5) to build and launch the game.
 
 ## Android
-
+### Windows
 1. Download **Android NDK r14b**:  
    http://dl.google.com/android/repository/android-ndk-r14b-windows-x86_64.zip
 
@@ -95,3 +95,75 @@ cmake --build .
 # Only repackage + install (no compilation)
 .\build.ps1 -NoBuild
 ```
+
+### Linux
+1. Download **Command line tools**:  
+   https://developer.android.com/studio#command-line-tools-only
+
+2. Unzip it into a folder, e.g.:
+
+   ```bash
+   mkdir -p "$HOME/Android/Sdk/"
+   unzip commandlinetools-linux-*.zip -d "$HOME/Android/Sdk/"
+   ```
+
+3. Your structure should look like
+
+   ```bash
+   $HOME/Android/Sdk/cmdline-tools/bin/sdkmanager
+   ```
+
+   > [!NOTE] 
+   > `sdkmanager` expects the SDK to include a `cmdline-tools/latest/` folder.
+   > If you only have `cmdline-tools/bin`, create the required layout:
+   >
+   > ```bash
+   > mkdir -p "$HOME/Android/Sdk/cmdline-tools/latest"
+   > ln -snf ../bin  "$HOME/Android/Sdk/cmdline-tools/latest/bin"
+   > ln -snf ../lib  "$HOME/Android/Sdk/cmdline-tools/latest/lib"
+   > ln -snf ../source.properties "$HOME/Android/Sdk/cmdline-tools/latest/source.properties"
+   > ln -snf ../NOTICE.txt        "$HOME/Android/Sdk/cmdline-tools/latest/NOTICE.txt"
+   > ```
+
+4. Install the build tools (and platform) using `sdkmanager`
+   
+   ```bash
+   export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+   export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+
+   sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+   ```
+
+   > [!NOTE]
+   > if you want build.sh to always find the SDK,
+   > Set ANDROID_SDK_ROOT in your shell config (~/.bashrc / ~/.profile / ~/.config/fish/config.fish), for example:
+   >
+   > ```bash
+   > export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+   > ```
+   >
+   > Then restart your shell (or `source` the file)
+
+5. Verify the install
+
+   ```bash
+   ls "$ANDROID_SDK_ROOT/build-tools"
+   ```
+
+   You should see a version folder like:
+
+   ```bash
+   35.0.0
+   33.0.2
+   ```
+
+6. Download **Android NDK r14b**:  
+   https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip
+
+7. Extract the archive to `/home/username/`, so that the final directory path is `/home/username/android-ndk-r14b/` 
+   
+   > [!WARNING]
+   > Make sure you don’t end up with a nested folder like `/home/username/android-ndk-r14b/android-ndk-r14b/`.
+
+8. Re run `build.sh`
+
