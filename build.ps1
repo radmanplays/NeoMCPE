@@ -1,18 +1,16 @@
 # ============================================================
-#  MCPE 0.6.1 Android Build Script  —  from-scratch capable
-#  Works on a clean machine; creates all dirs, keystore and
-#  stub Java files automatically.
-#
 #  Usage:
-#    .\build.ps1          # full build (NDK + Java + APK + install)
-#    .\build.ps1 -NoCpp   # skip NDK rebuild (Java/assets changed)
-#    .\build.ps1 -NoJava  # skip Java recompile (C++ changed only)
-#    .\build.ps1 -NoBuild # repackage + install only (no recompile)
+#    .\build.ps1              # full build (NDK + Java + APK + install)
+#    .\build.ps1 -NoCpp       # skip NDK rebuild (Java/assets changed)
+#    .\build.ps1 -NoJava      # skip Java recompile (C++ changed only)
+#    .\build.ps1 -NoBuild     # repackage + install only (no recompile)
+#    .\build.ps1 -Clean       # remove build output before building
 # ============================================================
 param(
     [switch]$NoCpp,
     [switch]$NoJava,
-    [switch]$NoBuild
+    [switch]$NoBuild,
+    [switch]$Clean
 )
 
 Set-StrictMode -Version Latest
@@ -66,7 +64,13 @@ function Write-Stub([string]$rel, [string]$content) {
     if (-not (Test-Path $full)) { [System.IO.File]::WriteAllText($full, $content); Write-Host "  stub: $rel" }
 }
 
-# ── 0. Bootstrap ─────────────────────────────────────────────
+# ── 0. Clean (optional) ───────────────────────────────────────
+if ($Clean) {
+    Write-Step "Cleaning build output"
+    Remove-Item -Recurse -Force $apkbuild -ErrorAction SilentlyContinue
+}
+
+# ── 1. Bootstrap ─────────────────────────────────────────────
 Write-Step "Bootstrap"
 
 New-Dir $apkbuild
@@ -227,16 +231,16 @@ if (-not $NoCpp -and -not $NoBuild) {
     }
     Push-Location "$junctionBase/project/android/jni"
     $env:NDK_MODULE_PATH = "$junctionBase/project/lib_projects"
-    # run ndk-build and capture everything; let user see full output for debugging
-    $ndkOutput = & "$ndk\ndk-build.cmd" NDK_PROJECT_PATH="$junctionBase/project/android" APP_BUILD_SCRIPT="$junctionBase/project/android/jni/Android.mk" 2>&1 | Tee-Object -Variable ndkOutput
-    # dump entire output for diagnosis
-    Write-Host "---- NDK BUILD OUTPUT BEGIN ----"
-    $ndkOutput | ForEach-Object { Write-Host $_ }
-    Write-Host "---- NDK BUILD OUTPUT END ----"
-    # optionally highlight errors/warnings afterwards
-    $ndkOutput | Where-Object { $_ -match "error:|warning:|libminecraftpe|In file included" }
+    # run ndk-build and stream output directly to the console
+    $ndkCmd = Join-Path $ndk 'ndk-build.cmd'
+    $ndkArgs = "NDK_PROJECT_PATH=`"$junctionBase/project/android`" APP_BUILD_SCRIPT=`"$junctionBase/project/android/jni/Android.mk`""
+
+    $proc = Start-Process -FilePath $ndkCmd -ArgumentList $ndkArgs -NoNewWindow -Wait -PassThru
     Pop-Location
-    Assert-ExitCode "ndk-build"
+    if ($proc.ExitCode -ne 0) {
+        Write-Host "ndk-build failed (exit $($proc.ExitCode))" -ForegroundColor Red
+        exit 1
+    }
     Copy-Item $libSrc $libDst -Force
     Write-Host "  .so  ->  $libDst"
 }
@@ -246,7 +250,7 @@ if (-not $NoJava -and -not $NoBuild) {
     Write-Step "Java compile"
 
     New-Dir (Split-Path $rJava -Parent)
-    & "$sdkTools\aapt.exe" package -f -M $manifest -S $res -I $androidJar -J "$apkbuild\gen" -F "$apkbuild\_rgen.apk" 2>&1 | Out-Null
+    & "$sdkTools\aapt.exe" package -f -M $manifest -S $res -I $androidJar -J "$apkbuild\gen" -F "$apkbuild\_rgen.apk"
     Assert-ExitCode "aapt R.java"
     Remove-Item "$apkbuild\_rgen.apk" -ea SilentlyContinue
 
@@ -258,11 +262,9 @@ if (-not $NoJava -and -not $NoBuild) {
 
     Remove-Item $classesDir -Recurse -Force -ea SilentlyContinue
     New-Dir $classesDir
-    $eap = $ErrorActionPreference; $ErrorActionPreference = "Continue"
-    $errors = & javac --release 8 -cp $androidJar -d $classesDir @srcs 2>&1 |
-              Where-Object { $_ -match "error:" }
-    $ErrorActionPreference = $eap
-    if ($errors) { Write-Host $errors -ForegroundColor Red; exit 1 }
+
+    & javac --release 8 -cp $androidJar -d $classesDir @srcs
+    if ($LASTEXITCODE -ne 0) { Write-Host 'javac failed' -ForegroundColor Red; exit 1 }
     Write-Host "  javac OK"
 
     $classFiles = Get-ChildItem $classesDir -Recurse -Filter "*.class" | Select-Object -Exp FullName
