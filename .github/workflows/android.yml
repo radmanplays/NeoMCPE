@@ -13,14 +13,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache Android NDK r14b
+        id: ndk-cache
+        uses: actions/cache@v4
+        with:
+          path: C:\android-ndk-r14b
+          key: android-ndk-r14b
+
       - name: Download Android NDK r14b
+        if: steps.ndk-cache.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           Invoke-WebRequest `
             -Uri "http://dl.google.com/android/repository/android-ndk-r14b-windows-x86_64.zip" `
             -OutFile "ndk.zip"
 
-      - name: Extract NDK
+      - name: Extract Android NDK
+        if: steps.ndk-cache.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           Expand-Archive ndk.zip C:\
