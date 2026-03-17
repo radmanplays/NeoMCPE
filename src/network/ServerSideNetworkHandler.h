@@ -66,7 +66,9 @@ public:
 
 	void displayGameMessage(const std::string& message);
 private:
-
+	/**
+	 * @brief Send packet to all players
+	 */
 	void redistributePacket(Packet* packet, const RakNet::RakNetGUID& fromPlayer);
 	Player* getPlayer(const RakNet::RakNetGUID& source);
 
