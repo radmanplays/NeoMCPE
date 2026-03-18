@@ -9,6 +9,7 @@
 
 #include "../components/ImageButton.h"
 #include "../components/OptionsGroup.h"
+#include "platform/input/Keyboard.h"
 
 OptionsScreen::OptionsScreen()
 	: btnClose(NULL),
@@ -153,18 +154,13 @@ void OptionsScreen::buttonClicked(Button* button) {
 	if (button == btnClose) {
 		minecraft->options.save();
 		minecraft->screenChooser.setScreen(SCREEN_STARTMENU);
-
 	}
 	else if (button->id > 1 && button->id < 7) {
-
 		int categoryButton = button->id - categoryButtons[0]->id;
 		selectCategory(categoryButton);
-
 	}
 	else if (button == btnCredits) {
-
 		minecraft->setScreen(new CreditsScreen());
-
 	}
 }
 
@@ -254,7 +250,9 @@ void OptionsScreen::mouseReleased(int x, int y, int buttonNum) {
 void OptionsScreen::keyPressed(int eventKey) {
 	if (currentOptionsGroup != NULL)
 		currentOptionsGroup->keyPressed(minecraft, eventKey);
-
+	if (eventKey == Keyboard::KEY_ESCAPE) 
+		minecraft->options.save();
+	
 	super::keyPressed(eventKey);
 }
 
