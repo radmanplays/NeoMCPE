@@ -10,13 +10,13 @@
 #endif
 
 // Other systems might run it, if they #define OPENGL_ES
-#if defined(OPENGL_ES) // || defined(ANDROID)
+// #if defined(OPENGL_ES) // || defined(ANDROID)
 	#define USE_VBO
 	#define GL_QUADS 0x0007
     #if defined(__APPLE__)
         #import <OpenGLES/ES1/gl.height>
         #import <OpenGLES/ES1/glext.height>
-    #elif defined(ANDROID)
+    #elif defined(ANDROID) || defined(__EMSCRIPTEN__)
         #include <GLES/gl.h>
         #include <GLES/glext.h>
     #else
@@ -28,18 +28,18 @@
 		#define glClearDepthf(x)        glClearDepth(x)
 		#define glDepthRangef(a,b)      glDepthRange(a,b)
     #endif
-#else
-    // Uglyness to fix redeclaration issues
-    #ifdef WIN32
-	   #include <WinSock2.h>
-	   #include <Windows.h>
-	#endif
-	#include <gl/glew.h>
-	#include <gl/GL.h>
+// #else
+//     // Uglyness to fix redeclaration issues
+//     #ifdef WIN32
+// 	   #include <WinSock2.h>
+// 	   #include <Windows.h>
+// 	#endif
+// 	#include <gl/glew.h>
+// 	#include <gl/GL.h>
 
-	#define glFogx(a,b)	glFogi(a,b)
-	#define glOrthof(a,b,c,d,e,f) glOrtho(a,b,c,d,e,f)
-#endif
+// 	#define glFogx(a,b)	glFogi(a,b)
+// 	#define glOrthof(a,b,c,d,e,f) glOrtho(a,b,c,d,e,f)
+// #endif
 
 
 #define GLERRDEBUG 1

@@ -86,21 +86,21 @@ public:
 	SelectWorldScreen();
 	virtual ~SelectWorldScreen();
 
-	virtual void init();
-	virtual void setupPositions();
+	virtual void init() override;
+	virtual void setupPositions() override;
 
-	virtual void tick();
-	virtual void render(int xm, int ym, float a);
+	virtual void tick() override;
+	virtual void render(int xm, int ym, float a) override;
 
 	virtual bool isIndexValid(int index);
-	virtual bool handleBackEvent(bool isDown);
-	virtual void buttonClicked(Button* button);
-	virtual void keyPressed(int eventKey);
+	virtual bool handleBackEvent(bool isDown) override;
+	virtual void buttonClicked(Button* button) override;
+	virtual void keyPressed(int eventKey) override;
 
 	// support for mouse wheel when desktop code uses touch variant
 	virtual void mouseWheel(int dx, int dy, int xm, int ym) override;
 
-	bool isInGameScreen();
+	bool isInGameScreen() override;
 private:
 	void loadLevelSource();
 	std::string getUniqueLevelName(const std::string& level);

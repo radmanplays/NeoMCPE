@@ -31,7 +31,7 @@ public:
     {
     }
 
-	BinaryBlob readAssetFile(const std::string& filename) {
+	BinaryBlob readAssetFile(const std::string& filename) override {
 		FILE* fp = fopen(("data/" + filename).c_str(), "r");
 		if (!fp)
 			return BinaryBlob();
@@ -48,7 +48,7 @@ public:
 		return blob;
 	}
 
-    void saveScreenshot(const std::string& filename, int glWidth, int glHeight) {
+    void saveScreenshot(const std::string& filename, int glWidth, int glHeight) override {
         //@todo
     }
 
@@ -56,7 +56,7 @@ public:
         return (p & 0xff00ff00) | ((p >> 16) & 0xff) | ((p << 16) & 0xff0000);
     }
 
-    TextureData loadTexture(const std::string& filename_, bool textureFolder)
+    TextureData loadTexture(const std::string& filename_, bool textureFolder) override
 	{
 		// Support fetching PNG textures via HTTP/HTTPS (for skins, etc)
 		if (Util::startsWith(filename_, "http://") || Util::startsWith(filename_, "https://")) {
@@ -132,10 +132,10 @@ public:
 		return std::string(mbstr);
 	}
 
-	virtual int getScreenWidth() { return 854; };
-	virtual int getScreenHeight() { return 480; };
+	virtual int getScreenWidth() override { return 854; };
+	virtual int getScreenHeight() override { return 480; };
 
-	virtual float getPixelsPerMillimeter();
+	virtual float getPixelsPerMillimeter() override;
 
 	virtual bool supportsTouchscreen() override { return true; }
 
@@ -147,6 +147,8 @@ public:
 		system(command.c_str());
 #endif
 	}
+
+	GLFWwindow* window;
 
 private:
 };

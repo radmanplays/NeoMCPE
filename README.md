@@ -167,3 +167,34 @@ cmake --build .
 
 8. Re run `build.sh`
 
+## Web
+1. Download and install **emsdk**: https://emscripten.org/docs/getting_started/downloads.html
+   > [!NOTE]
+   > On arch linux you can use AUR:
+   > `yay -Sy emsdk`
+   
+2. Configure and build project:
+   ```
+   mkdir build && cd build
+   cmake .. -B . -G Ninja "-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+   cmake --build . --target MinecraftPE
+   ```
+   > [!NOTE]
+   > If you are using VSCode with CMake plugin, you can add Emscripten kit
+   > 1. Press Ctrl + Shift + P
+   > 2. Type `CMake: Edit User-Local CMake Kits` and hit Enter
+   > 3. Add this:
+      ```json
+      {
+         "name": "Emscripten",
+         "compilers": {
+            "C": "/usr/lib/emsdk/upstream/bin/clang",
+            "CXX": "/usr/lib/emsdk/upstream/bin/clang++"
+         },
+         "toolchainFile": "/usr/lib/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+      }
+      ```
+3. Run game:
+   ```
+   emrun --port 8080 .
+   ```

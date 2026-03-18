@@ -2,9 +2,9 @@
 #define MAIN_GLFW_H__
 
 #include "App.h"
-#include "GLFW/glfw3.h"
+#include "client/renderer/entity/PlayerRenderer.h"
 #include "client/renderer/gles.h"
-#include "SharedConstants.h"
+#include "GLFW/glfw3.h"
 
 #include <cstdio>
 #include <chrono>
@@ -12,9 +12,10 @@
 #include "platform/input/Keyboard.h"
 #include "platform/input/Mouse.h"
 #include "platform/input/Multitouch.h"
-#include "util/Mth.h"
 #include "AppPlatform_glfw.h"
-
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
 static App* g_app = 0;
 
 int transformKey(int glfwkey) {
@@ -112,12 +113,39 @@ void error_callback(int error, const char* desc) {
 	printf("Error: %s\n", desc);
 }
 
+
+void loop() {
+	using clock = std::chrono::steady_clock;
+	auto frameStart = clock::now();
+
+	g_app->update();
+
+	glfwSwapBuffers(((AppPlatform_glfw*)g_app->platform())->window);
+	glfwPollEvents();
+
+	glfwSwapInterval(((MAIN_CLASS*)g_app)->options.getBooleanValue(OPTIONS_VSYNC) ? 1 : 0);
+	if(((MAIN_CLASS*)g_app)->options.getBooleanValue(OPTIONS_LIMIT_FRAMERATE)) {
+		auto frameEnd = clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+		auto target = std::chrono::microseconds(33333); // ~30 fps
+		if(elapsed < target)
+			std::this_thread::sleep_for(target - elapsed);
+	}
+}
+
 int main(void) {
 	AppContext appContext;
 
 #ifndef STANDALONE_SERVER
 	// Platform init.
 	appContext.platform = new AppPlatform_glfw();
+#if defined(DEBUG) && defined(__EMSCRIPTEN__)
+	EM_ASM({
+		console.log(FS.readdir("/"));
+		console.log(FS.readdir("/data"));
+		console.log(FS.readdir("/data/images"));
+	});
+#endif
 
 	glfwSetErrorCallback(error_callback);
 
@@ -126,26 +154,36 @@ int main(void) {
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+#ifndef __EMSCRIPTEN__
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+#else
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+#endif
 
-	GLFWwindow* window = glfwCreateWindow(appContext.platform->getScreenWidth(), appContext.platform->getScreenHeight(), "main", NULL, NULL);
+	AppPlatform_glfw* platform = (AppPlatform_glfw*)appContext.platform;
+
+	platform->window = glfwCreateWindow(appContext.platform->getScreenWidth(), appContext.platform->getScreenHeight(), "main", NULL, NULL);
 	
-	if (window == NULL) {
+	if (platform->window == NULL) {
 		return 1;
 	}
 
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetCharCallback(window, character_callback);
-	glfwSetCursorPosCallback(window, cursor_position_callback);
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetWindowSizeCallback(window, window_size_callback);
+	glfwSetKeyCallback(platform->window, key_callback);
+	glfwSetCharCallback(platform->window, character_callback);
+	glfwSetCursorPosCallback(platform->window, cursor_position_callback);
+	glfwSetMouseButtonCallback(platform->window, mouse_button_callback);
+	glfwSetScrollCallback(platform->window, scroll_callback);
+	glfwSetWindowSizeCallback(platform->window, window_size_callback);
 
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(platform->window);
+	#ifndef __EMSCRIPTEN__
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glfwSwapInterval(0);
+	#endif
 #endif
 
 	App* app = new MAIN_CLASS();
@@ -156,25 +194,14 @@ int main(void) {
 	g_app->init(appContext);
 	g_app->setSize(appContext.platform->getScreenWidth(), appContext.platform->getScreenHeight());
 
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(loop, 0, 1);
+#else
 	// Main event loop
-	using clock = std::chrono::steady_clock;
-	while(!glfwWindowShouldClose(window) && !app->wantToQuit()) {
-		auto frameStart = clock::now();
-
-		app->update();
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-		glfwSwapInterval(((MAIN_CLASS*)app)->options.getBooleanValue(OPTIONS_VSYNC) ? 1 : 0);
-		if(((MAIN_CLASS*)app)->options.getBooleanValue(OPTIONS_LIMIT_FRAMERATE)) {
-			auto frameEnd = clock::now();
-			auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
-			auto target = std::chrono::microseconds(33333); // ~30 fps
-			if(elapsed < target)
-				std::this_thread::sleep_for(target - elapsed);
-		}
+	while(!glfwWindowShouldClose(platform->window) && !app->wantToQuit()) {
+		loop();
 	}
+#endif
 
 	delete app;
 
@@ -184,7 +211,7 @@ int main(void) {
 	
 #ifndef STANDALONE_SERVER
 	// Exit.
-	glfwDestroyWindow(window);
+	glfwDestroyWindow(platform->window);
 	glfwTerminate();
 #endif
 

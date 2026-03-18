@@ -37,6 +37,8 @@ void CreditsScreen::init() {
     _lines.push_back("mschiller890");
     _lines.push_back("InviseDivine");
     _lines.push_back("Kolyah35");
+    _lines.push_back("karson");
+    _lines.push_back("deepfriedwaffles");
     _lines.push_back("");
     // avoid color tags around the URL so it isn't mangled by the parser please
     _lines.push_back("Join our Discord server: https://discord.gg/c58YesBxve");

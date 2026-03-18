@@ -13,7 +13,7 @@
 
 typedef void *( * pthread_fn )( void * );
 
-#if defined(__linux__) || defined(ANDROID) || defined(__APPLE__) || defined(POSIX)
+#if defined(__linux__) || defined(ANDROID) || defined(__APPLE__) || defined(POSIX) || defined(__EMSCRIPTEN__)
 	#include <pthread.h>
 	#include <unistd.h>
 
@@ -38,7 +38,7 @@ typedef void *( * pthread_fn )( void * );
 		DWORD						m_threadID;
 		HANDLE						m_threadHandle;
 	#endif
-	#if defined(__linux__) || defined(ANDROID) || defined(__APPLE__) || defined(POSIX)
+	#if defined(__linux__) || defined(ANDROID) || defined(__APPLE__) || defined(POSIX) || defined(__EMSCRIPTEN__)
 		pthread_fn					mp_threadFunc;
 		pthread_t					m_thread;
 		pthread_attr_t				m_attributes;

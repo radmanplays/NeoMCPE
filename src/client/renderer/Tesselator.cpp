@@ -79,6 +79,9 @@ RenderChunk Tesselator::end( bool useMine, int bufferId )
 	const int o_vertices = vertices;
 
 	if (vertices > 0) {
+		if (p <= 0 || p > maxVertices) { clear(); return RenderChunk(); }
+		int bytes = p * sizeof(VERTEX);
+		if (bytes <= 0) return RenderChunk();
 		if (++vboId >= vboCounts)
 			vboId = 0;
 
@@ -92,11 +95,11 @@ RenderChunk Tesselator::end( bool useMine, int bufferId )
 		bufferId = vboIds[vboId];
 #endif
 		int access = GL_STATIC_DRAW;//(accessMode==ACCESS_DYNAMIC) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
-		int bytes = p * sizeof(VERTEX);
 		glBindBuffer2(GL_ARRAY_BUFFER, bufferId);
 		glBufferData2(GL_ARRAY_BUFFER, bytes, _varray, access); // GL_STREAM_DRAW
+		
 		totalSize += bytes;
-
+	
 #ifndef USE_VBO
 		// 0 1 2 3 4 5 6 7
 		// x y z u v c
@@ -264,6 +267,7 @@ void Tesselator::vertex( float x, float y, float z )
 		for (int i = 0; i < 2; i++) {
 
 			const int offs = 3 - i;
+			if (p - offs < 0 || p >= maxVertices) { clear(); return; }
 			VERTEX& src = _varray[p - offs];
 			VERTEX& dst = _varray[p];
 
@@ -287,6 +291,7 @@ void Tesselator::vertex( float x, float y, float z )
 		}
 	}
 
+	if (p < 0 || p >= maxVertices) { clear(); return; }
 	VERTEX& vertex = _varray[p];
 
 	if (hasTexture) {
@@ -377,13 +382,15 @@ void Tesselator::draw()
 	tesselating = false;
 
 	if (vertices > 0) {
+		if (p <= 0 || p > maxVertices) { clear(); return; }
+		int bytes = p * sizeof(VERTEX);
+		if (bytes <= 0) { clear(); return; }
 		if (++vboId >= vboCounts)
 			vboId = 0;
 
 		int bufferId = vboIds[vboId];
 		
 		int access = GL_DYNAMIC_DRAW;//(accessMode==ACCESS_DYNAMIC) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
-		int bytes = p * sizeof(VERTEX);
 		glBindBuffer2(GL_ARRAY_BUFFER, bufferId);
 		glBufferData2(GL_ARRAY_BUFFER, bytes, _varray, access); // GL_STREAM_DRAW
 

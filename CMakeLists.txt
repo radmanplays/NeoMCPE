@@ -11,48 +11,69 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 find_package(Threads REQUIRED)
-
 find_package(OpenSSL)
-if (OpenSSL_FOUND)
-    message(STATUS "found openssl ${OPENSSL_VERSION}")
+
+if(EMSCRIPTEN)
+    set(AL_LIBTYPE "STATIC")
+else()
+    set(AL_LIBTYPE "SHARED")
 endif()
 
-CPMAddPackage("gh:madler/zlib@1.3.2")
-CPMAddPackage(
-    NAME "libpng"
-    GIT_REPOSITORY "https://github.com/pnggroup/libpng.git"
-    GIT_TAG "v1.6.55"
-    EXCLUDE_FROM_ALL TRUE
-    OPTIONS
-        "ZLIB_ROOT ${zlib_SOURCE_DIR}"
-        "ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR}"
-        "PNG_TOOLS OFF"
-        "PNG_TESTS OFF"
-        "BUILD_SHARED_LIBS ON"
-)
+# I totally shocked
+if(EMSCRIPTEN)
+    add_library(zlib INTERFACE IMPORTED)
+    set_target_properties(zlib PROPERTIES
+        INTERFACE_LINK_OPTIONS "-sUSE_ZLIB=1"
+    )
+
+    add_library(png INTERFACE IMPORTED)
+    set_target_properties(png PROPERTIES
+        INTERFACE_LINK_OPTIONS "-sUSE_LIBPNG=1"
+    )
+
+    add_library(glfw INTERFACE IMPORTED)
+    set_target_properties(glfw PROPERTIES
+        INTERFACE_LINK_OPTIONS "-sUSE_GLFW=3"
+    )
+else()
+    CPMAddPackage(
+        NAME "zlib"
+        GIT_REPOSITORY "https://github.com/madler/zlib"
+        GIT_TAG "v1.3.2"
+    )
+
+    CPMAddPackage(
+        NAME "libpng"
+        GIT_REPOSITORY "https://github.com/pnggroup/libpng.git"
+        GIT_TAG "v1.6.55"
+        OPTIONS
+            "ZLIB_ROOT ${zlib_SOURCE_DIR}"
+            "ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR}"
+            "PNG_TOOLS OFF"
+            "PNG_TESTS OFF"
+    )
+
+    CPMAddPackage(
+        NAME "glfw"
+        GIT_REPOSITORY "https://github.com/glfw/glfw.git"
+        GIT_TAG "3.4"
+        EXCLUDE_FROM_ALL TRUE
+        OPTIONS
+            "GLFW_BUILD_EXAMPLES OFF"
+            "GLFW_BUILD_TESTS OFF"
+            "GLFW_BUILD_DOCS OFF"
+    )
+endif()
 
 CPMAddPackage(
     NAME "openal"
     GIT_REPOSITORY "https://github.com/kcat/openal-soft.git"
     GIT_TAG "1.25.1"
-    EXCLUDE_FROM_ALL TRUE
     OPTIONS
         "ALSOFT_EXAMPLES OFF"
         "ALSOFT_TESTS OFF"
         "ALSOFT_UTILS OFF"
-        "BUILD_SHARED_LIBS ON"
-)
-
-CPMAddPackage(
-    NAME "glfw"
-    GIT_REPOSITORY "https://github.com/glfw/glfw.git"
-    GIT_TAG "3.4"
-    EXCLUDE_FROM_ALL TRUE
-    OPTIONS
-        "GLFW_BUILD_EXAMPLES OFF"
-        "GLFW_BUILD_TESTS OFF"
-        "GLFW_BUILD_DOCS OFF"
-        "BUILD_SHARED_LIBS ON"
+        "LIBTYPE ${AL_LIBTYPE}"
 )
 
 # TODO: Clear this paths with *
@@ -242,11 +263,15 @@ endif()
 
 
 if(PLATFORM STREQUAL "PLATFORM_WIN32")
-    list(APPEND CLIENT_SOURCES "src/AppPlatform_win32.cpp")
+    list(APPEND CLIENT_SOURCES "src/AppPlatform_win32.cpp" "glad/src/glad.c")
 endif()
 
 if(PLATFORM STREQUAL "PLATFORM_GLFW")
-    list(APPEND CLIENT_SOURCES "src/AppPlatform_glfw.cpp")
+    list(APPEND CLIENT_SOURCES "src/AppPlatform_glfw.cpp" "glad/src/glad.c")
+endif()
+
+if(EMSCRIPTEN)
+    list(APPEND CLIENT_SOURCES "glad/src/glad.c")
 endif()
 
 # Server
@@ -260,13 +285,10 @@ target_include_directories("${PROJECT_NAME}-server" PUBLIC
    "project/lib_projects/raknet/jni/RaknetSources"
 )
 
-target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT} png_shared)
+target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-add_executable(${PROJECT_NAME} 
-    ${CLIENT_SOURCES}
-    "glad/src/glad.c"
-)
+add_executable(${PROJECT_NAME} ${CLIENT_SOURCES})
 
 if(WIN32)
     set(EXTRA_LIBS "ws2_32")
@@ -277,8 +299,6 @@ if(PLATFORM STREQUAL "PLATFORM_WIN32" OR PLATFORM STREQUAL "PLATFORM_GLFW")
     target_compile_definitions(${PROJECT_NAME} PUBLIC "PLATFORM_DESKTOP")
 endif()
 
-
-
 target_include_directories(${PROJECT_NAME} PUBLIC 
     "${CMAKE_SOURCE_DIR}/glad/include/"
     "${CMAKE_SOURCE_DIR}/src"
@@ -287,9 +307,53 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     "lib/include"
 )
 
+if(EMSCRIPTEN)
+    set(CMAKE_CXX_STANDARD 11)
+    # uuuh i hate it
+    set(EM_FLAGS "-pthread -sUSE_PTHREADS=1 -sSHARED_MEMORY=1")
+    
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EM_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EM_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EM_FLAGS} --preload-file ${CMAKE_SOURCE_DIR}/data@/data -sPROXY_TO_PTHREAD")
+
+    target_compile_options(${PROJECT_NAME} PUBLIC
+        "-Os"
+        "-Wno-invalid-source-encoding"
+        "-Wno-narrowing"
+        "-Wno-deprecated-register"
+        "-Wno-reserved-user-defined-literal"
+    )
+
+    target_link_options(${PROJECT_NAME} PUBLIC
+        "-Os"
+        "-sALLOW_MEMORY_GROWTH=1"
+        "-sFORCE_FILESYSTEM=1"
+        "-sLEGACY_GL_EMULATION=1"
+        "-sGL_UNSAFE_OPTS=0"
+        "-sEMULATE_FUNCTION_POINTER_CASTS=1"
+        "-sALLOW_TABLE_GROWTH=1"
+        "-sEXPORTED_RUNTIME_METHODS=['FS','stringToUTF8','UTF8ToString','cwrap','ccall','HEAP8','HEAPU8','HEAP32','HEAPU32']"
+        "-sEXPORTED_FUNCTIONS=['_main']"
+    )
+
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        message("DEBUG MODE")
+
+        target_link_options(${PROJECT_NAME} PUBLIC
+            "-sASSERTIONS=2"
+            "-sSTACK_OVERFLOW_CHECK=2"
+            "-sSTACK_SIZE=5242880"
+            "-sGL_DEBUG=1"
+        )
+    endif()
+
+    target_compile_definitions(${PROJECT_NAME} PUBLIC "__EMSCRIPTEN__" "NO_SOUND" "NO_NETWORK")
+    set(EXTRA_LIBS "idbfs.js")
+endif()
+
 # Client
 target_compile_definitions(${PROJECT_NAME} PUBLIC "OPENGL_ES" "NO_EGL" ${PLATFORM})
-target_link_libraries(${PROJECT_NAME} zlib png_shared alsoft.common OpenAL::OpenAL glfw ${EXTRA_LIBS})
+target_link_libraries(${PROJECT_NAME} zlib png alsoft.common OpenAL::OpenAL glfw ${EXTRA_LIBS})
 
 if (OpenSSL_FOUND)
     target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto)
@@ -297,19 +361,27 @@ if (OpenSSL_FOUND)
 endif()
 
 if (NOT UNIX)
-add_custom_command(
-    TARGET ${PROJECT_NAME} 
-    POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}> 
-        COMMAND_EXPAND_LISTS
-)
+    add_custom_command(
+        TARGET ${PROJECT_NAME} 
+        POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}> 
+            COMMAND_EXPAND_LISTS
+    )
 endif()
 
-add_custom_command(
-    TARGET ${PROJECT_NAME} 
-    POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data" $<TARGET_FILE_DIR:${PROJECT_NAME}>/data
-)
+if(NOT EMSCRIPTEN)
+    add_custom_command(
+        TARGET ${PROJECT_NAME} 
+        POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data" $<TARGET_FILE_DIR:${PROJECT_NAME}>/data
+    )
+else()
+    add_custom_command(
+        TARGET ${PROJECT_NAME} 
+        POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/misc/web/index.html" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+endif()
 
 # Installing and packing
 

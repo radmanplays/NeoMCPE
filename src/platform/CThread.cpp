@@ -25,7 +25,7 @@
 			&m_threadID        // pointer to receive thread ID
 		);
 	#endif
-	#if defined(__linux__) || defined(ANDROID) || defined(__APPLE__) || defined(POSIX)
+	#if defined(__linux__) || defined(ANDROID) || defined(__APPLE__) || defined(POSIX) || defined(__EMSCRIPTEN__)
 		mp_threadFunc = (pthread_fn)threadFunc;
 
 		pthread_attr_init(&m_attributes);
