@@ -114,6 +114,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache Android command-line tools
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/android-sdk/cmdline-tools
+          key: android-cmdline-tools-v36
+
+      - name: Setup Android command line tools
+        run: |
+          if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools/latest" ]; then
+            mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+            curl -o cmdline-tools.zip -L "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip"
+            unzip -q cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+            mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          fi
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-${ANDROID_PLATFORM_API}" "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
+
+      - name: Cache Android NDK r14b
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/android-ndk-r14b
+          key: android-ndk-r14b
+
+      - name: Install Android NDK r14b
+        run: |
+          if [ ! -d "$GITHUB_WORKSPACE/android-ndk-r14b" ]; then
+            curl -L -o ndk.zip "https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip"
+            unzip -q ndk.zip -d "$GITHUB_WORKSPACE"
+          fi
+          echo "ANDROID_NDK_PATH=$GITHUB_WORKSPACE/android-ndk-r14b" >> $GITHUB_ENV
+
       - name: Install system prerequisites
         run: |
           sudo apt-get update -qq
@@ -130,25 +160,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 25
-
-      - name: Setup Android command line tools
-        run: |
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-          curl -o cmdline-tools.zip -L "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip"
-          unzip -q cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
-          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-${ANDROID_PLATFORM_API}" "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
-
-      - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r14b
-          add-to-path: true
-          link-to-sdk: false
-          local-cache: true
-
-      - name: Export NDK path
-        run: echo "ANDROID_NDK_PATH=$ANDROID_NDK_PATH" >> $GITHUB_ENV
 
       - name: Validate environment
         run: |
@@ -168,8 +179,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: minecraftpe-apk
-          path: |
-            ${{ github.workspace }}/build-apk/minecraftpe-debug.apk
+          path: ${{ github.workspace }}/build-apk/minecraftpe-debug.apk
 
   publish:
     name: Publish
