@@ -47,11 +47,11 @@ jobs:
         with:
           name: mcpe-windows
           path: |
-            '${{github.workspace}}/build/MinecraftPE.exe'
-            '${{github.workspace}}/build/glfw3.dll'
-            '${{github.workspace}}/build/libpng16.dll'
-            '${{github.workspace}}/build/OpenAL32.dll'
-            '${{github.workspace}}/build/z.dll'
+            ${{github.workspace}}/build/$env:BUILD_TYPE/MinecraftPE.exe
+            ${{github.workspace}}/build/$env:BUILD_TYPE/glfw3.dll
+            ${{github.workspace}}/build/$env:BUILD_TYPE/libpng16.dll
+            ${{github.workspace}}/build/$env:BUILD_TYPE/OpenAL32.dll
+            ${{github.workspace}}/build/$env:BUILD_TYPE/z.dll
 
   build-linux:
     name: Linux Build
@@ -94,7 +94,8 @@ jobs:
         with:
           name: mcpe-linux
           path: |
-            '${{github.workspace}}/build/MinecraftPE'
+            ${{github.workspace}}/build/MinecraftPE
+            ${{github.workspace}}/build/MinecraftPE-server
   
   publish:
     name: Publish
