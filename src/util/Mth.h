@@ -6,11 +6,10 @@
 #include <algorithm>
 
 namespace Mth {
-
-	extern const float PI;
-	extern const float TWO_PI;
-	extern const float RADDEG;
-	extern const float DEGRAD;
+	constexpr float PI = 3.1415926535897932384626433832795028841971f; // exactly!
+	constexpr float TWO_PI = 2.0f * PI; // exactly!
+	constexpr float DEGRAD = PI / 180.0f;
+	const float RADDEG = 180.0f / PI;
 
 	void initMth();
 

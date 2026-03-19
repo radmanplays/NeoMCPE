@@ -8,9 +8,6 @@ inputs:
   target:
     description: 'Target platform: win, linux'
     required: true
-  use-ccache:
-    description: 'Whether to use ccache/sccache'
-    required: true
 
 runs:
   using: "composite"
@@ -20,7 +17,6 @@ runs:
     with:
       variant: sccache
       key: ${{ inputs.target }}-v1
-    if: inputs.use-ccache
 
   - name: Setup CPM Cache
     uses: actions/cache@v4

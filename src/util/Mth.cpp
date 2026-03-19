@@ -9,11 +9,6 @@ static Random _rand;
 
 namespace Mth
 {
-	constexpr float PI = 3.1415926535897932384626433832795028841971f; // exactly!
-	constexpr float TWO_PI = 2.0f * PI; // exactly!
-	constexpr float DEGRAD = PI / 180.0f;
-	constexpr float RADDEG = 180.0f / PI;
-
 	static float _sin[65536];
 	static const float _sinScale = 65536.0f / (2.0f * PI);
 
