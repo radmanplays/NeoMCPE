@@ -139,11 +139,13 @@ jobs:
           mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
           yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-${ANDROID_PLATFORM_API}" "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
 
-      - name: Install Android NDK r14b
-        run: |
-          curl -L -o ndk.zip "https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip"
-          unzip -q ndk.zip -d "$GITHUB_WORKSPACE"
-          echo "ANDROID_NDK_PATH=$GITHUB_WORKSPACE/android-ndk-r14b" >> $GITHUB_ENV
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r14b
+          add-to-path: true
+          link-to-sdk: false
+          local-cache: true
 
       - name: Validate environment
         run: |
