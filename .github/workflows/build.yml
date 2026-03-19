@@ -147,11 +147,8 @@ jobs:
           link-to-sdk: false
           local-cache: true
 
-      - name: List NDK directory
-        run: |
-          echo "ANDROID_NDK_PATH=$ANDROID_NDK_PATH"
-          ls -l "$ANDROID_NDK_PATH"
-          ls -l "$ANDROID_NDK_PATH/ndk-build"
+      - name: Export NDK path
+        run: echo "ANDROID_NDK_PATH=$ANDROID_NDK_PATH" >> $GITHUB_ENV
 
       - name: Validate environment
         run: |
