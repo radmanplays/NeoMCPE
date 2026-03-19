@@ -13,6 +13,9 @@ env:
   BUILD_TYPE: Release
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm-cache
 
+permissions:
+  contents: write
+
 jobs:
   build-windows:
     name: Windows Build
@@ -47,11 +50,11 @@ jobs:
         with:
           name: mcpe-windows
           path: |
-            ${{github.workspace}}/build/$env:BUILD_TYPE/MinecraftPE.exe
-            ${{github.workspace}}/build/$env:BUILD_TYPE/glfw3.dll
-            ${{github.workspace}}/build/$env:BUILD_TYPE/libpng16.dll
-            ${{github.workspace}}/build/$env:BUILD_TYPE/OpenAL32.dll
-            ${{github.workspace}}/build/$env:BUILD_TYPE/z.dll
+            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/MinecraftPE.exe
+            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/glfw3.dll
+            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/libpng16.dll
+            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/OpenAL32.dll
+            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/z.dll
 
   build-linux:
     name: Linux Build
