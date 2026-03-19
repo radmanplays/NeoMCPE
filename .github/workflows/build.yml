@@ -42,16 +42,16 @@ jobs:
         shell: powershell
         run: cmake --build . --config $env:BUILD_TYPE --target MinecraftPE
       
-      - name: Upload Binary
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: mcpe-windows
           path: |
-            './MinecraftPE.exe'
-            './glfw3.dll'
-            './libpng16.dll'
-            './OpenAL32.dll'
-            './z.dll'
+            '${{github.workspace}}/build/MinecraftPE.exe'
+            '${{github.workspace}}/build/glfw3.dll'
+            '${{github.workspace}}/build/libpng16.dll'
+            '${{github.workspace}}/build/OpenAL32.dll'
+            '${{github.workspace}}/build/z.dll'
 
   build-linux:
     name: Linux Build
@@ -89,12 +89,12 @@ jobs:
         shell: bash
         run: cmake --build . --config $BUILD_TYPE
       
-      - name: Upload Binary
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: mcpe-linux
           path: |
-            './MinecraftPE'
+            '${{github.workspace}}/build/MinecraftPE'
   
   publish:
     name: Publish
