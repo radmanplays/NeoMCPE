@@ -105,11 +105,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-      ANDROID_NDK_PATH: ${{ env.ANDROID_NDK_PATH }}
+      # ANDROID_NDK_PATH: ${{ env.ANDROID_NDK_PATH }}
       ANDROID_PLATFORM_API: 36
       ANDROID_BUILD_TOOLS_VERSION: 36.0.0
       ADB: /bin/true
-      JAVA_HOME: ${{ env.JAVA_HOME }}
+      # JAVA_HOME: ${{ env.JAVA_HOME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
