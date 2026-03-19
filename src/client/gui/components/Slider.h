@@ -3,7 +3,7 @@
 
 #include "GuiElement.h"
 #include "../../../client/Options.h"
-#include <client/Option.h>
+#include "OptionsPane.h" // was originally Option.h, shouldn't it be this?
 
 class Slider : public GuiElement {
 	typedef GuiElement super;

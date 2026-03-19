@@ -97,6 +97,10 @@ typedef std::vector<std::string> StringVector;
 class Options
 {
 public:
+    // deepfriedwaffles: for iOS, was getting compile errors saying: No member named 'sound' in 'Options' and No member named 'music' in 'Options' so I floated them here. 1.0f means full volume out of the box, but if everything is too loud, you might want to try adjusting this
+    float sound = 1.0f;
+    float music = 1.0f;
+    
     static bool debugGl;
 
     Options(Minecraft* minecraft, const std::string& workingDirectory = "") 

@@ -12,13 +12,13 @@ SmallButton::SmallButton( int id, int x, int y, int width, int height, const std
 {
 }
 
-SmallButton::SmallButton( int id, int x, int y, Options::Option* item, const std::string& msg )
+SmallButton::SmallButton( int id, int x, int y, Option* item, const std::string& msg )
 :	super(id, x, y, 150, 20, msg),
 	option(item)
 {
 }
 
-Options::Option* SmallButton::getOption()
+Option* SmallButton::getOption()
 {
 	return option;
 }

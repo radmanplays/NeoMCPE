@@ -2,8 +2,8 @@
 #include "../Screen.h"
 #include "../components/Button.h"
 #include "../../Minecraft.h"
-#include "client/gui/components/ImageButton.h"
-#include "client/gui/components/TextBox.h"
+#include "ImageButton.h"
+#include "TextBox.h"
 
 class JoinByIPScreen: public Screen
 {

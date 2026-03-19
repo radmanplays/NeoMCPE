@@ -13,11 +13,11 @@ class SmallButton: public Button
 public:
     SmallButton(int id, int x, int y, const std::string& msg);
     SmallButton(int id, int x, int y, int width, int height, const std::string& msg);
-    SmallButton(int id, int x, int y, Options::Option* item, const std::string& msg);
+    SmallButton(int id, int x, int y, Option* item, const std::string& msg);
 
-    Options::Option* getOption();
+    Option* getOption();
 private:
-	Options::Option* option;
+	Option* option;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_COMPONENTS__SmallButton_H__*/

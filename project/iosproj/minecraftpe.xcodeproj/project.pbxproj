@@ -1147,6 +1147,7 @@
 		D5F3B7DD14548E7900D25470 /* IASKPSToggleSwitchSpecifierViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5F3B7C814548E7900D25470 /* IASKPSToggleSwitchSpecifierViewCell.xib */; };
 		D5F3B7DE14548E7900D25470 /* IASKSpecifierValuesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5F3B7C914548E7900D25470 /* IASKSpecifierValuesView.xib */; };
 		D5F3B7E51454930400D25470 /* InAppSettings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D5F3B7E41454930400D25470 /* InAppSettings.bundle */; };
+		F912B8CF2F6C3D5200BC60DF /* TextBox.h in Sources */ = {isa = PBXBuildFile; fileRef = 042A91AC16B17517007ABBC6 /* TextBox.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -5345,6 +5346,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F912B8CF2F6C3D5200BC60DF /* TextBox.h in Sources */,
 				D5CF9C57144C225000E4244F /* main.mm in Sources */,
 				D5CF9C5B144C225000E4244F /* minecraftpeAppDelegate.mm in Sources */,
 				D5CF9C65144C225000E4244F /* EAGLView.m in Sources */,
@@ -5754,7 +5756,11 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)\\src/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/**",
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -5776,7 +5782,11 @@
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+					"$(SRCROOT)/src/**",
+				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
@@ -5869,7 +5879,11 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)\\src/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/**",
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -5892,7 +5906,11 @@
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+					"$(SRCROOT)/src/**",
+				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
@@ -5957,7 +5975,11 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)\\src/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/**",
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -5984,7 +6006,11 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)\\src/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/**",
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -6008,7 +6034,11 @@
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+					"$(SRCROOT)/src/**",
+				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
@@ -6034,7 +6064,11 @@
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/src/client/gui/components/**",
+					"$(SRCROOT)/src/client/gui/**",
+					"$(SRCROOT)/src/**",
+				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 14;
