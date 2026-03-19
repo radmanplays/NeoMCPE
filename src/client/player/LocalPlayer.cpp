@@ -226,6 +226,7 @@ static void* fetchSkinForPlayer(void* param) {
     std::string skinUrl = getSkinUrlForUsername(player->name);
     if (skinUrl.empty()) {
         LOGW("[Skin] skin URL lookup failed for %s\n", player->name.c_str());
+        player->setTextureName("mob/char.png");
         return NULL;
     }
 
@@ -233,7 +234,7 @@ static void* fetchSkinForPlayer(void* param) {
     std::vector<unsigned char> skinData;
     if (!HttpClient::download(skinUrl, skinData) || skinData.empty()) {
         LOGW("[Skin] download failed for %s\n", skinUrl.c_str());
-        return NULL;
+ 	        return NULL;
     }
 
     // Save to cache
@@ -246,6 +247,7 @@ static void* fetchSkinForPlayer(void* param) {
 		player->setTextureName("skins/" + player->name + ".png");
 	} else {
         LOGW("[Skin] failed to write skin cache %s\n", cacheFile.c_str());
+        player->setTextureName("mob/char.png");
     }
 
     return NULL;
@@ -328,8 +330,11 @@ LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, const std::string& 
 	_init();
 
 #ifndef STANDALONE_SERVER
+	printf("%s \n", name.c_str());
+
 	if (!name.empty()) {
 		this->name = name;
+		printf("test \n");
 		// Fetch user skin and cape from Mojang servers in the background (avoids blocking the main thread)
 		// TODO: Fix this memory leak
 		new CThread(fetchSkinForPlayer, this);
