@@ -168,9 +168,7 @@ void Options::set(OptionId key, const std::string& value) {
 
 	if (option) {
 		option->set(value);
-
 		notifyOptionUpdate(key, value);
-		save();
 	}
 }
 
@@ -179,9 +177,7 @@ void Options::set(OptionId key, float value) {
 
 	if (option) {
 		option->set(value);
-
 		notifyOptionUpdate(key, value);
-		save();
 	}
 }
 
@@ -190,9 +186,7 @@ void Options::set(OptionId key, int value) {
 
 	if (option) {
 		option->set(value);
-
 		notifyOptionUpdate(key, value);
-		save();
 	}
 }
 
@@ -201,9 +195,7 @@ void Options::toggle(OptionId key) {
 
 	if (option) {
 		option->toggle();
-
 		notifyOptionUpdate(key, option->get());
-		save();
 	}
 }
 

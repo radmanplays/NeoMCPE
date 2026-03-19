@@ -217,9 +217,6 @@ void OptionsScreen::generateOptionScreens() {
 
 	// // Graphics Pane
 	optionPanes[3]->addOptionItem(OPTIONS_FANCY_GRAPHICS, minecraft)
-		// .addOptionItem(&Options::Option::VIEW_BOBBING, minecraft)
-		// .addOptionItem(&Options::Option::AMBIENT_OCCLUSION, minecraft)
-		// .addOptionItem(&Options::Option::ANAGLYPH, minecraft)
 		.addOptionItem(OPTIONS_LIMIT_FRAMERATE, minecraft)
 		.addOptionItem(OPTIONS_VSYNC, minecraft)
 		.addOptionItem(OPTIONS_RENDER_DEBUG, minecraft)
