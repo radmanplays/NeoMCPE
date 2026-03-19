@@ -147,6 +147,12 @@ jobs:
           link-to-sdk: false
           local-cache: true
 
+      - name: List NDK directory
+        run: |
+          echo "ANDROID_NDK_PATH=$ANDROID_NDK_PATH"
+          ls -l "$ANDROID_NDK_PATH"
+          ls -l "$ANDROID_NDK_PATH/ndk-build"
+
       - name: Validate environment
         run: |
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
