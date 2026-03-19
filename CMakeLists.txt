@@ -21,6 +21,8 @@ endif()
 
 # I totally shocked
 if(EMSCRIPTEN)
+    set(PNG_LIB png)
+
     add_library(zlib INTERFACE IMPORTED)
     set_target_properties(zlib PROPERTIES
         INTERFACE_LINK_OPTIONS "-sUSE_ZLIB=1"
@@ -36,6 +38,8 @@ if(EMSCRIPTEN)
         INTERFACE_LINK_OPTIONS "-sUSE_GLFW=3"
     )
 else()
+    set(PNG_LIB png_shared)
+
     CPMAddPackage(
         NAME "zlib"
         GIT_REPOSITORY "https://github.com/madler/zlib"
@@ -353,7 +357,7 @@ endif()
 
 # Client
 target_compile_definitions(${PROJECT_NAME} PUBLIC "OPENGL_ES" "NO_EGL" ${PLATFORM})
-target_link_libraries(${PROJECT_NAME} zlib png alsoft.common OpenAL::OpenAL glfw ${EXTRA_LIBS})
+target_link_libraries(${PROJECT_NAME} zlib ${PNG_LIB} alsoft.common OpenAL::OpenAL glfw ${EXTRA_LIBS})
 
 if (OpenSSL_FOUND)
     target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto)
