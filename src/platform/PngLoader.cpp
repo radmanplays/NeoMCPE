@@ -10,6 +10,7 @@ struct MemoryReader {
 };
 
 static void pngMemoryRead(png_structp pngPtr, png_bytep outBytes, png_size_t byteCountToRead) {
+#ifndef STANDALONE_SERVER
     MemoryReader* reader = (MemoryReader*)png_get_io_ptr(pngPtr);
     if (!reader)
         return;
@@ -21,10 +22,12 @@ static void pngMemoryRead(png_structp pngPtr, png_bytep outBytes, png_size_t byt
 
     memcpy(outBytes, reader->data + reader->pos, byteCountToRead);
     reader->pos += byteCountToRead;
+#endif
 }
 
 TextureData loadPngFromMemory(const unsigned char* data, size_t size) {
     TextureData out;
+#ifndef STANDALONE_SERVER
     if (!data || size == 0) return out;
 
     png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -89,6 +92,7 @@ TextureData loadPngFromMemory(const unsigned char* data, size_t size) {
 
     png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
     delete[] rowPtrs;
+#endif
 
     return out;
 }
