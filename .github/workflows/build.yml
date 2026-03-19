@@ -2,12 +2,12 @@ name: Build Game
 
 on:
   workflow_dispatch:
-  inputs:
-    use-ccache:
-      description: 'Enable sccache'
-      required: false
-      default: true
-      type: boolean
+    inputs:
+      use-ccache:
+        description: 'Enable sccache'
+        required: false
+        default: true
+        type: boolean
   pull_request:
   push:
     branches:
