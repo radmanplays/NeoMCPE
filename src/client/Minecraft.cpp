@@ -1212,7 +1212,7 @@ void Minecraft::setSize(int w, int h) {
 	int screenHeight = (int)(height * Gui::InvGuiScale);
 
 	// if (platform()) {
-	// 	float pixelsPerMillimeter = options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
+	// 	float pixelsPerMillimeter = options.getProgressValue(&Option::PIXELS_PER_MILLIMETER);
 	// 	pixelCalc.setPixelsPerMillimeter(pixelsPerMillimeter);
 	// 	pixelCalcUi.setPixelsPerMillimeter(pixelsPerMillimeter * Gui::InvGuiScale);
 	// }

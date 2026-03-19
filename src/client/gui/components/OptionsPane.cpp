@@ -28,7 +28,7 @@ OptionsGroup& OptionsPane::createOptionsGroup( std::string label ) {
 	return *newGroup;
 }
 
-void OptionsPane::createToggle( unsigned int group, std::string label, const Options::Option* option ) {
+void OptionsPane::createToggle( unsigned int group, std::string label, const Option* option ) {
 	if(group > children.size()) return;
 	ImageDef def;
 	def.setSrc(IntRectangle(160, 206, 39, 20));
@@ -42,7 +42,7 @@ void OptionsPane::createToggle( unsigned int group, std::string label, const Opt
 	setupPositions();
 }
 
-void OptionsPane::createProgressSlider( Minecraft* minecraft, unsigned int group, std::string label, const Options::Option* option, float progressMin/*=1.0f*/, float progressMax/*=1.0f */ ) {
+void OptionsPane::createProgressSlider( Minecraft* minecraft, unsigned int group, std::string label, const Option* option, float progressMin/*=1.0f*/, float progressMax/*=1.0f */ ) {
 	if(group > children.size()) return;
 	Slider* element = new Slider(minecraft, option, progressMin, progressMax);
 	element->width = 100;
@@ -52,7 +52,7 @@ void OptionsPane::createProgressSlider( Minecraft* minecraft, unsigned int group
 	setupPositions();
 }
 
-void OptionsPane::createStepSlider( Minecraft* minecraft, unsigned int group, std::string label, const Options::Option* option, const std::vector<int>& stepVec ) {
+void OptionsPane::createStepSlider( Minecraft* minecraft, unsigned int group, std::string label, const Option* option, const std::vector<int>& stepVec ) {
 	if(group > children.size()) return;
 	Slider* element = new Slider(minecraft, option, stepVec);
 	element->width = 100;
