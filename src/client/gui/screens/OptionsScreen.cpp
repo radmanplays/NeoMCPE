@@ -225,7 +225,8 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft);
 	
 	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
-		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft);
+		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft)
+		.addOptionItem(OPTIONS_RPI_CURSOR, minecraft);
 }
 
 void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {

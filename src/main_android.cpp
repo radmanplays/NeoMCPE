@@ -25,12 +25,33 @@ static void setupExternalPath(struct android_app* state, MAIN_CLASS* app)
     {
         LOGI("Environment exists");
     }
-    jclass clazz = env->FindClass("android/os/Environment");
-    jmethodID method = env->GetStaticMethodID(clazz, "getExternalStorageDirectory", "()Ljava/io/File;");
-    if (env->ExceptionOccurred()) {
-        env->ExceptionDescribe();
+    // try appspecific external directory first
+    jobject activity = state->activity->clazz;
+    jclass activityClass = env->GetObjectClass(activity);
+    jmethodID getExternalFilesDir = env->GetMethodID(activityClass, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+
+    jobject file = NULL;
+    if (getExternalFilesDir != NULL) {
+        file = env->CallObjectMethod(activity, getExternalFilesDir, NULL);
     }
-    jobject file = env->CallStaticObjectMethod(clazz, method);
+
+    if (file == NULL) {
+        // Fallback to the legacy shared storage directory
+        jclass clazz = env->FindClass("android/os/Environment");
+        jmethodID method = env->GetStaticMethodID(clazz, "getExternalStorageDirectory", "()Ljava/io/File;");
+        if (env->ExceptionOccurred()) {
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+        }
+        file = env->CallStaticObjectMethod(clazz, method);
+    }
+
+    if (!file) {
+        LOGI("Failed to get external storage file object, using current working dir");
+        app->externalStoragePath = ".";
+        app->externalCacheStoragePath = ".";
+        return;
+    }
 
     jclass fileClass = env->GetObjectClass(file);
     jmethodID fileMethod = env->GetMethodID(fileClass, "getAbsolutePath", "()Ljava/lang/String;");
@@ -38,7 +59,7 @@ static void setupExternalPath(struct android_app* state, MAIN_CLASS* app)
 
     const char* str = env->GetStringUTFChars((jstring) pathString, NULL);
     app->externalStoragePath = str;
-	app->externalCacheStoragePath = str;
+    app->externalCacheStoragePath = str;
     LOGI("%s", str);
 
     // ensure the process working directory is set to a writable location

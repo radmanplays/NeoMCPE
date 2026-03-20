@@ -1,4 +1,5 @@
 #include "GameRenderer.h"
+#include "client/Options.h"
 #include "gles.h"
 
 #include "../../util/PerfTimer.h"
@@ -214,12 +215,14 @@ void GameRenderer::render(float a) {
 			glDisable2(GL_SCISSOR_TEST);
 
 		mc->screen->render(xMouse, yMouse, a);
-#ifdef RPI
+
+    mc->platform()->hideCursor(!mc->options.getBooleanValue(OPTIONS_RPI_CURSOR));
+    if (mc->options.getBooleanValue(OPTIONS_RPI_CURSOR))        
 		renderCursor(xMouse, yMouse, mc);
-#endif
-		// Screen might have been removed, so check it again
-		if (mc->screen && !mc->screen->isInGameScreen())
-			sleepMs(15);
+        
+	// Screen might have been removed, so check it again
+    if (mc->screen && !mc->screen->isInGameScreen())
+        sleepMs(15);
     }
 }
 

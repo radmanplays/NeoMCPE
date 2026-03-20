@@ -166,7 +166,7 @@ int main(void) {
 
 	AppPlatform_glfw* platform = (AppPlatform_glfw*)appContext.platform;
 
-	platform->window = glfwCreateWindow(appContext.platform->getScreenWidth(), appContext.platform->getScreenHeight(), "main", NULL, NULL);
+	platform->window = glfwCreateWindow(appContext.platform->getScreenWidth(), appContext.platform->getScreenHeight(), "Minecraft PE 0.6.1", NULL, NULL);
 	
 	if (platform->window == NULL) {
 		return 1;
