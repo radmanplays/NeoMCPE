@@ -1160,12 +1160,13 @@ void Minecraft::setSize(int w, int h) {
 
 	// determine gui scale, optionally overriding auto
 	if (guiScale != 0) {
-		// manual selection: 1->small, 2->normal, 3->large, 4->larger
+		// manual selection: 1->small, 2->medium, 3->large, 4->larger, 5->largest
 		switch (guiScale) {
 		case 1: Gui::GuiScale = 2.0f; break;
 		case 2: Gui::GuiScale = 3.0f; break;
 		case 3: Gui::GuiScale = 4.0f; break;
-		case 4: Gui::GuiScale = 5.0f; break; // bigger than large
+		case 4: Gui::GuiScale = 5.0f; break;
+		case 5: Gui::GuiScale = 6.0f; break;
 		default: Gui::GuiScale = 1.0f; break; // auto
 		}
 	} else {
