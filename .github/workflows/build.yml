@@ -35,74 +35,22 @@ jobs:
         with:
           host: linux
 
-      - name: Download xwin
-        uses: robinraju/release-downloader@v1.10
-        with:
-          repository: Jake-Shadle/xwin
-          latest: true
-          fileName: 'xwin-*-x86_64-unknown-linux-musl.tar.gz'
-          tarBall: false
-          zipBall: false
-          out-file-path: "epic-xwin"
-        
-      - name: Prepare xwin
+      - name: Download llvm-mingw
         run: |
-          tar -xzf epic-xwin/xwin-*-x86_64-unknown-linux-musl.tar.gz -C epic-xwin
-          mv epic-xwin/xwin-*-x86_64-unknown-linux-musl/xwin ./xwin
-          ./xwin --arch x86_64 --sdk-version 10.0.22621 --accept-license list
-      
-      # this caches '.xwin-cache/**/*' but that's actually only gonna
-      # contain the manifest cuz we only ran `xwin list` so far
-      - name: Setup xwin Cache
-        id: xwin-cache
-        uses: actions/cache@v4
-        with:
-          path: .xwin-cache
-          key: xwin-win-v1-${{ hashFiles('.xwin-cache/**/*') }}
-
-      - name: Download Windows headers
-        run: ./xwin --arch x86_64 --sdk-version 10.0.22621 --accept-license splat --include-debug-libs
-        if: steps.xwin-cache.outputs.cache-hit != 'true'
-
-
-      - name: Download clang-msvc-sdk toolchain
-        uses: actions/checkout@v4
-        with:
-          repository: 'geode-sdk/clang-msvc-sdk'
-          path: toolchain
-          submodules: recursive
-
-      - name: Install Clang
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget lsb-release software-properties-common gnupg
-
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh 21 all
-
-      - name: Add LLVM 21 to path
-        run: echo "/usr/lib/llvm-21/bin" >> $GITHUB_PATH
-
-      - name: Verify LLVM
-        run: |
-          which clang-cl
-          which lld-link
-          clang-cl --version
-          lld-link --version
-
-      - name: Create Build Environment
-        # Some projects don't allow in-source building, so create a separate build directory
-        # We'll use this as our working directory for all subsequent commands
-        run: cmake -E make_directory ${{github.workspace}}/build
-      
+          curl -L https://github.com/mstorsjo/llvm-mingw/releases/latest/download/llvm-mingw-linux-x86_64.tar.xz -o llvm-mingw.tar.xz
+          tar -xf llvm-mingw.tar.xz
+          mv llvm-mingw-* llvm-mingw
+    
       - name: Configure CMake
         working-directory: ${{github.workspace}}/build
-        run: cmake ${{github.workspace}} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN -DCMAKE_CXX_SCAN_FOR_MODULES=OFF -G Ninja
-        env:
-          SPLAT_DIR: ${{ github.workspace }}/.xwin-cache/splat
-          TOOLCHAIN: ${{ github.workspace }}/toolchain/clang-cl-msvc.cmake
-          HOST_ARCH: x86_64
+        run: |
+          cmake -B build \
+            -G Ninja \
+            -DCMAKE_SYSTEM_NAME=Windows \
+            -DCMAKE_C_COMPILER=$PWD/llvm-mingw/bin/x86_64-w64-mingw32-clang \
+            -DCMAKE_CXX_COMPILER=$PWD/llvm-mingw/bin/x86_64-w64-mingw32-clang++ \
+            -DCMAKE_RC_COMPILER=$PWD/llvm-mingw/bin/x86_64-w64-mingw32-windres \
+            -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
       - name: Build
         working-directory: ${{github.workspace}}/build
