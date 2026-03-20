@@ -100,6 +100,7 @@ CPMAddPackage(
         "ALSOFT_TESTS OFF"
         "ALSOFT_UTILS OFF"
         "LIBTYPE ${AL_LIBTYPE}"
+        "ALSOFT_ENABLE_MODULES OFF"
 )
 
 # TODO: Clear this paths with *
