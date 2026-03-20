@@ -19,7 +19,7 @@ permissions:
 jobs:
   build-windows:
     name: Windows Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
 
       - name: Download llvm-mingw
         run: |
-          curl -L https://github.com/mstorsjo/llvm-mingw/releases/latest/download/llvm-mingw-linux-x86_64.tar.xz -o llvm-mingw.tar.xz
+          curl -L https://github.com/mstorsjo/llvm-mingw/releases/download/20260311/llvm-mingw-20260311-msvcrt-ubuntu-22.04-x86_64.tar.xz -o llvm-mingw.tar.xz
           tar -xf llvm-mingw.tar.xz
           mv llvm-mingw-* llvm-mingw
     
