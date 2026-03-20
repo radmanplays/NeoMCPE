@@ -22,12 +22,12 @@
 #include "NinecraftApp.h"
 #define MAIN_CLASS NinecraftApp
 
-#ifdef PLATFORM_WINDOWS
-	#include "main_win32.h"
-#endif
+// #ifdef PLATFORM_WINDOWS
+// 	#include "main_win32.h"
+// #endif
 
 
-#ifdef PLATFORM_GLFW
+#ifdef PLATFORM_DESKTOP
     #include "main_glfw.h"
 #endif
 

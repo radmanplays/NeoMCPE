@@ -5,7 +5,7 @@
 #include <SDL/SDL.h>
 #endif
 
-#ifdef PLATFORM_GLFW
+#ifdef PLATFORM_DESKTOP
 #include <GLFW/glfw3.h>
 #endif
 
@@ -34,7 +34,7 @@ void MouseHandler::grab() {
 	SDL_ShowCursor(0);
 #endif
 
-#ifdef PLATFORM_GLFW
+#ifdef PLATFORM_DESKTOP
 	glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 #endif
 }
@@ -46,7 +46,7 @@ void MouseHandler::release() {
 	SDL_ShowCursor(1);
 #endif
 
-#ifdef PLATFORM_GLFW
+#ifdef PLATFORM_DESKTOP
 	glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 #endif
 }

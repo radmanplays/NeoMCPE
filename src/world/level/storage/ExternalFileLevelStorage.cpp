@@ -7,6 +7,7 @@
 #include "../chunk/LevelChunk.h"
 #include "../Level.h"
 #include "../LevelConstants.h"
+#include "platform/log.h"
 #include "../tile/TreeTile.h"
 #include "../../entity/EntityFactory.h"
 #include "../../../nbt/NbtIo.h"
@@ -289,8 +290,9 @@ bool ExternalFileLevelStorage::readPlayerData(const std::string& filename, Level
 void ExternalFileLevelStorage::tick()
 {
 	tickCount++;
-	if ((tickCount % 50) == 0 && level)
-	{
+	if ((tickCount % 1000) == 0 && level) {
+		LOGI("Saving level...\n");
+
 		// look for chunks that needs to be saved
 		for (int z = 0; z < CHUNK_CACHE_WIDTH; z++)
 		{
