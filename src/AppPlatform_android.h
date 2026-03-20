@@ -202,6 +202,8 @@ public:
         LOGI("initConsts: screenWidth=%d, calling getScreenHeight\n", _screenWidth);
         _screenHeight = env->CallIntMethod(instance, fHeight);
         LOGI("initConsts: screenHeight=%d, done\n", _screenHeight);
+
+        return 1;
     }
 
     void tick() {
@@ -536,7 +538,7 @@ public:
 
     static __inline bool isSquare(int n) {
         int L = n & 0xf;
-        if ((1 << L) & 0x213 == 0) return false;
+        if (((1 << L) & 0x213) == 0) return false;
 
         int t = (int) sqrt((double) n) + 0.5;
         return t*t == n;
