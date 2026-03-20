@@ -1,6 +1,7 @@
 #include "OptionsFile.h"
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include <platform/log.h>
 
 OptionsFile::OptionsFile() {
