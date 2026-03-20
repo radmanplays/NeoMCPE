@@ -52,9 +52,9 @@ jobs:
           cmake $GITHUB_WORKSPACE \
             -G Ninja \
             -DCMAKE_SYSTEM_NAME=Windows \
-            -DCMAKE_C_COMPILER=$PWD/llvm-mingw/bin/x86_64-w64-mingw32-clang \
-            -DCMAKE_CXX_COMPILER=$PWD/llvm-mingw/bin/x86_64-w64-mingw32-clang++ \
-            -DCMAKE_RC_COMPILER=$PWD/llvm-mingw/bin/x86_64-w64-mingw32-windres \
+            -DCMAKE_C_COMPILER=$GITHUB_WORKSPACE/llvm-mingw/bin/x86_64-w64-mingw32-clang \
+            -DCMAKE_CXX_COMPILER=$GITHUB_WORKSPACE/llvm-mingw/bin/x86_64-w64-mingw32-clang++ \
+            -DCMAKE_RC_COMPILER=$GITHUB_WORKSPACE/llvm-mingw/bin/x86_64-w64-mingw32-windres \
             -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
       - name: Build
