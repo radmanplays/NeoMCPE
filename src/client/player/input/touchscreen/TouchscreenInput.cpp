@@ -126,8 +126,8 @@ void TouchscreenInput_TestFps::onConfigChanged(const Config& c) {
     
     // If too large (like playing on Tablet)
     PixelCalc& pc = _minecraft->pixelCalc;
-    if (pc.pixelsToMillimeters(Bw) > 14) {
-        Bw = Bh = pc.millimetersToPixels(14);
+    if (pc.pixelsToMillimeters(Bw) > 200) { //14
+        Bw = Bh = pc.millimetersToPixels(200); //14
     }
 	// temp data
 	float xx;
