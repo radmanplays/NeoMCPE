@@ -5,6 +5,11 @@
 #   ./build.sh --no-cpp  # skip NDK rebuild (Java/assets changed)
 #   ./build.sh --no-java # skip Java recompile (C++ changed only)
 #   ./build.sh --no-build # repackage + install only (no recompile)
+#
+# ABI targeting:
+#   ./build.sh --abi arm64-v8a    # build for arm64 only (default)
+#   ./build.sh --abi armeabi-v7a  # build for ARMv7 only
+#   ./build.sh --abi all          # build for both ABIs (fat APK)
 # ============================================================
 
 # lets be strict cuz we are safe like that
@@ -27,6 +32,11 @@ ANDROID_NDK_PATH="${ANDROID_NDK_PATH:-$HOME/android-ndk-r14b}"
 ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/Android/Sdk}}"
 ANDROID_BUILD_TOOLS_VERSION="${ANDROID_BUILD_TOOLS_VERSION:-}"
 ANDROID_PLATFORM_API="${ANDROID_PLATFORM_API:-}"
+
+# ABI selection: can be set via --abi flag or MATRIX_ABI env var.
+# Supported values: arm64-v8a, armeabi-v7a, all
+# MATRIX_ABI takes precedence over the default but is overridden by --abi on the CLI.
+TARGET_ABI="${MATRIX_ABI:-arm64-v8a}"
 
 function fail() {
   echo "ERROR: $1" >&2
@@ -114,10 +124,11 @@ ANDROID_MANIFEST="$REPO_ROOT/project/android_java/AndroidManifest.xml"
 ANDROID_RES_DIR="$REPO_ROOT/project/android_java/res"
 DATA_DIR="$REPO_ROOT/data"
 
-# output files
-APK_UNSIGNED="$BUILD_DIR/minecraftpe-unsigned.apk"
-APK_ALIGNED="$BUILD_DIR/minecraftpe-aligned.apk"
-APK_SIGNED="$BUILD_DIR/minecraftpe-debug.apk"
+# output files: APK names are derived after argument parsing once TARGET_ABI is final.
+# see the "resolve APK output filenames" block below.
+APK_UNSIGNED=""
+APK_ALIGNED=""
+APK_SIGNED=""
 DEX_OUTPUT="$BUILD_DIR/classes.dex"
 
 # flags parsed from CLI args
@@ -130,12 +141,14 @@ NO_BUILD=false
 ########################################
 function usage() {
   cat <<EOF
-Usage: $0 [--no-cpp] [--no-java] [--no-build]
+Usage: $0 [--no-cpp] [--no-java] [--no-build] [--abi <abi>]
 
 Options:
-  --no-cpp    Skip the NDK (C++) build step
-  --no-java   Skip the Java build step
-  --no-build  Skip the compile steps; just package + install
+  --no-cpp         Skip the NDK (C++) build step
+  --no-java        Skip the Java build step
+  --no-build       Skip the compile steps; just package + install
+  --abi <abi>      Target ABI: arm64-v8a (default), armeabi-v7a, or all
+                   Can also be set via MATRIX_ABI env var for CI matrix builds.
 EOF
   exit 1
 }
@@ -196,6 +209,33 @@ function write_stub_file() {
   fi
 }
 
+function build_ndk_abi() {
+  local abi="$1"
+
+  # armeabi-v7a needs a few extra NDK flags to get hardware FPU support
+  # without APP_ABI the default would be whatever Android.mk says, so we
+  # always pass it explicitly so the same Android.mk works for both targets
+  local -a extra_flags=( "APP_ABI=$abi" )
+  if [[ "$abi" == "armeabi-v7a" ]]; then
+    # enable hardware FPU + NEON like the old Minecraft ARMv7 builds used to
+    extra_flags+=( "APP_ARM_MODE=arm" "APP_ARM_NEON=true" )
+  fi
+
+  echo "  ndk-build for $abi..."
+  if ! "$ANDROID_NDK_PATH/ndk-build" \
+      NDK_PROJECT_PATH="$REPO_ROOT/project/android" \
+      APP_BUILD_SCRIPT="$JNI_DIR/Android.mk" \
+      "${extra_flags[@]}" \
+      2>&1 | tee "$BUILD_DIR/ndk-build-${abi}.log"; then
+    echo "NDK build failed for $abi. See $BUILD_DIR/ndk-build-${abi}.log" >&2
+    exit 1
+  fi
+
+  ensure_dir "$BUILD_DIR/lib/$abi"
+  cp -v "$REPO_ROOT/project/android/libs/$abi/libminecraftpe.so" "$BUILD_DIR/lib/$abi/"
+  echo "  .so -> $BUILD_DIR/lib/$abi/libminecraftpe.so"
+}
+
 ########################################
 # argument parsing
 ########################################
@@ -204,6 +244,11 @@ while [[ $# -gt 0 ]]; do
     --no-cpp) NO_CPP=true ;;
     --no-java) NO_JAVA=true ;;
     --no-build) NO_BUILD=true ;;
+    --abi)
+      shift
+      [[ $# -gt 0 ]] || fail "--abi requires a value (arm64-v8a, armeabi-v7a, all)"
+      TARGET_ABI="$1"
+      ;;
     -h|--help) usage ;;
     *)
       echo "Unknown option: $1" >&2
@@ -212,6 +257,27 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
+
+# validate the ABI value now that all args are parsed
+case "$TARGET_ABI" in
+  arm64-v8a|armeabi-v7a|all) ;;
+  *) fail "Unknown ABI '$TARGET_ABI'. Supported values: arm64-v8a, armeabi-v7a, all" ;;
+esac
+
+echo "  TARGET_ABI=$TARGET_ABI"
+
+# resolve APK output filenames now that TARGET_ABI is final.
+# arm64-v8a -> minecraftpe-v8a-debug.apk
+# armeabi-v7a -> minecraftpe-v7a-debug.apk
+# all -> minecraftpe-all-debug.apk  (fat APK containing both ABIs)
+case "$TARGET_ABI" in
+  arm64-v8a)   APK_SUFFIX="v8a" ;;
+  armeabi-v7a) APK_SUFFIX="v7a" ;;
+  *)           APK_SUFFIX="$TARGET_ABI" ;;
+esac
+APK_UNSIGNED="$BUILD_DIR/minecraftpe-${APK_SUFFIX}-unsigned.apk"
+APK_ALIGNED="$BUILD_DIR/minecraftpe-${APK_SUFFIX}-aligned.apk"
+APK_SIGNED="$BUILD_DIR/minecraftpe-${APK_SUFFIX}-debug.apk"
 
 ########################################
 # validate required tools
@@ -245,6 +311,7 @@ log_step "Bootstrap"
 
 ensure_dir "$BUILD_DIR"
 ensure_dir "$BUILD_DIR/lib/arm64-v8a"
+ensure_dir "$BUILD_DIR/lib/armeabi-v7a"
 ensure_dir "$BUILD_DIR/gen"
 ensure_dir "$BUILD_DIR/stubs"
 
@@ -283,7 +350,7 @@ echo "  stubs OK"
 # ndk build
 ########################################
 if [[ "$NO_CPP" == false && "$NO_BUILD" == false ]]; then
-  log_step "NDK build (arm64-v8a)"
+  log_step "NDK build ($TARGET_ABI)"
 
   # the original windows build script used a junction to avoid long paths here
   # on linux, path lengths are *usually* fine, but we still keep things simple
@@ -291,18 +358,15 @@ if [[ "$NO_CPP" == false && "$NO_BUILD" == false ]]; then
 
   export NDK_MODULE_PATH="$REPO_ROOT/project/lib_projects"
 
-  # run ndk-build and show output in case of failure
-  if ! "$ANDROID_NDK_PATH/ndk-build" NDK_PROJECT_PATH="$REPO_ROOT/project/android" APP_BUILD_SCRIPT="$JNI_DIR/Android.mk" 2>&1 | tee "$BUILD_DIR/ndk-build.log"; then
-    echo "NDK build failed. See $BUILD_DIR/ndk-build.log" >&2
-    exit 1
+  # build each requested ABI by delegating to build_ndk_abi()
+  if [[ "$TARGET_ABI" == "all" ]]; then
+    build_ndk_abi "arm64-v8a"
+    build_ndk_abi "armeabi-v7a"
+  else
+    build_ndk_abi "$TARGET_ABI"
   fi
 
   popd >/dev/null
-
-  # copy the compiled library to the APK staging folder
-  cp -v "$REPO_ROOT/project/android/libs/arm64-v8a/libminecraftpe.so" "$BUILD_DIR/lib/arm64-v8a/"
-
-  echo "  .so -> $BUILD_DIR/lib/arm64-v8a/libminecraftpe.so"
 fi
 
 ########################################
@@ -327,7 +391,7 @@ if [[ "$NO_JAVA" == false && "$NO_BUILD" == false ]]; then
   rm -rf "$BUILD_DIR/classes"
   ensure_dir "$BUILD_DIR/classes"
 
-  # Some JDK versions (<=8) don’t support --release.
+  # Some JDK versions (<=8) don't support --release.
   JAVAC_ARGS=(--release 8)
   if "$JAVAC_CMD" -version 2>&1 | grep -qE '^javac 1\.'; then
     JAVAC_ARGS=(-source 1.8 -target 1.8)
@@ -351,10 +415,18 @@ rm -f "$APK_UNSIGNED" "$APK_ALIGNED" "$APK_SIGNED"
 
 "$AAPT" package -f -M "$ANDROID_MANIFEST" -S "$ANDROID_RES_DIR" -I "$ANDROID_PLATFORM_DIR/android.jar" -F "$APK_UNSIGNED"
 
-# add classes.dex and native library into apk
+# add classes.dex and native library/libraries into apk.
+# when building for "all" we pack both ABIs into the same APK so Android can
+# pick the right one at install time (fat APK). for a single-ABI build we
+# only include the one .so that was actually compiled.
 pushd "$BUILD_DIR" >/dev/null
 zip -q "$APK_UNSIGNED" "classes.dex"
-zip -q "$APK_UNSIGNED" "lib/arm64-v8a/libminecraftpe.so"
+if [[ "$TARGET_ABI" == "all" ]]; then
+  zip -q "$APK_UNSIGNED" "lib/arm64-v8a/libminecraftpe.so"
+  zip -q "$APK_UNSIGNED" "lib/armeabi-v7a/libminecraftpe.so"
+else
+  zip -q "$APK_UNSIGNED" "lib/$TARGET_ABI/libminecraftpe.so"
+fi
 popd >/dev/null
 
 # add assets from data/ directory into the apk under assets/

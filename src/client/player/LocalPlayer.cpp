@@ -31,6 +31,7 @@
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <errno.h>
 #endif
 
 #ifndef STANDALONE_SERVER

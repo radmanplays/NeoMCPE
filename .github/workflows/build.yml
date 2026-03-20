@@ -99,11 +99,104 @@ jobs:
           path: |
             ${{github.workspace}}/build/MinecraftPE
             ${{github.workspace}}/build/MinecraftPE-server
-  
+
+  build-android: # pray to god
+    name: Build Android APK (${{ matrix.abi }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      # keep going with the other ABI if one fails so you at least get something useful
+      fail-fast: false
+      matrix:
+        abi: [ arm64-v8a, armeabi-v7a ]
+
+    env:
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+      # ANDROID_NDK_PATH: ${{ env.ANDROID_NDK_PATH }}
+      ANDROID_PLATFORM_API: 36
+      ANDROID_BUILD_TOOLS_VERSION: 36.0.0
+      ADB: /bin/true
+      # JAVA_HOME: ${{ env.JAVA_HOME }}
+      # build.sh reads MATRIX_ABI to decide which ABI to build when no --abi flag is passed
+      MATRIX_ABI: ${{ matrix.abi }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Android command-line tools
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/android-sdk/cmdline-tools
+          key: android-cmdline-tools-v36
+
+      - name: Setup Android command line tools
+        run: |
+          if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools/latest" ]; then
+            mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+            curl -o cmdline-tools.zip -L "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip"
+            unzip -q cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+            mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          fi
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-${ANDROID_PLATFORM_API}" "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
+
+      - name: Cache Android NDK r14b
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/android-ndk-r14b
+          key: android-ndk-r14b
+
+      - name: Install Android NDK r14b
+        run: |
+          if [ ! -d "$GITHUB_WORKSPACE/android-ndk-r14b" ]; then
+            curl -L -o ndk.zip "https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip"
+            unzip -q ndk.zip -d "$GITHUB_WORKSPACE"
+          fi
+          echo "ANDROID_NDK_PATH=$GITHUB_WORKSPACE/android-ndk-r14b" >> $GITHUB_ENV
+
+      - name: Install system prerequisites
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends wget unzip curl git python3 libncurses6 libtinfo6
+          if ! ldconfig -p | grep -q "libncurses.so.5"; then
+            sudo ln -sf /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5 || true
+          fi
+          if ! ldconfig -p | grep -q "libtinfo.so.5"; then
+            sudo ln -sf /lib/x86_64-linux-gnu/libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5 || true
+          fi
+
+      - name: Setup Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Validate environment
+        run: |
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          echo "ANDROID_NDK_PATH=$ANDROID_NDK_PATH"
+          echo "JAVA_HOME=$JAVA_HOME"
+          echo "MATRIX_ABI=$MATRIX_ABI"
+          $ANDROID_SDK_ROOT/platform-tools/adb version || true
+          java -version
+          javac -version
+
+      - name: Run Android build script
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          # artifact name is ABI-specific so both matrix legs can upload without clobbering each other
+          name: minecraftpe-apk-${{ matrix.abi }}
+          path: ${{ github.workspace }}/build-apk/minecraftpe-*-debug.apk
+
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    needs: [ build-windows, build-linux ]
+    needs: [ build-windows, build-linux, build-android ]
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
@@ -136,6 +229,18 @@ jobs:
           files: mcpe-linux/MinecraftPE-server
           dest: minecraftpe-server-${{ steps.ref.outputs.hash }}.zip
 
+      - name: Zip Android arm64-v8a Artifact
+        uses: vimtor/action-zip@v1.2
+        with:
+          files: minecraftpe-apk-arm64-v8a/minecraftpe-v8a-debug.apk
+          dest: minecraftpe-${{ steps.ref.outputs.hash }}-android-arm64-v8a.zip
+
+      - name: Zip Android armeabi-v7a Artifact
+        uses: vimtor/action-zip@v1.2
+        with:
+          files: minecraftpe-apk-armeabi-v7a/minecraftpe-v7a-debug.apk
+          dest: minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.zip
+
       - name: Update Development Release
         uses: andelf/nightly-release@main
         env:
@@ -149,3 +254,5 @@ jobs:
             ./minecraftpe-${{ steps.ref.outputs.hash }}-windows.zip
             ./minecraftpe-${{ steps.ref.outputs.hash }}-linux.zip
             ./minecraftpe-server-${{ steps.ref.outputs.hash }}.zip
+            ./minecraftpe-${{ steps.ref.outputs.hash }}-android-arm64-v8a.zip
+            ./minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.zip

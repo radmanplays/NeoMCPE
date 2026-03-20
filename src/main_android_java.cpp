@@ -7,8 +7,7 @@
 //#include "main_android_java.h"
 #include "platform/input/Multitouch.h"
 #include <unistd.h>
-#include <sys/syscall.h>
-#define gettid() ((int)syscall(SYS_gettid))
+#include <pthread.h>
 
 // Horrible, I know. / A
 #ifndef MAIN_CLASS
@@ -145,7 +144,7 @@ Java_com_mojang_minecraftpe_GLRenderer_nativeOnSurfaceCreated(JNIEnv* env) {
 
 JNIEXPORT void JNICALL
 Java_com_mojang_minecraftpe_GLRenderer_nativeOnSurfaceChanged(JNIEnv* env, jclass cls, jint w, jint h) {
-    LOGI("@nativeOnSurfaceChanged: %p\n", pthread_self());
+    LOGI("@nativeOnSurfaceChanged: %lu\n", (unsigned long)pthread_self());
 
     if (gApp) {
         gApp->setSize(w, h);
