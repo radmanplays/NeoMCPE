@@ -24,6 +24,7 @@
 #include "../../platform/HttpClient.h"
 #include "../../platform/CThread.h"
 #include "../../util/StringUtils.h"
+#include "client/Options.h"
 
 #if defined(_WIN32)
 #include <direct.h>
@@ -328,12 +329,12 @@ LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, const std::string& 
 {
 	this->dimension = dimension;
 	_init();
-
 #ifndef STANDALONE_SERVER
-	printf("%s \n", name.c_str());
 
-	if (!name.empty()) {
-		this->name = name;
+	if (minecraft->options.getStringValue(OPTIONS_USERNAME).size() != 0) {
+		textureName = "mob/char.png";
+
+		this->name = minecraft->options.getStringValue(OPTIONS_USERNAME);
 		printf("test \n");
 		// Fetch user skin and cape from Mojang servers in the background (avoids blocking the main thread)
 		// TODO: Fix this memory leak
