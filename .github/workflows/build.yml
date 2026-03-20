@@ -219,13 +219,13 @@ jobs:
       - name: Zip Windows Artifacts
         uses: vimtor/action-zip@v1.2
         with:
-          files: data/ mcpe-windows/MinecraftPE.exe mcpe-windows/glfw3.dll mcpe-windows/libpng16.dll mcpe-windows/OpenAL32.dll mcpe-windows/z.dll
+          files: data mcpe-windows/MinecraftPE.exe mcpe-windows/glfw3.dll mcpe-windows/libpng16.dll mcpe-windows/OpenAL32.dll mcpe-windows/z.dll
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-windows.zip
 
       - name: Zip Linux Artifacts
         uses: vimtor/action-zip@v1.2
         with:
-          files: data/ mcpe-linux/MinecraftPE
+          files: data mcpe-linux/MinecraftPE
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-linux.zip
 
       - name: Zip Linux Server Artifacts
