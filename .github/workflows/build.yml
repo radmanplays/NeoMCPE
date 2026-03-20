@@ -19,7 +19,7 @@ permissions:
 jobs:
   build-windows:
     name: Windows Build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -29,21 +29,74 @@ jobs:
         with:
           host: win
           target: win
+      
+      - name: Download xwin
+        uses: robinraju/release-downloader@v1.10
+        with:
+          repository: Jake-Shadle/xwin
+          latest: true
+          fileName: 'xwin-*-x86_64-unknown-linux-musl.tar.gz'
+          tarBall: false
+          zipBall: false
+          out-file-path: "epic-xwin"
+        
+      - name: Prepare xwin
+        run: |
+          tar -xzf epic-xwin/xwin-*-x86_64-unknown-linux-musl.tar.gz -C epic-xwin
+          mv epic-xwin/xwin-*-x86_64-unknown-linux-musl/xwin ./xwin
+          ./xwin --arch x86_64 --sdk-version 10.0.22621 --accept-license list
+      
+      # this caches '.xwin-cache/**/*' but that's actually only gonna
+      # contain the manifest cuz we only ran `xwin list` so far
+      - name: Setup xwin Cache
+        id: xwin-cache
+        uses: actions/cache@v4
+        with:
+          path: .xwin-cache
+          key: xwin-win-v1-${{ hashFiles('.xwin-cache/**/*') }}
+
+      - name: Download clang-msvc-sdk toolchain
+        uses: actions/checkout@v4
+        with:
+          repository: 'Nemirtingas/clang-msvc-sdk'
+          path: toolchain
+          submodules: recursive
+
+      - name: Install Clang
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget lsb-release software-properties-common gnupg
+
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 21 all
+
+      - name: Add LLVM 21 to path
+        run: echo "/usr/lib/llvm-21/bin" >> $GITHUB_PATH
+
+      - name: Verify LLVM
+        run: |
+          which clang-cl
+          which lld-link
+          clang-cl --version
+          lld-link --version
 
       - name: Create Build Environment
         # Some projects don't allow in-source building, so create a separate build directory
         # We'll use this as our working directory for all subsequent commands
         run: cmake -E make_directory ${{github.workspace}}/build
-
+      
       - name: Configure CMake
-        shell: powershell
         working-directory: ${{github.workspace}}/build
-        run: cmake $env:GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
+        run: cmake $env:GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        env:
+          SPLAT_DIR: ${{ github.workspace }}/.xwin-cache/splat
+          TOOLCHAIN: ${{ github.workspace }}/toolchain/clang-cl-msvc.cmake
+          HOST_ARCH: x86_64
 
       - name: Build
         working-directory: ${{github.workspace}}/build
-        shell: powershell
-        run: cmake --build . --config $env:BUILD_TYPE --target MinecraftPE
+        run: cmake --build . --config $env:BUILD_TYPE --target MinecraftPE --parallel
       
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -91,8 +144,8 @@ jobs:
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
-          cmake --build . --config $BUILD_TYPE --target MinecraftPE
-          cmake --build . --config $BUILD_TYPE --target MinecraftPE-server
+          cmake --build . --config $BUILD_TYPE --target MinecraftPE --parallel
+          cmake --build . --config $BUILD_TYPE --target MinecraftPE-server --parallel
       
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -219,21 +272,13 @@ jobs:
       - name: Zip Windows Artifacts
         uses: vimtor/action-zip@v1.2
         with:
-          files: |
-            ${{github.workspace}}/data/ 
-            mcpe-windows/MinecraftPE.exe 
-            mcpe-windows/glfw3.dll 
-            mcpe-windows/libpng16.dll 
-            mcpe-windows/OpenAL32.dll 
-            mcpe-windows/z.dll
+          files: data mcpe-windows/MinecraftPE.exe mcpe-windows/glfw3.dll mcpe-windows/libpng16.dll mcpe-windows/OpenAL32.dll mcpe-windows/z.dll
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-windows.zip
 
       - name: Zip Linux Artifacts
         uses: vimtor/action-zip@v1.2
         with:
-          files: | 
-            ${{github.workspace}}/data/
-            mcpe-linux/MinecraftPE # ye, you should install libraries by urself :trollface:
+          files: data mcpe-linux/MinecraftPE
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-linux.zip
 
       - name: Zip Linux Server Artifacts

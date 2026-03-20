@@ -43,8 +43,8 @@ public:
 protected:
 	void setArmor(Model* armor);
 	Model* getArmor();
+	Model* model; // allows derived renderers to swap models dynamically for skin formats
 private:
-	Model* model;
 	Model* armor;
 };
 

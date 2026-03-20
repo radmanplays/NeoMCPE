@@ -4,6 +4,12 @@
 #include <errno.h>
 #include <platform/log.h>
 
+#if !defined(_WIN32)
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 OptionsFile::OptionsFile() {
 #ifdef __APPLE__
 	settingsPath = "./Documents/options.txt";
@@ -14,6 +20,14 @@ OptionsFile::OptionsFile() {
 #endif
 }
 
+void OptionsFile::setOptionsPath(const std::string& path) {
+	settingsPath = path;
+}
+
+std::string OptionsFile::getOptionsPath() const {
+	return settingsPath;
+}
+
 void OptionsFile::save(const StringVector& settings) {
 	FILE* pFile = fopen(settingsPath.c_str(), "w");
 	if(pFile != NULL) {
@@ -22,9 +36,32 @@ void OptionsFile::save(const StringVector& settings) {
 		}
 		fclose(pFile);
 	} else {
-		LOGI("OptionsFile::save failed to open '%s' for writing: %s", settingsPath.c_str(), strerror(errno));
+		if (errno != ENOENT)
+			LOGI("OptionsFile::save failed to open '%s' for writing: %s", settingsPath.c_str(), strerror(errno));
+
+		// Ensure parent directory exists for safekeeping if path contains directories
+		std::string dir = settingsPath;
+		size_t fpos = dir.find_last_of("/\\");
+		if (fpos != std::string::npos) {
+			dir.resize(fpos);
+			struct stat st;
+			if (stat(dir.c_str(), &st) != 0) {
+				// attempt recursive mkdir
+				std::string toCreate;
+				for (size_t i = 0; i <= dir.size(); ++i) {
+					if (i == dir.size() || dir[i] == '/' || dir[i] == '\\') {
+						if (!toCreate.empty()) {
+							mkdir(toCreate.c_str(), 0755);
+						}
+					}
+					if (i < dir.size())
+						toCreate.push_back(dir[i]);
+				}
+			}
+		}
 	}
 }
+
 
 StringVector OptionsFile::getOptionStrings() {
 	StringVector returnVector;
@@ -46,7 +83,8 @@ StringVector OptionsFile::getOptionStrings() {
 		}
 		fclose(pFile);
 	} else {
-		LOGI("OptionsFile::getOptionStrings failed to open '%s' for reading: %s", settingsPath.c_str(), strerror(errno));
+		if (errno != ENOENT)
+			LOGI("OptionsFile::getOptionStrings failed to open '%s' for reading: %s", settingsPath.c_str(), strerror(errno));
 	}
 	return returnVector;
 }

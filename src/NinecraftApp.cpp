@@ -99,6 +99,9 @@ void NinecraftApp::init()
 	I18n::loadLanguage(platform(), "en_US");
 #endif
 
+	if (!externalStoragePath.empty()) {
+		options.setOptionsFilePath(externalStoragePath);
+	}
 	Minecraft::init();
 
 #if !defined(DEMO_MODE) && !defined(APPLE_DEMO_PROMOTION) && !defined(NO_STORAGE)

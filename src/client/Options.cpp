@@ -285,6 +285,10 @@ void Options::save() {
 	optionsFile.save(stringVec);
 }
 
+void Options::setOptionsFilePath(const std::string& path) {
+	optionsFile.setOptionsPath(path + "/options.txt");
+}
+
 void Options::notifyOptionUpdate(OptionId key, bool value) {
 	minecraft->optionUpdated(key, value);
 }
