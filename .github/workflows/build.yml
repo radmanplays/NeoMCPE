@@ -98,7 +98,7 @@ jobs:
       
       - name: Configure CMake
         working-directory: ${{github.workspace}}/build
-        run: cmake ${{github.workspace}} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja
+        run: cmake ${{github.workspace}} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN -G Ninja
         env:
           SPLAT_DIR: ${{ github.workspace }}/.xwin-cache/splat
           TOOLCHAIN: ${{ github.workspace }}/toolchain/clang-cl-msvc.cmake
