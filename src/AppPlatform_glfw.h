@@ -73,50 +73,20 @@ public:
 								: filename_;
 		std::ifstream source(filename.c_str(), std::ios::binary);
 
-		if (source) {
-			png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-
-			if (!pngPtr)
-				return out;
-
-			png_infop infoPtr = png_create_info_struct(pngPtr);
-
-			if (!infoPtr) {
-				png_destroy_read_struct(&pngPtr, NULL, NULL);
-				return out;
-			}
-
-			// Hack to get around the broken libpng for windows
-			png_set_read_fn(pngPtr,(void*)&source, png_funcReadFile);
-
-			png_read_info(pngPtr, infoPtr);
-
-			// Set up the texdata properties
-			out.w = png_get_image_width(pngPtr, infoPtr);
-			out.h = png_get_image_height(pngPtr, infoPtr);
-
-			png_bytep* rowPtrs = new png_bytep[out.h];
-			out.data = new unsigned char[4 * out.w * out.h];
-			out.memoryHandledExternally = false;
-
-			int rowStrideBytes = 4 * out.w;
-			for (int i = 0; i < out.h; i++) {
-				rowPtrs[i] = (png_bytep)&out.data[i*rowStrideBytes];
-			}
-			png_read_image(pngPtr, rowPtrs);
-
-			// Teardown and return
-			png_destroy_read_struct(&pngPtr, &infoPtr,(png_infopp)0);
-			delete[] (png_bytep)rowPtrs;
-			source.close();
-
-			return out;
-		}
-		else
-		{
+		if (!source) {
 			LOGI("Couldn't find file: %s\n", filename.c_str());
 			return out;
 		}
+
+		std::vector<unsigned char> fileData((std::istreambuf_iterator<char>(source)), std::istreambuf_iterator<char>());
+		source.close();
+
+		if (fileData.empty()) {
+			LOGI("Couldn't read file: %s\n", filename.c_str());
+			return out;
+		}
+
+		return loadTextureFromMemory(fileData.data(), fileData.size());
     }
 
 	TextureData loadTextureFromMemory(const unsigned char* data, size_t size) override {

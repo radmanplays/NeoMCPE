@@ -263,7 +263,8 @@ static void* fetchSkinForPlayer(void* param) {
     std::vector<unsigned char> skinData;
     if (!HttpClient::download(skinUrl, skinData) || skinData.empty()) {
         LOGW("[Skin] download failed for %s\n", skinUrl.c_str());
- 	        return NULL;
+        player->setTextureName("mob/char.png");
+        return NULL;
     }
 
     // Save to cache

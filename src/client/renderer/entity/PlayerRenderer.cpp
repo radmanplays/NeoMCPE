@@ -1,5 +1,6 @@
 #include "PlayerRenderer.h"
 #include "EntityRenderDispatcher.h"
+#include "../Textures.h"
 #include "../../../world/entity/player/Player.h"
 #include "../../../world/level/Level.h"
 #include "../../../world/item/ArmorItem.h"
@@ -14,12 +15,22 @@ static const std::string armorFilenames[10] = {
 
 PlayerRenderer::PlayerRenderer( HumanoidModel* humanoidModel, float shadow )
 :	super(humanoidModel, shadow),
+	playerModel64(humanoidModel),
+	playerModel32(new HumanoidModel(0, 0, 64, 32)),
 	armorParts1(new HumanoidModel(1.0f, 0, 64, 64)),
 	armorParts2(new HumanoidModel(0.5f, 0, 64, 64))
 {
+	// default to legacy skin path until we know the exact texture size
+	model = playerModel32;
+	humanoidModel = playerModel32;
 }
 
 PlayerRenderer::~PlayerRenderer() {
+	// prevent MobRenderer destructor from deleting model pointers we manage manually
+	model = nullptr;
+
+	delete playerModel32;
+	delete playerModel64;
 	delete armorParts1;
 	delete armorParts2;
 }
@@ -43,11 +54,34 @@ void PlayerRenderer::setupRotations( Entity* mob, float bob, float bodyRot, floa
 	super::setupRotations(mob, bob, bodyRot, a);
 }
 
+bool PlayerRenderer::isModernPlayerSkin(Mob* mob) {
+	const std::string texName = mob->getTexture();
+	TextureId texId = entityRenderDispatcher->textures->loadTexture(texName);
+	if (!Textures::isTextureIdValid(texId))
+		return false;
+	const TextureData* texData = entityRenderDispatcher->textures->getTemporaryTextureData(texId);
+	return texData && texData->w == 64 && texData->h == 64;
+}
+
 void PlayerRenderer::renderName( Mob* mob, float x, float y, float z ){
 	//@todo: figure out how to handle HideGUI
 	if (mob != entityRenderDispatcher->cameraEntity && mob->level->adventureSettings.showNameTags) {
 		renderNameTag(mob, ((Player*)mob)->name, x, y, z, 32);
 	}
+}
+
+void PlayerRenderer::render(Entity* mob_, float x, float y, float z, float rot, float a) {
+	Mob* mob = (Mob*) mob_;
+	HumanoidModel* desired = isModernPlayerSkin(mob) ? playerModel64 : playerModel32;
+	if (model != desired || humanoidModel != desired) {
+		model = desired;
+		humanoidModel = desired;
+	}
+	// LOGI("[PlayerRenderer] %s: skin=%s, modelTex=%dx%d, desired=%s\n", 
+	// 	((Player*)mob)->name.c_str(), mob->getTexture().c_str(), 
+	// 	humanoidModel->texWidth, humanoidModel->texHeight,
+	// 	(desired == playerModel64 ? "64" : "32"));
+	HumanoidMobRenderer::render(mob_, x, y, z, rot, a);
 }
 
 int PlayerRenderer::prepareArmor(Mob* mob, int layer, float a) {
@@ -80,8 +114,11 @@ int PlayerRenderer::prepareArmor(Mob* mob, int layer, float a) {
 }
 
 void PlayerRenderer::onGraphicsReset() {
-	super::onGraphicsReset();
+	if (playerModel32) playerModel32->onGraphicsReset();
+	if (playerModel64) playerModel64->onGraphicsReset();
 
 	if (armorParts1) armorParts1->onGraphicsReset();
 	if (armorParts2) armorParts2->onGraphicsReset();
+
+	super::onGraphicsReset();
 }
