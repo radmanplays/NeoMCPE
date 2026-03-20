@@ -4,10 +4,11 @@
 #include <errno.h>
 #include <platform/log.h>
 
-#if !defined(_WIN32)
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#if defined(_WIN32)
+    #include <direct.h>
+#else
+    #include <sys/stat.h>
+    #include <sys/types.h>
 #endif
 
 OptionsFile::OptionsFile() {
@@ -27,39 +28,44 @@ void OptionsFile::setOptionsPath(const std::string& path) {
 std::string OptionsFile::getOptionsPath() const {
 	return settingsPath;
 }
-
 void OptionsFile::save(const StringVector& settings) {
-	FILE* pFile = fopen(settingsPath.c_str(), "w");
-	if(pFile != NULL) {
-		for(StringVector::const_iterator it = settings.begin(); it != settings.end(); ++it) {
-			fprintf(pFile, "%s\n", it->c_str());
-		}
-		fclose(pFile);
-	} else {
-		if (errno != ENOENT)
-			LOGI("OptionsFile::save failed to open '%s' for writing: %s", settingsPath.c_str(), strerror(errno));
+    FILE* pFile = fopen(settingsPath.c_str(), "w");
 
-		// Ensure parent directory exists for safekeeping if path contains directories
-		std::string dir = settingsPath;
-		size_t fpos = dir.find_last_of("/\\");
-		if (fpos != std::string::npos) {
-			dir.resize(fpos);
-			struct stat st;
-			if (stat(dir.c_str(), &st) != 0) {
-				// attempt recursive mkdir
-				std::string toCreate;
-				for (size_t i = 0; i <= dir.size(); ++i) {
-					if (i == dir.size() || dir[i] == '/' || dir[i] == '\\') {
-						if (!toCreate.empty()) {
-							mkdir(toCreate.c_str(), 0755);
-						}
-					}
-					if (i < dir.size())
-						toCreate.push_back(dir[i]);
-				}
-			}
-		}
-	}
+    if (!pFile && errno == ENOENT) {
+        std::string dir = settingsPath;
+        size_t fpos = dir.find_last_of("/\\");
+        if (fpos != std::string::npos) {
+            dir.resize(fpos);
+
+            std::string toCreate;
+            for (size_t i = 0; i <= dir.size(); ++i) {
+                if (i == dir.size() || dir[i] == '/' || dir[i] == '\\') {
+                    if (!toCreate.empty()) {
+#if defined(_WIN32)
+                        _mkdir(toCreate.c_str());
+#else
+                        mkdir(toCreate.c_str(), 0755);
+#endif
+                    }
+                }
+                if (i < dir.size())
+                    toCreate.push_back(dir[i]);
+            }
+        }
+
+        pFile = fopen(settingsPath.c_str(), "w");
+    }
+
+    if (!pFile) {
+        LOGI("OptionsFile::save failed: %s", strerror(errno));
+        return;
+    }
+
+    for (const auto& s : settings) {
+        fprintf(pFile, "%s\n", s.c_str());
+    }
+
+    fclose(pFile);
 }
 
 
