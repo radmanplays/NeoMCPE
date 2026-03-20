@@ -20,6 +20,7 @@ OptionBool fixedCamera("fixedCamera", false);
 OptionBool isFlying("isflying", false);
 OptionBool barOnTop("barOnTop", false);
 OptionBool allowSprint("allowSprint", true);
+OptionBool rpiCursor("rpiCursor", false);
 OptionBool autoJump("autoJump", true);
 
 
@@ -158,6 +159,7 @@ void Options::initTable() {
 
 	m_options[OPTIONS_BAR_ON_TOP] = &barOnTop;
 	m_options[OPTIONS_ALLOW_SPRINT] = &allowSprint;
+	m_options[OPTIONS_RPI_CURSOR] = &rpiCursor;
 
 	m_options[OPTIONS_AUTOJUMP] = &autoJump;
 	m_options[OPTIONS_LAST_IP] = &lastIp;

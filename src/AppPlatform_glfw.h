@@ -139,6 +139,11 @@ public:
 
 	virtual bool supportsTouchscreen() override { return true; }
 
+	virtual void hideCursor(bool hide) {
+		int isHide = hide ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN;
+		glfwSetInputMode(window, GLFW_CURSOR, isHide);
+	}
+
 	virtual void openURL(const std::string& url) override {
 #ifdef _WIN32
 		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
