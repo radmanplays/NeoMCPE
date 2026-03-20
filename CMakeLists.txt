@@ -6,45 +6,22 @@ include(cmake/CPM.cmake)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
-
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "-Wno-c++11-narrowing -Wno-narrowing -Wno-invalid-source-encoding -Wno-reserved-user-defined-literal")
 endif()
 
-# ## Config options ###
-include(CMakeDependentOption)
-include(cmake/EnumOption.cmake)
-
-if(EMSCRIPTEN)
-    # When configuring web builds with "emcmake cmake -B build -S .", set PLATFORM to Web by default
-    set(PLATFORM Web CACHE STRING "Platform to build for.")
-endif()
-
-enum_option(PLATFORM "Desktop;Web" "Platform to build for.")
-
 find_package(Threads REQUIRED)
 find_package(OpenSSL)
 
-if (${PLATFORM} STREQUAL "Desktop")
-    set(PLATFORM_CPP "PLATFORM_DESKTOP")
-
-    if (WIN32)
-        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-        set(EXTRA_LIBS ws2_32)
-    elseif(UNIX)
-        find_library(pthread NAMES pthread)
-        set(EXTRA_LIBS pthread m)
-    endif()
-
-elseif (${PLATFORM} STREQUAL "Web")
-    set(PLATFORM_CPP "PLATFORM_WEB")
-    set(EXTRA_LIBS "idbfs.js")
+if(EMSCRIPTEN)
+    set(AL_LIBTYPE "STATIC")
+else()
+    set(AL_LIBTYPE "SHARED")
 endif()
 
 # I totally shocked
-if(${PLATFORM} MATCHES "Web")
+if(EMSCRIPTEN)
     set(PNG_LIB png)
-    set(AL_LIBTYPE "STATIC")
 
     add_library(zlib INTERFACE IMPORTED)
     set_target_properties(zlib PROPERTIES
@@ -62,7 +39,6 @@ if(${PLATFORM} MATCHES "Web")
     )
 else()
     set(PNG_LIB png_shared)
-    set(AL_LIBTYPE "SHARED")
 
     CPMAddPackage(
         NAME "zlib"
@@ -283,32 +259,49 @@ file(GLOB CLIENT_SOURCES
     "src/SharedConstants.cpp"
     "src/main.cpp"
     "src/NinecraftApp.cpp"
-
-    "src/AppPlatform_glfw.cpp"
-    "src/main.cpp"
 )
 
-if (${PLATFORM} STREQUAL "Desktop")
-    list(APPEND CLIENT_SOURCES glad/src/glad.c)
+if(NOT DEFINED PLATFORM)
+    set(PLATFORM "PLATFORM_GLFW")
+endif()
+
+
+if(PLATFORM STREQUAL "PLATFORM_WIN32")
+    list(APPEND CLIENT_SOURCES "src/AppPlatform_win32.cpp" "glad/src/glad.c")
+endif()
+
+if(PLATFORM STREQUAL "PLATFORM_GLFW")
+    list(APPEND CLIENT_SOURCES "src/AppPlatform_glfw.cpp" "glad/src/glad.c")
+endif()
+
+if(EMSCRIPTEN)
+    list(APPEND CLIENT_SOURCES "glad/src/glad.c")
 endif()
 
 # Server
 if(UNIX)
-    add_executable("${PROJECT_NAME}-server" ${SERVER_SOURCES})
+add_executable("${PROJECT_NAME}-server" ${SERVER_SOURCES})
 
-    target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER" "SERVER_PROFILER")
+target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER" "SERVER_PROFILER")
 
-    target_include_directories("${PROJECT_NAME}-server" PUBLIC 
-        "${CMAKE_SOURCE_DIR}/src/"
-        "project/lib_projects/raknet/jni/RaknetSources"
-    )
+target_include_directories("${PROJECT_NAME}-server" PUBLIC 
+   "${CMAKE_SOURCE_DIR}/src/"
+   "project/lib_projects/raknet/jni/RaknetSources"
+)
 
-    target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries("${PROJECT_NAME}-server" ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 add_executable(${PROJECT_NAME} ${CLIENT_SOURCES})
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC ${PLATFORM_CPP})
+if(WIN32)
+    set(EXTRA_LIBS "ws2_32")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC "_CRT_SECURE_NO_WARNINGS")
+endif()
+
+if(PLATFORM STREQUAL "PLATFORM_WIN32" OR PLATFORM STREQUAL "PLATFORM_GLFW")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC "PLATFORM_DESKTOP")
+endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
     "${CMAKE_SOURCE_DIR}/glad/include/"
@@ -318,7 +311,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     "lib/include"
 )
 
-if(${PLATFORM} MATCHES "Web")
+if(EMSCRIPTEN)
     set(CMAKE_CXX_STANDARD 11)
     # uuuh i hate it
     set(EM_FLAGS "-pthread -sUSE_PTHREADS=1 -sSHARED_MEMORY=1")
@@ -359,6 +352,7 @@ if(${PLATFORM} MATCHES "Web")
     endif()
 
     target_compile_definitions(${PROJECT_NAME} PUBLIC "__EMSCRIPTEN__" "NO_SOUND" "NO_NETWORK")
+    set(EXTRA_LIBS "idbfs.js")
 endif()
 
 # Client
@@ -379,7 +373,7 @@ if (NOT UNIX)
     )
 endif()
 
-if(NOT ${PLATFORM} MATCHES "Web")
+if(NOT EMSCRIPTEN)
     add_custom_command(
         TARGET ${PROJECT_NAME} 
         POST_BUILD
@@ -392,6 +386,3 @@ else()
             COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/misc/web/index.html" $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 endif()
-
-message(STATUS "Compiling with the flags:")
-message(STATUS "  PLATFORM=" ${PLATFORM_CPP})
