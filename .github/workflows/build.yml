@@ -27,7 +27,7 @@ jobs:
       - name: Setup caches
         uses: ./.github/actions/setup-cache
         with:
-          host: win
+          host: linux
           target: win
       
       - name: Setup Ninja
@@ -55,6 +55,7 @@ jobs:
             -DCMAKE_C_COMPILER=$GITHUB_WORKSPACE/llvm-mingw/bin/x86_64-w64-mingw32-clang \
             -DCMAKE_CXX_COMPILER=$GITHUB_WORKSPACE/llvm-mingw/bin/x86_64-w64-mingw32-clang++ \
             -DCMAKE_RC_COMPILER=$GITHUB_WORKSPACE/llvm-mingw/bin/x86_64-w64-mingw32-windres \
+            -DALSOFT_BACKEND_PIPEWIRE=OFF \
             -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
       - name: Build
@@ -66,11 +67,11 @@ jobs:
         with:
           name: mcpe-windows
           path: |
-            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/MinecraftPE.exe
-            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/glfw3.dll
-            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/libpng16.dll
-            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/OpenAL32.dll
-            ${{github.workspace}}/build/${{ env.BUILD_TYPE }}/z.dll
+            ${{github.workspace}}/build/MinecraftPE.exe
+            ${{github.workspace}}/build/glfw3.dll
+            ${{github.workspace}}/build/libpng16.dll
+            ${{github.workspace}}/build/OpenAL32.dll
+            ${{github.workspace}}/build/z.dll
 
   build-linux:
     name: Linux Build
