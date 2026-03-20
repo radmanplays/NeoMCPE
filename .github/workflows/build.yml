@@ -220,7 +220,7 @@ jobs:
       - name: Zip Android Artifact
         uses: vimtor/action-zip@v1.2
         with:
-          files: mcpe-apk/minecraftpe-debug.apk
+          files: minecraftpe-apk/minecraftpe-debug.apk
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-android.zip
 
       - name: Update Development Release
