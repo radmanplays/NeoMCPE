@@ -127,7 +127,7 @@ jobs:
         id: cache-android-tools
         uses: actions/cache@v3
         with:
-          path: ${{ env.ANDROID_SDK_ROOT }}/cmdline-tools
+          path: ${{ env.ANDROID_SDK_ROOT }}
           key: android-cmdline-tools-v36
 
       - name: Setup Android command line tools
