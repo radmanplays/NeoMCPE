@@ -113,7 +113,7 @@ cmake --build .
    $HOME/Android/Sdk/cmdline-tools/bin/sdkmanager
    ```
 
-   > [!NOTE] 
+   > [!Note] 
    > `sdkmanager` expects the SDK to include a `cmdline-tools/latest/` folder.
    > If you only have `cmdline-tools/bin`, create the required layout:
    >
@@ -134,7 +134,7 @@ cmake --build .
    sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
    ```
 
-   > [!NOTE]
+   > [!Note]
    > if you want build.sh to always find the SDK,
    > Set ANDROID_SDK_ROOT in your shell config (~/.bashrc / ~/.profile / ~/.config/fish/config.fish), for example:
    >
@@ -162,14 +162,14 @@ cmake --build .
 
 7. Extract the archive to `/home/username/`, so that the final directory path is `/home/username/android-ndk-r14b/` 
    
-   > [!WARNING]
+   > [!Warning]
    > Make sure you don’t end up with a nested folder like `/home/username/android-ndk-r14b/android-ndk-r14b/`.
 
 8. Re run `build.sh`
 
 ## Web
 1. Download and install **emsdk**: https://emscripten.org/docs/getting_started/downloads.html
-   > [!NOTE]
+   > [!Note]
    > On arch linux you can use AUR:
    > `yay -Sy emsdk`
    
@@ -179,7 +179,7 @@ cmake --build .
    cmake .. -B . -G Ninja "-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
    cmake --build . --target MinecraftPE
    ```
-   > [!NOTE]
+   > [!Note]
    > If you are using VSCode with CMake plugin, you can add Emscripten kit
    > 1. Press Ctrl + Shift + P
    > 2. Type `CMake: Edit User-Local CMake Kits` and hit Enter
