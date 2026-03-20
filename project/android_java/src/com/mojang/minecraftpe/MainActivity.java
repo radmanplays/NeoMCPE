@@ -59,6 +59,7 @@ public class MainActivity extends Activity {
     private static final int PERMISSION_REQUEST_CODE = 123;
 
     private GLView _glView;
+    private boolean _nativeInitialized = false;
     public float invScale = 1.0f;// / 1.5f;
     private int _screenWidth = 0;
     private int _screenHeight = 0;
@@ -77,63 +78,48 @@ public class MainActivity extends Activity {
         _screenWidth = Math.max(_dm.widthPixels, _dm.heightPixels);
         _screenHeight = Math.min(_dm.widthPixels, _dm.heightPixels);
 
-        nativeOnCreate(_screenWidth, _screenHeight);
-
         _glView = new GLView(getApplication(), this);
         //_glView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+
         _glView.setEGLConfigChooser(true);
         //_glView
-        
-//        _glView.setEGLConfigChooser(
-//        	new GLSurfaceView.EGLConfigChooser() {
-//			
-//			@Override
-//			public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-//				// TODO Auto-generated method stub
-//				
-//		        // Specify a configuration for our opengl session 
-//		         // and grab the first configuration that matches is 
-//		         int[] configSpec = { 
-//		                 EGL10.EGL_DEPTH_SIZE,   24, 
-//		                 EGL10.EGL_NONE 
-//		         }; 
-//		         EGLConfig[] configs = new EGLConfig[1]; 
-//		         int[] num_config = new int[1]; 
-//		         egl.eglChooseConfig(display, configSpec, configs, 1, num_config); 
-//		         EGLConfig config = configs[0];
-//		         return config;
-//				
-//				//return null;
-//			}
-//		} );
 
         _glView.commit();
-    	setContentView(_glView);
-    	
-    	_soundPlayer = new SoundPlayer(this, AudioManager.STREAM_MUSIC);
+        setContentView(_glView);
 
-        // request dangerous permissions at runtime if necessary
+        _soundPlayer = new SoundPlayer(this, AudioManager.STREAM_MUSIC);
+
         checkAndRequestPermissions();
+        initNative();
     }
 
-    private void checkAndRequestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            boolean needRequest = false;
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                needRequest = true;
-            }
-            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                needRequest = true;
-            }
-            if (needRequest) {
-                requestPermissions(new String[] {
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE
-                }, PERMISSION_REQUEST_CODE);
-            }
+    private void initNative() {
+        if (_nativeInitialized) {
+            return;
         }
+        _nativeInitialized = true;
+        nativeOnCreate(_screenWidth, _screenHeight);
+    }
+
+    // request dangerous permissions at runtime if necessary
+    private boolean checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+
+        boolean writeGranted = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean readGranted = checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+        if (writeGranted && readGranted) {
+            return true;
+        }
+
+        requestPermissions(new String[] {
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        }, PERMISSION_REQUEST_CODE);
+
+        return false;
     }
 
     @Override
@@ -146,8 +132,18 @@ public class MainActivity extends Activity {
                     break;
                 }
             }
-            if (!granted) {
-                // user denied; you might want to warn or close the app
+            if (granted) {
+                initNative();
+            } else {
+                // We can still run using app-specific external files in scoped-storage,
+                // so allow startup while warning the user.
+                initNative();
+                new AlertDialog.Builder(this)
+                    .setTitle("Storage permission recommended")
+                    .setMessage("MinecraftPE can still run with app-private storage, but public external save/load may require permission.")
+                    .setPositiveButton("OK", null)
+                    .setCancelable(true)
+                    .show();
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

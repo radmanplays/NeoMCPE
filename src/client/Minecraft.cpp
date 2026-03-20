@@ -1143,6 +1143,8 @@ void Minecraft::init()
 	checkGlError("Init complete");
 #endif
 
+	options.load();
+
 	setIsCreativeMode(false); // false means it's Survival Mode
 	reloadOptions();
 }

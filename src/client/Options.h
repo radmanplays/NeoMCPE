@@ -100,15 +100,10 @@ public:
         // elements werent initialized so i was getting a garbage pointer and a crash
         m_options.fill(nullptr);
         initTable();
-		load();
+	    // load() is deferred to init() where path is configured correctly
     }
 
-	void initTable();
-
-    void set(OptionId key, int value);
-    void set(OptionId key, float value);
-    void set(OptionId key, const std::string& value);
-    void toggle(OptionId key);
+    void initTable();
 
     int getIntValue(OptionId key) {
         auto option = opt<OptionInt>(key);
@@ -144,6 +139,11 @@ public:
 
     void load();
     void save();
+    void set(OptionId key, int value);
+    void set(OptionId key, float value);
+    void set(OptionId key, const std::string& value);
+	void setOptionsFilePath(const std::string& path);
+	void toggle(OptionId key);
 
 	void notifyOptionUpdate(OptionId key, bool value);
 	void notifyOptionUpdate(OptionId key, float value);

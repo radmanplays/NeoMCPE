@@ -189,6 +189,33 @@ static bool ensureDirectoryExists(const std::string& path) {
     struct stat st;
     if (stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
         return true;
+
+    std::string subPath;
+    size_t i = 0;
+    while (i < path.length()) {
+        i = path.find_first_of("/\\", i);
+        if (i == std::string::npos) {
+            subPath = path;
+        } else {
+            subPath = path.substr(0, i);
+        }
+
+        if (!subPath.empty()) {
+            if (stat(subPath.c_str(), &st) != 0) {
+                if (mkdir(subPath.c_str(), 0755) != 0 && errno != EEXIST)
+                    return false;
+            } else if (!S_ISDIR(st.st_mode)) {
+                return false;
+            }
+        }
+
+        if (i == std::string::npos)
+            break;
+        i += 1;
+    }
+
+    if (stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
+        return true;
     return mkdir(path.c_str(), 0755) == 0 || errno == EEXIST;
 #endif
 }
