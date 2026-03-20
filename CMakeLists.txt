@@ -11,8 +11,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "-Wno-c++11-narrowing -Wno-narrowing -Wno-invalid-source-encoding -Wno-reserved-user-defined-literal")
 endif()
 
-# ## Config options ###
-include(CMakeDependentOption)
 include(cmake/EnumOption.cmake)
 
 if(EMSCRIPTEN)

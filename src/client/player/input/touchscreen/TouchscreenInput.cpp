@@ -9,7 +9,10 @@
 #include "../../../../platform/log.h"
 #include "../../../renderer/Textures.h"
 #include "../../../sound/SoundEngine.h"
+#include "client/gui/screens/ScreenChooser.h"
 
+
+// ARGHHHHHH WHY NOT FUCKING ENUM
 static const int AREA_DPAD_FIRST = 100;
 static const int AREA_DPAD_N = 100;
 static const int AREA_DPAD_S = 101;
@@ -17,6 +20,7 @@ static const int AREA_DPAD_W = 102;
 static const int AREA_DPAD_E = 103;
 static const int AREA_DPAD_C = 104;
 static const int AREA_PAUSE = 105;
+static const int AREA_CHAT = 106;
 
 static int cPressed = 0;
 static int cReleased = 0;
@@ -158,14 +162,11 @@ void TouchscreenInput_TestFps::onConfigChanged(const Config& c) {
 	xx = BaseX + 2 * Bw; yy = BaseY + Bh;
 	_model.addArea(AREA_DPAD_E, aRight = new RectangleArea(xx, yy, xx+Bw, yy+Bh));
 
-#ifdef __APPLE__
     float maxPixels = _minecraft->pixelCalc.millimetersToPixels(10);
-    float btnSize = Mth::Min(18 * Gui::GuiScale, maxPixels);
-	_model.addArea(AREA_PAUSE, aPause = new RectangleArea(w - 4 - btnSize,
-                                                          4,
-                                                          w - 4,
-                                                          4 + btnSize));
-#endif /* __APPLE__ */
+    // float btnSize = Mth::Min(18 * Gui::GuiScale, maxPixels);
+	float btnSize = pc.millimetersToPixels(50);
+	_model.addArea(AREA_PAUSE, aPause = new RectangleArea(w - 4 - btnSize, 4, w - 4, 4 + btnSize));
+	_model.addArea(AREA_CHAT,  aChat  = new RectangleArea(w - 8 - btnSize * 2, 4, w - 8 - btnSize, 4 + btnSize));
 
 	//rebuild();
 }
@@ -309,14 +310,19 @@ void TouchscreenInput_TestFps::tick( Player* player )
 			setButton = true;
 			xa -= 1;
 		}
-#ifdef __APPLE__
 		else if (areaId == AREA_PAUSE) {
 			if (Multitouch::isReleased(p)) {
                 _minecraft->soundEngine->playUI("random.click", 1, 1);
 				_minecraft->screenChooser.setScreen(SCREEN_PAUSE);
             }
 		}
-#endif /*__APPLE__*/
+		else if (areaId == AREA_CHAT) {
+			if (Multitouch::isReleased(p)) {
+                _minecraft->soundEngine->playUI("random.click", 1, 1);
+				_minecraft->screenChooser.setScreen(SCREEN_CONSOLE);
+            }
+		}
+
 		_buttons[areaId - AREA_DPAD_FIRST] = setButton;
 	}
 
@@ -499,15 +505,14 @@ void TouchscreenInput_TestFps::rebuild() {
 		drawRectangleArea(t, aJump, imageU + imageSize * 4, imageV, (float)imageSize);
 	}
 	
-
-#ifdef __APPLE__
 	if (!_minecraft->screen) {
-		if (isButtonDown(AREA_PAUSE))  t.colorABGR(cPressedPause);
-		else						   t.colorABGR(cReleasedPause);
+		t.colorABGR(0xFFFFFFFF);
+		// if (isButtonDown(AREA_PAUSE))  t.colorABGR(cPressedPause);
+		// else						   t.colorABGR(cReleasedPause);
 		
         drawRectangleArea(t, aPause, 200, 64, 18.0f);
+		drawRectangleArea(t, aChat,  200, 82, 18.0f);
 	}
-#endif /*__APPLE__*/
 //t.end(true, _bufferId);
 	//return;
 

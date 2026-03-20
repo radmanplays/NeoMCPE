@@ -4,6 +4,7 @@
 #include "JoinGameScreen.h"
 #include "PauseScreen.h"
 #include "RenameMPLevelScreen.h"
+#include "ConsoleScreen.h"
 #include "IngameBlockSelectionScreen.h"
 #include "JoinByIPScreen.h"
 #include "touch/TouchStartMenuScreen.h"
@@ -19,6 +20,7 @@ Screen* ScreenChooser::createScreen( ScreenId id )
 {
 	Screen* screen = NULL;
 
+	// :sob:
 	if (_mc->useTouchscreen()) {
 		switch (id) {
 		case SCREEN_STARTMENU:	     screen = new Touch::StartMenuScreen();	break;
@@ -28,6 +30,7 @@ Screen* ScreenChooser::createScreen( ScreenId id )
 		case SCREEN_PAUSEPREV:	     screen = new PauseScreen(true);	 break;
 		case SCREEN_BLOCKSELECTION:	 screen = new Touch::IngameBlockSelectionScreen();	break;
 		case SCREEN_JOINBYIP:        screen = new JoinByIPScreen(); break;
+		case SCREEN_CONSOLE:		 screen = new ConsoleScreen(); break;
 		case SCREEN_NONE:
 		default:
 			// Do nothing
@@ -42,7 +45,7 @@ Screen* ScreenChooser::createScreen( ScreenId id )
 		case SCREEN_PAUSEPREV:	     screen = new PauseScreen(true);	 break;
 		case SCREEN_BLOCKSELECTION:	 screen = new IngameBlockSelectionScreen();	break;
 		case SCREEN_JOINBYIP:        screen = new JoinByIPScreen(); break;
-
+		case SCREEN_CONSOLE:		 screen = new ConsoleScreen(); break;
 		case SCREEN_NONE:
 		default:
 			// Do nothing

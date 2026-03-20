@@ -216,8 +216,5 @@ void ConsoleScreen::render(int /*xm*/, int /*ym*/, float /*a*/)
         displayed += '_';
 
     // Placeholder hint when empty
-    if (_input.empty() && (_cursorBlink / 10) % 2 != 0)
-        font->drawShadow("Type a message or /command", (float)(boxX0 + 2), (float)(boxY + 2), 0xff606060);
-    else
-        font->drawShadow(displayed, (float)(boxX0 + 2), (float)(boxY + 2), 0xffffffff);
+    font->drawShadow(displayed, (float)(boxX0 + 2), (float)(boxY + 2), 0xffffffff);
 }
