@@ -866,15 +866,17 @@ void Minecraft::tickInput() {
 		gameMode->stopDestroyBlock();
 	}
 
+	if (!Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
+		gameMode->releaseUsingItem(player);
+	}
+
 	if (useTouchscreen()) {
 		// Touch: gesture recognizer classifies the action type (turn/destroy/build)
 		BuildActionIntention bai;
 		if (inputHolder && inputHolder->getBuildInput()->tickBuild(player, &bai)) {
 			handleBuildAction(&bai);
-		}
-
-		if (!Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
-			gameMode->releaseUsingItem(player);
+		} else {
+			gameMode->stopDestroyBlock();
 		}
 	} else {
 		// Desktop: left mouse = destroy/attack

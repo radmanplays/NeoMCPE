@@ -164,7 +164,7 @@ void TouchscreenInput_TestFps::onConfigChanged(const Config& c) {
 
     float maxPixels = _minecraft->pixelCalc.millimetersToPixels(10);
     // float btnSize = Mth::Min(18 * Gui::GuiScale, maxPixels);
-	float btnSize = pc.millimetersToPixels(50);
+	float btnSize = pc.millimetersToPixels(50 * Gui::GuiScale);
 	_model.addArea(AREA_PAUSE, aPause = new RectangleArea(w - 4 - btnSize, 4, w - 4, 4 + btnSize));
 	_model.addArea(AREA_CHAT,  aChat  = new RectangleArea(w - 8 - btnSize * 2, 4, w - 8 - btnSize, 4 + btnSize));
 
