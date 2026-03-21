@@ -153,7 +153,11 @@ void OptionsScreen::buttonClicked(Button* button) {
 
 	if (button == btnClose) {
 		minecraft->options.save();
-		minecraft->screenChooser.setScreen(SCREEN_STARTMENU);
+		if (minecraft->screen != NULL) {
+			minecraft->setScreen(NULL);
+		} else {
+			minecraft->screenChooser.setScreen(SCREEN_STARTMENU);
+		}
 	}
 	else if (button->id > 1 && button->id < 7) {
 		int categoryButton = button->id - categoryButtons[0]->id;
