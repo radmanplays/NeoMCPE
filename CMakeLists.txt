@@ -327,7 +327,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 if(${PLATFORM} MATCHES "Web")
     set(CMAKE_CXX_STANDARD 11)
     # uuuh i hate it
-    set(EM_FLAGS "-pthread -sUSE_PTHREADS=1 -sSHARED_MEMORY=1")
+    set(EM_FLAGS "-pthread -sUSE_PTHREADS=1 -sUSE_LIBPNG=1 -sSHARED_MEMORY=1")
     
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EM_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EM_FLAGS}")
