@@ -213,7 +213,8 @@ void OptionsScreen::generateOptionScreens() {
 
 	// // Controls Pane
 	optionPanes[2]->addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
-		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft);
+		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft)
+		.addOptionItem(OPTIONS_AUTOJUMP, minecraft);
 
 	for (int i = OPTIONS_KEY_FORWARD; i <= OPTIONS_KEY_USE; i++) {
 		optionPanes[2]->addOptionItem((OptionId)i, minecraft);
