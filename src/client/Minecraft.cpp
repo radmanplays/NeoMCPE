@@ -872,6 +872,10 @@ void Minecraft::tickInput() {
 		if (inputHolder && inputHolder->getBuildInput()->tickBuild(player, &bai)) {
 			handleBuildAction(&bai);
 		}
+
+		if (!Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
+			gameMode->releaseUsingItem(player);
+		}
 	} else {
 		// Desktop: left mouse = destroy/attack
 		if (Mouse::isButtonDown(MouseAction::ACTION_LEFT)) {
