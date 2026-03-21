@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   build-windows:
-    name: Windows Build
+    name: Build Windows
     runs-on: ubuntu-22.04
 
     steps:
@@ -73,7 +73,7 @@ jobs:
             ${{github.workspace}}/build/libz.dll
 
   build-linux:
-    name: Linux Build
+    name: Build Linux
     runs-on: ubuntu-latest
 
     steps:
@@ -119,7 +119,7 @@ jobs:
             ${{github.workspace}}/build/MinecraftPE-server
 
   build-android: # pray to god
-    name: Build Android APK (${{ matrix.abi }})
+    name: Build Android (${{ matrix.abi }})
     runs-on: ubuntu-latest
 
     strategy:
@@ -214,10 +214,59 @@ jobs:
           name: minecraftpe-apk-${{ matrix.abi }}
           path: ${{ github.workspace }}/build-apk/minecraftpe-*-debug.apk
 
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup caches
+        uses: ./.github/actions/setup-cache
+        with:
+          host: linux
+          target: linux
+    
+      - name: Setup Ninja
+        uses: ./.github/actions/setup-ninja
+        with:
+          host: linux
+
+      - name: Setup emsdk
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 5.0.3
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Create Build Environment
+        # Some projects don't allow in-source building, so create a separate build directory
+        # We'll use this as our working directory for all subsequent commands
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Configure CMake
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G Ninja -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/emsdk-cache/emsdk-main/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+
+      - name: Build
+        working-directory: ${{github.workspace}}/build
+        run: cmake --build . --config $BUILD_TYPE --target MinecraftPE --parallel
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcpe-web
+          path: |
+            ${{github.workspace}}/build/MinecraftPE.js
+            ${{github.workspace}}/build/MinecraftPE.wasm
+            ${{github.workspace}}/build/MinecraftPE.data
+
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    needs: [ build-windows, build-linux, build-android ]
+    needs: [ build-windows, build-linux, build-android, build-web ]
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
@@ -235,16 +284,14 @@ jobs:
       - name: Zip Windows Artifacts
         uses: vimtor/action-zip@v1.2
         with:
-          files: data mcpe-windows/MinecraftPE.exe mcpe-windows/libpng16.dll mcpe-windows/OpenAL32.dll mcpe-windows/libz.dll
+          files: mcpe-windows/MinecraftPE.exe mcpe-windows/libpng16.dll mcpe-windows/OpenAL32.dll mcpe-windows/libz.dll
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-windows.zip
-          recursive: false
 
       - name: Zip Linux Artifacts
         uses: vimtor/action-zip@v1.2
         with:
-          files: data mcpe-linux/MinecraftPE
+          files: mcpe-linux/MinecraftPE
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-linux.zip
-          recursive: false
 
       - name: Zip Linux Server Artifacts
         uses: vimtor/action-zip@v1.2
@@ -264,6 +311,18 @@ jobs:
           files: minecraftpe-apk-armeabi-v7a/minecraftpe-v7a-debug.apk
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.zip
 
+      - name: Zip Web Artifact
+        uses: vimtor/action-zip@v1.2
+        with:
+          files: mcpe-web/MinecraftPE.js mcpe-web/MinecraftPE.wasm mcpe-web/MinecraftPE.data misc/web/index.html
+          dest: minecraftpe-${{ steps.ref.outputs.hash }}-web.zip
+
+      - name: Zip Data
+        uses: vimtor/action-zip@v1.2
+        with:
+          files: data
+          recursive: false
+
       - name: Update Development Release
         uses: andelf/nightly-release@main
         env:
@@ -279,3 +338,4 @@ jobs:
             ./minecraftpe-server-${{ steps.ref.outputs.hash }}.zip
             ./minecraftpe-${{ steps.ref.outputs.hash }}-android-arm64-v8a.zip
             ./minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.zip
+            ./minecraftpe-${{ steps.ref.outputs.hash }}-web.zip
