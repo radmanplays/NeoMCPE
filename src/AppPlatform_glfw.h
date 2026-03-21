@@ -20,6 +20,10 @@
 #include <shellapi.h>
 #endif
 
+#ifdef __EMSCRIPTEN__
+	#include <emscripten/html5.h>
+#endif
+
 static void png_funcReadFile(png_structp pngPtr, png_bytep data, png_size_t length) {
 	((std::istream*)png_get_io_ptr(pngPtr))->read((char*)data, length);
 }
@@ -102,8 +106,27 @@ public:
 		return std::string(mbstr);
 	}
 
-	virtual int getScreenWidth() override { return 854; };
-	virtual int getScreenHeight() override { return 480; };
+	virtual int getScreenWidth() override { 
+		#ifdef __EMSCRIPTEN__
+			int w, h;
+			emscripten_get_canvas_element_size("canvas", &w, &h);
+
+			return w;
+		#endif
+
+		return 854; 
+	};
+
+	virtual int getScreenHeight() override { 
+		#ifdef __EMSCRIPTEN__
+			int w, h;
+			emscripten_get_canvas_element_size("canvas", &w, &h);
+
+			return h;
+		#endif
+
+		return 480; 
+	};
 
 	virtual float getPixelsPerMillimeter() override;
 
