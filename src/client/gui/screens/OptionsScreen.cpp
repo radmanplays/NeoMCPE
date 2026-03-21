@@ -19,7 +19,6 @@ OptionsScreen::OptionsScreen()
 }
 
 OptionsScreen::~OptionsScreen() {
-
 	if (btnClose != NULL) {
 		delete btnClose;
 		btnClose = NULL;
@@ -53,7 +52,6 @@ OptionsScreen::~OptionsScreen() {
 }
 
 void OptionsScreen::init() {
-
 	bHeader = new Touch::THeader(0, "Options");
 
 	btnClose = new ImageButton(1, "");
@@ -89,7 +87,6 @@ void OptionsScreen::init() {
 }
 
 void OptionsScreen::setupPositions() {
-
 	int buttonHeight = btnClose->height;
 
 	btnClose->x = width - btnClose->width;
@@ -134,7 +131,6 @@ void OptionsScreen::setupPositions() {
 
 
 void OptionsScreen::render(int xm, int ym, float a) {
-
 	renderBackground();
 
 	int xmm = xm * width / minecraft->width;
@@ -150,7 +146,6 @@ void OptionsScreen::removed() {
 }
 
 void OptionsScreen::buttonClicked(Button* button) {
-
 	if (button == btnClose) {
 		minecraft->options.save();
 		if (minecraft->screen != NULL) {
@@ -169,7 +164,6 @@ void OptionsScreen::buttonClicked(Button* button) {
 }
 
 void OptionsScreen::selectCategory(int index) {
-
 	int currentIndex = 0;
 
 	for (std::vector<Touch::TButton*>::iterator it = categoryButtons.begin(); it != categoryButtons.end(); ++it) {
@@ -235,7 +229,6 @@ void OptionsScreen::generateOptionScreens() {
 }
 
 void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {
-
 	if (currentOptionsGroup != NULL)
 		currentOptionsGroup->mouseClicked(minecraft, x, y, buttonNum);
 
@@ -243,7 +236,6 @@ void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {
 }
 
 void OptionsScreen::mouseReleased(int x, int y, int buttonNum) {
-
 	if (currentOptionsGroup != NULL)
 		currentOptionsGroup->mouseReleased(minecraft, x, y, buttonNum);
 

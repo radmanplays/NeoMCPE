@@ -320,6 +320,7 @@ void TouchscreenInput_TestFps::tick( Player* player )
 			if (Multitouch::isReleased(p)) {
                 _minecraft->soundEngine->playUI("random.click", 1, 1);
 				_minecraft->screenChooser.setScreen(SCREEN_CONSOLE);
+				_minecraft->platform()->showKeyboard();
             }
 		}
 
