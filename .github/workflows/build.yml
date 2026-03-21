@@ -68,10 +68,9 @@ jobs:
           name: mcpe-windows
           path: |
             ${{github.workspace}}/build/MinecraftPE.exe
-            ${{github.workspace}}/build/glfw3.dll
             ${{github.workspace}}/build/libpng16.dll
             ${{github.workspace}}/build/OpenAL32.dll
-            ${{github.workspace}}/build/z.dll
+            ${{github.workspace}}/build/libz.dll
 
   build-linux:
     name: Linux Build
@@ -236,14 +235,16 @@ jobs:
       - name: Zip Windows Artifacts
         uses: vimtor/action-zip@v1.2
         with:
-          files: data mcpe-windows/MinecraftPE.exe mcpe-windows/glfw3.dll mcpe-windows/libpng16.dll mcpe-windows/OpenAL32.dll mcpe-windows/z.dll
+          files: data mcpe-windows/MinecraftPE.exe mcpe-windows/libpng16.dll mcpe-windows/OpenAL32.dll mcpe-windows/libz.dll
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-windows.zip
+          recursive: false
 
       - name: Zip Linux Artifacts
         uses: vimtor/action-zip@v1.2
         with:
           files: data mcpe-linux/MinecraftPE
           dest: minecraftpe-${{ steps.ref.outputs.hash }}-linux.zip
+          recursive: false
 
       - name: Zip Linux Server Artifacts
         uses: vimtor/action-zip@v1.2
