@@ -56,6 +56,7 @@ if(${PLATFORM} MATCHES "Web")
 
     add_library(png INTERFACE IMPORTED)
     set_target_properties(png PROPERTIES
+        INTERFACE_COMPILE_OPTIONS "-sUSE_LIBPNG=1" 
         INTERFACE_LINK_OPTIONS "-sUSE_LIBPNG=1"
     )
 
@@ -331,7 +332,7 @@ if(${PLATFORM} MATCHES "Web")
     
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EM_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EM_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EM_FLAGS} --preload-file ${CMAKE_SOURCE_DIR}/data@/data -sPROXY_TO_PTHREAD")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EM_FLAGS} --preload-file ${CMAKE_SOURCE_DIR}/data@/data")
 
     target_compile_options(${PROJECT_NAME} PUBLIC
         "-Os"
