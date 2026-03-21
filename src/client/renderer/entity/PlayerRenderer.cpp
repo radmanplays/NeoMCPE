@@ -17,8 +17,8 @@ PlayerRenderer::PlayerRenderer( HumanoidModel* humanoidModel, float shadow )
 :	super(humanoidModel, shadow),
 	playerModel64(humanoidModel),
 	playerModel32(new HumanoidModel(0, 0, 64, 32)),
-	armorParts1(new HumanoidModel(1.0f, 0, 64, 64)),
-	armorParts2(new HumanoidModel(0.5f, 0, 64, 64))
+	armorParts1(new HumanoidModel(1.0f, 0, 64, 32)),
+	armorParts2(new HumanoidModel(0.5f, 0, 64, 32))
 {
 	// default to legacy skin path until we know the exact texture size
 	model = playerModel32;
@@ -77,10 +77,10 @@ void PlayerRenderer::render(Entity* mob_, float x, float y, float z, float rot, 
 		model = desired;
 		humanoidModel = desired;
 	}
-	// LOGI("[PlayerRenderer] %s: skin=%s, modelTex=%dx%d, desired=%s\n", 
-	// 	((Player*)mob)->name.c_str(), mob->getTexture().c_str(), 
-	// 	humanoidModel->texWidth, humanoidModel->texHeight,
-	// 	(desired == playerModel64 ? "64" : "32"));
+	LOGI("[PlayerRenderer] %s: skin=%s, modelTex=%dx%d, desired=%s\n", 
+		((Player*)mob)->name.c_str(), mob->getTexture().c_str(), 
+		humanoidModel->texWidth, humanoidModel->texHeight,
+		(desired == playerModel64 ? "64" : "32"));
 	HumanoidMobRenderer::render(mob_, x, y, z, rot, a);
 }
 
