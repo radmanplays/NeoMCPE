@@ -109,6 +109,8 @@ public:
 
 	bool isLevelGenerated();
 
+	void handleMouseDown(int button, bool down);
+	
     void audioEngineOn();
     void audioEngineOff();
     

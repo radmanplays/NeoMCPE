@@ -879,6 +879,13 @@ void Minecraft::tickInput() {
 			if (!bai.isRemoveContinue())
 				handleBuildAction(&bai);
 		}
+#ifdef __ANDROID__
+		bool isTryingToDestroyBlock = (options.useMouseForDigging
+		?	(Mouse::isButtonDown(MouseAction::ACTION_LEFT) && mouseDiggable)
+		:	Keyboard::isKeyDown(options.keyDestroy.key))
+		||	(buildHandled && bai.isRemove());
+		handleMouseDown(MouseAction::ACTION_LEFT, isTryingToDestroyBlock || (buildHandled && bai.isInteract()));
+#endif
 	} else {
 		// Desktop: left mouse = destroy/attack
 		if (Mouse::isButtonDown(MouseAction::ACTION_LEFT)) {
@@ -919,6 +926,32 @@ void Minecraft::tickInput() {
 	//Mouse::reset();
 
 	TIMER_POP();
+#endif
+}
+void Minecraft::handleMouseDown(int button, bool down) {
+#ifndef STANDALONE_SERVER
+#ifndef RPI
+	if(player->isUsingItem()) {
+		if(!down && !Keyboard::isKeyDown(options.keyUse.key)) {
+			gameMode->releaseUsingItem(player);
+		}
+		return;
+	}
+#endif
+	if(player->isSleeping()) {
+		return;
+	}
+    if (button == MouseAction::ACTION_LEFT && missTime > 0) return;
+	if (down && hitResult.type == TILE && button == MouseAction::ACTION_LEFT && !hitResult.indirectHit) {
+        int x = hitResult.x;
+        int y = hitResult.y;
+        int z = hitResult.z;
+        gameMode->continueDestroyBlock(x, y, z, hitResult.f);
+        particleEngine->crack(x, y, z, hitResult.f);
+		player->swing();
+    } else {
+        gameMode->stopDestroyBlock();
+    }
 #endif
 }
 
