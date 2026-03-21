@@ -880,10 +880,7 @@ void Minecraft::tickInput() {
 				handleBuildAction(&bai);
 		}
 #ifdef __ANDROID__
-		bool isTryingToDestroyBlock = (options.useMouseForDigging
-		?	(Mouse::isButtonDown(MouseAction::ACTION_LEFT) && mouseDiggable)
-		:	Keyboard::isKeyDown(options.keyDestroy.key))
-		||	(buildHandled && bai.isRemove());
+		bool isTryingToDestroyBlock = buildHandled && bai.isRemove();
 		handleMouseDown(MouseAction::ACTION_LEFT, isTryingToDestroyBlock || (buildHandled && bai.isInteract()));
 #endif
 	} else {
@@ -930,9 +927,9 @@ void Minecraft::tickInput() {
 }
 void Minecraft::handleMouseDown(int button, bool down) {
 #ifndef STANDALONE_SERVER
-#ifndef RPI
+#ifdef __ANDROID__
 	if(player->isUsingItem()) {
-		if(!down && !Keyboard::isKeyDown(options.keyUse.key)) {
+		if(!down) {
 			gameMode->releaseUsingItem(player);
 		}
 		return;
