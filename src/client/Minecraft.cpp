@@ -873,16 +873,12 @@ void Minecraft::tickInput() {
 	if (useTouchscreen()) {
 		// Touch: gesture recognizer classifies the action type (turn/destroy/build)
 		BuildActionIntention bai;
-		bool buildHandled = inputHolder->getBuildInput()->tickBuild(player, &bai);
 
-		if (buildHandled) {
-			if (!bai.isRemoveContinue())
-				handleBuildAction(&bai);
+		if (inputHolder && inputHolder->getBuildInput()->tickBuild(player, &bai)) {
+			handleBuildAction(&bai);
+		} else {
+			gameMode->stopDestroyBlock();
 		}
-#ifdef __ANDROID__
-		bool isTryingToDestroyBlock = buildHandled && bai.isRemove();
-		handleMouseDown(MouseAction::ACTION_LEFT, isTryingToDestroyBlock || (buildHandled && bai.isInteract()));
-#endif
 	} else {
 		// Desktop: left mouse = destroy/attack
 		if (Mouse::isButtonDown(MouseAction::ACTION_LEFT)) {
@@ -923,32 +919,6 @@ void Minecraft::tickInput() {
 	//Mouse::reset();
 
 	TIMER_POP();
-#endif
-}
-void Minecraft::handleMouseDown(int button, bool down) {
-#ifndef STANDALONE_SERVER
-#ifdef __ANDROID__
-	if(player->isUsingItem()) {
-		if(!down) {
-			gameMode->releaseUsingItem(player);
-		}
-		return;
-	}
-#endif
-	if(player->isSleeping()) {
-		return;
-	}
-    if (button == MouseAction::ACTION_LEFT && missTime > 0) return;
-	if (down && hitResult.type == TILE && button == MouseAction::ACTION_LEFT && !hitResult.indirectHit) {
-        int x = hitResult.x;
-        int y = hitResult.y;
-        int z = hitResult.z;
-        gameMode->continueDestroyBlock(x, y, z, hitResult.f);
-        particleEngine->crack(x, y, z, hitResult.f);
-		player->swing();
-    } else {
-        gameMode->stopDestroyBlock();
-    }
 #endif
 }
 
