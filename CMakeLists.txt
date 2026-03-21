@@ -7,10 +7,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "-Wno-c++11-narrowing -Wno-narrowing -Wno-invalid-source-encoding -Wno-reserved-user-defined-literal")
-endif()
-
 include(cmake/EnumOption.cmake)
 
 if(EMSCRIPTEN)
@@ -25,6 +21,14 @@ find_package(OpenSSL)
 
 if (${PLATFORM} STREQUAL "Desktop")
     set(PLATFORM_CPP "PLATFORM_DESKTOP")
+
+    if (MINGW)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")
+    endif()
+
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-narrowing -Wno-narrowing -Wno-invalid-source-encoding -Wno-reserved-user-defined-literal")
+    endif()
 
     if (WIN32)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
@@ -102,6 +106,8 @@ CPMAddPackage(
         "ALSOFT_UTILS OFF"
         "LIBTYPE ${AL_LIBTYPE}"
         "ALSOFT_ENABLE_MODULES OFF"
+        "ALSOFT_STATIC_STDCXX ON"
+        "ALSOFT_STATIC_LIBGCC ON"
 )
 
 # TODO: Clear this paths with *
@@ -321,7 +327,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 if(${PLATFORM} MATCHES "Web")
     set(CMAKE_CXX_STANDARD 11)
     # uuuh i hate it
-    set(EM_FLAGS "-pthread -sUSE_PTHREADS=1 -sSHARED_MEMORY=1")
+    set(EM_FLAGS "-pthread -sUSE_PTHREADS=1 -sUSE_LIBPNG=1 -sSHARED_MEMORY=1")
     
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EM_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EM_FLAGS}")
