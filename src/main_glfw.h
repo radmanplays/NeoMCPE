@@ -205,15 +205,15 @@ int main(void) {
 
 	delete app;
 
-	appContext.platform->finish();
-	
-	delete appContext.platform;
-	
 #ifndef STANDALONE_SERVER
 	// Exit.
 	glfwDestroyWindow(platform->window);
 	glfwTerminate();
 #endif
+
+	appContext.platform->finish();
+	
+	delete appContext.platform;
 
 	return 0;
 }
