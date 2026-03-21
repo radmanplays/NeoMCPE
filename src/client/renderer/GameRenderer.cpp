@@ -153,7 +153,7 @@ void GameRenderer::render(float a) {
 
 	int xMouse = (int)(Mouse::getX() * Gui::InvGuiScale);
 	int yMouse = (int)(Mouse::getY() * Gui::InvGuiScale);
-#ifndef PLATFORM_DESKTOP
+
     if (mc->useTouchscreen()) {
 		const int pid = Multitouch::getFirstActivePointerIdExThisUpdate();
 		if (pid >= 0) {
@@ -164,7 +164,6 @@ void GameRenderer::render(float a) {
 			yMouse = -9999;
 		}
 	}
-#endif
 	TIMER_POP();
 
 	bool hasClearedColorBuffer = false;
@@ -361,9 +360,9 @@ void GameRenderer::renderLevel(float a) {
 			if (mc->hitResult.isHit() && !cameraEntity->isUnderLiquid(Material::water)) {
 				TIMER_POP_PUSH("select");
 				Player* player = (Player*) cameraEntity;
-				if (mc->useTouchscreen()) {
+				// if (mc->useTouchscreen()) {
 					levelRenderer->renderHitSelect(player, mc->hitResult, 0, NULL, a); //player.inventory->getSelected(), a);
-				}
+				// }
 				levelRenderer->renderHit(player, mc->hitResult, 0, NULL, a);//player->inventory.getSelected(), a);
 			}
 		}
@@ -657,11 +656,9 @@ void GameRenderer::pick(float a) {
 
     float range = mc->gameMode->getPickRange();
     bool isPicking = true;
-#ifndef PLATFORM_DESKTOP
-    bool freeform = mc->useTouchscreen()  && !mc->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA);
-#else 
-    bool freeform = false;
-#endif
+
+    bool freeform = mc->useTouchscreen(); //&& !mc->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA);
+    
     if (freeform) {
         isPicking = updateFreeformPickDirection(a, pickDirection);
     } else {

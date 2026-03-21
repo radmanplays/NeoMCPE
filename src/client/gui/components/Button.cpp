@@ -95,7 +95,7 @@ void Button::renderBg( Minecraft* minecraft, int xm, int ym )
 }
 
 bool Button::hovered(Minecraft* minecraft, int xm , int ym) {
-	return minecraft->useTouchscreen()? (_currentlyDown && isInside(xm, ym)) : false;
+	return minecraft->useTouchscreen()? (_currentlyDown && isInside(xm, ym)) : isInside(xm, ym);
 }
 
 bool Button::isInside( int xm, int ym ) {
@@ -143,7 +143,8 @@ TButton::TButton( int id, int x, int y, int w, int h, const std::string& msg )
 
 void TButton::renderBg( Minecraft* minecraft, int xm, int ym )
 {
-	bool hovered = active && (minecraft->useTouchscreen()? (_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : false);
+	bool hovered = active && (minecraft->useTouchscreen()? (_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : isInside(xm, ym));
+	// bool hovered = active && (_currentlyDown && isInside(xm, ym));
 
 	minecraft->textures->loadAndBindTexture("gui/touchgui.png");
 

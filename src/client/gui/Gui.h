@@ -127,6 +127,8 @@ private:
 	static const float DropTicks;
 	float  _currentDropTicks;
 	int    _currentDropSlot;
+
+	bool   _openInventorySlot;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI__Gui_H__*/

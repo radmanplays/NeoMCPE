@@ -41,7 +41,7 @@ public:
 		//fill(x+1, y+1, x+w-1, y+h-1, 0xff999999);
 		
 		bool hovered = active && (minecraft->useTouchscreen()?
-			(_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : false);
+			(_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : isInside(xm, ym));
 
 		if (hovered || *selectedPtr == this)
 			statePressed->draw(Tesselator::instance, (float)x, (float)y);
@@ -547,7 +547,7 @@ void CraftButton::renderBg(Minecraft* minecraft, int xm, int ym) {
 	//fill(x+1, y+1, x+w-1, y+h-1, 0xff999999);
 
 	bool hovered = active && (minecraft->useTouchscreen()?
-		(_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : false);
+		(_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : isInside(xm, ym));
 
 	if (hovered || selected)
 		bgSelected->draw(Tesselator::instance, (float)x, (float)y);

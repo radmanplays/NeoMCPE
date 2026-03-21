@@ -31,7 +31,7 @@ ConfirmScreen::~ConfirmScreen() {
 
 void ConfirmScreen::init()
 {
-	if (minecraft->useTouchscreen()) {
+	if (/* minecraft->useTouchscreen() */ true) {
 		yesButton = new Touch::TButton(0, 0, 0, yesButtonText),
 		noButton  = new Touch::TButton(1, 0, 0, noButtonText);
 	} else {

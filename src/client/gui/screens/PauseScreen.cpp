@@ -48,7 +48,7 @@ PauseScreen::~PauseScreen() {
 }
 
 void PauseScreen::init() {
-	if (minecraft->useTouchscreen()) {
+	if (/* minecraft->useTouchscreen() */ true) {
 		bContinue = new Touch::TButton(1, "Back to game");
 		bOptions = new Touch::TButton(5, "Options");
 		bQuit = new Touch::TButton(2, "Quit to title");

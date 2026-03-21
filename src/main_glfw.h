@@ -139,12 +139,14 @@ int main(void) {
 #ifndef STANDALONE_SERVER
 	// Platform init.
 	appContext.platform = new AppPlatform_glfw();
-#if defined(DEBUG) && defined(__EMSCRIPTEN__)
-	EM_ASM({
-		console.log(FS.readdir("/"));
-		console.log(FS.readdir("/data"));
-		console.log(FS.readdir("/data/images"));
-	});
+#if defined(__EMSCRIPTEN__)
+	EM_ASM(
+		FS.mkdir('/games');
+		FS.mkdir('/games/com.mojang');
+        FS.mkdir('/games/com.mojang/minecraftWorlds');
+        FS.mount(IDBFS, {}, '/games');
+        FS.syncfs(true, function (err) {});
+    );
 #endif
 
 	glfwSetErrorCallback(error_callback);

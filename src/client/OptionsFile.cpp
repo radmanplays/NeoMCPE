@@ -16,6 +16,8 @@ OptionsFile::OptionsFile() {
 	settingsPath = "./Documents/options.txt";
 #elif defined(ANDROID)
 	settingsPath = "options.txt";
+#elif defined(__EMSCRIPTEN__)
+    settingsPath = "/games/com.mojang/options.txt";
 #else
 	settingsPath = "options.txt";
 #endif

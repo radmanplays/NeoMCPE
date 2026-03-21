@@ -50,10 +50,8 @@ void KeyboardInput::tick( Player* player )
 		ya *= 0.3f;
 	}
 
-	#if defined(RPI) || defined(PLATFORM_DESKTOP)
-		wantUp = jumping;
-		wantDown = sneaking;
-	#endif
+	wantUp = jumping;
+	wantDown = sneaking;
 
 	if (keys[KEY_CRAFT])
 		player->startCrafting((int)player->x, (int)player->y, (int)player->z, Recipe::SIZE_2X2);

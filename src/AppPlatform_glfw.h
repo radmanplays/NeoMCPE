@@ -130,7 +130,7 @@ public:
 
 	virtual float getPixelsPerMillimeter() override;
 
-	virtual bool supportsTouchscreen() override { return true; }
+	virtual bool supportsTouchscreen() override { return false; /* glfw supports only mouse and keyboard */ }
 
 	virtual void hideCursor(bool hide) override {
 		int isHide = hide ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN;
@@ -143,6 +143,8 @@ public:
 #elif __linux__
 		std::string command = "xdg-open " + url;
 		system(command.c_str());
+#elif __EMSCRIPTEN__
+		emscripten_run_script(std::string("window.open('" + url + "', '_blank')").c_str());
 #endif
 	}
 

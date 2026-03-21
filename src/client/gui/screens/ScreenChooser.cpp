@@ -21,7 +21,7 @@ Screen* ScreenChooser::createScreen( ScreenId id )
 	Screen* screen = NULL;
 
 	// :sob:
-	if (_mc->useTouchscreen()) {
+	if (/* _mc->useTouchscreen() */ true) {
 		switch (id) {
 		case SCREEN_STARTMENU:	     screen = new Touch::StartMenuScreen();	break;
 		case SCREEN_SELECTWORLD:     screen = new Touch::SelectWorldScreen();break;

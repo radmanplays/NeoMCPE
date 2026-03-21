@@ -36,6 +36,9 @@
   }
 
   window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('onunload', () => {
+    FS.syncfs(true, function (err) { console.log('Sync FS failed: ' + err) });
+  })
 </script>
 
 <script src="MinecraftPE.js"></script>

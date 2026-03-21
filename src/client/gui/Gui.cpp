@@ -51,7 +51,8 @@ Gui::Gui(Minecraft* minecraft)
 	_currentDropTicks(-1),
 	_currentDropSlot(-1),
 	MAX_MESSAGE_WIDTH(240),
-	itemNameOverlayTime(2)
+	itemNameOverlayTime(2),
+	_openInventorySlot(minecraft->useTouchscreen())
 {
 	glGenBuffers2(1, &_inventoryRc.vboId);
 	glGenBuffers2(1, &rcFeedbackInner.vboId);
@@ -75,11 +76,8 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 	//minecraft->gameRenderer->setupGuiScreen();
 	Font* font = minecraft->font;
 
-#ifdef PLATFORM_DESKTOP
-	const bool isTouchInterface = false;
-#else
 	const bool isTouchInterface = minecraft->useTouchscreen();
-#endif
+	
 	const int screenWidth = (int)(minecraft->width * InvGuiScale);
 	const int screenHeight = (int)(minecraft->height * InvGuiScale);
 	blitOffset = -90;
@@ -206,16 +204,10 @@ void Gui::handleClick(int button, int x, int y) {
 	if (button != MouseAction::ACTION_LEFT)	return;
 
 	int slot = getSlotIdAt(x, y);
-	if (slot != -1)
-	{
-#ifndef PLATFORM_DESKTOP
-		if (slot == (getNumSlots()-1))
-		{
+	if (slot != -1) {
+		if (_openInventorySlot && slot == (getNumSlots()-1)) {
 			minecraft->screenChooser.setScreen(SCREEN_BLOCKSELECTION);
-		}
-		else
-#endif
-		{
+		} else {
 			minecraft->player->inventory->selectSlot(slot);
 			itemNameOverlayTime = 0;
 		}
@@ -537,11 +529,7 @@ void Gui::tickItemDrop()
 	static bool isCurrentlyActive = false;
 	isCurrentlyActive = false;
 
-	int slots = getNumSlots();
-
-#ifndef PLATFORM_DESKTOP
-	slots--;
-#endif
+	int slots = getNumSlots() - _openInventorySlot;
 
 	if (Mouse::isButtonDown(MouseAction::ACTION_LEFT)) {
 		int slot = getSlotIdAt(Mouse::getX(), Mouse::getY());
@@ -1083,13 +1071,7 @@ void Gui::renderToolBar( float a, int ySlot, const int screenWidth ) {
 
 	float x = baseItemX;
 
-	int slots = getNumSlots();
-
-	// TODO: if using touchscreen
-
-#ifndef PLATFORM_DESKTOP
-	slots--;
-#endif
+	int slots = getNumSlots() - _openInventorySlot;
 
 	for (int i = 0; i < slots; i++) {
 		renderSlot(i, (int)x, ySlot, a);
@@ -1097,9 +1079,10 @@ void Gui::renderToolBar( float a, int ySlot, const int screenWidth ) {
 	}
 	_inventoryNeedsUpdate = false;
 
-#ifndef PLATFORM_DESKTOP
-	blit(screenWidth / 2 + 10 * getNumSlots() - 20 + 4, ySlot + 6, 242, 252, 14, 4, 14, 4);
-#endif
+
+	if (_openInventorySlot) {
+		blit(screenWidth / 2 + 10 * getNumSlots() - 20 + 4, ySlot + 6, 242, 252, 14, 4, 14, 4);
+	}
 
 	minecraft->textures->loadAndBindTexture("gui/gui_blocks.png");
 	t.endOverrideAndDraw();
