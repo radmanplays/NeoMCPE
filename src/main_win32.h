@@ -14,7 +14,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include <WinSock2.h>
+#include <winsock2.h>
 #include <process.h>
 #include "SharedConstants.h"
 
