@@ -153,7 +153,11 @@ void OptionsScreen::buttonClicked(Button* button) {
 
 	if (button == btnClose) {
 		minecraft->options.save();
-		minecraft->screenChooser.setScreen(SCREEN_STARTMENU);
+		if (minecraft->screen != NULL) {
+			minecraft->setScreen(NULL);
+		} else {
+			minecraft->screenChooser.setScreen(SCREEN_STARTMENU);
+		}
 	}
 	else if (button->id > 1 && button->id < 7) {
 		int categoryButton = button->id - categoryButtons[0]->id;
@@ -209,7 +213,8 @@ void OptionsScreen::generateOptionScreens() {
 
 	// // Controls Pane
 	optionPanes[2]->addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
-		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft);
+		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft)
+		.addOptionItem(OPTIONS_AUTOJUMP, minecraft);
 
 	for (int i = OPTIONS_KEY_FORWARD; i <= OPTIONS_KEY_USE; i++) {
 		optionPanes[2]->addOptionItem((OptionId)i, minecraft);

@@ -1228,7 +1228,6 @@ void Minecraft::reloadOptions() {
 	if ((wasTouchscreen != useTouchscreen()) || (inputHolder == 0))
 		_reloadInput();
 
-	// TODO:
 	// user->name = options.username;
 
 	LOGI("Reloading-options\n");
