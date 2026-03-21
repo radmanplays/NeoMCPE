@@ -322,6 +322,7 @@ jobs:
         with:
           files: data
           recursive: false
+          dest: data.zip
 
       - name: Update Development Release
         uses: andelf/nightly-release@main
@@ -333,6 +334,7 @@ jobs:
           body: |
             MinecraftPE development release for commit ${{ github.sha }}.
           files: |
+            ./data.zip
             ./minecraftpe-${{ steps.ref.outputs.hash }}-windows.zip
             ./minecraftpe-${{ steps.ref.outputs.hash }}-linux.zip
             ./minecraftpe-server-${{ steps.ref.outputs.hash }}.zip
