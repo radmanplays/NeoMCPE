@@ -1,9 +1,11 @@
 #include "OptionsItem.h"
 #include "../../Minecraft.h"
+#include "../../../locale/I18n.h"
 #include "../../../util/Mth.h"
-OptionsItem::OptionsItem( std::string label, GuiElement* element )
+OptionsItem::OptionsItem( OptionId optionId, std::string label, GuiElement* element )
 : GuiElementContainer(false, true, 0, 0, 24, 12),
-  label(label) {
+  m_optionId(optionId),
+  m_label(label) {
 	  addChild(element);
 }
 
@@ -19,6 +21,22 @@ void OptionsItem::setupPositions() {
 
 void OptionsItem::render( Minecraft* minecraft, int xm, int ym ) {
 	int yOffset = (height - 8) / 2;
-	minecraft->font->draw(label, (float)x, (float)y + yOffset, 0x909090, false);
+	std::string text = m_label;
+	if (m_optionId == OPTIONS_GUI_SCALE) {
+		int value = minecraft->options.getIntValue(OPTIONS_GUI_SCALE);
+		std::string scaleText;
+		switch (value) {
+		case 0: scaleText = I18n::get("options.guiScale.auto"); break;
+		case 1: scaleText = I18n::get("options.guiScale.small"); break;
+		case 2: scaleText = I18n::get("options.guiScale.medium"); break;
+		case 3: scaleText = I18n::get("options.guiScale.large"); break;
+		case 4: scaleText = I18n::get("options.guiScale.larger"); break;
+		case 5: scaleText = I18n::get("options.guiScale.largest"); break;
+		default: scaleText = I18n::get("options.guiScale.auto"); break;
+		}
+		text += ": " + scaleText;
+	}
+
+	minecraft->font->draw(text, (float)x, (float)y + yOffset, 0x909090, false);
 	super::render(minecraft, xm, ym);
 }

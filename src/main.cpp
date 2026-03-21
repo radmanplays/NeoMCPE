@@ -27,7 +27,7 @@
 // #endif
 
 
-#ifdef PLATFORM_DESKTOP
+#if defined(PLATFORM_DESKTOP) || defined(PLATFORM_WEB)
     #include "main_glfw.h"
 #endif
 

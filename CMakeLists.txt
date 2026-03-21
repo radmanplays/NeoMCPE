@@ -28,7 +28,8 @@ if (${PLATFORM} STREQUAL "Desktop")
 
     if (WIN32)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-        set(EXTRA_LIBS ws2_32)
+        include_directories(misc/windows)
+        set(EXTRA_LIBS ws2_32 winhttp)
     elseif(UNIX)
         find_library(pthread NAMES pthread)
         set(EXTRA_LIBS pthread m)
@@ -100,6 +101,7 @@ CPMAddPackage(
         "ALSOFT_TESTS OFF"
         "ALSOFT_UTILS OFF"
         "LIBTYPE ${AL_LIBTYPE}"
+        "ALSOFT_ENABLE_MODULES OFF"
 )
 
 # TODO: Clear this paths with *

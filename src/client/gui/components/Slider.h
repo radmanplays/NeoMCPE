@@ -38,6 +38,7 @@ class SliderInt : public Slider {
 public:
 	SliderInt(Minecraft* minecraft, OptionId option);
 
+	virtual void render( Minecraft* minecraft, int xm, int ym ) override;
 	virtual void mouseReleased( Minecraft* minecraft, int x, int y, int buttonNum ) override;
 
 protected:

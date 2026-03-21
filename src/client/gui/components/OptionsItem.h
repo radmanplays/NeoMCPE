@@ -15,12 +15,13 @@ class OptionsItem: public GuiElementContainer
 {
 	typedef GuiElementContainer super;
 public:
-	OptionsItem(std::string label, GuiElement* element);
+	OptionsItem(OptionId optionId, std::string label, GuiElement* element);
 	virtual void render(Minecraft* minecraft, int xm, int ym);
 	void setupPositions();
 
 private:
-	std::string label;
+	OptionId m_optionId;
+	std::string m_label;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_COMPONENTS__OptionsItem_H__*/
