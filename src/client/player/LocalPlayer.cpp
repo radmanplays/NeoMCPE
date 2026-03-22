@@ -388,6 +388,12 @@ void LocalPlayer::calculateFlight(float xa, float ya, float za) {
     ya = 0;
     za = za * flySpeed;
 
+    if (sprinting) {
+        float sprintBoost = getWalkingSpeedModifier(); // 1.3x
+        xa *= sprintBoost;
+        za *= sprintBoost;
+    }
+
 #ifdef ANDROID
     if (Keyboard::isKeyDown(103)) ya = .2f * flySpeed;
     if (Keyboard::isKeyDown(102)) ya = -.2f * flySpeed;
@@ -506,7 +512,7 @@ void LocalPlayer::aiStep() {
 		if (sprintDoubleTapTimer > 0) sprintDoubleTapTimer--;
 		prevForwardHeld = forwardHeld;
 	}
-	if (input->sneaking || abilities.flying)
+	if (input->sneaking)
 		sprinting = false;
 
     if (input->sneaking) {
