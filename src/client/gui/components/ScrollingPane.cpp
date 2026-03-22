@@ -20,6 +20,9 @@ static const float kMinimumTrackingForDrag = 5;
 static const float kMinIndicatorLength = 34.0f / 3;
 static const float PKScrollIndicatorEndSize = 3;
 static const float PKScrollIndicatorThickness = 7.0f /3;
+static const float kWheelOverscrollMax = 80.0f;
+static const float kWheelOverscrollDamping = 0.6f;
+static const float kWheelOverscrollRestoreAlpha = 0.18f;
 
 ScrollingPane::ScrollingPane(
 		int optionFlags,
@@ -70,12 +73,18 @@ ScrollingPane::ScrollingPane(
 	}
 	//LOGI("%d, %d :: %d\n", bbox.w, itemBbox.w, this->columns);
 
-	rows = 1 + (numItems-1) / this->columns,
+	rows = 1 + (numItems-1) / this->columns;
 
 	/*
 	if (columns * itemBbox.w <= bbox.w) flags |= SF_LockX;
 	if (rows    * itemBbox.h <= bbox.h) flags |= SF_LockY;
 	*/
+
+	// initialize content bounds immediately
+	adjustContentSize();
+	minPoint.set((float)(this->size.w - this->adjustedContentSize.w), (float)(this->size.h - this->adjustedContentSize.h), 0);
+	this->snapContentOffsetToBounds(false);
+
 
 	dragDeltas.reserve(128);
 
@@ -113,6 +122,34 @@ void ScrollingPane::tick() {
 	if (isSet(SF_ShowScrollbar)) {
 		updateScrollFade(vScroll);
 		updateScrollFade(hScroll);
+	}
+
+	if (isNotSet(SF_HardLimits) && !Mouse::isButtonDown(MouseAction::ACTION_LEFT) && !dragging && !tracking && !decelerating) {
+		float targetX = _contentOffset.x;
+		float targetY = _contentOffset.y;
+		bool corrected = false;
+
+		if (targetX > 0.0f) {
+			targetX = Mth::lerp(targetX, 0.0f, kWheelOverscrollRestoreAlpha);
+			corrected = true;
+		} else if (targetX < minPoint.x) {
+			targetX = Mth::lerp(targetX, minPoint.x, kWheelOverscrollRestoreAlpha);
+			corrected = true;
+		}
+
+		if (targetY > 0.0f) {
+			targetY = Mth::lerp(targetY, 0.0f, kWheelOverscrollRestoreAlpha);
+			corrected = true;
+		} else if (targetY < minPoint.y) {
+			targetY = Mth::lerp(targetY, minPoint.y, kWheelOverscrollRestoreAlpha);
+			corrected = true;
+		}
+
+		if (corrected) {
+			if (Mth::abs(targetX - _contentOffset.x) < 0.25f) targetX = (targetX > 0.0f ? 0.0f : (targetX < minPoint.x ? minPoint.x : targetX));
+			if (Mth::abs(targetY - _contentOffset.y) < 0.25f) targetY = (targetY > 0.0f ? 0.0f : (targetY < minPoint.y ? minPoint.y : targetY));
+			setContentOffset(Vec3(targetX, targetY, 0));
+		}
 	}
 }
 
@@ -549,11 +586,39 @@ void ScrollingPane::stepThroughDecelerationAnimation(bool noAnimation) {
 }
 
 void ScrollingPane::scrollBy(float dx, float dy) {
-	// adjust the translation offsets fpx/fpy by the requested amount
-	float nfpx = fpx + dx;
-	float nfpy = fpy + dy;
-	// convert back to content offset (fpx = -contentOffset.x)
-	setContentOffset(Vec3(-nfpx, -nfpy, 0));
+	// compute target content offset from wheel delta (in screen-space w/ opposite sign)
+	float targetX = _contentOffset.x - dx;
+	float targetY = _contentOffset.y - dy;
+
+	if (isSet(SF_LockX)) targetX = _contentOffset.x;
+	if (isSet(SF_LockY)) targetY = _contentOffset.y;
+
+	if (isSet(SF_HardLimits)) {
+		targetX = Mth::clamp(targetX, minPoint.x, 0.0f);
+		targetY = Mth::clamp(targetY, minPoint.y, 0.0f);
+	} else {
+		if (targetX > 0.0f) {
+			float overshoot = targetX;
+			overshoot = Mth::Min(overshoot, kWheelOverscrollMax);
+			targetX = overshoot * kWheelOverscrollDamping;
+		} else if (targetX < minPoint.x) {
+			float overshoot = targetX - minPoint.x;
+			overshoot = Mth::Max(overshoot, -kWheelOverscrollMax);
+			targetX = minPoint.x + overshoot * kWheelOverscrollDamping;
+		}
+
+		if (targetY > 0.0f) {
+			float overshoot = targetY;
+			overshoot = Mth::Min(overshoot, kWheelOverscrollMax);
+			targetY = overshoot * kWheelOverscrollDamping;
+		} else if (targetY < minPoint.y) {
+			float overshoot = targetY - minPoint.y;
+			overshoot = Mth::Max(overshoot, -kWheelOverscrollMax);
+			targetY = minPoint.y + overshoot * kWheelOverscrollDamping;
+		}
+	}
+
+	setContentOffset(Vec3(targetX, targetY, 0));
 }
 
 void ScrollingPane::setContentOffset(float x, float y) {
