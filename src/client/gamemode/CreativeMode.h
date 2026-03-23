@@ -19,7 +19,6 @@ public:
 
 	void initAbilities(Abilities& abilities);
 
-	void releaseUsingItem(Player* player);
 private:
 	void creativeDestroyBlock(int x, int y, int z, int face);
 };

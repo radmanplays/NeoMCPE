@@ -54,16 +54,3 @@ void CreativeMode::initAbilities( Abilities& abilities ) {
 bool CreativeMode::isCreativeType() {
 	return true;
 }
-
-void CreativeMode::releaseUsingItem( Player* player ) {
-	if(player->getCarriedItem() != NULL) {
-		int oldItemId = player->getCarriedItem()->id;
-		int oldAux = player->getAuxData();
-		super::releaseUsingItem(player);
-		if(player->getCarriedItem() != NULL && player->getCarriedItem()->id == oldItemId) {
-			player->getCarriedItem()->setAuxValue(oldAux);
-		}
-	} else {
-		super::releaseUsingItem(player);
-	}
-}

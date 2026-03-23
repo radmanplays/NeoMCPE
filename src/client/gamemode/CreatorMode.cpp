@@ -92,19 +92,6 @@ bool CreatorMode::isCreativeType() {
 	return true;
 }
 
-void CreatorMode::releaseUsingItem( Player* player ) {
-	if(player->getCarriedItem() != NULL) {
-		int oldItemId = player->getCarriedItem()->id;
-		int oldAux = player->getAuxData();
-		super::releaseUsingItem(player);
-		if(player->getCarriedItem() != NULL && player->getCarriedItem()->id == oldItemId) {
-			player->getCarriedItem()->setAuxValue(oldAux);
-		}
-	} else {
-		super::releaseUsingItem(player);
-	}
-}
-
 ICreator* CreatorMode::getCreator() {
 	return _creator;
 }
