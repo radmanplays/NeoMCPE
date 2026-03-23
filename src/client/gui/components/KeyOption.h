@@ -1,6 +1,6 @@
 #pragma once
 #include "Button.h"
-#include <client/Options.h>
+#include "Options.h"
 
 class KeyOption : public Touch::TButton {
 public:

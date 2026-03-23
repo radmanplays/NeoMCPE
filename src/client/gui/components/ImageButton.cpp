@@ -4,7 +4,7 @@
 #include "../../../platform/log.h"
 #include "../../../util/Mth.h"
 #include "../../renderer/Textures.h"
-#include <client/Option.h>
+#include "../../Option.h"
 
 
 ImageButton::ImageButton(int id, const std::string& msg)

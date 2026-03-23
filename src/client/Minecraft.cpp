@@ -1,10 +1,11 @@
 #include "Minecraft.h"
 #include "Options.h"
-#include "client/Options.h"
-#include "client/player/input/IBuildInput.h"
-#include "platform/input/Keyboard.h"
-#include "world/item/Item.h"
-#include "world/item/ItemInstance.h"
+#include "IBuildInput.h"
+#include "Keyboard.h"
+#include "Item.h"
+#include "ItemInstance.h"
+#include "XperiaPlayInput.h"
+#include "ControllerTurnInput.h"
 #include <string>
 #include <cstdlib>
 
@@ -24,9 +25,13 @@
 #include "../world/level/storage/LevelStorageSource.h"
 #include "../world/level/storage/LevelStorage.h"
 #include "player/input/KeyboardInput.h"
+<<<<<<< HEAD
 #include "player/input/ControllerTurnInput.h"
 #include "player/input/XperiaPlayInput.h"
 #include "world/level/chunk/ChunkSource.h"
+=======
+#include "ChunkSource.h"
+>>>>>>> abfb9e0 (more refactoring for iOS)
 
 #ifndef STANDALONE_SERVER
 #include "player/input/touchscreen/TouchInputHolder.h"

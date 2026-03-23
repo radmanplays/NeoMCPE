@@ -41,7 +41,6 @@
 		042A91AE16B17517007ABBC6 /* GuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 042A91A316B17517007ABBC6 /* GuiElement.cpp */; };
 		042A91AF16B17517007ABBC6 /* NinePatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 042A91A516B17517007ABBC6 /* NinePatch.cpp */; };
 		042A91B016B17517007ABBC6 /* OptionsGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 042A91A716B17517007ABBC6 /* OptionsGroup.cpp */; };
-		042A91B116B17517007ABBC6 /* OptionsPane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 042A91A916B17517007ABBC6 /* OptionsPane.cpp */; };
 		042A91B216B17517007ABBC6 /* TextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 042A91AB16B17517007ABBC6 /* TextBox.cpp */; };
 		044129071682FF9600B70EE6 /* MouseHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 044129061682FF9600B70EE6 /* MouseHandler.cpp */; };
 		9D293CE716071C08000305C8 /* CreateNewWorld_iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */; };
@@ -1209,8 +1208,6 @@
 		042A91A616B17517007ABBC6 /* NinePatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NinePatch.h; sourceTree = "<group>"; };
 		042A91A716B17517007ABBC6 /* OptionsGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionsGroup.cpp; sourceTree = "<group>"; };
 		042A91A816B17517007ABBC6 /* OptionsGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsGroup.h; sourceTree = "<group>"; };
-		042A91A916B17517007ABBC6 /* OptionsPane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionsPane.cpp; sourceTree = "<group>"; };
-		042A91AA16B17517007ABBC6 /* OptionsPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsPane.h; sourceTree = "<group>"; };
 		042A91AB16B17517007ABBC6 /* TextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBox.cpp; sourceTree = "<group>"; };
 		042A91AC16B17517007ABBC6 /* TextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBox.h; path = ../../src/client/gui/components/TextBox.h; sourceTree = SOURCE_ROOT; };
 		044129061682FF9600B70EE6 /* MouseHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseHandler.cpp; sourceTree = "<group>"; };
@@ -3227,8 +3224,6 @@
 				042A91A616B17517007ABBC6 /* NinePatch.h */,
 				042A91A716B17517007ABBC6 /* OptionsGroup.cpp */,
 				042A91A816B17517007ABBC6 /* OptionsGroup.h */,
-				042A91A916B17517007ABBC6 /* OptionsPane.cpp */,
-				042A91AA16B17517007ABBC6 /* OptionsPane.h */,
 				042A91AB16B17517007ABBC6 /* TextBox.cpp */,
 				042A91AC16B17517007ABBC6 /* TextBox.h */,
 				D5B50C2814CFF66F005F7284 /* Button.cpp */,
@@ -5705,7 +5700,6 @@
 				042A91AE16B17517007ABBC6 /* GuiElement.cpp in Sources */,
 				042A91AF16B17517007ABBC6 /* NinePatch.cpp in Sources */,
 				042A91B016B17517007ABBC6 /* OptionsGroup.cpp in Sources */,
-				042A91B116B17517007ABBC6 /* OptionsPane.cpp in Sources */,
 				042A91B216B17517007ABBC6 /* TextBox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
