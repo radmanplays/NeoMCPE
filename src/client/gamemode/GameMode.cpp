@@ -89,8 +89,8 @@ bool GameMode::useItemOn(Player* player, Level* level, ItemInstance* item, int x
 	float clickX = hit.x - x;
 	float clickY = hit.y - y;
 	float clickZ = hit.z - z;
-	item = player->inventory->getSelected();
-	if(level->isClientSide) {
+	if (level->isClientSide) {
+		item = player->inventory->getSelected();
 		UseItemPacket packet(x, y, z, face, item, player->entityId, clickX, clickY, clickZ);
 		minecraft->raknetInstance->send(packet);
 	}
@@ -149,7 +149,7 @@ void GameMode::initPlayer( Player* player ) {
 }
 
 void GameMode::releaseUsingItem(Player* player){
-	if(minecraft->level->isClientSide) {
+	if (minecraft->level->isClientSide && player->isUsingItem()) {
 		PlayerActionPacket packet(PlayerActionPacket::RELEASE_USE_ITEM,  0, 0, 0, 0, player->entityId);
 		minecraft->raknetInstance->send(packet);
 	}
