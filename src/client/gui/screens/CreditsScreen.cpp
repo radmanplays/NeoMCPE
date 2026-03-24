@@ -28,6 +28,7 @@ void CreditsScreen::init() {
     buttons.push_back(bHeader);
     buttons.push_back(btnBack);
 
+    // TODO: rewrite it
     // prepare text lines
     _lines.clear();
     _lines.push_back("Minecraft: Pocket Edition");
@@ -39,6 +40,7 @@ void CreditsScreen::init() {
     _lines.push_back("Kolyah35");
     _lines.push_back("karson");
     _lines.push_back("deepfriedwaffles");
+    _lines.push_back("EpikIzCool");
     _lines.push_back("");
     // avoid color tags around the URL so it isn't mangled by the parser please
     _lines.push_back("Join our Discord server: https://discord.gg/c58YesBxve");
