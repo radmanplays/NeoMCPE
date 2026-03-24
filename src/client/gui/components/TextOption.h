@@ -1,6 +1,6 @@
 #pragma once
 #include "TextBox.h"
-#include "Options.h"
+#include <client/Options.h>
 
 class TextOption : public TextBox {
 public:

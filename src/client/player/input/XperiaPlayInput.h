@@ -1,7 +1,5 @@
 #ifndef NET_MINECRAFT_CLIENT_PLAYER__XperiaPlayInput_H__
 #define NET_MINECRAFT_CLIENT_PLAYER__XperiaPlayInput_H__
-#include "Player.h"
-#include "Controller.h"
 
 //package net.minecraft.client.player;
 
