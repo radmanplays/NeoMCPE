@@ -227,6 +227,7 @@ void SoundEngine::init( Minecraft* mc, Options* options )
     sounds.add( "random.eat",  _pp("eat1"));
     sounds.add( "random.eat",  _pp("eat2"));
     sounds.add( "random.eat",  _pp("eat3"));
+    sounds.add( "random.burp",  _pp("burp1"));
     sounds.add( "random.fuse", _pp("fuse"));
 
     sounds.add(	"step.cloth", _pp("cloth1"));

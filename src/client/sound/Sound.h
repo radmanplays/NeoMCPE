@@ -172,6 +172,7 @@ extern SoundDesc SA_creeperdeath;
 extern SoundDesc SA_eat1;
 extern SoundDesc SA_eat2;
 extern SoundDesc SA_eat3;
+extern SoundDesc SA_burp1;
 extern SoundDesc SA_fuse;
 
 #endif /*!PRE_ANDROID23 && !__APPLE__*/
