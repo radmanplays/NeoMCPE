@@ -1106,7 +1106,9 @@ void Minecraft::releaseMouse()
 }
 
 bool Minecraft::useTouchscreen() {
-#ifdef RPI
+#if TARGET_OS_IPHONE
+    return true;
+#elif RPI
 	return false;
 #endif
 	return options.getBooleanValue(OPTIONS_USE_TOUCHSCREEN) && !_supportsNonTouchscreen;
