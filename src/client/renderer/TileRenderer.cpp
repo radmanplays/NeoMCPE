@@ -13,6 +13,7 @@
 #include "../../world/level/tile/BedTile.h"
 #include "../../world/level/tile/StemTile.h"
 #include "../../world/level/tile/StairTile.h"
+#include "../../world/level/tile/FireTile.h"
 #include "../../world/Direction.h"
 #include "../../world/Facing.h"
 #include "tileentity/TileEntityRenderer.h"
@@ -157,8 +158,8 @@ bool TileRenderer::tesselateInWorld( Tile* tt, int x, int y, int z )
         return tesselateRowInWorld(tt, x, y, z);
 	} else if (shape == Tile::SHAPE_TORCH) {
 		return tesselateTorchInWorld(tt, x, y, z);
-    //} else if (shape == Tile::SHAPE_FIRE) {
-    //    return tesselateFireInWorld(tt, x, y, z);
+    } else if (shape == Tile::SHAPE_FIRE) {
+        return tesselateFireInWorld(tt, x, y, z);
     //} else if (shape == Tile::SHAPE_RED_DUST) {
     //    return tesselateDustInWorld(tt, x, y, z);
 	} else if (shape == Tile::SHAPE_LADDER) {
@@ -221,6 +222,299 @@ bool TileRenderer::tesselateTorchInWorld( Tile* tt, int x, int y, int z )
 	}
 	return true;
 }
+
+bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
+{
+	Tesselator& t = Tesselator::instance;
+
+	//Icon *firstTex = tt->getTextureLayer(0);
+	//Icon *secondTex = tt->getTextureLayer(1);
+	//Icon *tex = firstTex;
+	int tex = tt->getTexture(0);
+
+//	if (hasFixedTexture()) tex = fixedTexture;
+	if (fixedTexture >= 0) tex = fixedTexture;
+	
+	
+//		t.color( 1.0f, 1.0f, 1.0f );
+//		t.tex( getLightColor(tt,  level, x, y, z ) );
+	
+	
+	
+
+
+
+
+	
+		float br = tt->getBrightness( level, x, y, z );
+		t.color( br, br, br );
+	
+	int xt = ((tex & 0xf) << 4);
+	int yt = tex & 0xf0;
+
+	float u0 = (xt) / 256.0f;
+	float u1 = (xt + 15.99f) / 256.0f;
+	float v0 = (yt) / 256.0f;
+	float v1 = (yt + 15.99f) / 256.0f;
+	float		h = 1.4f;
+
+	if ( level->isSolidBlockingTile( x, y - 1, z ) || Tile::fire->canBurn( level, x, y - 1, z ) )
+	{
+		float	x0 = x + 0.5f + 0.2f;
+		float	x1 = x + 0.5f - 0.2f;
+		float	z0 = z + 0.5f + 0.2f;
+		float	z1 = z + 0.5f - 0.2f;
+
+		float	x0_ = x + 0.5f - 0.3f;
+		float	x1_ = x + 0.5f + 0.3f;
+		float	z0_ = z + 0.5f - 0.3f;
+		float	z1_ = z + 0.5f + 0.3f;
+
+		t.vertexUV( ( float )( x0_ ), ( float )( y + h ), ( float )( z + 1 ), ( float )( u1 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x0 ), ( float )( y + 0 ), ( float )( z + 1 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x0 ), ( float )( y + 0 ), ( float )( z + 0 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x0_ ), ( float )( y + h ), ( float )( z + 0 ), ( float )( u0 ), ( float )( v0 ) );
+
+		t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z + 0 ), ( float )( u1 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x1 ), ( float )( y + 0 ), ( float )( z + 0 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x1 ), ( float )( y + 0 ), ( float )( z + 1 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z + 1 ), ( float )( u0 ), ( float )( v0 ) );
+
+	//	tex = secondTex;
+//		u0 = tex->getU0(true);
+//		v0 = tex->getV0(true);
+//		u1 = tex->getU1(true);
+//		v1 = tex->getV1(true);
+
+		u0 = (xt) / 256.0f;
+		u1 = (xt + 15.99f) / 256.0f;
+		v0 = (yt) / 256.0f;
+		v1 = (yt + 15.99f) / 256.0f;
+
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + h ), ( float )( z1_ ), ( float )( u1 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + 0 ), ( float )( z1 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + 0 ), ( float )( z1 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + h ), ( float )( z1_ ), ( float )( u0 ), ( float )( v0 ) );
+
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + h ), ( float )( z0_ ), ( float )( u1 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + 0 ), ( float )( z0 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + 0 ), ( float )( z0 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + h ), ( float )( z0_ ), ( float )( u0 ), ( float )( v0 ) );
+
+		x0 = x + 0.5f - 0.5f;
+		x1 = x + 0.5f + 0.5f;
+		z0 = z + 0.5f - 0.5f;
+		z1 = z + 0.5f + 0.5f;
+
+		x0_ = x + 0.5f - 0.4f;
+		x1_ = x + 0.5f + 0.4f;
+		z0_ = z + 0.5f - 0.4f;
+		z1_ = z + 0.5f + 0.4f;
+
+		t.vertexUV( ( float )( x0_ ), ( float )( y + h ), ( float )( z + 0 ), ( float )( u0 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x0 ), ( float )( y + 0 ), ( float )( z + 0 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x0 ), ( float )( y + 0 ), ( float )( z + 1 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x0_ ), ( float )( y + h ), ( float )( z + 1 ), ( float )( u1 ), ( float )( v0 ) );
+
+		t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z + 1 ), ( float )( u0 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x1 ), ( float )( y + 0 ), ( float )( z + 1 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x1 ), ( float )( y + 0 ), ( float )( z + 0 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z + 0 ), ( float )( u1 ), ( float )( v0 ) );
+
+//		tex = firstTex;
+		u0 = (xt) / 256.0f;
+		u1 = (xt + 15.99f) / 256.0f;
+		v0 = (yt) / 256.0f;
+		v1 = (yt + 15.99f) / 256.0f;
+
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + h ), ( float )( z1_ ), ( float )( u0 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + 0 ), ( float )( z1 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + 0 ), ( float )( z1 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + h ), ( float )( z1_ ), ( float )( u1 ), ( float )( v0 ) );
+
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + h ), ( float )( z0_ ), ( float )( u0 ), ( float )( v0 ) );
+		t.vertexUV( ( float )( x + 1 ), ( float )( y + 0 ), ( float )( z0 ), ( float )( u0 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + 0 ), ( float )( z0 ), ( float )( u1 ), ( float )( v1 ) );
+		t.vertexUV( ( float )( x + 0 ), ( float )( y + h ), ( float )( z0_ ), ( float )( u1 ), ( float )( v0 ) );
+	}
+	else
+	{
+		float	r = 0.2f;
+		float	yo = 1 / 16.0f;
+		if ( ( ( x + y + z ) & 1 ) == 1 )
+		{
+		//	tex = secondTex;
+			u0 = (xt) / 256.0f;
+			u1 = (xt + 15.99f) / 256.0f;
+			v0 = (yt) / 256.0f;
+			v1 = (yt + 15.99f) / 256.0f;
+		}
+		if ( ( ( x / 2 + y / 2 + z / 2 ) & 1 ) == 1 )
+		{
+			float tmp = u1;
+			u1 = u0;
+			u0 = tmp;
+		}
+		if ( Tile::fire->canBurn( level, x - 1, y, z ) )
+		{
+			t.vertexUV( ( float )( x + r ), ( float )( y + h + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + r ), ( float )( y + h + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v0 ) );
+
+			t.vertexUV( ( float )( x + r ), ( float )( y + h + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + r ), ( float )( y + h + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v0 ) );
+		}
+		if ( Tile::fire->canBurn( level, x + 1, y, z ) )
+		{
+			t.vertexUV( ( float )( x + 1 - r ), ( float )( y + h + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 1 - 0 ), ( float )( y + 0 + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1 - 0 ), ( float )( y + 0 + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1 - r ), ( float )( y + h + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v0 ) );
+
+			t.vertexUV( ( float )( x + 1.0f - r ), ( float )( y + h + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 1.0f - 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 1.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1.0f - 0 ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1.0f - r ), ( float )( y + h + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v0 ) );
+		}
+		if ( Tile::fire->canBurn( level, x, y, z - 1 ) )
+		{
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + h + yo ), ( float )( z +
+						 r ), ( float )( u1 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 0.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + h + yo ), ( float )( z +
+						 r ), ( float )( u0 ), ( float )( v0 ) );
+
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + h + yo ), ( float )( z +
+						 r ), ( float )( u0 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z +
+						 0.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + h + yo ), ( float )( z +
+						 r ), ( float )( u1 ), ( float )( v0 ) );
+		}
+		if ( Tile::fire->canBurn( level, x, y, z + 1 ) )
+		{
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + h + yo ), ( float )( z + 1.0f -
+						 r ), ( float )( u0 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + 0.0f + yo ), ( float )( z + 1.0f -
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z + 1.0f -
+						 0.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + h + yo ), ( float )( z + 1.0f -
+						 r ), ( float )( u1 ), ( float )( v0 ) );
+
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + h + yo ), ( float )( z + 1.0f -
+						 r ), ( float )( u1 ), ( float )( v0 ) );
+			t.vertexUV( ( float )( x + 0.0f ), ( float )( y + 0.0f + yo ), ( float )( z + 1.0f -
+						 0.0f ), ( float )( u1 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + 0.0f + yo ), ( float )( z + 1.0f -
+						 0.0f ), ( float )( u0 ), ( float )( v1 ) );
+			t.vertexUV( ( float )( x + 1.0f ), ( float )( y + h + yo ), ( float )( z + 1.0f -
+						 r ), ( float )( u0 ), ( float )( v0 ) );
+		}
+		if ( Tile::fire->canBurn( level, x, y + 1.0f, z ) )
+		{
+			double	x0 = x + 0.5f + 0.5f;
+			double	x1 = x + 0.5f - 0.5f;
+			double	z0 = z + 0.5f + 0.5f;
+			double	z1 = z + 0.5f - 0.5f;
+
+			double	x0_ = x + 0.5f - 0.5f;
+			double	x1_ = x + 0.5f + 0.5f;
+			double	z0_ = z + 0.5f - 0.5f;
+			double	z1_ = z + 0.5f + 0.5f;
+
+	//		tex = firstTex;
+			u0 = (xt) / 256.0f;
+			u1 = (xt + 15.99f) / 256.0f;
+			v0 = (yt) / 256.0f;
+			v1 = (yt + 15.99f) / 256.0f;
+
+			y += 1;
+			h = -0.2f;
+
+			if ( ( ( x + y + z ) & 1 ) == 0 )
+			{
+				t.vertexUV( ( float )( x0_ ), ( float )( y + h ), ( float )( z +
+							 0 ), ( float )( u1 ), ( float )( v0 ) );
+				t.vertexUV( ( float )( x0 ), ( float )( y + 0 ), ( float )( z +
+							 0 ), ( float )( u1 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x0 ), ( float )( y + 0 ), ( float )( z +
+							 1 ), ( float )( u0 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x0_ ), ( float )( y + h ), ( float )( z +
+							 1 ), ( float )( u0 ), ( float )( v0 ) );
+
+//				tex = secondTex;
+				u0 = (xt) / 256.0f;
+				u1 = (xt + 15.99f) / 256.0f;
+				v0 = (yt) / 256.0f;
+				v1 = (yt + 15.99f) / 256.0f;
+
+				t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z +
+							 1.0f ), ( float )( u1 ), ( float )( v0 ) );
+				t.vertexUV( ( float )( x1 ), ( float )( y + 0.0f ), ( float )( z +
+							 1.0f ), ( float )( u1 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x1 ), ( float )( y + 0.0f ), ( float )( z +
+							 0 ), ( float )( u0 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z +
+							 0 ), ( float )( u0 ), ( float )( v0 ) );
+			}
+			else
+			{
+				t.vertexUV( ( float )( x + 0.0f ), ( float )( y +
+							 h ), ( float )( z1_ ), ( float )( u1 ), ( float )( v0 ) );
+				t.vertexUV( ( float )( x + 0.0f ), ( float )( y +
+							 0.0f ), ( float )( z1 ), ( float )( u1 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x + 1.0f ), ( float )( y +
+							 0.0f ), ( float )( z1 ), ( float )( u0 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x + 1.0f ), ( float )( y +
+							 h ), ( float )( z1_ ), ( float )( u0 ), ( float )( v0 ) );
+
+//				tex = secondTex;
+				u0 = (xt) / 256.0f;
+				u1 = (xt + 15.99f) / 256.0f;
+				v0 = (yt) / 256.0f;
+				v1 = (yt + 15.99f) / 256.0f;
+
+				t.vertexUV( ( float )( x + 1.0f ), ( float )( y +
+							 h ), ( float )( z0_ ), ( float )( u1 ), ( float )( v0 ) );
+				t.vertexUV( ( float )( x + 1.0f ), ( float )( y +
+							 0.0f ), ( float )( z0 ), ( float )( u1 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x + 0.0f ), ( float )( y +
+							 0.0f ), ( float )( z0 ), ( float )( u0 ), ( float )( v1 ) );
+				t.vertexUV( ( float )( x + 0.0f ), ( float )( y +
+							 h ), ( float )( z0_ ), ( float )( u0 ), ( float )( v0 ) );
+			}
+		}
+	}
+
+	return true;
+
+}
+
 
 bool TileRenderer::tesselateLadderInWorld( Tile* tt, int x, int y, int z )
 {

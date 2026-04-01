@@ -1599,8 +1599,8 @@ bool Level::containsFireTile(const AABB& box) {
                 for (int z = z0; z < z1; z++) {
                     int t = getTile(x, y, z);
 
-                    if (/*t == ((Tile*)(Tile::fire))->id
-					 ||*/ t == Tile::lava->id
+                    if (t == ((Tile*)(Tile::fire))->id
+					 || t == Tile::lava->id
 					 || t == Tile::calmLava->id) {
  						 return true;
 					}

@@ -34,6 +34,8 @@ public:
 	bool tesselateFenceGateInWorld(FenceGateTile* tt, int x, int y, int z);
 	bool tesselateBedInWorld(Tile *tt, int x, int y, int z);
 	bool tesselateRowInWorld(Tile* tt, int x, int y, int z);
+	bool tesselateFireInWorld(Tile* tt, int x, int y, int z);
+
 
     void tesselateTorch(Tile* tt, float x, float y, float z, float xxa, float zza);
 	void tesselateCrossTexture(Tile* tt, int data, float x, float y, float z);

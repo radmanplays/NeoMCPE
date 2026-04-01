@@ -206,3 +206,93 @@ void WaterSideTexture::tick() {
 		pixels[i * 4 + 3] = a;
 	}
 }
+
+FireTexture::FireTexture()
+:   super(((Tile*)Tile::fire)->tex),
+	_tick(0),
+	_frame(0)
+{
+	current = new float[16*20];
+	next = new float[16*20];
+	heat = new float[16*20];
+	heata = new float[16*20];
+
+	for (int i = 0; i < 256; ++i) {
+		current[i] = 0;
+		next[i] = 0;
+		heat[i] = 0;
+		heata[i] = 0;
+	}
+}
+
+FireTexture::~FireTexture() {
+	delete[] current;
+	delete[] next;
+	delete[] heat;
+	delete[] heata;
+}
+
+
+// oh boy time to implement fire textures, i am so fucked - shredder
+
+void FireTexture::tick() {
+//  loop generates fire texture  on the empty texture grid, hopefully shouldnt be too taxing on older hardware - shredder
+    for (int x = 0; x < 16; x++) {
+        for (int y = 0; y < 20; y++) {
+            int count = 18;
+            float pow = this->current[x + (y + 1) % 20 * 16] * (float)(count);
+            for (int xx = x - 1; xx <= x + 1; xx++) {
+                for (int yy = y; yy <= y + 1; yy++) {
+                    if (xx >= 0 && yy >= 0 && xx < 16 && yy < 20) {
+                        pow += this->current[xx + yy * 16];
+                    }
+                    count++;
+                }
+            }
+            this->next[x + y * 16] = pow / (float(count) * 1.06f);
+            if (y >= 19) {
+                this->next[x + y * 16] = float(Mth::random() * Mth::random() * Mth::random() * 4.0 + Mth::random() * 0.1f + 0.2f);
+            }
+        }
+    }
+
+    // hopefully this doesn't cause any mysterious issues - shredder
+	float* tmp = next;
+	next = current;
+	current = tmp;
+
+    for (int i = 0; i < 256; i++) {
+        float pow = this->current[i] * 1.8f;
+        if (pow > 1.0f) {
+            pow = 1.0f;
+        }
+        if (pow < 0.0f) {
+            pow = 0.0f;
+        }
+		
+	
+        int r = (int) (pow * 155.0f + 100.0f);
+        int g = (int)(pow * pow * 255.0f);
+        int b = (int)(pow * pow * pow * pow * pow * pow * pow * pow * pow * pow * 255.0f);
+        int a = 255;
+        if (pow < 0.5f) {
+            a = 0;
+        }
+
+		// @TODO: cant be arsed rn to implement the anaglyph3d check would be nice to check if it does - shredder
+        //if (this->anaglyph3d) {
+        //    float rr = (r * 30 + g * 59 + b * 11) / 100;
+        //    float gg = (r * 30 + g * 70) / 100;
+        //    float bb = (r * 30 + b * 70) / 100;
+        //    r = rr;
+        //    g = gg;
+        //    b = bb;
+        //}
+
+		pixels[i * 4 + 0] = r;
+		pixels[i * 4 + 1] = g;
+		pixels[i * 4 + 2] = b;
+		pixels[i * 4 + 3] = a;
+
+    }
+}
