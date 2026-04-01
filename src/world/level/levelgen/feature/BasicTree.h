@@ -221,7 +221,7 @@ private:
 			int dir = 0;
 			int xdiff = abs(coordinate[0] - start[0]);
 			int zdiff = abs(coordinate[2] - start[2]);
-			int maxdiff = max(xdiff, zdiff);
+			int maxdiff = (std::max)(xdiff, zdiff);
 
 			if (maxdiff > 0)
 			{
