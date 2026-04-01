@@ -116,12 +116,12 @@ private:
 
 	}
 
-	void crossection(int x, int y, int z, float radius, byte direction, int material)
+	void crossection(int x, int y, int z, float radius, unsigned char direction, int material)
 	{
 
 		int rad = (int) (radius + 0.618);
-		byte secidx1 = axisConversionArray[direction];
-		byte secidx2 = axisConversionArray[direction + 3];
+		unsigned char secidx1 = axisConversionArray[direction];
+		unsigned char secidx2 = axisConversionArray[direction + 3];
 		int center[] = { x, y, z };
 		int position[] = { 0, 0, 0 };
 		int offset1 = -rad;
@@ -182,7 +182,7 @@ private:
 		while (cury >= y)
 		{
 			radius = foliageShape(cury - y);
-			crossection(x, cury, z, radius, (byte) 1, Tile::leaves->id);
+			crossection(x, cury, z, radius, (unsigned char) 1, Tile::leaves->id);
 			cury--;
 		}
 
@@ -190,8 +190,8 @@ private:
 	void limb(int *start, int *end, int material)
 	{
 		int delta[] = { 0, 0, 0 };
-		byte idx = 0;
-		byte primidx = 0;
+		unsigned char idx = 0;
+		unsigned char primidx = 0;
 		while (idx < 3)
 		{
 			delta[idx] = end[idx] - start[idx];
@@ -202,8 +202,8 @@ private:
 			idx++;
 		}
 		if (delta[primidx] == 0) return;
-		byte secidx1 = axisConversionArray[primidx];
-		byte secidx2 = axisConversionArray[primidx + 3];
+		unsigned char secidx1 = axisConversionArray[primidx];
+		unsigned char secidx2 = axisConversionArray[primidx + 3];
 		char primsign;
 		if (delta[primidx] > 0) primsign = 1;
 		else primsign = -1;
@@ -295,8 +295,8 @@ private:
 	int checkLine(int *start, int *end){
 
 		int delta[] = { 0, 0, 0 };
-		byte idx = 0;
-		byte primidx = 0;
+		unsigned char idx = 0;
+		unsigned char primidx = 0;
 		while (idx < 3)
 		{
 			delta[idx] = end[idx] - start[idx];
@@ -307,8 +307,8 @@ private:
 			idx++;
 		}
 		if (delta[primidx] == 0) return -1;
-		byte secidx1 = axisConversionArray[primidx];
-		byte secidx2 = axisConversionArray[primidx + 3];
+		unsigned char secidx1 = axisConversionArray[primidx];
+		unsigned char secidx2 = axisConversionArray[primidx + 3];
 		char primsign; 
 		if (delta[primidx] > 0) primsign = 1;
 		else primsign = -1;
@@ -415,7 +415,7 @@ public:
 	virtual bool place(Level *level, Random *random, int x, int y, int z){
 
 		thisLevel = level;
-		__int64 seed = random->nextLong();
+		int seed = random->nextLong();
 		rnd->setSeed(seed);
 		origin[0] = x;
 		origin[1] = y;
