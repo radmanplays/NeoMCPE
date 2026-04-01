@@ -6,6 +6,7 @@
 #include "Biome.h"
 #include "../levelgen/feature/TreeFeature.h"
 #include "../levelgen/feature/BirchFeature.h"
+#include "../levelgen/feature/BasicTree.h"
 
 class ForestBiome: public Biome
 {
@@ -15,7 +16,7 @@ public:
             return new BirchFeature();
         }
         if (random->nextInt(3) == 0) {
-            //return new BasicTree();
+            return new BasicTree(false);
         }
         return new TreeFeature(false);
     }

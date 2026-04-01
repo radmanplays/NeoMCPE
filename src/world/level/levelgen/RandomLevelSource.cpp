@@ -370,6 +370,18 @@ void RandomLevelSource::postProcess(ChunkSource* parent, int xt, int zt) {
 		}
 		//printf("placing tree at %d, %d, %d\n", x, y, z);
     }
+  //  for (int i = 0; i < forests; i++) {
+  //      int x = xo + random.nextInt(16) + 8;
+  //      int z = zo + random.nextInt(16) + 8;
+		//int y = level->getHeightmap(x, z);
+  //      Feature* tree = biome->getBasicTreeFeature(&random);
+		//if (tree) {
+	 //       tree->init(1, 1, 1);
+		//    tree->place(level, &random, x, y, z);
+		//	delete tree;
+		//}
+		////printf("placing tree at %d, %d, %d\n", x, y, z);
+  //  }
 
     for (int i = 0; i < 2; i++) {
         int x = xo + random.nextInt(16) + 8;

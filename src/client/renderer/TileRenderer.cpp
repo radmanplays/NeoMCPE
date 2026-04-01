@@ -225,29 +225,16 @@ bool TileRenderer::tesselateTorchInWorld( Tile* tt, int x, int y, int z )
 
 bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 {
+	// @todo: fire alpha transparency seems to be scuffed, also it seems i might have messed up the second layer while porting from lce/java , need to look into it - shredder
+
 	Tesselator& t = Tesselator::instance;
 
-	//Icon *firstTex = tt->getTextureLayer(0);
-	//Icon *secondTex = tt->getTextureLayer(1);
-	//Icon *tex = firstTex;
 	int tex = tt->getTexture(0);
 
-//	if (hasFixedTexture()) tex = fixedTexture;
 	if (fixedTexture >= 0) tex = fixedTexture;
 	
-	
-//		t.color( 1.0f, 1.0f, 1.0f );
-//		t.tex( getLightColor(tt,  level, x, y, z ) );
-	
-	
-	
-
-
-
-
-	
-		float br = tt->getBrightness( level, x, y, z );
-		t.color( br, br, br );
+	float br = tt->getBrightness( level, x, y, z );
+	t.color( br, br, br );
 	
 	int xt = ((tex & 0xf) << 4);
 	int yt = tex & 0xf0;
@@ -256,7 +243,7 @@ bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 	float u1 = (xt + 15.99f) / 256.0f;
 	float v0 = (yt) / 256.0f;
 	float v1 = (yt + 15.99f) / 256.0f;
-	float		h = 1.4f;
+	float h = 1.4f;
 
 	if ( level->isSolidBlockingTile( x, y - 1, z ) || Tile::fire->canBurn( level, x, y - 1, z ) )
 	{
@@ -280,11 +267,7 @@ bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 		t.vertexUV( ( float )( x1 ), ( float )( y + 0 ), ( float )( z + 1 ), ( float )( u0 ), ( float )( v1 ) );
 		t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z + 1 ), ( float )( u0 ), ( float )( v0 ) );
 
-	//	tex = secondTex;
-//		u0 = tex->getU0(true);
-//		v0 = tex->getV0(true);
-//		u1 = tex->getU1(true);
-//		v1 = tex->getV1(true);
+
 
 		u0 = (xt) / 256.0f;
 		u1 = (xt + 15.99f) / 256.0f;
@@ -321,7 +304,7 @@ bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 		t.vertexUV( ( float )( x1 ), ( float )( y + 0 ), ( float )( z + 0 ), ( float )( u1 ), ( float )( v1 ) );
 		t.vertexUV( ( float )( x1_ ), ( float )( y + h ), ( float )( z + 0 ), ( float )( u1 ), ( float )( v0 ) );
 
-//		tex = firstTex;
+
 		u0 = (xt) / 256.0f;
 		u1 = (xt + 15.99f) / 256.0f;
 		v0 = (yt) / 256.0f;
@@ -343,7 +326,6 @@ bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 		float	yo = 1 / 16.0f;
 		if ( ( ( x + y + z ) & 1 ) == 1 )
 		{
-		//	tex = secondTex;
 			u0 = (xt) / 256.0f;
 			u1 = (xt + 15.99f) / 256.0f;
 			v0 = (yt) / 256.0f;
@@ -447,7 +429,6 @@ bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 			double	z0_ = z + 0.5f - 0.5f;
 			double	z1_ = z + 0.5f + 0.5f;
 
-	//		tex = firstTex;
 			u0 = (xt) / 256.0f;
 			u1 = (xt + 15.99f) / 256.0f;
 			v0 = (yt) / 256.0f;
@@ -467,7 +448,6 @@ bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 				t.vertexUV( ( float )( x0_ ), ( float )( y + h ), ( float )( z +
 							 1 ), ( float )( u0 ), ( float )( v0 ) );
 
-//				tex = secondTex;
 				u0 = (xt) / 256.0f;
 				u1 = (xt + 15.99f) / 256.0f;
 				v0 = (yt) / 256.0f;
@@ -493,7 +473,6 @@ bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 				t.vertexUV( ( float )( x + 1.0f ), ( float )( y +
 							 h ), ( float )( z1_ ), ( float )( u0 ), ( float )( v0 ) );
 
-//				tex = secondTex;
 				u0 = (xt) / 256.0f;
 				u1 = (xt + 15.99f) / 256.0f;
 				v0 = (yt) / 256.0f;
