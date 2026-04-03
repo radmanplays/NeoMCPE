@@ -4,6 +4,7 @@
 #include "tile/Tile.h"
 #include "Level.h"
 
+
 Region::Region(Level* level, int x1, int y1, int z1, int x2, int y2, int z2) {
     this->level = level;
 
@@ -135,6 +136,6 @@ Biome* Region::getBiome( int x, int z ) {
 	return level->getBiome(x, z);
 }
 
-//BiomeSource getBiomeSource() {
-//    return level.getBiomeSource();
-//}
+BiomeSource* Region::getBiomeSource() {
+    return level->getBiomeSource();
+}
