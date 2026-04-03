@@ -264,6 +264,3 @@ void Chunk::resetUpdates()
 	updates = 0;
 	//swRebuild.reset();
 }
-BiomeSource* Region::getBiomeSource() {
-	return level->getBiomeSource();
-}
