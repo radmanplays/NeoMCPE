@@ -84,6 +84,7 @@ enum OptionId {
     OPTIONS_LAST_IP,
 
     OPTIONS_RPI_CURSOR,
+	OPTIONS_FOLIAGE_TINT,
 	// Should be last!
 	OPTIONS_COUNT
 };

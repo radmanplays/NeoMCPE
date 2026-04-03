@@ -9,6 +9,8 @@
 #include "../../item/Item.h"
 #include "../../item/ItemInstance.h"
 #include "../FoliageColor.h"
+#include "../LevelSource.h"
+#include "../biome/BiomeSource.h"
 
 class Entity;
 
@@ -54,8 +56,16 @@ public:
         if (data == BIRCH_LEAF) {
             return FoliageColor::getBirchColor();
         }
+		if (!FoliageColor::useTint){
+			return FoliageColor::getDefaultColor();
+		}
 
-        return FoliageColor::getDefaultColor();
+ //       return FoliageColor::getDefaultColor(); we need to hook this up with OPTION_FOLIAGE_TINT
+		level->getBiomeSource()->getBiomeBlock(x, z, 1, 1);
+		float temperature = level->getBiomeSource()->temperatures[0];
+        float rainfall = level->getBiomeSource()->downfalls[0];
+        return FoliageColor::get(temperature, rainfall);
+		
     }
 
     void onRemove(Level* level, int x, int y, int z) {

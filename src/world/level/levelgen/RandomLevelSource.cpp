@@ -473,7 +473,7 @@ void RandomLevelSource::postProcess(ChunkSource* parent, int xt, int zt) {
 		MobSpawner::postProcessSpawnMobs(level, biome, xo + 8, zo + 8, 16, 16, &random);
 
 	//LOGI("Reading temp: 1\n");
-    float* temperatures = level->getBiomeSource()->getTemperatureBlock(/*NULL,*/ xo + 8, zo + 8, 16, 16);
+    float* temperatures = level->getBiomeSource()->getTemperatureBlock(NULL, xo + 8, zo + 8, 16, 16);
     for (int x = xo + 8; x < xo + 8 + 16; x++)
         for (int z = zo + 8; z < zo + 8 + 16; z++) {
             int xp = x - (xo + 8);

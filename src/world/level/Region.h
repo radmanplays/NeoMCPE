@@ -5,6 +5,7 @@
 
 #include "LevelSource.h"
 
+
 class Level;
 class Material;
 class LevelChunk;
@@ -27,6 +28,7 @@ public:
 	int getData(int x, int y, int z);
 	const Material* getMaterial(int x, int y, int z);
 	Biome* getBiome(int x, int z);
+	BiomeSource* getBiomeSource() override;
 private:
     int xc1, zc1;
     LevelChunk*** chunks;

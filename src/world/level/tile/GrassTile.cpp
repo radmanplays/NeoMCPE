@@ -1,6 +1,11 @@
 #include "GrassTile.h"
 #include "../material/Material.h"
 #include "../../entity/item/ItemEntity.h"
+#include "../GrassColor.h"
+#include "../Level.h"
+#include "../LevelSource.h"
+#include "../biome/BiomeSource.h"
+#include "../../../client/Minecraft.h"
 
 GrassTile::GrassTile(int id)
 :	super(id, Material::dirt)
@@ -24,11 +29,18 @@ int GrassTile::getTexture( int face, int data ) {
 }
 
 int GrassTile::getColor( LevelSource* level, int x, int y, int z ) {
-	//level.getBiomeSource().getBiomeBlock(x, z, 1, 1);
-	//float temp = level.getBiomeSource().temperatures[0];
-	//float rain = level.getBiomeSource().downfalls[0];
 
-	return 0x339933;//GrassColor.get(temp, rain);
+	if(!GrassColor::useTint){
+		return 0x339933;
+	}
+
+	level->getBiomeSource()->getBiomeBlock(x, z, 1, 1);
+	float temp = level->getBiomeSource()->temperatures[0];
+	float rain = level->getBiomeSource()->downfalls[0];
+
+//	return 0x339933;//GrassColor.get(temp, rain); // we need to hook this up with OPTION_FOLIAGE_TINT
+
+	return GrassColor::get(temp, rain);
 }
 
 void GrassTile::tick( Level* level, int x, int y, int z, Random* random ) {

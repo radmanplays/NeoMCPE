@@ -71,7 +71,6 @@ public:
 
 	virtual Feature* getTreeFeature(Random* random);
 	virtual Feature* getGrassFeature(Random* random);
-	virtual Feature* getBasicTreeFeature(Random* random);
 
     static Biome* getBiome(float temperature, float downfall);
     static Biome* _getBiome(float temperature, float downfall);

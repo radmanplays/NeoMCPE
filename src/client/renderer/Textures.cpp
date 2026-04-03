@@ -249,6 +249,37 @@ int Textures::crispBlend( int c0, int c1 )
 	return (a << 24) | (r << 16) | (g << 8) | b;
 }
 
+// shredder here, moved the code from minecraft.cpp bcus that isnt the right place
+// had to implement this because i couldn't find a similar function in the code to do this
+int* Textures::loadTexturePixels(TextureId texId, const std::string& resourceName){
+	
+	const TextureData* texture = getTemporaryTextureData(texId); // storing raw pixels
+
+	int size = texture->w * texture->h; // gets the size of our funny lil guy
+    int* pixels = new int[size]; // memory leaks be galore 
+	unsigned char* raw = texture->data; // storing raw data into our beloved variable
+	for (int i = 0; i < (texture->w * texture->h); i++){
+		// my head hurts i hate working with this 
+		
+
+		// uh since each pixel stores r g b a, aka the color channels which are each one byte, we multiply them by 4 to move from one pixel to another
+		
+		int r = raw[i * 4 + 0]; // gets us the first channel aka red
+		int g = raw[i * 4 + 1]; // gets us the second channel green
+		int b = raw[i * 4 + 2]; // gets us the third channel blue
+		int a = raw[i * 4 + 3]; // gets us the alpha channel
+
+		// woohoo pixels uh should have been seperated into their colors now hopefully
+
+		// r g b a
+		// ugh we now got to turn it into the AA RR GGBB format aak 0xAARRGGBB
+		// b gets 0 - 7 (8 bits), g gets 7 - 15 (8 bits), r gets 16 - 23 (8 bits), alpha gets the last ones 24 - 31 (8 bits),
+		pixels[i] = (a << 24) | (r << 16) | (g << 8) | (b); // shuld combine them into one 32 bit int unless i did something dumb
+	}
+	return pixels; // your meal has been prepared john colors
+}
+
+
 ///*public*/ int loadHttpTexture(std::string url, std::string backup) {
 //    HttpTexture texture = httpTextures.get(url);
 //    if (texture != NULL) {

@@ -153,6 +153,7 @@ options.group.tweaks=Tweaks
 options.allowSprint=Allow sprint
 options.barOnTop=HUD above inventory
 options.rpiCursor=Show Raspberry PI cursor
+options.foliageTint=Tint Grass and Leaves
 options.autoJump=Auto Jump
 options.thirdperson=Third Person
 options.servervisible=Server Visible

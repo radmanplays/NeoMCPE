@@ -7,6 +7,10 @@
 #include "../../world/level/Region.h"
 #include "../../world/level/chunk/LevelChunk.h"
 #include "../../util/Mth.h"
+
+#include "../../world/level/biome/BiomeSource.h"
+
+#include "../../world/level/Level.h"
 //#include "../../platform/time.h"
 
 /*static*/ int Chunk::updates = 0;
@@ -259,4 +263,7 @@ void Chunk::resetUpdates()
 {
 	updates = 0;
 	//swRebuild.reset();
+}
+BiomeSource* Region::getBiomeSource() {
+	return level->getBiomeSource();
 }

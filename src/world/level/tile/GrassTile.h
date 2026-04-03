@@ -14,6 +14,7 @@ class GrassTile: public Tile
 {
 	typedef Tile super;
 public:
+
 	static const int MIN_BRIGHTNESS = 4;
 
 	GrassTile(int id);

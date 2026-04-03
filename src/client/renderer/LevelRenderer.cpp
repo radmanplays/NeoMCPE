@@ -25,6 +25,8 @@
 
 #include "../../client/player/LocalPlayer.h"
 
+#include "../../world/level/GrassColor.h"
+
 #ifdef GFX_SMALLER_CHUNKS
 /* static */ const int LevelRenderer::CHUNK_SIZE = 8;
 #else
@@ -143,6 +145,10 @@ void LevelRenderer::setLevel( Level* level )
 		level->addListener(this);
 		allChanged();
 	}
+	    if (mc->options.getBooleanValue(OPTIONS_AMBIENT_OCCLUSION)) {
+        mc->useAmbientOcclusion = !mc->useAmbientOcclusion;
+        allChanged();
+		}
 }
 
 void LevelRenderer::allChanged()
@@ -154,6 +160,11 @@ void LevelRenderer::allChanged()
 	Tile::leaves->setFancy(fancy);
 	Tile::leaves_carried->setFancy(fancy);
 	lastViewDistance = mc->options.getIntValue(OPTIONS_VIEW_DISTANCE);
+
+	bool tint = mc->options.getBooleanValue(OPTIONS_FOLIAGE_TINT);
+	FoliageColor::setUseTint(tint);
+	GrassColor::setUseTint(tint);
+
 
 	int dist = (512 >> 3) << (3 - lastViewDistance);
 	if (lastViewDistance <= 2 && mc->isPowerVR())

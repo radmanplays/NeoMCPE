@@ -60,6 +60,8 @@ OptionBool useTouchscreen("useTouchscreen", true);
 
 OptionBool serverVisible("servervisible", true);
 
+OptionBool foliageTint("foliagetint", false);
+
 OptionInt keyForward("key.forward", Keyboard::KEY_W);
 OptionInt keyLeft("key.left", Keyboard::KEY_A);
 OptionInt keyBack("key.back", Keyboard::KEY_S);
@@ -136,6 +138,8 @@ void Options::initTable() {
 
     m_options[OPTIONS_USE_TOUCHSCREEN] = &useTouchscreen;
 
+
+
     m_options[OPTIONS_SERVER_VISIBLE] = &serverVisible;
 
     m_options[OPTIONS_KEY_FORWARD] = &keyForward;
@@ -160,6 +164,7 @@ void Options::initTable() {
 	m_options[OPTIONS_BAR_ON_TOP] = &barOnTop;
 	m_options[OPTIONS_ALLOW_SPRINT] = &allowSprint;
 	m_options[OPTIONS_RPI_CURSOR] = &rpiCursor;
+	m_options[OPTIONS_FOLIAGE_TINT] = &foliageTint;
 
 	m_options[OPTIONS_AUTOJUMP] = &autoJump;
 	m_options[OPTIONS_LAST_IP] = &lastIp;

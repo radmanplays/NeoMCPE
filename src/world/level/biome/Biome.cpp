@@ -149,13 +149,7 @@ Feature* Biome::getGrassFeature( Random* random ) {
 	return new TallgrassFeature(Tile::tallgrass->id, TallGrass::TALL_GRASS);
 }
 
-Feature* Biome::getBasicTreeFeature( Random* random )
-{
-	if (random->nextInt(10) == 0) {
-		return new BasicTree(false);
-	}
-	
-}
+
 
 
 Biome* Biome::getBiome( float temperature, float downfall )

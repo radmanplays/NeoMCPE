@@ -69,11 +69,11 @@ Biome* BiomeSource::getBiome( int x, int z )
 	return getBiomeBlock(x, z, 1, 1)[0];
 }
 
-//float BiomeSource::getTemperature( int x, int z )
-//{
-//	temperatures = temperatureMap->getRegion(temperatures, x, z, 1, 1, tempScale, tempScale, 0.5f);
-//	return temperatures[0];
-//}
+float BiomeSource::getTemperature( int x, int z )
+{
+	temperatures = temperatureMap->getRegion(temperatures, x, z, 1, 1, tempScale, tempScale, 0.5f);
+	return temperatures[0];
+}
 
 Biome** BiomeSource::getBiomeBlock( int x, int z, int w, int h )
 {
@@ -123,7 +123,7 @@ Biome** BiomeSource::getBiomeBlock( Biome** biomes__, int x, int z, int w, int h
 	return biomes;
 }
 
-float* BiomeSource::getTemperatureBlock( /*float* temperatures__, */int x, int z, int w, int h )
+float* BiomeSource::getTemperatureBlock( float* temperatures__, int x, int z, int w, int h )
 {
 	//LOGI("gTempBlock: 1\n");
 	//const int size = w * h;
@@ -164,8 +164,8 @@ float* BiomeSource::getTemperatureBlock( /*float* temperatures__, */int x, int z
 	return temperatures;
 }
 
-//float* BiomeSource::getDownfallBlock( /*float* downfalls__,*/ int x, int z, int w, int h )
-//{
+float* BiomeSource::getDownfallBlock( float* downfalls__, int x, int z, int w, int h )
+{
 //	//const int size = w * h;
 //	//if (lenDownfalls < size) {
 //	//	delete[] downfalls;
@@ -173,6 +173,6 @@ float* BiomeSource::getTemperatureBlock( /*float* temperatures__, */int x, int z
 //	//	lenDownfalls = size;
 //	//}
 //
-//	downfalls = downfallMap->getRegion(downfalls, x, z, w, w, downfallScale, downfallScale, 0.5f);
-//	return downfalls;
-//}
+	downfalls = downfallMap->getRegion(downfalls, x, z, w, w, downfallScale, downfallScale, 0.5f);
+	return downfalls;
+}

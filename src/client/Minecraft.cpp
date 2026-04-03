@@ -90,6 +90,7 @@
 #include "../network/command/CommandServer.h"
 #include "gamemode/CreatorMode.h"
 
+#include "../world/level/GrassColor.h"
 static void checkGlError(const char* tag) {
 #ifdef GLDEBUG
 	while (1) {
@@ -1131,6 +1132,24 @@ void Minecraft::init()
 	levelRenderer = new LevelRenderer(this);
 	gameRenderer = new GameRenderer(this);
 	particleEngine = new ParticleEngine(level, textures);
+
+	// 4j's code for reference
+//	FoliageColor::init(textures->loadTexturePixels(L"misc/foliagecolor.png"));
+
+
+	// my code
+	TextureId foliageId = (textures->loadTexture("environment/foliagecolor.png")); // loading the uh png for foliage color
+	int* foliagePixels = textures->loadTexturePixels(foliageId, "environment/foliagecolor.png");
+	// now i can finally initialize foliage color, probably not the best way to handle this but i cant be arsed rn
+	FoliageColor::init(foliagePixels);
+
+	TextureId grassId = (textures->loadTexture("environment/grasscolor.png")); // loading the uh png for foliage color
+	int* grassPixels = textures->loadTexturePixels(grassId, "environment/grasscolor.png");
+	GrassColor::init(grassPixels);
+	
+	bool tint = options.getBooleanValue(OPTIONS_FOLIAGE_TINT); // finally, toggleable foliage color
+	FoliageColor::setUseTint(tint);
+	GrassColor::setUseTint(tint);
 
 	// Platform specific initialization here
 	font = new Font(&options, "font/default8.png", textures);

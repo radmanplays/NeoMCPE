@@ -1,4 +1,4 @@
-#if 0
+
 
 #include "CanyonFeature.h"
 
@@ -138,7 +138,7 @@ void CanyonFeature::addTunnel( int xOffs, int zOffs, unsigned char* blocks, floa
 	}
 }
 
-void CanyonFeature::addFeature( Level level, int x, int z, int xOffs, int zOffs, char* blocks )
+void CanyonFeature::addFeature(Level* level, int x, int z, int xOffs, int zOffs,unsigned char* blocks)
 {
 	if (random.nextInt(15) != 0) return;
 
@@ -151,6 +151,7 @@ void CanyonFeature::addFeature( Level level, int x, int z, int xOffs, int zOffs,
 	float thickness = (random.nextFloat() * 2 + random.nextFloat()) + 1;
 
 	addTunnel(xOffs, zOffs, blocks, xCave, yCave, zCave, thickness, yRot, xRot, 0, 0, 5.0);
+
 }
 
     /*    //private
@@ -165,4 +166,4 @@ void CanyonFeature::addFeature( Level level, int x, int z, int xOffs, int zOffs,
             for (int z = zOffs - r; z <= zOffs + r; z++) {
                 random.setSeed((x * xScale + z * zScale) ^ level.seed);*/
 
-#endif
+
