@@ -17,8 +17,8 @@
         #import <OpenGLES/ES1/gl.h>
         #import <OpenGLES/ES1/glext.h> 
     #elif defined(ANDROID) || defined(__EMSCRIPTEN__)
-        #import <OpenGLES/ES1/gl.h>
-        #import <OpenGLES/ES1/glext.h>
+        #import <GLES/gl.h>
+        #import <GLES/glext.h>
     #else
         #include <glad/glad.h>
 
