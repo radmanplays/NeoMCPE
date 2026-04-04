@@ -16,7 +16,7 @@
 #include "../../../../world/level/Level.h"
 #include "../../../../world/item/DyePowderItem.h"
 #include "../../../../world/item/crafting/Recipe.h"
-#include "Keyboard.h"
+#include "platform/input/Keyboard.h"
 
 static NinePatchLayer* guiPaneFrame = NULL;
 
