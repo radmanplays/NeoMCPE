@@ -48,8 +48,8 @@ Color Color::getHSBColor(float hue, float saturation, float brightness)
 	}
 	else
 	{
-	    float h = (hue - (float)floor(hue)) * 6.0f;
-	    float f = h - (float)floor(h);
+	    float h = (hue - (float)Mth::floor(hue)) * 6.0f;
+	    float f = h - (float)Mth::floor(h);
 	    float p = brightness * (1.0f - saturation);
 	    float q = brightness * (1.0f - saturation * f);
 	    float t = brightness * (1.0f - (saturation * (1.0f - f)));
