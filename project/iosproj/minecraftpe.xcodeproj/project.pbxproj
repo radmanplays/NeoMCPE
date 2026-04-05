@@ -2435,8 +2435,8 @@
 		F99D341D2F736AA100DC153E /* HttpClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HttpClient.h; path = ../../src/platform/HttpClient.h; sourceTree = "<group>"; };
 		F99D341E2F736AA100DC153E /* HttpClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HttpClient.cpp; path = ../../src/platform/HttpClient.cpp; sourceTree = "<group>"; };
 		F99D34212F736AD400DC153E /* TextOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextOption.h; path = ../../src/client/gui/components/TextOption.h; sourceTree = "<group>"; };
-		F99D34222F736AD400DC153E /* TextOption.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TextOption.cpp; path = ../../src/client/gui/components/TextOption.cpp; sourceTree = "<unknown>"; };
-		F99D34252F736AFB00DC153E /* OptionsFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OptionsFile.h; path = ../../src/client/OptionsFile.h; sourceTree = "<group>"; };
+		F99D34222F736AD400DC153E /* TextOption.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TextOption.cpp; path = ../../src/client/gui/components/TextOption.cpp; };
+		F99D34252F736AFB00DC153E /* OptionsFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OptionsFile.h; path = ../../src/client/OptionsFile.h; sourceTree = "<group>"; sourceTree = "<group>"; };
 		F99D34262F736AFB00DC153E /* OptionsFile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OptionsFile.cpp; path = ../../src/client/OptionsFile.cpp; sourceTree = "<group>"; };
 		F99D34292F736B6F00DC153E /* OptionsItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OptionsItem.h; path = ../../src/client/gui/components/OptionsItem.h; sourceTree = "<group>"; };
 		F99D342A2F736B6F00DC153E /* OptionsItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OptionsItem.cpp; path = ../../src/client/gui/components/OptionsItem.cpp; sourceTree = "<group>"; };
@@ -5853,7 +5853,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C93D3524-5C6F-466E-B12B-833663B7EAE0";
@@ -5884,7 +5884,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5978,7 +5978,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "64BA8967-1A9A-4980-972C-42E75AD5E023";
@@ -6010,7 +6010,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6076,7 +6076,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
@@ -6104,7 +6104,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -6137,7 +6137,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6172,7 +6172,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
