@@ -8,6 +8,8 @@
 #include "../../entity/MobCategory.h"
 #include "../../level/tile/TallGrass.h"
 
+#include "../../../util/Color.h"
+
 Biome* Biome::rainForest	 = NULL;
 Biome* Biome::swampland		 = NULL;
 Biome* Biome::seasonalForest = NULL;
@@ -208,11 +210,11 @@ float Biome::adjustDepth( float depth )
 
 int Biome::getSkyColor( float temp )
 {
-//	temp /= 3.f;
-//	if (temp < -1) temp = -1;
-//	if (temp > 1) temp = 1;
-	return 0x80808080;
-	//return Color.getHSBColor(224 / 360.0f - temp * 0.05f, 0.50f + temp * 0.1f, 1.0f).getRGB();
+	temp /= 3.f;
+	if (temp < -1) temp = -1;
+	if (temp > 1) temp = 1;
+//	return 0x80808080;This is the vanilla way, add it as OPTION_SKY or leave it like this bcus this function literally never gets used anyways if level has vanilla sky color - shredder
+	return Color::getHSBColor(224 / 360.0f - temp * 0.05f, 0.50f + temp * 0.1f, 1.0f).getRGB();
 }
 
 Biome::MobList& Biome::getMobs(const MobCategory& category)

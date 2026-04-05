@@ -1138,13 +1138,13 @@ void Minecraft::init()
 
 
 	// my code
-	TextureId foliageId = (textures->loadTexture("environment/foliagecolor.png")); // loading the uh png for foliage color
-	int* foliagePixels = textures->loadTexturePixels(foliageId, "environment/foliagecolor.png");
+	TextureId foliageId = (textures->loadTexture("misc/foliagecolor.png")); // loading the uh png for foliage color
+	int* foliagePixels = textures->loadTexturePixels(foliageId, "misc/foliagecolor.png");
 	// now i can finally initialize foliage color, probably not the best way to handle this but i cant be arsed rn
 	FoliageColor::init(foliagePixels);
 
-	TextureId grassId = (textures->loadTexture("environment/grasscolor.png")); // loading the uh png for foliage color
-	int* grassPixels = textures->loadTexturePixels(grassId, "environment/grasscolor.png");
+	TextureId grassId = (textures->loadTexture("misc/foliagecolor.png")); // loading the uh png for foliage color
+	int* grassPixels = textures->loadTexturePixels(grassId, "misc/foliagecolor.png");
 	GrassColor::init(grassPixels);
 	
 	bool tint = options.getBooleanValue(OPTIONS_FOLIAGE_TINT); // finally, toggleable foliage color
@@ -1400,6 +1400,12 @@ void Minecraft::_levelGenerated()
 	if (player && !level->isClientSide) {
 		player->resetPos(false);
 	}
+
+	    if (level && level->dimension) {
+        // For example, if you want FogType or any other option
+        level->dimension->FogType = options.getBooleanValue(OPTIONS_FOG_TYPE);
+		}
+
 
 	this->cameraTargetPlayer = player;
 

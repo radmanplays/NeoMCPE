@@ -85,6 +85,8 @@ enum OptionId {
 
     OPTIONS_RPI_CURSOR,
 	OPTIONS_FOLIAGE_TINT,
+	OPTIONS_FOG_TYPE,
+	OPTIONS_JAVA_HUD,
 	// Should be last!
 	OPTIONS_COUNT
 };

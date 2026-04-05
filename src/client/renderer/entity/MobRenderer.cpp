@@ -135,7 +135,7 @@ void MobRenderer::render(Entity* e, float x, float y, float z, float rot, float 
 	//glEnable2(GL_DEPTH_TEST);
 
 	glPopMatrix2();
-
+	postRender(mob, x, y, z, rot, a);
 	renderName(mob, x, y, z);
 }
 

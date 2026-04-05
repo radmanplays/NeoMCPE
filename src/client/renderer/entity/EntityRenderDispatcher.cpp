@@ -40,18 +40,18 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 {
 	//@note: The Models (model/armor) will be deleted by resp. MobRenderer
 	assign( ER_ITEM_RENDERER,       new ItemRenderer());
-	assign(	ER_HUMANOID_RENDERER,	new HumanoidMobRenderer(new HumanoidModel(), 0));
-	assign(	ER_PIG_RENDERER,		new PigRenderer(new PigModel(), NULL/*new PigModel(0.5f)*/, 0));
-	assign(	ER_COW_RENDERER,		new MobRenderer(new CowModel(), 0));
-	assign(	ER_CHICKEN_RENDERER,	new ChickenRenderer( new ChickenModel(), 0));
-	assign(	ER_SHEEP_RENDERER,	    new SheepRenderer(new SheepModel(), new SheepFurModel(), 0));
+	assign(	ER_HUMANOID_RENDERER,	new HumanoidMobRenderer(new HumanoidModel(), 0.5));
+	assign(	ER_PIG_RENDERER,		new PigRenderer(new PigModel(0.5), NULL/*new PigModel(0.5f)*/, 0.7));
+	assign(	ER_COW_RENDERER,		new MobRenderer(new CowModel(), 0.7));
+	assign(	ER_CHICKEN_RENDERER,	new ChickenRenderer( new ChickenModel(), 0.3));
+	assign(	ER_SHEEP_RENDERER,	    new SheepRenderer(new SheepModel(), new SheepFurModel(), 0.7));
 	assign(	ER_SKELETON_RENDERER,	new HumanoidMobRenderer(new SkeletonModel(), 0.5f));
 	assign(	ER_ZOMBIE_RENDERER,		new HumanoidMobRenderer(new ZombieModel(), 0.5f));
 	assign(	ER_CREEPER_RENDERER,	new CreeperRenderer());
 	assign(	ER_SPIDER_RENDERER,		new SpiderRenderer());
 	assign(	ER_TNT_RENDERER,		new TntRenderer());
 	assign(	ER_ARROW_RENDERER,		new ArrowRenderer());
-	assign( ER_PLAYER_RENDERER,		new PlayerRenderer(new HumanoidModel(0, 0, 64, 64), 0));
+	assign( ER_PLAYER_RENDERER,		new PlayerRenderer(new HumanoidModel(0, 0, 64, 64), 0.5));
 	assign( ER_THROWNEGG_RENDERER,  new ItemSpriteRenderer(Item::egg->getIcon(0)));
 	assign( ER_SNOWBALL_RENDERER,   new ItemSpriteRenderer(Item::snowBall->getIcon(0)));
 	assign( ER_PAINTING_RENDERER,   new PaintingRenderer());
@@ -133,7 +133,7 @@ void EntityRenderDispatcher::render( Entity* entity, float x, float y, float z, 
 	EntityRenderer* renderer = getRenderer(entity);
 	if (renderer != NULL) {
 		renderer->render(entity, x, y, z, rot, a);
-		//renderer->postRender(entity, x, y, z, rot, a);
+		renderer->postRender(entity, x, y, z, rot, a);
 	}
 }
 

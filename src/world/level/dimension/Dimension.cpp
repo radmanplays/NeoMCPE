@@ -15,7 +15,8 @@ Dimension::Dimension()
 	ultraWarm(false),
 	hasCeiling(false),
 	biomeSource(NULL),
-	id(0)
+	id(0),
+	fogColor(0x80daff)
 {
 }
 
@@ -93,6 +94,18 @@ float* Dimension::getSunriseColor( float td, float a )
 
 Vec3 Dimension::getFogColor( float td, float a )
 {
+	if (FogType == 1)
+	{
+		fogColor = 0xc0d8ff; // 1 returns java beta styled fog color.
+	} 
+	else if (FogType == 2)
+	{
+		fogColor = 0x406fe5; // 2 returns some type of unused fog color IDK what this one was used for possibly early pe??
+	}
+	else // otherwise as default we return the mcpe fog color
+	{
+		fogColor = 0x80daff;
+	}
 	float br = Mth::cos(td * Mth::PI * 2) * 2 + 0.5f;
 	if (br < 0.0f) br = 0.0f;
 	if (br > 1.0f) br = 1.0f;
@@ -104,7 +117,8 @@ Vec3 Dimension::getFogColor( float td, float a )
 	g *= br * 0.94f + 0.06f;
 	b *= br * 0.91f + 0.09f;
 	return Vec3(r, g, b);
-	//return Vec3(0.752941f, 0.847059f, 1);
+	
+	 //
 }
 
 bool Dimension::mayRespawn()

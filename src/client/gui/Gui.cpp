@@ -36,7 +36,7 @@ const float Gui::DropTicks = 40.0f;
 //#include <android/log.h>
 
 Gui::Gui(Minecraft* minecraft)
-:	minecraft(minecraft),
+	:	minecraft(minecraft),
 	tickCount(0),
 	progress(0),
 	overlayMessageTime(0),
@@ -77,7 +77,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 	Font* font = minecraft->font;
 
 	const bool isTouchInterface = minecraft->useTouchscreen();
-	
+
 	const int screenWidth = (int)(minecraft->width * InvGuiScale);
 	const int screenHeight = (int)(minecraft->height * InvGuiScale);
 	blitOffset = -90;
@@ -86,9 +86,9 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 	glColor4f2(1, 1, 1, 1);
 
 	// H: 4
-    // T: 7
-    // L: 6
-    // F: 3
+	// T: 7
+	// L: 6
+	// F: 3
 	int ySlot = screenHeight - 16 - 3;
 
 	if (!minecraft->options.getBooleanValue(OPTIONS_HIDEGUI)) {
@@ -103,6 +103,12 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 		}
 	}
 
+	// @todo - Shredder: I added this here but currently viginette is broken so i cant do much about it.
+	//	if (minecraft->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)){
+	//		this->renderVignette(this->minecraft->player->getBrightness(a), screenWidth, screenHeight);
+	//	}
+	// shredder end
+
 	if(minecraft->player->getSleepTimer() > 0) {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_ALPHA_TEST);
@@ -113,38 +119,38 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 		glEnable(GL_DEPTH_TEST);
 	}
 	if (!minecraft->options.getBooleanValue(OPTIONS_HIDEGUI)) {
-	renderToolBar(a, ySlot, screenWidth);
+		renderToolBar(a, ySlot, screenWidth);
 
-	glEnable(GL_BLEND);
-	bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
-	unsigned int max = 10;
-	if (isChatting) {
-		int lineHeight = 9;
-		max = (screenHeight - 48) / lineHeight;
-		if (max < 1) max = 1;
-		int maxScroll = (int)guiMessages.size() - (int)max;
-		if (maxScroll < 0) maxScroll = 0;
-		if (chatScrollOffset > maxScroll) chatScrollOffset = maxScroll;
-	} else {
-		chatScrollOffset = 0;
-	}
-	renderChatMessages(screenHeight, max, isChatting, font);
+		glEnable(GL_BLEND);
+		bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
+		unsigned int max = 10;
+		if (isChatting) {
+			int lineHeight = 9;
+			max = (screenHeight - 48) / lineHeight;
+			if (max < 1) max = 1;
+			int maxScroll = (int)guiMessages.size() - (int)max;
+			if (maxScroll < 0) maxScroll = 0;
+			if (chatScrollOffset > maxScroll) chatScrollOffset = maxScroll;
+		} else {
+			chatScrollOffset = 0;
+		}
+		renderChatMessages(screenHeight, max, isChatting, font);
 #if !defined(RPI)
-	renderOnSelectItemNameText(screenWidth, font, ySlot);
+		renderOnSelectItemNameText(screenWidth, font, ySlot);
 #endif
 #if defined(RPI)
-	renderDebugInfo();
+		renderDebugInfo();
 #endif
 
-	if (Keyboard::isKeyDown(Keyboard::KEY_TAB)) {
-		renderPlayerList(font, screenWidth, screenHeight);
+		if (Keyboard::isKeyDown(Keyboard::KEY_TAB)) {
+			renderPlayerList(font, screenWidth, screenHeight);
+		}
+
+		if (minecraft->options.getBooleanValue(OPTIONS_RENDER_DEBUG))
+			renderDebugInfo();
 	}
 
-	if (minecraft->options.getBooleanValue(OPTIONS_RENDER_DEBUG))
-		renderDebugInfo();
-	}
-
-    glDisable(GL_BLEND);
+	glDisable(GL_BLEND);
 	glEnable2(GL_ALPHA_TEST);
 }
 
@@ -183,7 +189,7 @@ void Gui::getSlotPos(int slot, int& posX, int& posY) {
 	int screenWidth = (int)(minecraft->width * InvGuiScale);
 	int screenHeight = (int)(minecraft->height * InvGuiScale);
 	posX = screenWidth / 2 - getNumSlots() * 10 + slot * 20, 
-	posY = screenHeight - 22;
+		posY = screenHeight - 22;
 }
 
 RectangleArea Gui::getRectangleArea(int extendSide) {
@@ -196,7 +202,7 @@ RectangleArea Gui::getRectangleArea(int extendSide) {
 		return RectangleArea(0, (float)minecraft->height-pHeight, pCenterX+pHalfWidth+2, (float)minecraft->height);
 	if (extendSide > 0)
 		return RectangleArea(pCenterX-pHalfWidth, (float)minecraft->height-pHeight, (float)minecraft->width, (float)minecraft->height);
-	
+
 	return RectangleArea(pCenterX-pHalfWidth, (float)minecraft->height-pHeight, pCenterX+pHalfWidth+2, (float)minecraft->height);
 }
 
@@ -242,7 +248,7 @@ void Gui::handleKeyPressed(int key)
 	if (key == Keyboard::KEY_F1) {
 		minecraft->options.toggle(OPTIONS_HIDEGUI);
 	}
-	
+
 	if (key == 99)
 	{
 		if (minecraft->player->inventory->selected > 0)
@@ -290,11 +296,11 @@ void Gui::tick() {
 	if(itemNameOverlayTime < 2)
 		itemNameOverlayTime += 1.0f / SharedConstants::TicksPerSecond;
 	for (unsigned int i = 0; i < guiMessages.size(); i++) {
-	    guiMessages.at(i).ticks++;
+		guiMessages.at(i).ticks++;
 	}
 
-    if (!minecraft->isCreativeMode())
-        tickItemDrop();
+	if (!minecraft->isCreativeMode())
+		tickItemDrop();
 }
 
 void Gui::addMessage(const std::string& _string) {
@@ -344,6 +350,8 @@ void Gui::displayClientMessage(const std::string& messageId) {
 	addMessage(messageId);
 }
 
+
+// @todo - shredder: Function seems to be completely fine and ported over from java beta, but renders opaque??? need to investigate
 void Gui::renderVignette(float br, int w, int h) {
 	br = 1 - br;
 	if (br < 0) br = 0;
@@ -354,7 +362,10 @@ void Gui::renderVignette(float br, int w, int h) {
 	glDepthMask(false);
 	glBlendFunc2(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 	glColor4f2(tbr, tbr, tbr, 1);
+
 	minecraft->textures->loadAndBindTexture("misc/vignette.png");
+	glTexParameteri2(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri2(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	Tesselator& t = Tesselator::instance;
 	t.begin();
@@ -407,7 +418,7 @@ void Gui::inventoryUpdated() {
 }
 
 void Gui::onGraphicsReset() {
-    inventoryUpdated();
+	inventoryUpdated();
 }
 
 void Gui::texturesLoaded( Textures* textures ) {
@@ -585,12 +596,12 @@ void Gui::renderProgressIndicator( const bool isTouchInterface, const int screen
 	bool bowEquipped = currentItem != NULL ? currentItem->getItem() == Item::bow : false;
 	bool itemInUse = currentItem != NULL ? currentItem->getItem() == minecraft->player->getUseItem()->getItem() : false;
 	if ((!isTouchInterface || minecraft->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA) 
-	|| (bowEquipped && itemInUse)) && !minecraft->options.getBooleanValue(OPTIONS_HIDEGUI)) {
-		minecraft->textures->loadAndBindTexture("gui/icons.png");
-		glEnable(GL_BLEND);
-		glBlendFunc2(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
-		blit(screenWidth/2 - 8, screenHeight/2 - 8, 0, 0, 16, 16);
-		glDisable(GL_BLEND);
+		|| (bowEquipped && itemInUse)) && !minecraft->options.getBooleanValue(OPTIONS_HIDEGUI)) {
+			minecraft->textures->loadAndBindTexture("gui/icons.png");
+			glEnable(GL_BLEND);
+			glBlendFunc2(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
+			blit(screenWidth/2 - 8, screenHeight/2 - 8, 0, 0, 16, 16);
+			glDisable(GL_BLEND);
 	} else if(!bowEquipped) {
 		const float tprogress = minecraft->gameMode->destroyProgress;
 		const float alpha = Mth::clamp(minecraft->inputHolder->alpha, 0.0f, 1.0f);
@@ -665,10 +676,10 @@ void Gui::renderHearts() {
 		int ip2 = i + i + 1;
 
 		if (armor > 0) {
-		    int xo = xx + 80 + i * 8 + 4;
-		    if (ip2 < armor) blit(xo, yo, 16 + 2 * 9, 9 * 1, 9, 9);
-		    else if (ip2 == armor) blit(xo, yo, 16 + 4 * 9, 9 * 1, 9, 9);
-		    else if (ip2 > armor) blit(xo, yo, 16 + 0 * 9, 9 * 1, 9, 9);
+			int xo = xx + 80 + i * 8 + 4;
+			if (ip2 < armor) blit(xo, yo, 16 + 2 * 9, 9 * 1, 9, 9);
+			else if (ip2 == armor) blit(xo, yo, 16 + 4 * 9, 9 * 1, 9, 9);
+			else if (ip2 > armor) blit(xo, yo, 16 + 0 * 9, 9 * 1, 9, 9);
 		}
 
 		int bg = 0;
@@ -691,7 +702,7 @@ void Gui::renderBubbles() {
 	if (minecraft->player->isUnderLiquid(Material::water)) {
 		int screenWidth = (int)(minecraft->width * InvGuiScale);
 		int screenHeight = (int)(minecraft->height * InvGuiScale);
-		
+
 		int xx = (minecraft->options.getBooleanValue(OPTIONS_BAR_ON_TOP)) ? screenWidth / 2 - getNumSlots() * 10 - 1 : 2;
 		int yo = (minecraft->options.getBooleanValue(OPTIONS_BAR_ON_TOP)) ? screenHeight - 42 : 12;
 		int count = (int) std::ceil((minecraft->player->airSupply - 2) * 10.0f / Player::TOTAL_AIR_SUPPLY);
@@ -910,64 +921,64 @@ void Gui::renderOnSelectItemNameText( const int screenWidth, Font* font, int ySl
 
 // helper structure used by drawColoredString
 struct ColorSegment {
-    std::string text;
-    uint32_t color;
+	std::string text;
+	uint32_t color;
 };
 
 // parse [tag] and [/tag] markers; tags may contain a color name (gold, green, etc.)
 static void parseColorTags(const std::string& in, std::vector<ColorSegment>& out) {
-    uint32_t curColor = 0xffffff;
-    size_t pos = 0;
-    while (pos < in.size()) {
-        size_t open = in.find('[', pos);
-        if (open == std::string::npos) {
-            out.push_back({in.substr(pos), curColor});
-            break;
-        }
-        if (open > pos) {
-            out.push_back({in.substr(pos, open - pos), curColor});
-        }
-        size_t close = in.find(']', open);
-        if (close == std::string::npos) {
-            out.push_back({in.substr(open), curColor});
-            break;
-        }
-        std::string tag = in.substr(open + 1, close - open - 1);
-        if (!tag.empty() && tag[0] == '/') {
-            curColor = 0xffffff;
-        } else {
-            std::string lower;
-            lower.resize(tag.size());
-            std::transform(tag.begin(), tag.end(), lower.begin(), ::tolower);
-            if (lower.find("gold") != std::string::npos) curColor = 0xffd700;
-            else if (lower.find("green") != std::string::npos) curColor = 0x00ff00;
-            else if (lower.find("yellow") != std::string::npos) curColor = 0xffff00;
-            else if (lower.find("red") != std::string::npos) curColor = 0xff0000;
-            else if (lower.find("blue") != std::string::npos) curColor = 0x0000ff;
-        }
-        pos = close + 1;
-    }
+	uint32_t curColor = 0xffffff;
+	size_t pos = 0;
+	while (pos < in.size()) {
+		size_t open = in.find('[', pos);
+		if (open == std::string::npos) {
+			out.push_back({in.substr(pos), curColor});
+			break;
+		}
+		if (open > pos) {
+			out.push_back({in.substr(pos, open - pos), curColor});
+		}
+		size_t close = in.find(']', open);
+		if (close == std::string::npos) {
+			out.push_back({in.substr(open), curColor});
+			break;
+		}
+		std::string tag = in.substr(open + 1, close - open - 1);
+		if (!tag.empty() && tag[0] == '/') {
+			curColor = 0xffffff;
+		} else {
+			std::string lower;
+			lower.resize(tag.size());
+			std::transform(tag.begin(), tag.end(), lower.begin(), ::tolower);
+			if (lower.find("gold") != std::string::npos) curColor = 0xffd700;
+			else if (lower.find("green") != std::string::npos) curColor = 0x00ff00;
+			else if (lower.find("yellow") != std::string::npos) curColor = 0xffff00;
+			else if (lower.find("red") != std::string::npos) curColor = 0xff0000;
+			else if (lower.find("blue") != std::string::npos) curColor = 0x0000ff;
+		}
+		pos = close + 1;
+	}
 }
 
 void Gui::drawColoredString(Font* font, const std::string& text, float x, float y, int alpha) {
-    std::vector<ColorSegment> segs;
-    parseColorTags(text, segs);
-    float cx = x;
-    for (auto &s : segs) {
-        int color = s.color + (alpha << 24);
-        font->drawShadow(s.text, cx, y, color);
-        cx += font->width(s.text);
-    }
+	std::vector<ColorSegment> segs;
+	parseColorTags(text, segs);
+	float cx = x;
+	for (auto &s : segs) {
+		int color = s.color + (alpha << 24);
+		font->drawShadow(s.text, cx, y, color);
+		cx += font->width(s.text);
+	}
 }
 
 float Gui::getColoredWidth(Font* font, const std::string& text) {
-    std::vector<ColorSegment> segs;
-    parseColorTags(text, segs);
-    float w = 0;
-    for (auto &s : segs) {
-        w += font->width(s.text);
-    }
-    return w;
+	std::vector<ColorSegment> segs;
+	parseColorTags(text, segs);
+	float w = 0;
+	for (auto &s : segs) {
+		w += font->width(s.text);
+	}
+	return w;
 }
 
 void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isChatting, Font* font ) {
@@ -1011,13 +1022,13 @@ void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isC
 				glEnable(GL_BLEND);
 
 				// special-case join/leave announcements
-			int baseColor = 0xffffff;
-			if (msg.find(" joined the game") != std::string::npos ||
-				msg.find(" left the game") != std::string::npos) {
-				baseColor = 0xffff00; // yellow
-			}
-			// replace previous logic; allow full colour tags now
-			Gui::drawColoredString(font, msg, x, y, alpha);
+				int baseColor = 0xffffff;
+				if (msg.find(" joined the game") != std::string::npos ||
+					msg.find(" left the game") != std::string::npos) {
+						baseColor = 0xffff00; // yellow
+				}
+				// replace previous logic; allow full colour tags now
+				Gui::drawColoredString(font, msg, x, y, alpha);
 			}
 		}
 	}
@@ -1105,22 +1116,41 @@ void Gui::renderToolBar( float a, int ySlot, const int screenWidth ) {
 
 	// Draw count
 	//Tesselator& t = Tesselator::instance;
-	glPushMatrix2();
-	glScalef2(InvGuiScale + InvGuiScale, InvGuiScale + InvGuiScale, 1);
+
 	const float k = 0.5f * GuiScale;
-
-	t.beginOverride();
-	if (minecraft->gameMode->isSurvivalType()) {
-		x = baseItemX;
-		for (int i = 0; i < slots; i++) {
-			ItemInstance* item = minecraft->player->inventory->getItem(i);
-			if (item && item->count >= 0)
-				renderSlotText(item, k*x, k*ySlot + 1, true, true);
-			x += 20;
+	if (minecraft->options.getBooleanValue(OPTIONS_JAVA_HUD)) // if true enables the java beta item count size and color and calls the java items decorations
+	{
+		t.beginOverride();
+		if (minecraft->gameMode->isSurvivalType()) {
+			x = baseItemX;
+			for (int i = 0; i < slots; i++) {
+				ItemInstance* item = minecraft->player->inventory->getItem(i);
+				if (item && item->count >= 0)
+					ItemRenderer::renderGuiItemDecorations(minecraft->font, minecraft->textures, minecraft->player->inventory->getItem(i), x, (float)ySlot);
+				x += 20;
+			}
 		}
+		minecraft->textures->loadAndBindTexture("font/default8.png");
+		t.endOverrideAndDraw();
 	}
-	minecraft->textures->loadAndBindTexture("font/default8.png");
-	t.endOverrideAndDraw();
+	else { // otherwise uses the normal pocket edition one
+		glPushMatrix2();
+		glScalef2(InvGuiScale + InvGuiScale, InvGuiScale + InvGuiScale, 1);
+		t.beginOverride();
+		if (minecraft->gameMode->isSurvivalType()) {
+			x = baseItemX;
+			for (int i = 0; i < slots; i++) {
+				ItemInstance* item = minecraft->player->inventory->getItem(i);
+				if (item && item->count >= 0)
+					renderSlotText(item, k*x, k*ySlot, true, true);
+				x += 20;
+			}
+		}
 
-	glPopMatrix2();
+		minecraft->textures->loadAndBindTexture("font/default8.png");
+		t.endOverrideAndDraw();
+
+		glPopMatrix2();
+	}
+
 }

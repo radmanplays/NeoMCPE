@@ -262,14 +262,14 @@ void LevelChunk::recalcHeight(int x, int yStart, int z) {
 
 /*public*/
 void LevelChunk::skyBrightnessChanged() {
-//	int x0 = xt;
-//    int y0 = this->minHeight - 16;
-//    int z0 = zt;
-//    int x1 = xt + 16;
-//    int y1 = Level::DEPTH - 1;
-//    int z1 = zt + 16;
+	int x0 = xt;
+    int y0 = this->minHeight - 16;
+    int z0 = zt;
+    int x1 = xt + 16;
+    int y1 = Level::DEPTH - 1;
+    int z1 = zt + 16;
 
-    //level->setTilesDirty(x0, y0, z0, x1, y1, z1);
+    level->setTilesDirty(x0, y0, z0, x1, y1, z1);
 }
 
 /*public*/

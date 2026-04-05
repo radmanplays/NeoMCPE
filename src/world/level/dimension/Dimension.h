@@ -49,8 +49,11 @@ public:
 	bool hasCeiling;
 	float brightnessRamp[16];//Level::MAX_BRIGHTNESS + 1];
 	int id;
+
+	// shredder added
+	int FogType; // lets us choose between what fog we want ig
 protected:
-	static const long fogColor = 0x80daff;//0x406fe5;//0xc0d8ff;
+	long fogColor; //= 0x80daff;//0x406fe5;//0xc0d8ff;
 	float sunriseCol[4];
 };
 

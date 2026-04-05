@@ -62,6 +62,10 @@ OptionBool serverVisible("servervisible", true);
 
 OptionBool foliageTint("foliagetint", false);
 
+OptionInt fogType("fogType", 0, 0, 2);
+
+OptionBool javaHud("javaHud", false);
+
 OptionInt keyForward("key.forward", Keyboard::KEY_W);
 OptionInt keyLeft("key.left", Keyboard::KEY_A);
 OptionInt keyBack("key.back", Keyboard::KEY_S);
@@ -165,6 +169,11 @@ void Options::initTable() {
 	m_options[OPTIONS_ALLOW_SPRINT] = &allowSprint;
 	m_options[OPTIONS_RPI_CURSOR] = &rpiCursor;
 	m_options[OPTIONS_FOLIAGE_TINT] = &foliageTint;
+
+	// more options yay
+	m_options[OPTIONS_FOG_TYPE] = &fogType;
+
+	m_options[OPTIONS_JAVA_HUD] = &javaHud;
 
 	m_options[OPTIONS_AUTOJUMP] = &autoJump;
 	m_options[OPTIONS_LAST_IP] = &lastIp;

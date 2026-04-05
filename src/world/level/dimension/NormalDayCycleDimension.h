@@ -9,6 +9,7 @@
 
 class NormalDayCycleDimension: public Dimension {
 public:
+
 	float getTimeOfDay(long time, float a) {
 		int dayStep = (int) (time % Level::TICKS_PER_DAY);
 		float td = (dayStep + a) / Level::TICKS_PER_DAY - 0.25f;
@@ -20,6 +21,18 @@ public:
 	}
 
 	Vec3 getFogColor( float td, float a ) {
+		if (FogType == 1)
+		{
+			fogColor = 0xc0d8ff; // 1 returns java beta styled fog color.
+		} 
+		else if (FogType == 2)
+		{
+			fogColor = 0x406fe5; // 2 returns some type of unused fog color IDK what this one was used for possibly early pe??
+		}
+		else // otherwise as default we return the mcpe fog color
+		{
+			fogColor = 0x80daff;
+		}
 		float br = cos(td * Mth::PI * 2) * 2 + 0.5f;
 		if (br < 0) br = 0;
 		if (br > 1.f) br = 1.f;
@@ -35,7 +48,7 @@ public:
 
 		return Vec3(r, g, b);
 	}
-	
+
 };
 
 #endif /*NET_MINECRAFT_WORLD_LEVEL_DIMENSION__NormalDayCycleDimension_H__*/

@@ -113,6 +113,9 @@ private:
 	bool occlusionCheck;
 	int lastViewDistance;
 
+	// shredder added again...
+	int lastFogType;
+
 	int ticks;
     int starList, skyList, darkList;
 

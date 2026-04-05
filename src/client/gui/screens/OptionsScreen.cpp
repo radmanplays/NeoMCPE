@@ -138,7 +138,7 @@ void OptionsScreen::render(int xm, int ym, float a) {
 
 	if (currentOptionsGroup != NULL)
 		currentOptionsGroup->render(minecraft, xmm, ymm);
-	
+
 	super::render(xm, ym, a);
 }
 
@@ -222,11 +222,14 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_ANAGLYPH_3D, minecraft)
 		.addOptionItem(OPTIONS_VIEW_BOBBING, minecraft)
 		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft);
-	
+
 	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
 		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft)
 		.addOptionItem(OPTIONS_RPI_CURSOR, minecraft)
-		.addOptionItem(OPTIONS_FOLIAGE_TINT, minecraft);
+		.addOptionItem(OPTIONS_FOLIAGE_TINT, minecraft)
+		.addOptionItem(OPTIONS_JAVA_HUD, minecraft)
+		.addOptionItem(OPTIONS_FOG_TYPE, minecraft);
+		
 }
 
 void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {
@@ -248,7 +251,7 @@ void OptionsScreen::keyPressed(int eventKey) {
 		currentOptionsGroup->keyPressed(minecraft, eventKey);
 	if (eventKey == Keyboard::KEY_ESCAPE) 
 		minecraft->options.save();
-	
+
 	super::keyPressed(eventKey);
 }
 
