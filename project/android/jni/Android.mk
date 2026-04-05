@@ -146,6 +146,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/util/StringUtils.cpp \
 ../../../src/util/PerfTimer.cpp \
 ../../../src/util/PerfRenderer.cpp \
+../../../src/util/Color.cpp \
 ../../../src/world/Direction.cpp \
 ../../../src/world/entity/AgableMob.cpp \
 ../../../src/world/entity/Entity.cpp \

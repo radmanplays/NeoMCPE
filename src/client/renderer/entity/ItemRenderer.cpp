@@ -230,7 +230,9 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures, const ItemInsta
 void ItemRenderer::renderGuiItemDecorations(Font* font, Textures* textures, ItemInstance* item, int x, int y){ // this is normally unused in the header but i ported it from java beta - shredder
 	if (item != NULL) {
 		if (item->count > 1) {
-			std::string countStr = std::to_string(item->count);
+			char buf[16];
+			sprintf(buf, "%d", item->count);
+			std::string countStr = buf;
 			//			glDisable(GL_LIGHTING);
 			//			glDisable(GL_DEPTH_TEST);
 			font->drawShadow(countStr, x + 19 - 2 - font->width(countStr),
@@ -246,8 +248,8 @@ void ItemRenderer::renderGuiItemDecorations(Font* font, Textures* textures, Item
 			//			glDisable(GL_TEXTURE_2D);
 			//            auto var8 = ::net::minecraft::client::renderer::Tesselator::instance();
 			Tesselator& t = Tesselator::instance;
-			int ca = 255 - cc << 16 | cc << 8;
-			int cb = (255 - cc) / 4 << 16 | 16128;
+			int ca = ((255 - cc)<< 16 | (cc << 8));
+			int cb = (((255 - cc) / 4) << 16 | 16128);
 			fillRect(t, x + 2, y + 13, 13, 2, 0);
 			fillRect(t, x + 2, y + 13, 12, 1, cb);
 			fillRect(t, x + 2, y + 13, p, 1, ca);
