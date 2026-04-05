@@ -199,6 +199,9 @@ file(GLOB SERVER_SOURCES
 
     "src/world/level/dimension/Dimension.cpp"
 
+    "src/world/level/dimension/FoliageColor.cpp"
+    "src/world/level/GrassColor.cpp"
+
     "src/world/level/levelgen/*.cpp"
     "src/world/level/levelgen/feature/Feature.cpp"
     "src/world/level/levelgen/synth/*.cpp"
@@ -257,6 +260,8 @@ file(GLOB CLIENT_SOURCES
     "src/server/**.cpp"
     
     "src/util/**.cpp"
+
+    "src/util/Color.cpp"
 
     "src/world/*.cpp"
     "src/world/phys/*.cpp"
