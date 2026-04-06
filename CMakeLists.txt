@@ -166,6 +166,7 @@ file(GLOB SERVER_SOURCES
     "src/util/Mth.cpp"
     "src/util/PerfTimer.cpp"
     "src/util/StringUtils.cpp"
+    "src/util/Color.cpp"
 
     "src/world/Direction.cpp"
 
