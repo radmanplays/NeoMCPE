@@ -1173,6 +1173,12 @@
 		F99D344C2F7370CF00DC153E /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99D344A2F7370CF00DC153E /* Slider.cpp */; };
 		F99D344E2F7372A100DC153E /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F99D344D2F7372A100DC153E /* Launch Screen.storyboard */; };
 		F99D344F2F7372A100DC153E /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F99D344D2F7372A100DC153E /* Launch Screen.storyboard */; };
+		F99F0FA92F84369F00F2B29A /* GrassColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FA82F84369F00F2B29A /* GrassColor.cpp */; };
+		F99F0FAA2F84369F00F2B29A /* GrassColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FA82F84369F00F2B29A /* GrassColor.cpp */; };
+		F99F0FAC2F8436CE00F2B29A /* FoliageColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */; };
+		F99F0FAD2F8436CE00F2B29A /* FoliageColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */; };
+		F99F0FAF2F8436EB00F2B29A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAE2F8436EB00F2B29A /* Color.cpp */; };
+		F99F0FB02F8436EB00F2B29A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAE2F8436EB00F2B29A /* Color.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -2435,8 +2441,8 @@
 		F99D341D2F736AA100DC153E /* HttpClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HttpClient.h; path = ../../src/platform/HttpClient.h; sourceTree = "<group>"; };
 		F99D341E2F736AA100DC153E /* HttpClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HttpClient.cpp; path = ../../src/platform/HttpClient.cpp; sourceTree = "<group>"; };
 		F99D34212F736AD400DC153E /* TextOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextOption.h; path = ../../src/client/gui/components/TextOption.h; sourceTree = "<group>"; };
-		F99D34222F736AD400DC153E /* TextOption.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TextOption.cpp; path = ../../src/client/gui/components/TextOption.cpp; };
-		F99D34252F736AFB00DC153E /* OptionsFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OptionsFile.h; path = ../../src/client/OptionsFile.h; sourceTree = "<group>"; sourceTree = "<group>"; };
+		F99D34222F736AD400DC153E /* TextOption.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TextOption.cpp; path = ../../src/client/gui/components/TextOption.cpp; sourceTree = "<unknown>"; };
+		F99D34252F736AFB00DC153E /* OptionsFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OptionsFile.h; path = ../../src/client/OptionsFile.h; sourceTree = "<group>"; };
 		F99D34262F736AFB00DC153E /* OptionsFile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OptionsFile.cpp; path = ../../src/client/OptionsFile.cpp; sourceTree = "<group>"; };
 		F99D34292F736B6F00DC153E /* OptionsItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OptionsItem.h; path = ../../src/client/gui/components/OptionsItem.h; sourceTree = "<group>"; };
 		F99D342A2F736B6F00DC153E /* OptionsItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OptionsItem.cpp; path = ../../src/client/gui/components/OptionsItem.cpp; sourceTree = "<group>"; };
@@ -2457,6 +2463,9 @@
 		F99D34492F7370CF00DC153E /* Slider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Slider.h; path = ../../src/client/gui/components/Slider.h; sourceTree = "<group>"; };
 		F99D344A2F7370CF00DC153E /* Slider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Slider.cpp; path = ../../src/client/gui/components/Slider.cpp; sourceTree = "<group>"; };
 		F99D344D2F7372A100DC153E /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		F99F0FA82F84369F00F2B29A /* GrassColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GrassColor.cpp; sourceTree = "<group>"; };
+		F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FoliageColor.cpp; sourceTree = "<group>"; };
+		F99F0FAE2F8436EB00F2B29A /* Color.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3761,6 +3770,7 @@
 				D5B50E6914CFF66F005F7284 /* StringUtils.cpp */,
 				D5B50E6A14CFF66F005F7284 /* StringUtils.h */,
 				D5B50E6B14CFF66F005F7284 /* WeighedRandom.h */,
+				F99F0FAE2F8436EB00F2B29A /* Color.cpp */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -4025,6 +4035,8 @@
 				D5B50F3714CFF66F005F7284 /* TickNextTickData.h */,
 				D5B50F3814CFF66F005F7284 /* tile */,
 				D5B50F6814CFF66F005F7284 /* TilePos.h */,
+				F99F0FA82F84369F00F2B29A /* GrassColor.cpp */,
+				F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */,
 			);
 			path = level;
 			sourceTree = "<group>";
@@ -5194,6 +5206,7 @@
 				D5B5111014CFF670005F7284 /* Mth.cpp in Sources */,
 				D5B5111214CFF670005F7284 /* PerfRenderer.cpp in Sources */,
 				D5B5111414CFF670005F7284 /* PerfTimer.cpp in Sources */,
+				F99F0FA92F84369F00F2B29A /* GrassColor.cpp in Sources */,
 				D5B5111614CFF670005F7284 /* StringUtils.cpp in Sources */,
 				D5B5111814CFF670005F7284 /* Direction.cpp in Sources */,
 				D5B5111A14CFF670005F7284 /* Animal.cpp in Sources */,
@@ -5214,12 +5227,14 @@
 				D5B5113814CFF670005F7284 /* PathFinderMob.cpp in Sources */,
 				D5B5113A14CFF670005F7284 /* Inventory.cpp in Sources */,
 				D5B5113C14CFF670005F7284 /* Player.cpp in Sources */,
+				F99F0FB02F8436EB00F2B29A /* Color.cpp in Sources */,
 				D5B5113E14CFF670005F7284 /* Arrow.cpp in Sources */,
 				D5B5114014CFF670005F7284 /* Recipes.cpp in Sources */,
 				D5B5114214CFF670005F7284 /* ToolRecipes.cpp in Sources */,
 				D5B5114414CFF670005F7284 /* WeaponRecipes.cpp in Sources */,
 				D5B5114614CFF670005F7284 /* HatchetItem.cpp in Sources */,
 				D5B5114814CFF670005F7284 /* Item.cpp in Sources */,
+				F99F0FAC2F8436CE00F2B29A /* FoliageColor.cpp in Sources */,
 				D5B5114A14CFF670005F7284 /* ItemInstance.cpp in Sources */,
 				D5B5114C14CFF670005F7284 /* PickaxeItem.cpp in Sources */,
 				F99D344B2F7370CF00DC153E /* Slider.cpp in Sources */,
@@ -5528,6 +5543,7 @@
 				D5B5102F14CFF670005F7284 /* main.cpp in Sources */,
 				D5B5103514CFF670005F7284 /* Tag.cpp in Sources */,
 				D5B5103714CFF670005F7284 /* ClientSideNetworkHandler.cpp in Sources */,
+				F99F0FAF2F8436EB00F2B29A /* Color.cpp in Sources */,
 				D5B5103914CFF670005F7284 /* NetEventCallback.cpp in Sources */,
 				D5B5103B14CFF670005F7284 /* Packet.cpp in Sources */,
 				D5B5103D14CFF670005F7284 /* RakNetInstance.cpp in Sources */,
@@ -5548,6 +5564,7 @@
 				D5B5111514CFF670005F7284 /* StringUtils.cpp in Sources */,
 				D5B5111714CFF670005F7284 /* Direction.cpp in Sources */,
 				D5B5111914CFF670005F7284 /* Animal.cpp in Sources */,
+				F99F0FAD2F8436CE00F2B29A /* FoliageColor.cpp in Sources */,
 				D5B5111B14CFF670005F7284 /* Chicken.cpp in Sources */,
 				D5B5111D14CFF670005F7284 /* Cow.cpp in Sources */,
 				D5B5111F14CFF670005F7284 /* Pig.cpp in Sources */,
@@ -5598,6 +5615,7 @@
 				D5B5117714CFF670005F7284 /* ExternalFileLevelStorageSource.cpp in Sources */,
 				D5B5117914CFF670005F7284 /* RegionFile.cpp in Sources */,
 				D5B5117B14CFF670005F7284 /* TickNextTickData.cpp in Sources */,
+				F99F0FAA2F84369F00F2B29A /* GrassColor.cpp in Sources */,
 				D5B5117D14CFF670005F7284 /* DoorTile.cpp in Sources */,
 				D5B5118114CFF670005F7284 /* StoneSlabTile.cpp in Sources */,
 				D5B5118314CFF670005F7284 /* Tile.cpp in Sources */,
@@ -5853,7 +5871,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C93D3524-5C6F-466E-B12B-833663B7EAE0";
@@ -5884,7 +5902,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5978,7 +5996,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "64BA8967-1A9A-4980-972C-42E75AD5E023";
@@ -6010,7 +6028,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6076,7 +6094,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
@@ -6104,7 +6122,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -6137,7 +6155,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6172,7 +6190,7 @@
 				);
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
