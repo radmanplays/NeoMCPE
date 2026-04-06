@@ -221,6 +221,7 @@ private:
 	bool _isCreativeMode;
 	//int _respawnPlayerTicks;
 	Player* _pendingRemovePlayer; // @attn @todo @fix: remove this shait and fix the respawn behaviour
+    // shit* lmao
 
 	PerfRenderer* _perfRenderer;
 	CommandServer* _commandServer;

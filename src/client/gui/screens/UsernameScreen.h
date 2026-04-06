@@ -3,7 +3,8 @@
 
 #include "../Screen.h"
 #include "../components/Button.h"
-#include "client/gui/components/TextBox.h"
+// this is cursed lol
+#include "../../../client/gui/components/TextBox.h"
 #include <string>
 
 class UsernameScreen : public Screen

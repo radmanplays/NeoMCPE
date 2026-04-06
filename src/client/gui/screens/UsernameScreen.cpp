@@ -35,8 +35,8 @@ void UsernameScreen::setupPositions()
     // Make the done button match the touch-style option tabs
     _btnDone.width  = 66;
     _btnDone.height = 26;
-    _btnDone.x = (width - _btnDone.width) / 2;
-    _btnDone.y = height / 2 + 52;
+    _btnDone.x = cx - (_btnDone.width / 2);
+    _btnDone.y = cy + 52;
 
     tUsername.width = 120;
     tUsername.height = 20;

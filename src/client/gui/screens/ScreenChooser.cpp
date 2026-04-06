@@ -14,7 +14,7 @@
 
 #include "../../Minecraft.h"
 
-#include <client/gui/screens/UsernameScreen.h>
+#include "UsernameScreen.h"
 
 Screen* ScreenChooser::createScreen( ScreenId id )
 {

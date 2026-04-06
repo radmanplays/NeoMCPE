@@ -72,6 +72,30 @@ jobs:
             ${{github.workspace}}/build/OpenAL32.dll
             ${{github.workspace}}/build/libz.dll
 
+  build-ios:
+  # credit to pengubow from deepfriedwaffles repo
+    name: Build iOS
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Build
+        run: |
+          cd project/iosproj
+          xcodebuild -scheme minecraftpe -derivedDataPath build -destination 'generic/platform=iOS' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          mkdir -p Payload
+          cp -R build/Build/Products/Debug-iphoneos/minecraftpe.app Payload/
+          zip -r minecraftpe.ipa Payload
+          rm -rf Payload
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: minecraftpe-ios
+          path: project/iosproj/minecraftpe.ipa
+          
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
@@ -266,8 +290,7 @@ jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    needs: [ build-windows, build-linux, build-android, build-web ]
-    if: github.ref == 'refs/heads/main'
+    needs: [ build-windows, build-ios, build-linux, build-android, build-web ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
