@@ -198,3 +198,38 @@ cmake --build .
    ```
    emrun --port 8080 .
    ```
+## iOS
+### Xcode
+> [Note!]
+> There's a precompiled IPA artifact in the GitHub mirror under Actions for those who either don't have Macs or don't want to build themself. But if you want to build youself, you'll need a Mac with Xcode. Download Xcode from the Mac App Store.
+
+### 1. Clone
+Open your terminal and clone the repository
+```bash
+git clone https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1.git
+cd minecraft-pe-0.6.1
+```
+You can also build from the ios-support branch by checking out to it
+```
+git checkout ios-support
+```
+
+### 2. Open in Xcode
+
+The project file is in `minecraft-pe-0.6.1/project/iosproj/minecraftpe.xcodeproj`. Open it.
+
+### 3. Configure Code Signing
+
+Before you can deploy to an iPhone, you must sign the app with your own Apple Developer account:
+
+1. Select the **minecraftpe** project in the left sidebar.
+2. Go to **Signing & Capabilities**.
+3. Change the **Bundle Identifier** to something unique (e.g., `com.yourname.mcpe`).
+4. Select your **Team** from the dropdown menu.
+
+### 4. Build and Run
+
+1. Connect your iPhone via USB or LAN.
+2. Select your device from the run destination menu at the top of Xcode.
+3. Press **Cmd + R** (or the Play button).
+4. **Note:** If you encounter a "Developer Mode" or "Untrusted Developer" error on your phone, go to **Settings > General > VPN & Device Management** to trust your certificate.

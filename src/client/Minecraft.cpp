@@ -1106,7 +1106,9 @@ void Minecraft::releaseMouse()
 }
 
 bool Minecraft::useTouchscreen() {
-#ifdef RPI
+#if defined(TARGET_OS_IPHONE)
+    return true;
+#elif defined(RPI)
 	return false;
 #endif
 	return options.getBooleanValue(OPTIONS_USE_TOUCHSCREEN) && !_supportsNonTouchscreen;
@@ -1212,7 +1214,7 @@ void Minecraft::setSize(int w, int h) {
 	int screenHeight = (int)(height * Gui::InvGuiScale);
 
 	// if (platform()) {
-	// 	float pixelsPerMillimeter = options.getProgressValue(&Options::Option::PIXELS_PER_MILLIMETER);
+	// 	float pixelsPerMillimeter = options.getProgressValue(&Option::PIXELS_PER_MILLIMETER);
 	// 	pixelCalc.setPixelsPerMillimeter(pixelsPerMillimeter);
 	// 	pixelCalcUi.setPixelsPerMillimeter(pixelsPerMillimeter * Gui::InvGuiScale);
 	// }
