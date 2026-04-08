@@ -1035,7 +1035,10 @@ void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isC
 }
 
 void Gui::renderToolBar( float a, int ySlot, const int screenWidth ) {
-	glColor4f2(1, 1, 1, .5);
+	glColor4f2(1, 1, 1, 1);
+	    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	minecraft->textures->loadAndBindTexture("gui/gui.png");
 
 	Inventory* inventory = minecraft->player->inventory;

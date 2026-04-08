@@ -131,6 +131,10 @@ public:
         return false;
     }
 
+		    int getRenderLayer() {
+        return Tile::RENDERLAYER_ALPHATEST;
+    }
+
     bool canBurn(LevelSource* level, int x, int y, int z) {
         return flameOdds[level->getTile(x, y, z)] > 0;
     }
