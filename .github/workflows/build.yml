@@ -216,16 +216,6 @@ jobs:
           distribution: temurin
           java-version: 25
 
-      - name: Validate environment
-        run: |
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          echo "ANDROID_NDK_PATH=$ANDROID_NDK_PATH"
-          echo "JAVA_HOME=$JAVA_HOME"
-          echo "MATRIX_ABI=$MATRIX_ABI"
-          $ANDROID_SDK_ROOT/platform-tools/adb version || true
-          java -version
-          javac -version
-
       - name: Run Android build script
         run: |
           chmod +x ./build.sh
@@ -322,17 +312,10 @@ jobs:
           files: mcpe-linux/MinecraftPE-server
           dest: minecraftpe-server-${{ steps.ref.outputs.hash }}.zip
 
-      - name: Zip Android arm64-v8a Artifact
-        uses: vimtor/action-zip@v1.2
-        with:
-          files: minecraftpe-apk-arm64-v8a/minecraftpe-v8a-debug.apk
-          dest: minecraftpe-${{ steps.ref.outputs.hash }}-android-arm64-v8a.zip
-
-      - name: Zip Android armeabi-v7a Artifact
-        uses: vimtor/action-zip@v1.2
-        with:
-          files: minecraftpe-apk-armeabi-v7a/minecraftpe-v7a-debug.apk
-          dest: minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.zip
+      - name: Rename Android Artifacts
+        run: |
+          mv minecraftpe-apk-arm64-v8a/minecraftpe-v8a-debug.apk minecraftpe-${{ steps.ref.outputs.hash }}-android-arm64-v8a.apk
+          mv minecraftpe-apk-armeabi-v7a/minecraftpe-v7a-debug.apk minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.apk
 
       - name: Zip Web Artifact
         uses: vimtor/action-zip@v1.2
@@ -358,9 +341,9 @@ jobs:
             MinecraftPE development release for commit ${{ github.sha }}.
           files: |
             ./data.zip
+            ./minecraftpe-server-${{ steps.ref.outputs.hash }}.zip
             ./minecraftpe-${{ steps.ref.outputs.hash }}-windows.zip
             ./minecraftpe-${{ steps.ref.outputs.hash }}-linux.zip
-            ./minecraftpe-server-${{ steps.ref.outputs.hash }}.zip
-            ./minecraftpe-${{ steps.ref.outputs.hash }}-android-arm64-v8a.zip
-            ./minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.zip
+            ./minecraftpe-${{ steps.ref.outputs.hash }}-android-arm64-v8a.apk
+            ./minecraftpe-${{ steps.ref.outputs.hash }}-android-armeabi-v7a.apk
             ./minecraftpe-${{ steps.ref.outputs.hash }}-web.zip
