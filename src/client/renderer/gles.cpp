@@ -115,6 +115,41 @@ void drawArrayVTC_NoState(int bufferId, int vertices, int vertexSize /* = 24 */)
 }
 #endif
 
+void drawArrayVTN(int bufferId, int vertices, int vertexSize /* = 24 */) {
+	//if (Options::debugGl) LOGI("drawArray\n");
+	//LOGI("draw-vtc: %d, %d, %d\n", bufferId, vertices, vertexSize);
+	glEnableClientState2(GL_VERTEX_ARRAY);
+	glEnableClientState2(GL_TEXTURE_COORD_ARRAY);
+	//glEnableClientState2(GL_COLOR_ARRAY);
+	glEnableClientState2(GL_NORMAL_ARRAY);
+
+	glBindBuffer2(GL_ARRAY_BUFFER, bufferId);
+
+	glVertexPointer2(  3, GL_FLOAT, vertexSize, 0);
+	glTexCoordPointer2(2, GL_FLOAT, vertexSize, (GLvoid*) (3 * 4));
+	//glColorPointer2(4, GL_UNSIGNED_BYTE, vertexSize, (GLvoid*) (5*4));
+	glNormalPointer(GL_BYTE, vertexSize, (GLvoid*) (6 * 4));
+
+	glDrawArrays2(GL_TRIANGLES, 0, vertices);
+
+	glDisableClientState2(GL_VERTEX_ARRAY);
+	glDisableClientState2(GL_TEXTURE_COORD_ARRAY);
+	//glDisableClientState2(GL_COLOR_ARRAY); 
+	glDisableClientState2(GL_NORMAL_ARRAY);
+}
+
+#ifndef drawArrayVTN_NoState
+void drawArrayVTCN_NoState(int bufferId, int vertices, int vertexSize /* = 24 */) {
+	glBindBuffer2(GL_ARRAY_BUFFER, bufferId);
+
+	glVertexPointer2(  3, GL_FLOAT, vertexSize, 0);
+	glTexCoordPointer2(2, GL_FLOAT, vertexSize, (GLvoid*) (3 * 4));
+	//glColorPointer2(4, GL_UNSIGNED_BYTE, vertexSize, (GLvoid*) (5*4));
+	glNormalPointer(GL_BYTE, vertexSize, (GLvoid*) (6 * 4));
+
+	glDrawArrays2(GL_TRIANGLES, 0, vertices);
+}
+#endif
 #endif
 
 

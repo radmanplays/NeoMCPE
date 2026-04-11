@@ -55,13 +55,18 @@ void anGenBuffers(GLsizei n, GLuint* buffer);
 #ifdef USE_VBO
 #define drawArrayVT_NoState drawArrayVT
 #define drawArrayVTC_NoState drawArrayVTC
-void drawArrayVT(int bufferId, int vertices, int vertexSize = 24, unsigned int mode = GL_TRIANGLES);
+#define drawArrayVTN_NoState drawArrayVTN
+void drawArrayVT(int bufferId, int vertices, int vertexSize = 28, unsigned int mode = GL_TRIANGLES);
 #ifndef drawArrayVT_NoState
-//void drawArrayVT_NoState(int bufferId, int vertices, int vertexSize = 24);
+//void drawArrayVT_NoState(int bufferId, int vertices, int vertexSize = 28);
 #endif
-void drawArrayVTC(int bufferId, int vertices, int vertexSize = 24);
+void drawArrayVTC(int bufferId, int vertices, int vertexSize = 28);
 #ifndef drawArrayVTC_NoState
-void drawArrayVTC_NoState(int bufferId, int vertices, int vertexSize = 24);
+void drawArrayVTC_NoState(int bufferId, int vertices, int vertexSize = 28);
+#endif
+void drawArrayVTN(int bufferId, int vertices, int vertexSize = 28);
+#ifndef drawArrayVTN_NoState
+void drawArrayVTCN_NoState(int bufferId, int vertices, int vertexSize = 28);
 #endif
 #endif
 
@@ -114,6 +119,7 @@ int glhUnProjectf(	float winx, float winy, float winz,
 	#define glVertexPointer2	glVertexPointer
 	#define glColorPointer2		glColorPointer
 	#define glTexCoordPointer2  glTexCoordPointer
+	#define glNormalPointer2 glNormalPointer
 	#define glEnableClientState2  glEnableClientState
 	#define glDisableClientState2 glDisableClientState
 	#define glDrawArrays2		glDrawArrays

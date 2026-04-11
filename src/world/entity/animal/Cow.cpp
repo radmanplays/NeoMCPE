@@ -66,11 +66,11 @@ void Cow::dropDeathLoot( /*bool wasKilledByPlayer, int playerBonusLevel*/ ) {
 	// and some meat
 	count = random.nextInt(3) + 1;
 	for (int i = 0; i < count; i++) {
-	//    if (isOnFire()) { //@fire
-	//        spawnAtLocation(Item::beef_cooked->id, 1);
-	//    } else {
+	    if (isOnFire()) { //@fire
+	       spawnAtLocation(Item::beef_cooked->id, 1);
+	    } else {
 	        spawnAtLocation(Item::beef_raw->id, 1);
-	//    }
+	    }
 	}
 }
 

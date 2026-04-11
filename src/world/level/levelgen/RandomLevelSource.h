@@ -25,6 +25,7 @@ class LevelChunk;
 
 #include "../chunk/ChunkSource.h"
 #include "LargeCaveFeature.h"
+#include "CanyonFeature.h"
 #include "synth/PerlinNoise.h"
 #include "../../../SharedConstants.h"
 
@@ -63,6 +64,7 @@ private:
 public:
 	//Biome** biomes;
 	LargeCaveFeature caveFeature;
+	CanyonFeature canyonFeature;
 	int waterDepths[16+16][16+16];
 private:
 	ChunkMap chunkMap;
@@ -92,6 +94,7 @@ private:
 	float* fi;
 	float* fis;
     ///*private*/ float[] temperatures;
+	float* temperatures; // normally unused like above, but restored this maybe might come handy - shredder
 };
 
 class PerformanceTestChunkSource : public ChunkSource

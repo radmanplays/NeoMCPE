@@ -56,6 +56,44 @@ public:
 	void tick();
 };
 
+class LavaTexture: public DynamicTexture
+{
+    typedef DynamicTexture super;
+    int _tick;
+	int _frame;
+
+	float* current;
+	float* next;
+	float* heat;
+	float* heata;
+
+public:
+    LavaTexture();
+	~LavaTexture();
+
+    void tick();
+};
+
+class LavaSideTexture: public DynamicTexture
+{
+	typedef DynamicTexture super;
+	int _tick;
+	int _frame;
+	int _tickCount;
+
+	float* current;
+	float* next;
+	float* heat;
+	float* heata;
+
+public:
+	LavaSideTexture();
+	~LavaSideTexture();
+
+	void tick();
+};
+
+
 class FireTexture: public DynamicTexture
 {
     typedef DynamicTexture super;

@@ -203,7 +203,7 @@ void ModelPart::compile( float scale )
 void ModelPart::draw()
 {
 #ifdef OPENGL_ES
-	drawArrayVT_NoState(vboId, cubes.size() * 2 * 3 * 6, 24);
+	drawArrayVTN_NoState(vboId, cubes.size() * 2 * 3 * 6, 28);
 #else
 	glCallList(list);
 #endif

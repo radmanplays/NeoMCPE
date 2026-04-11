@@ -513,14 +513,14 @@ void LevelRenderer::render(const AABB& b) const
 {
 	Tesselator& t = Tesselator::instance;
 
-	glColor4f2(1, 1, 1, 1);
+//	glColor4f2(1, 1, 1, 1);
 
-	textures->loadAndBindTexture("terrain.png");
+//	textures->loadAndBindTexture("terrain.png"); // uh need to check java - shredder
 
 	//t.begin();
-	t.color(255, 255, 255, 255);
+//	t.color(255, 255, 255, 255); // again not needed, for some reason the vanilla source code tints it... white? maybe this was used for something else in MCPE's dev at one point? - shredder
 
-	t.offset(((Mob*)mc->player)->getPos(0).negated());
+//	t.offset(((Mob*)mc->player)->getPos(0).negated()); // why does this even exist normally, it just makes the thing... not render
 
 	t.begin(GL_LINE_STRIP);
 	t.vertex(b.x0, b.y0, b.z0);

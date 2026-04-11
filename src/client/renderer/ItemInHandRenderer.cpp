@@ -21,11 +21,12 @@
 #include "../../world/item/BowItem.h"
 #include "../../world/level/tile/LeafTile.h"
 #include "entity/HumanoidMobRenderer.h"
+#include "Lighting.h"
 
 //static StopwatchHandler handler;
 
 ItemInHandRenderer::ItemInHandRenderer( Minecraft* mc )
-:	mc(mc),
+	:	mc(mc),
 	lastSlot(-1),
 	height(0),
 	oHeight(0),
@@ -49,21 +50,47 @@ ItemInHandRenderer::ItemInHandRenderer( Minecraft* mc )
 void ItemInHandRenderer::tick()
 {
 	oHeight = height;
-	item.id = 0;
+	//item.id = 0;
 
 	ItemInstance* itemInHand = mc->player->inventory->getSelected();
-	if (itemInHand && itemInHand->count > 0) {
-		item.id = itemInHand->id;
-		item.setAuxValue(itemInHand->getAuxValue());
+	bool sameItem = (itemInHand && item.id == itemInHand->id && item.getAuxValue() == itemInHand->getAuxValue());
+
+
+	
+	if (mc->options.getBooleanValue(OPTIONS_RESTORED_ANIMS)) // if enabled, restores and fixes item switching animation
+	{
+		if (!itemInHand && item.id == 0) sameItem = true;
+		float max = 0.4f;
+		float tHeight = sameItem ? 1 : 0;
+		float dd = tHeight - height;
+		if (dd < -max) dd = -max;
+		if (dd > max) dd = max;
+
+		height += dd;
+
+		if (height < 0.1){
+			if (itemInHand && itemInHand->count > 0) {
+				item.id = itemInHand->id;
+				item.setAuxValue(itemInHand->getAuxValue());
+			} else {
+				item.id = 0;
+			}
+		}
+	} else // otherwise use vanilla broken behaviour where it instantly switches items/blocks
+	{
+		if (itemInHand && itemInHand->count > 0) {
+			item.id = itemInHand->id;
+			item.setAuxValue(itemInHand->getAuxValue());
+		}
+
+		float max = 0.4f;
+		float tHeight = 1;//matches ? 1 : 0;
+		float dd = tHeight - height;
+		if (dd < -max) dd = -max;
+		if (dd > max) dd = max;
+
+		height += dd;
 	}
-
-	float max = 0.4f;
-	float tHeight = 1;//matches ? 1 : 0;
-	float dd = tHeight - height;
-	if (dd < -max) dd = -max;
-	if (dd > max) dd = max;
-
-	height += dd;
 }
 
 void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
@@ -92,7 +119,7 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 	if(mob != NULL) {
 		itemIcon = mob->getItemInHandIcon(item, 0);
 	}
-	
+
 	bool reTesselate(false);
 	if(itemIcon != lastIconRendered && lastItemRendered == itemId)
 		reTesselate  = true;
@@ -139,9 +166,9 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 			float v1 = (vp * 16 + 15.99f) / 256.0f;
 
 			float r = 1.0f;
-//			float xo = 0.0f;
-//			float yo = 0.3f;
-/*
+			//			float xo = 0.0f;
+			//			float yo = 0.3f;
+			/*
 			//glEnable2(GL_RESCALE_NORMAL);
 			glTranslatef2(-xo, -yo, 0);
 			float s = 1.5f;
@@ -150,19 +177,28 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 			glRotatef2(50, 0, 1, 0);
 			glRotatef2(45 + 290, 0, 0, 1);
 			glTranslatef2(-15 / 16.0f, -1 / 16.0f, 0);
-*/
+			*/
 			float dd = 1 / 16.0f;
+			float col = 1.0f;
+			float br = mc->player->getBrightness(0);
 
+
+			t.color(col*br,col*br,col*br,1.0f);
+			t.normal(0.0f, 0.0f, 1.0f);
 			t.vertexUV(0, 0, 0, u0, v1);
 			t.vertexUV(r, 0, 0, u1, v1);
 			t.vertexUV(r, 1, 0, u1, v0);
 			t.vertexUV(0, 1, 0, u0, v0);
 
+			t.normal(0.0f, 0.0f, -1.0f);
 			t.vertexUV(0, 1, 0 - dd, u0, v0);
 			t.vertexUV(r, 1, 0 - dd, u1, v0);
 			t.vertexUV(r, 0, 0 - dd, u1, v1);
 			t.vertexUV(0, 0, 0 - dd, u0, v1);
 
+			col = 0.8f;
+			t.color(col*br,col*br,col*br,1.0f);
+			t.normal(-1.0f, 0.0f, 0.0f);
 			for (int i = 0; i < 16; i++) {
 				float p = i / 16.0f;
 				float uu = u0 + (u1 - u0) * p - 0.5f / 256.0f;
@@ -172,6 +208,7 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 				t.vertexUV(xx, 1, 0, uu, v0);
 				t.vertexUV(xx, 1, 0 - dd, uu, v0);
 			}
+			t.normal(1.0f, 0.0f, 0.0f);
 			for (int i = 0; i < 16; i++) {
 				float p = i / 16.0f;
 				float uu = u0 + (u1 - u0) * p - 0.5f / 256.0f;
@@ -181,6 +218,10 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 				t.vertexUV(xx, 0, 0, uu, v1);
 				t.vertexUV(xx, 0, 0 - dd, uu, v1);
 			}
+
+			col = 0.6f;
+			t.color(col*br,col*br,col*br,1.0f);
+			t.normal(0.0f, 1.0f, 0.0f);
 			for (int i = 0; i < 16; i++) {
 				float p = i / 16.0f;
 				float vv = v1 + (v0 - v1) * p - 0.5f / 256.0f;
@@ -190,6 +231,7 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 				t.vertexUV(r, yy, 0 - dd, u1, vv);
 				t.vertexUV(0, yy, 0 - dd, u0, vv);
 			}
+			t.normal(0.0f, -1.0f, 0.0f);
 			for (int i = 0; i < 16; i++) {
 				float p = i / 16.0f;
 				float vv = v1 + (v0 - v1) * p - 0.5f / 256.0f;
@@ -219,13 +261,14 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 		}
 		mc->textures->loadAndBindTexture(renderObject.texture);
 
-		drawArrayVT_NoState(renderObject.chunk.vboId, renderObject.chunk.vertexCount);
+		drawArrayVTN_NoState(renderObject.chunk.vboId, renderObject.chunk.vertexCount);
 		if (renderObject.isFlat)
 			glPopMatrix2();
 	}
 	//w.stop();
 	//handler.printEvery(100);
 }
+
 
 void ItemInHandRenderer::render( float a )
 {
@@ -241,6 +284,8 @@ void ItemInHandRenderer::render( float a )
 	glPushMatrix2();
 	glRotatef2(player->xRotO + (player->xRot - player->xRotO) * a, 1, 0, 0);
 	glRotatef2(player->yRotO + (player->yRot - player->yRotO) * a, 0, 1, 0);
+	glEnable(GL_RESCALE_NORMAL);
+	Lighting::turnOn(mc);
 	glPopMatrix2();
 
 	float br = mc->level->getBrightness(Mth::floor(player->x), Mth::floor(player->y), Mth::floor(player->z));
@@ -356,7 +401,7 @@ void ItemInHandRenderer::render( float a )
 
 		mc->textures->loadAndBindTexture(player->getTexture());
 		glTranslatef2(-1.0f, +3.6f, +3.5f);
-		glRotatef2(120, 0, 0, 1);
+		glRotatef2(120, 0, 0, 1);	
 		glRotatef2(180 + 20, 1, 0, 0);
 		glRotatef2(-90 - 45, 0, 1, 0);
 		glScalef2(1.5f / 24.0f * 16, 1.5f / 24.0f * 16, 1.5f / 24.0f * 16);
@@ -369,8 +414,8 @@ void ItemInHandRenderer::render( float a )
 		playerRenderer->renderHand();
 		glPopMatrix2();
 	}
-	//glDisable2(GL_RESCALE_NORMAL);
-	//Lighting.turnOff();
+	glDisable2(GL_RESCALE_NORMAL);
+	Lighting::turnOff();
 	//w.stop();
 }
 

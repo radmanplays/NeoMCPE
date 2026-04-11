@@ -54,17 +54,23 @@ OptionBool limitFramerate("limitFramerate", false);
 OptionBool vsync("vsync", true);
 OptionBool fancyGraphics("fancyGraphics", true);
 OptionBool viewBobbing("viewBobbing", true);
-OptionBool ambientOcclusion("ao", false);
+OptionBool ambientOcclusion("ao", true);
+
+OptionBool useNormalLighting("normalLighting", true);
 
 OptionBool useTouchscreen("useTouchscreen", true);
 
 OptionBool serverVisible("servervisible", true);
 
-OptionBool foliageTint("foliagetint", false);
+OptionBool foliageTint("foliagetint", true);
 
 OptionInt fogType("fogType", 0, 0, 2);
 
 OptionBool javaHud("javaHud", false);
+
+OptionBool blockOutline("blockOutline", false);
+
+OptionBool restoredAnims("restoredAnims", true);
 
 OptionInt keyForward("key.forward", Keyboard::KEY_W);
 OptionInt keyLeft("key.left", Keyboard::KEY_A);
@@ -142,7 +148,11 @@ void Options::initTable() {
 
     m_options[OPTIONS_USE_TOUCHSCREEN] = &useTouchscreen;
 
+	m_options[OPTIONS_BLOCK_OUTLINE] = &blockOutline;
 
+	m_options[OPTIONS_NORMAL_LIGHTING] = &useNormalLighting;
+
+	m_options[OPTIONS_RESTORED_ANIMS] = &restoredAnims;
 
     m_options[OPTIONS_SERVER_VISIBLE] = &serverVisible;
 

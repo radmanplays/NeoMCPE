@@ -138,7 +138,7 @@ void CanyonFeature::addTunnel( int xOffs, int zOffs, unsigned char* blocks, floa
 	}
 }
 
-void CanyonFeature::addFeature(Level* level, int x, int z, int xOffs, int zOffs,unsigned char* blocks)
+void CanyonFeature::addFeature(Level* level, int x, int z, int xOffs, int zOffs, unsigned char* blocks, int blocksSize)
 {
 	if (random.nextInt(15) != 0) return;
 

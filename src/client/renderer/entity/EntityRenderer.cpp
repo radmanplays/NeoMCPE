@@ -12,6 +12,7 @@
 #include "../../Minecraft.h"
 #include "../../Option.h"
 
+#include "../Lighting.h"
 EntityRenderDispatcher* EntityRenderer::entityRenderDispatcher = NULL;
 
 EntityRenderer::EntityRenderer()
@@ -134,7 +135,7 @@ void EntityRenderer::postRender(Entity* entity, float x, float y, float z, float
 	}
 }
 void EntityRenderer::renderFlame(Entity* e, float x, float y, float z, float a) {
-
+	 glDisable(GL_LIGHTING);
 	int tex = ((Tile*)Tile::fire)->tex;
 
 	int xt = (tex & 0xf) << 4;
@@ -176,7 +177,7 @@ void EntityRenderer::renderFlame(Entity* e, float x, float y, float z, float a) 
 	}
 	t.draw();
 	glPopMatrix2();
-	//	glEnable2(GL_LIGHTING);
+	glEnable2(GL_LIGHTING);
 }
 
 void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float pow, float a) { //

@@ -153,7 +153,20 @@ options.group.tweaks=Tweaks
 options.allowSprint=Allow sprint
 options.barOnTop=HUD above inventory
 options.rpiCursor=Show Raspberry PI cursor
-options.foliageTint=Tint Grass and Leaves
+options.foliagetint=Foliage Tinting
+options.javaHud=Beta Java hotbar tweaks
+options.blockOutline=Block Outline Selection
+options.fogType=Fog/Sky Color
+options.fogType.vanilla=Vanilla
+options.fogType.java=Beta Java
+options.fogType.unused=Unused
+
+options.restoredAnims=Restored Animations
+
+options.normalLighting=Java Beta/Normals Shading
+
+options.isJoyTouchArea=Use Split Controls
+
 options.autoJump=Auto Jump
 options.thirdperson=Third Person
 options.servervisible=Server Visible

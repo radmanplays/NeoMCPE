@@ -45,7 +45,7 @@ void ItemRenderer::render(Entity* itemEntity_, float x, float y, float z, float 
 	else if (item->count > 1) count = 2;
 
 	glTranslatef2((float) x, (float) y + bob, (float) z);
-	//glEnable2(GL_RESCALE_NORMAL);
+	glEnable2(GL_RESCALE_NORMAL);
 	if (item->id < 256 && TileRenderer::canRender(Tile::tiles[item->id]->getRenderShape())) {
 		glRotatef2(spin, 0, 1, 0);
 
@@ -107,7 +107,7 @@ void ItemRenderer::render(Entity* itemEntity_, float x, float y, float z, float 
 			}
 			glRotatef2(180 - entityRenderDispatcher->playerRotY, 0, 1, 0);
 			t.begin();
-			//t.normal(0, 1, 0);
+			t.normal(0, 1, 0);
 			t.vertexUV(0 - xo, 0 - yo, 0, u0, v1);
 			t.vertexUV(r - xo, 0 - yo, 0, u1, v1);
 			t.vertexUV(r - xo, 1 - yo, 0, u1, v0);
@@ -118,7 +118,7 @@ void ItemRenderer::render(Entity* itemEntity_, float x, float y, float z, float 
 			glPopMatrix2();
 		}
 	}
-	//glDisable2(GL_RESCALE_NORMAL);
+	glDisable2(GL_RESCALE_NORMAL);
 	glPopMatrix2();
 }
 

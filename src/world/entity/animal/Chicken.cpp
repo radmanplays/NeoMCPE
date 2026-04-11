@@ -102,8 +102,8 @@ void Chicken::dropDeathLoot( /*bool wasKilledByPlayer, int playerBonusLevel*/ )
 		spawnAtLocation(Item::feather->id, 1);
 	}
 	//// and some meat
-	//if (isOnFire()) spawnAtLocation(Item::chicken_cooked->id, 1); //@fire
-	//else
+	if (isOnFire()) spawnAtLocation(Item::chicken_cooked->id, 1); //@fire
+	else
 	    spawnAtLocation(Item::chicken_raw->id, 1);
 }
 

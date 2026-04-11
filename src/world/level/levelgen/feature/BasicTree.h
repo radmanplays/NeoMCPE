@@ -17,7 +17,7 @@ class BasicTree : public Feature
 	typedef Feature super;
 private:
 
-	
+
 
 	unsigned char axisConversionArray[6];
 	Random *rnd;
@@ -25,11 +25,11 @@ private:
 	int origin[3];
 	int height;
 	int trunkHeight;
-	double trunkHeightScale;
-	double branchDensity;
-	double branchSlope;
-	double widthScale;
-	double foliageDensity;
+	float trunkHeightScale;
+	float branchDensity;
+	float branchSlope;
+	float widthScale;
+	float foliageDensity;
 	int trunkWidth;
 	int heightVariance;
 	int foliageHeight;
@@ -38,7 +38,7 @@ private:
 	void prepare(){
 		trunkHeight = (int) (height * trunkHeightScale);
 		if (trunkHeight >= height) trunkHeight = height - 1;
-		int clustersPerY = (int) (1.382 + pow(foliageDensity * height / 13.0, 2));
+		int clustersPerY = (int) (1.382f + pow(foliageDensity * height / 13.0, 2));
 		if (clustersPerY < 1) clustersPerY = 1;
 		int **tempFoliageCoords = new int *[clustersPerY * height];
 		for( int i = 0; i < clustersPerY * height; i++ )
@@ -68,19 +68,19 @@ private:
 				continue;
 			}
 
-			double originOffset = 0.5;
+			float originOffset = 0.5f;
 			while (num < clustersPerY)
 			{
-				double radius = widthScale * (shapefac * (rnd->nextFloat() + 0.328));
-				double angle = rnd->nextFloat() * 2.0 * 3.14159;
+				float radius = widthScale * (shapefac * (rnd->nextFloat() + 0.328f));
+				float angle = rnd->nextFloat() * 2.0f * 3.14159f;
 				int x = Mth::floor(radius * sin(angle) + origin[0] + originOffset);
 				int z = Mth::floor(radius * cos(angle) + origin[2] + originOffset);
 				int checkStart[] = { x, y, z };
 				int checkEnd[] = { x, y + foliageHeight, z };
 				if (checkLine(checkStart, checkEnd) == -1) {
 					int checkBranchBase[] = { origin[0], origin[1], origin[2] };
-					double distance = sqrt(pow(abs(origin[0] - checkStart[0]), 2.0) + pow(abs(origin[2] - checkStart[2]), 2.0));
-					double branchHeight = distance * branchSlope;
+					float distance = sqrt(pow(abs(origin[0] - checkStart[0]), 2.0f) + pow(abs(origin[2] - checkStart[2]), 2.0f));
+					float branchHeight = distance * branchSlope;
 					if ((checkStart[1] - branchHeight) > trunkTop)
 					{
 						checkBranchBase[1] = trunkTop;
@@ -134,7 +134,9 @@ private:
 			offset2 = -rad;
 			while (offset2 <= rad)
 			{
-				double thisdistance = pow(abs(offset1) + 0.5, 2) + pow(abs(offset2) + 0.5, 2);
+				float off1 = (float)offset1 + 0.5f;
+				float off2 = (float)offset2 + 0.5f;
+				float thisdistance = (off1 * off1) + (off2 * off2);
 				if (thisdistance > radius * radius)
 				{
 					offset2++;
@@ -159,14 +161,14 @@ private:
 
 	}
 	float treeShape(int y){
-		if (y < (((float) height) * 0.3)) return (float) -1.618;
-		float radius = ((float) height) / ((float) 2.0);
-		float adjacent = (((float) height) / ((float) 2.0)) - y;
+		if (y < (((float) height) * 0.3f)) return (float) -1.618f;
+		float radius = ((float) height) / ((float) 2.0f);
+		float adjacent = (((float) height) / ((float) 2.0f)) - y;
 		float distance;
 		if (adjacent == 0) distance = radius;
-		else if (abs(adjacent) >= radius) distance = (float) 0.0;
+		else if (abs(adjacent) >= radius) distance = (float) 0.0f;
 		else distance = (float) sqrt(pow(abs(radius), 2) - pow(abs(adjacent), 2));
-		distance *= (float) 0.5;
+		distance *= (float) 0.5f;
 		return distance;
 	}
 	float foliageShape(int y){
@@ -207,8 +209,8 @@ private:
 		char primsign;
 		if (delta[primidx] > 0) primsign = 1;
 		else primsign = -1;
-		double secfac1 = ((double) delta[secidx1]) / ((double) delta[primidx]);
-		double secfac2 = ((double) delta[secidx2]) / ((double) delta[primidx]);
+		float secfac1 = ((float) delta[secidx1]) / ((float) delta[primidx]);
+		float secfac2 = ((float) delta[secidx2]) / ((float) delta[primidx]);
 		int coordinate[] = { 0, 0, 0 };
 		int primoffset = 0;
 		int endoffset = delta[primidx] + primsign;
@@ -312,8 +314,8 @@ private:
 		char primsign; 
 		if (delta[primidx] > 0) primsign = 1;
 		else primsign = -1;
-		double secfac1 = ((double) delta[secidx1]) / ((double) delta[primidx]);
-		double secfac2 = ((double) delta[secidx2]) / ((double) delta[primidx]);
+		float secfac1 = ((float) delta[secidx1]) / ((float) delta[primidx]);
+		float secfac2 = ((float) delta[secidx2]) / ((float) delta[primidx]);
 		int coordinate[] = { 0, 0, 0 };
 		int primoffset = 0;
 		int endoffset = delta[primidx] + primsign;
@@ -331,19 +333,19 @@ private:
 			}
 			primoffset += primsign;
 		}
-	
+
 		if (primoffset == endoffset)
 		{
 			return -1;
 		}
-	
+
 		else
 		{
 			return abs(primoffset);
 		}
 	}
 	bool checkLocation(){
-	
+
 		int startPosition[] = { origin[0], origin[1], origin[2] };
 		int endPosition[] = { origin[0], origin[1] + height - 1, origin[2] };
 
@@ -373,11 +375,11 @@ private:
 public:
 	BasicTree(bool doUpdate){
 		axisConversionArray[0] = 2;
-        axisConversionArray[1] = 0;
-        axisConversionArray[2] = 0;
-        axisConversionArray[3] = 1;
-        axisConversionArray[4] = 2;
-        axisConversionArray[5] = 1;
+		axisConversionArray[1] = 0;
+		axisConversionArray[2] = 0;
+		axisConversionArray[3] = 1;
+		axisConversionArray[4] = 2;
+		axisConversionArray[5] = 1;
 		rnd = new Random();
 		origin[0] = 0;
 		origin[1] = 0;
@@ -405,7 +407,7 @@ public:
 		delete [] foliageCoords;
 	}
 
-	virtual void init(double heightInit, double widthInit, double foliageDensityInit){
+	virtual void init(float heightInit, float widthInit, float foliageDensityInit){
 
 		heightVariance = (int) (heightInit * 12);
 		if (heightInit > 0.5) foliageHeight = 5;
@@ -430,7 +432,7 @@ public:
 			return false;
 		}
 
-	
+
 
 		prepare();
 

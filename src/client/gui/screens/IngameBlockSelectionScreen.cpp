@@ -1,5 +1,6 @@
 #include "IngameBlockSelectionScreen.h"
 #include "../../renderer/TileRenderer.h"
+#include "../../renderer/Lighting.h"
 #include "../../player/LocalPlayer.h"
 #include "../../renderer/gles.h"
 #include "../../Minecraft.h"
@@ -80,10 +81,10 @@ void IngameBlockSelectionScreen::renderSlots()
 
 	blitOffset = -90;
 
-	//glEnable2(GL_RESCALE_NORMAL);
+	glEnable2(GL_RESCALE_NORMAL);
 	//glPushMatrix2();
 	//glRotatef2(180, 1, 0, 0);
-	//Lighting::turnOn();
+	Lighting::turnOn(minecraft);
 	//glPopMatrix2();
 
 	minecraft->textures->loadAndBindTexture("gui/gui.png");
@@ -122,8 +123,8 @@ void IngameBlockSelectionScreen::renderSlots()
 	//w.stop();
 	//w.printEvery(1000, "render-blocksel");
 
-	//glDisable2(GL_RESCALE_NORMAL);
-	//Lighting::turnOn();
+	glDisable2(GL_RESCALE_NORMAL);
+	Lighting::turnOn(minecraft);
 }
 
 int IngameBlockSelectionScreen::getSlotPosX(int slotX) {

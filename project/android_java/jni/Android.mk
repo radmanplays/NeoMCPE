@@ -75,6 +75,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/player/RemotePlayer.cpp \
 ../../../src/client/player/input/KeyboardInput.cpp \
 ../../../src/client/player/input/touchscreen/TouchscreenInput.cpp \
+../../../src/client/renderer/Lighting.cpp \
 ../../../src/client/renderer/Chunk.cpp \
 ../../../src/client/renderer/EntityTileRenderer.cpp \
 ../../../src/client/renderer/GameRenderer.cpp \

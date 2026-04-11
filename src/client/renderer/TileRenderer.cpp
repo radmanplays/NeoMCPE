@@ -225,7 +225,7 @@ bool TileRenderer::tesselateTorchInWorld( Tile* tt, int x, int y, int z )
 
 bool TileRenderer::tesselateFireInWorld( Tile* tt, int x, int y, int z )
 {
-	// @todo: fire alpha transparency seems to be scuffed, also it seems i might have messed up the second layer while porting from lce/java , need to look into it - shredder
+	// fire transparency has been fixed - shredder
 
 	Tesselator& t = Tesselator::instance;
 
@@ -2308,30 +2308,54 @@ void TileRenderer::renderEast( Tile* tt, float x, float y, float z, int tex )
 void TileRenderer::renderTile( Tile* tile, int data )
 {
 	Tesselator& t = Tesselator::instance;
-
-	t.color(0xff, 0xff, 0xff);
+		
+	t.color(0xff, 0xff, 0xff); // i disabled this, this is normally enabled in normal mcpe see if this fits OPTION_NORMAL_LIGHTING - shredder
 	int shape = tile->getRenderShape();
 
 	if (shape == Tile::SHAPE_BLOCK) {
 		tile->updateDefaultShape();
 		t.addOffset(-0.5f, -0.5f, -0.5f);
 		t.begin();
+
+		t.normal(0.0f, -1.0f, 0.0f);// most normal calls in this file has been added me since they existed in java - shredder
+
 		renderFaceDown(tile, 0, 0, 0, tile->getTexture(0, data));
+
+		t.normal(0.0f, 1.0f, 0.0f); 
+
 		renderFaceUp(tile, 0, 0, 0, tile->getTexture(1, data));
+		
+		t.normal(0.0f, 0.0f, -1.0f);
+
 		renderNorth(tile, 0, 0, 0, tile->getTexture(2, data));
+
+		t.normal(0.0f, 0.0f, 1.0f);
+
 		renderSouth(tile, 0, 0, 0, tile->getTexture(3, data));
+
+		t.normal(-1.0f, 0.0f, 0.0f);
+
 		renderWest(tile, 0, 0, 0, tile->getTexture(4, data));
+
+		t.normal(1.0f, 0.0f, 0.0f);
+
 		renderEast(tile, 0, 0, 0, tile->getTexture(5, data));
 		t.draw();
 
 		t.addOffset(0.5f, 0.5f, 0.5f);
 
-	} else if (shape == Tile::SHAPE_CROSS_TEXTURE) {
+	} else if (shape == Tile::SHAPE_CROSS_TEXTURE) { // uhh java has this but is this even ever used??? - shredder
 		t.begin();
+
+		t.normal(0.0f, -1.0f, 0.0f);
+
 		tesselateCrossTexture(tile, data, -0.5f, -0.5f, -0.5f);
 		t.draw();
 	} else if(shape == Tile::SHAPE_STEM) {
 		t.begin();
+
+		t.normal(0.0f, -1.0f, 0.0f);
+
 		tile->updateDefaultShape();
 		tesselateStemTexture(tile, data, tile->yy1, -0.5f, -0.5f, -0.5f);
 		t.draw();
@@ -2340,16 +2364,39 @@ void TileRenderer::renderTile( Tile* tile, int data )
 		t.offset(-0.5f, -0.5f, -0.5f);
 		float s = 1 / 16.0f;
 		t.begin();
+
+		t.normal(0.0f, -1.0f, 0.0f);
+
 		renderFaceDown(tile, 0, 0, 0, tile->getTexture(0));
+
+		t.normal(0.0f, 1.0f, 0.0f);
+
 		renderFaceUp(tile, 0, 0, 0, tile->getTexture(1));
+
+		t.normal(0.0f, 0.0f, -1.0f);
+
 		t.addOffset(0, 0, s);
+
+
 		renderNorth(tile, 0, 0, 0, tile->getTexture(2));
+
+		t.normal(0.0f, 0.0f, 1.0f);
+
 		t.addOffset(0, 0, -s);
 		t.addOffset(0, 0, -s);
+
+
+
 		renderSouth(tile, 0, 0, 0, tile->getTexture(3));
+
+		t.normal(-1.0f, 0.0f, 0.0f);
+
 		t.addOffset(0, 0, s);
 		t.addOffset(s, 0, 0);
 		renderWest(tile, 0, 0, 0, tile->getTexture(4));
+
+		t.normal(1.0f, 0.0f, 0.0f);
+
 		t.addOffset(-s, 0, 0);
 		t.addOffset(-s, 0, 0);
 		renderEast(tile, 0, 0, 0, tile->getTexture(5));
@@ -2363,7 +2410,7 @@ void TileRenderer::renderTile( Tile* tile, int data )
 		//}  else if (shape == Tile::SHAPE_TORCH) {
 		////    t.begin();
 		////    t.normal(0, -1, 0);
-		////    tesselateTorch(tile, -0.5f, -0.5f, -0.5f, 0, 0);
+		///    tesselateTorch(tile, -0.5f, -0.5f, -0.5f, 0, 0);
 		////    t.end();
         } else if (shape == Tile::SHAPE_ENTITYTILE_ANIMATED) {
             EntityTileRenderer::instance->render(tile, data, 1.0f);
@@ -2375,11 +2422,23 @@ void TileRenderer::renderTile( Tile* tile, int data )
 		        if (i == 0) tile->setShape(0, 0, 0, 1, 1, 0.5f);
 		        if (i == 1) tile->setShape(0, 0, 0.5f, 1, 0.5f, 1);
 
+
+				t.normal(0.0f, -1.0f, 0.0f);
 		        renderFaceDown(tile, 0, 0, 0, tile->getTexture(0));
+
+				t.normal(0.0f, 1.0f, 0.0f);
 		        renderFaceUp(tile, 0, 0, 0, tile->getTexture(1));
+
+				t.normal(0.0f, 0.0f, -1.0f);
 		        renderNorth(tile, 0, 0, 0, tile->getTexture(2));
+
+				t.normal(0.0f, 0.0f, 1.0f);
 		        renderSouth(tile, 0, 0, 0, tile->getTexture(3));
+
+				t.normal(-1.0f, 0.0f, 0.0f);
 		        renderWest(tile, 0, 0, 0, tile->getTexture(4));
+
+				t.normal(1.0f, 0.0f, 0.0f);
 		        renderEast(tile, 0, 0, 0, tile->getTexture(5));
 		    }
 			t.draw();
@@ -2396,12 +2455,23 @@ void TileRenderer::renderTile( Tile* tile, int data )
 				if (i == 2) tile->setShape(0.5f - w, 1 - w * 3, -w * 2, 0.5f + w, 1 - w, 1 + w * 2);
 				if (i == 3) tile->setShape(0.5f - w, 0.5f - w * 3, -w * 2, 0.5f + w, 0.5f - w, 1 + w * 2);
 
-				renderFaceDown(tile, 0, 0, 0, tile->getTexture(0));
-				renderFaceUp(tile, 0, 0, 0, tile->getTexture(1));
-				renderNorth(tile, 0, 0, 0, tile->getTexture(2));
-				renderSouth(tile, 0, 0, 0, tile->getTexture(3));
-				renderWest(tile, 0, 0, 0, tile->getTexture(4));
-				renderEast(tile, 0, 0, 0, tile->getTexture(5));
+				t.normal(0.0f, -1.0f, 0.0f);
+		        renderFaceDown(tile, 0, 0, 0, tile->getTexture(0));
+
+				t.normal(0.0f, 1.0f, 0.0f);
+		        renderFaceUp(tile, 0, 0, 0, tile->getTexture(1));
+
+				t.normal(0.0f, 0.0f, -1.0f);
+		        renderNorth(tile, 0, 0, 0, tile->getTexture(2));
+
+				t.normal(0.0f, 0.0f, 1.0f);
+		        renderSouth(tile, 0, 0, 0, tile->getTexture(3));
+
+				t.normal(-1.0f, 0.0f, 0.0f);
+		        renderWest(tile, 0, 0, 0, tile->getTexture(4));
+
+				t.normal(1.0f, 0.0f, 0.0f);
+		        renderEast(tile, 0, 0, 0, tile->getTexture(5));
 			}
 			t.draw();
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -2415,12 +2485,23 @@ void TileRenderer::renderTile( Tile* tile, int data )
 				if (i == 1) tile->setShape(0.5f - w, .3f, 1 - w * 2, 0.5f + w, 1, 1);
 				if (i == 2) tile->setShape(0.5f - w, .5f, w * 2, 0.5f + w, 1 - w, 1 - w * 2);
 
-				renderFaceUp(tile, 0, 0, 0, tile->getTexture(0));
-				renderFaceDown(tile, 0, 0, 0, tile->getTexture(1));
-				renderNorth(tile, 0, 0, 0, tile->getTexture(2));
-				renderSouth(tile, 0, 0, 0, tile->getTexture(3));
-				renderWest(tile, 0, 0, 0, tile->getTexture(4));
-				renderEast(tile, 0, 0, 0, tile->getTexture(5));
+								t.normal(0.0f, -1.0f, 0.0f);
+		        renderFaceDown(tile, 0, 0, 0, tile->getTexture(0));
+
+				t.normal(0.0f, 1.0f, 0.0f);
+		        renderFaceUp(tile, 0, 0, 0, tile->getTexture(1));
+
+				t.normal(0.0f, 0.0f, -1.0f);
+		        renderNorth(tile, 0, 0, 0, tile->getTexture(2));
+
+				t.normal(0.0f, 0.0f, 1.0f);
+		        renderSouth(tile, 0, 0, 0, tile->getTexture(3));
+
+				t.normal(-1.0f, 0.0f, 0.0f);
+		        renderWest(tile, 0, 0, 0, tile->getTexture(4));
+
+				t.normal(1.0f, 0.0f, 0.0f);
+		        renderEast(tile, 0, 0, 0, tile->getTexture(5));
 			}
 			t.draw();
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -2469,7 +2550,7 @@ void TileRenderer::renderGuiTile( Tile* tile, int data )
 
 	} else if (shape == Tile::SHAPE_CROSS_TEXTURE) {
 		t.begin();
-		//t.normal(0, -1, 0);
+		t.normal(0, -1, 0);
 		tesselateCrossTexture(tile, data, -0.5f, -0.5f, -0.5f);
 		//t.end();
 		t.draw();

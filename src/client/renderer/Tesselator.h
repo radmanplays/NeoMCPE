@@ -10,7 +10,7 @@
 
 extern const int VertexSizeBytes;
 
-typedef VertexDeclPTC VERTEX;
+typedef VertexDeclPTCN VERTEX;
 typedef std::map<GLuint, GLsizei> IntGLMap;
 
 

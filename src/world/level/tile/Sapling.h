@@ -8,6 +8,7 @@
 #include "../levelgen/feature/SpruceFeature.h"
 #include "../levelgen/feature/BirchFeature.h"
 #include "../levelgen/feature/TreeFeature.h"
+#include "../levelgen/feature/BasicTree.h"
 
 class Sapling: public Bush
 {
@@ -90,9 +91,9 @@ public:
 //                 f = new TreeFeature(true, 4 + random.nextInt(7), TreeTile::JUNGLE_TRUNK, LeafTile::JUNGLE_LEAF, false);
 //             }
         } else {
-            //if (random->nextInt(10) == 0) {
-            //    f = new BasicTree(true);
-            //} else
+            if (random->nextInt(10) == 0) {
+                f = new BasicTree(true);
+            } else
                 f = new TreeFeature(true);
         }
 

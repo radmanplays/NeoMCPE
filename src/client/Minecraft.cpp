@@ -745,6 +745,7 @@ void Minecraft::tickInput() {
 				int dst = options.getIntValue(OPTIONS_VIEW_DISTANCE);
 				options.set(OPTIONS_VIEW_DISTANCE, (dst + 1) % 4);
 			}
+
 			#ifdef CHEATS
 				if (key == Keyboard::KEY_U) {
 					onGraphicsReset();
@@ -1128,6 +1129,8 @@ void Minecraft::init()
 	textures = new Textures(&options, platform());
 	textures->addDynamicTexture(new WaterTexture());
 	textures->addDynamicTexture(new WaterSideTexture());
+	textures->addDynamicTexture(new LavaTexture());
+	textures->addDynamicTexture(new LavaSideTexture());
 	textures->addDynamicTexture(new FireTexture());
 	gui.texturesLoaded(textures);
 

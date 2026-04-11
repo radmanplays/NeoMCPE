@@ -36,6 +36,16 @@ void OptionsItem::render( Minecraft* minecraft, int xm, int ym ) {
 		}
 		text += ": " + scaleText;
 	}
+		if (m_optionId == OPTIONS_FOG_TYPE) {
+		int value = minecraft->options.getIntValue(OPTIONS_FOG_TYPE);
+		std::string scaleText;
+		switch (value) {
+		case 0: scaleText = I18n::get("options.fogType.vanilla"); break;
+		case 1: scaleText = I18n::get("options.fogType.java"); break;
+		case 2: scaleText = I18n::get("options.fogType.unused"); break;
+		}
+		text += ": " + scaleText;
+	}
 
 	minecraft->font->draw(text, (float)x, (float)y + yOffset, 0x909090, false);
 	super::render(minecraft, xm, ym);

@@ -208,7 +208,9 @@ void OptionsScreen::generateOptionScreens() {
 	// // Controls Pane
 	optionPanes[2]->addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
 		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft)
-		.addOptionItem(OPTIONS_AUTOJUMP, minecraft);
+		.addOptionItem(OPTIONS_AUTOJUMP, minecraft)	
+		.addOptionItem(OPTIONS_BLOCK_OUTLINE, minecraft)
+		.addOptionItem(OPTIONS_IS_JOY_TOUCH_AREA, minecraft);
 
 	for (int i = OPTIONS_KEY_FORWARD; i <= OPTIONS_KEY_USE; i++) {
 		optionPanes[2]->addOptionItem((OptionId)i, minecraft);
@@ -224,14 +226,16 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_RENDER_DEBUG, minecraft)
 		.addOptionItem(OPTIONS_ANAGLYPH_3D, minecraft)
 		.addOptionItem(OPTIONS_VIEW_BOBBING, minecraft)
-		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft);
+		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft)
+		.addOptionItem(OPTIONS_NORMAL_LIGHTING, minecraft);
 
 	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
 		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft)
 		.addOptionItem(OPTIONS_RPI_CURSOR, minecraft)
 		.addOptionItem(OPTIONS_FOLIAGE_TINT, minecraft)
 		.addOptionItem(OPTIONS_JAVA_HUD, minecraft)
-		.addOptionItem(OPTIONS_FOG_TYPE, minecraft);
+		.addOptionItem(OPTIONS_FOG_TYPE, minecraft)
+		.addOptionItem(OPTIONS_RESTORED_ANIMS, minecraft);
 		
 }
 

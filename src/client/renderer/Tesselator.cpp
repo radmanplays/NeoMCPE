@@ -278,9 +278,9 @@ void Tesselator::vertex( float x, float y, float z )
 			if (hasColor) {
 				dst.color = src.color;
 			}
-			//if (hasNormal) {
-			//	dst.normal = src.normal;
-			//}
+			if (hasNormal) {
+				dst.normal = src.normal;
+			}
 
 			dst.x = src.x;
 			dst.y = src.y;
@@ -301,9 +301,9 @@ void Tesselator::vertex( float x, float y, float z )
 	if (hasColor) {
 		vertex.color = _color;
 	}
-	//if (hasNormal) {
-	//	vertex.normal = _normal;
-	//}
+	if (hasNormal) {
+		vertex.normal = _normal;
+	}
 
 	vertex.x = _sx * (x + xo);
 	vertex.y = _sy * (y + yo);
@@ -332,10 +332,10 @@ void Tesselator::setAccessMode(int mode)
 
 void Tesselator::normal( float x, float y, float z )
 {
-	static int _warn_t = 0;
-	if ((++_warn_t & 32767) == 1)
-		LOGI("WARNING: Can't use normals (Tesselator::normal)\n");
-	return;
+	//static int _warn_t = 0;
+	//if ((++_warn_t & 32767) == 1)
+	//	LOGI("WARNING: Can't use normals (Tesselator::normal)\n");
+	//return;
 
 	if (!tesselating) printf("But..");
 	hasNormal = true;
@@ -404,10 +404,10 @@ void Tesselator::draw()
 			//glColorPointer2(4, GL_UNSIGNED_BYTE, VertexSizeBytes, (GLvoid*) &_varray->color);
 			glEnableClientState2(GL_COLOR_ARRAY);
 		}
-		//if (hasNormal) {
-		//	glNormalPointer(GL_BYTE, VertexSizeBytes, (GLvoid*) (6 * 4));
-		//	glEnableClientState2(GL_NORMAL_ARRAY);
-		//}
+		if (hasNormal) {
+			glNormalPointer(GL_BYTE, VertexSizeBytes, (GLvoid*) (6 * 4));
+			glEnableClientState2(GL_NORMAL_ARRAY);
+		}
 		//glVertexPointer2(3, GL_FLOAT, VertexSizeBytes, (GLvoid*)&_varray);
 		glVertexPointer2(3, GL_FLOAT, VertexSizeBytes, 0);
 		glEnableClientState2(GL_VERTEX_ARRAY);
@@ -421,7 +421,7 @@ void Tesselator::draw()
 		glDisableClientState2(GL_VERTEX_ARRAY);
 		if (hasTexture) glDisableClientState2(GL_TEXTURE_COORD_ARRAY);
 		if (hasColor) glDisableClientState2(GL_COLOR_ARRAY);
-		//if (hasNormal) glDisableClientState2(GL_NORMAL_ARRAY);
+		if (hasNormal) glDisableClientState2(GL_NORMAL_ARRAY);
 	}
 
 	clear();

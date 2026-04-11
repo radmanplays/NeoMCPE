@@ -54,8 +54,8 @@ std::string Pig::getDeathSound()
 int Pig::getDeathLoot()
 {
 	//@fire
-	//if (isOnFire())
-	//	return Item::porkChop_cooked->id;
+	if (isOnFire())
+		return Item::porkChop_cooked->id;
 	return Item::porkChop_raw->id;
 }
 

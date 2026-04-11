@@ -43,6 +43,18 @@ void PolygonQuad::mirror() {
 }
 
 void PolygonQuad::render(Tesselator& t, float scale, int vboId /* = -1 */) {
+	Vec3 v0 = vertices[0].pos - vertices[1].pos;
+	Vec3 v1 = vertices[2].pos - vertices[1].pos;
+	Vec3 n = v1.cross(v0).normalized();
+	if (_flipNormal == true)
+	{
+		t.normal(-n.x , -n.y , -n.z );
+	}
+	else
+	{
+		t.normal(n.x , n.y , n.z );
+	}
+
 	for (int i = 0; i < 4; i++) {
 		VertexPT& v = vertices[i];
 		t.vertexUV(v.pos.x * scale, v.pos.y * scale, v.pos.z * scale, v.u, v.v);
