@@ -128,7 +128,7 @@ void drawArrayVTN(int bufferId, int vertices, int vertexSize /* = 24 */) {
 	glVertexPointer2(  3, GL_FLOAT, vertexSize, 0);
 	glTexCoordPointer2(2, GL_FLOAT, vertexSize, (GLvoid*) (3 * 4));
 	//glColorPointer2(4, GL_UNSIGNED_BYTE, vertexSize, (GLvoid*) (5*4));
-	glNormalPointer(GL_BYTE, vertexSize, (GLvoid*) (6 * 4));
+	glNormalPointer(GL_FLOAT, vertexSize, (GLvoid*) (6 * 4));
 
 	glDrawArrays2(GL_TRIANGLES, 0, vertices);
 
@@ -145,7 +145,7 @@ void drawArrayVTCN_NoState(int bufferId, int vertices, int vertexSize /* = 24 */
 	glVertexPointer2(  3, GL_FLOAT, vertexSize, 0);
 	glTexCoordPointer2(2, GL_FLOAT, vertexSize, (GLvoid*) (3 * 4));
 	//glColorPointer2(4, GL_UNSIGNED_BYTE, vertexSize, (GLvoid*) (5*4));
-	glNormalPointer(GL_BYTE, vertexSize, (GLvoid*) (6 * 4));
+	glNormalPointer(GL_FLOAT, vertexSize, (GLvoid*) (6 * 4));
 
 	glDrawArrays2(GL_TRIANGLES, 0, vertices);
 }

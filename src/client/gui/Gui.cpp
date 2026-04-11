@@ -606,7 +606,7 @@ void Gui::renderProgressIndicator( const bool isTouchInterface, const int screen
 			glBlendFunc2(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
 			blit(screenWidth/2 - 8, screenHeight/2 - 8, 0, 0, 16, 16);
 			glDisable(GL_BLEND);
-	} else if(!bowEquipped) {
+	} else if((!bowEquipped) || (!minecraft->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA))) {
 		const float tprogress = minecraft->gameMode->destroyProgress;
 		const float alpha = Mth::clamp(minecraft->inputHolder->alpha, 0.0f, 1.0f);
 		//LOGI("alpha: %f\n", alpha);

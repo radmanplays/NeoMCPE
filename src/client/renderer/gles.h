@@ -60,17 +60,17 @@ void anGenBuffers(GLsizei n, GLuint* buffer);
 #define drawArrayVT_NoState drawArrayVT
 #define drawArrayVTC_NoState drawArrayVTC
 #define drawArrayVTN_NoState drawArrayVTN
-void drawArrayVT(int bufferId, int vertices, int vertexSize = 28, unsigned int mode = GL_TRIANGLES);
+void drawArrayVT(int bufferId, int vertices, int vertexSize = 36, unsigned int mode = GL_TRIANGLES);
 #ifndef drawArrayVT_NoState
-//void drawArrayVT_NoState(int bufferId, int vertices, int vertexSize = 28);
+//void drawArrayVT_NoState(int bufferId, int vertices, int vertexSize = 36);
 #endif
-void drawArrayVTC(int bufferId, int vertices, int vertexSize = 28);
+void drawArrayVTC(int bufferId, int vertices, int vertexSize = 36);
 #ifndef drawArrayVTC_NoState
-void drawArrayVTC_NoState(int bufferId, int vertices, int vertexSize = 28);
+void drawArrayVTC_NoState(int bufferId, int vertices, int vertexSize = 36);
 #endif
-void drawArrayVTN(int bufferId, int vertices, int vertexSize = 28);
+void drawArrayVTN(int bufferId, int vertices, int vertexSize = 36);
 #ifndef drawArrayVTN_NoState
-void drawArrayVTCN_NoState(int bufferId, int vertices, int vertexSize = 28);
+void drawArrayVTCN_NoState(int bufferId, int vertices, int vertexSize = 36);
 #endif
 #endif
 
