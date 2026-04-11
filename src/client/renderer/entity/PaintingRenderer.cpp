@@ -9,7 +9,7 @@ void PaintingRenderer::render( Entity* entity, float x, float y, float z, float 
 	glPushMatrix();
 	glTranslatef(float(x), float(y), float(z));
 	glRotatef(rot, 0, 1.0f, 0);
-	//glEnable(GL_RESCALE_NORMAL);
+	glEnable(GL_RESCALE_NORMAL);
 	bindTexture("art/kz.png");
 	Painting* painting = (Painting*)entity;
 	const Motive* motive = painting->motive;
@@ -17,7 +17,7 @@ void PaintingRenderer::render( Entity* entity, float x, float y, float z, float 
 	float s = 1.0f / 16.0f;
 	glScalef(s, s, s);
 	renderPainting(painting, motive->w, motive->h, motive->uo, motive->vo, a);
-	//glDisable(GL_RESCALE_NORMAL);
+	glDisable(GL_RESCALE_NORMAL);
 	glPopMatrix();
 }
 

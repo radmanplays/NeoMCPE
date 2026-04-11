@@ -14,6 +14,7 @@ void Lighting::turnOn(Minecraft* minecraft) {
 	turnOff();
 		return;
 	}
+	glEnable(GL_NORMALIZE);
 	// if normal lighting is true then enable GLES/OpenGL states to setup lighting
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);

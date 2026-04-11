@@ -4,6 +4,10 @@
 #include "../../platform/log.h"
 #include "../Options.h"
 
+#if defined(__APPLE__)
+    #define GLES_SILENCE_DEPRECATION
+#endif
+
 // Android should always run OPENGL_ES
 #if defined(ANDROID) || defined(__APPLE__) || defined(RPI)
     #define OPENGL_ES
@@ -143,7 +147,7 @@ int glhUnProjectf(	float winx, float winy, float winz,
 //
 // Extensions
 //
-#ifdef WIN32
+#ifdef WIN32	
 	#define glGetProcAddress(a) wglGetProcAddress(a)
 #else
 	#define glGetProcAddress(a) (void*(0))

@@ -338,7 +338,7 @@ void ItemInHandRenderer::render( float a )
 		glTranslatef2(0.7f * d, -0.65f * d - (1 - h) * 0.6f, -0.9f * d);
 
 		glRotatef2(45, 0, 1, 0);
-		//glEnable2(GL_RESCALE_NORMAL);
+		glEnable2(GL_RESCALE_NORMAL);
 		glRotatef2(-swing3 * 20, 0, 1, 0);
 		glRotatef2(-swing2 * 20, 0, 0, 1);
 		glRotatef2(-swing2 * 80, 1, 0, 0);
@@ -394,7 +394,7 @@ void ItemInHandRenderer::render( float a )
 		glTranslatef2(0.8f * d, -0.75f * d - (1 - h) * 0.6f, -0.9f * d);
 
 		glRotatef2(45, 0, 1, 0);
-		//glEnable2(GL_RESCALE_NORMAL);
+		glEnable2(GL_RESCALE_NORMAL);
 		glRotatef2(swing2 * 70, 0, 1, 0);
 		glRotatef2(-swing3 * 20, 0, 0, 1);
 		// glRotatef2(-swing2 * 80, 1, 0, 0);
