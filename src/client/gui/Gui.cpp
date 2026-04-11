@@ -382,7 +382,6 @@ void Gui::renderVignette(float br, int w, int h) {
 
 void Gui::renderSlot(int slot, int x, int y, float a) {
 	ItemInstance* item = minecraft->player->inventory->getItem(slot);
-
 	if (!item) {
 		//LOGW("Warning: item @ Gui::renderSlot is NULL\n");
 		return;
@@ -596,17 +595,15 @@ void Gui::renderProgressIndicator( const bool isTouchInterface, const int screen
 	ItemInstance* currentItem = minecraft->player->inventory->getSelected();
 	bool bowEquipped = currentItem != NULL ? currentItem->getItem() == Item::bow : false;
 	bool itemInUse = currentItem != NULL ? currentItem->getItem() == minecraft->player->getUseItem()->getItem() : false;
-	//if ((!isTouchInterface || minecraft->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA) 
-	//	|| (bowEquipped && itemInUse)) && !minecraft->options.getBooleanValue(OPTIONS_HIDEGUI))
 	if ((!isTouchInterface || minecraft->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA) 
-|| (bowEquipped && itemInUse)) && !minecraft->options.getBooleanValue(OPTIONS_HIDEGUI))
+		|| (bowEquipped && itemInUse)) && !minecraft->options.getBooleanValue(OPTIONS_HIDEGUI))
 	{
 			minecraft->textures->loadAndBindTexture("gui/icons.png");
 			glEnable(GL_BLEND);
 			glBlendFunc2(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
 			blit(screenWidth/2 - 8, screenHeight/2 - 8, 0, 0, 16, 16);
 			glDisable(GL_BLEND);
-	} else if((!bowEquipped) || (!minecraft->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA))) {
+	} else if(!bowEquipped) {
 		const float tprogress = minecraft->gameMode->destroyProgress;
 		const float alpha = Mth::clamp(minecraft->inputHolder->alpha, 0.0f, 1.0f);
 		//LOGI("alpha: %f\n", alpha);
@@ -624,7 +621,7 @@ void Gui::renderProgressIndicator( const bool isTouchInterface, const int screen
 			const float x = InvGuiScale * minecraft->inputHolder->mousex;
 			const float y = InvGuiScale * minecraft->inputHolder->mousey;
 			glTranslatef2(x, y, 0);
-			drawArrayVT(rcFeedbackOuter.vboId, rcFeedbackOuter.vertexCount, 24);
+			drawArrayVT(rcFeedbackOuter.vboId, rcFeedbackOuter.vertexCount, 36);
 			glTranslatef2(-x, -y, 0);
 
 			glEnable2(GL_TEXTURE_2D);
@@ -645,12 +642,12 @@ void Gui::renderProgressIndicator( const bool isTouchInterface, const int screen
 			const float y = InvGuiScale * minecraft->inputHolder->mousey;
 			glPushMatrix2();
 			glTranslatef2(x, y, 0);
-			drawArrayVT(rcFeedbackOuter.vboId, rcFeedbackOuter.vertexCount, 24);
+			drawArrayVT(rcFeedbackOuter.vboId, rcFeedbackOuter.vertexCount, 36);
 			glScalef2(0.5f + progress, 0.5f + progress, 1);
 			//glDisable2(GL_CULL_FACE);
 			glColor4f2(1, 1, 1, 1);
 			glBlendFunc2(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
-			drawArrayVT(rcFeedbackInner.vboId, rcFeedbackInner.vertexCount, 24, GL_TRIANGLE_FAN);
+			drawArrayVT(rcFeedbackInner.vboId, rcFeedbackInner.vertexCount, 36, GL_TRIANGLE_FAN);
 			glPopMatrix2();
 
 			glDisable(GL_BLEND);

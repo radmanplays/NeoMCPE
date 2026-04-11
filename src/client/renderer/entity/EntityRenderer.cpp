@@ -135,7 +135,7 @@ void EntityRenderer::postRender(Entity* entity, float x, float y, float z, float
 	}
 }
 void EntityRenderer::renderFlame(Entity* e, float x, float y, float z, float a) {
-	 glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHTING);
 	int tex = ((Tile*)Tile::fire)->tex;
 
 	int xt = (tex & 0xf) << 4;
@@ -187,7 +187,7 @@ void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float po
 	//Textures* textures = entityRenderDispatcher->textures;
 	//textures->bind(textures->loadTexture("%clamp%/environment/shadow.png"));
 	Textures* textures = entityRenderDispatcher->textures;
-	textures->loadAndBindTexture(("/misc/shadow.png"));
+
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -222,6 +222,7 @@ void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float po
 					renderTileShadow(Tile::tiles[t], x, y + e->getShadowHeightOffs(), z, xt, yt, zt, pow, r, xo, yo + e->getShadowHeightOffs(), zo);
 				}
 			}
+			textures->loadAndBindTexture(("/misc/shadow.png"));
 			tt.draw();
 
 			glColor4f2(1, 1, 1, 1);
