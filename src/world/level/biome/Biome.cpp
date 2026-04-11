@@ -143,7 +143,7 @@ void Biome::teardownBiomes() {
 Feature* Biome::getTreeFeature( Random* random )
 {
 	if (random->nextInt(10) == 0) {
-		return new BasicTree(false);
+	//	return new BasicTree(false); // temporarily disabled
 	}
 	return new TreeFeature(false);
 }

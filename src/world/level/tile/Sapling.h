@@ -92,7 +92,7 @@ public:
 //             }
         } else {
             if (random->nextInt(10) == 0) {
-                f = new BasicTree(true);
+//                f = new BasicTree(true); // temporarily disabled
             } else
                 f = new TreeFeature(true);
         }

@@ -13,7 +13,7 @@ class RainforestBiome: public Biome
 public:
     Feature* getTreeFeature(Random* random) {
         if (random->nextInt(3) == 0) {
-            return new BasicTree(false);
+        //    return new BasicTree(false); // temporarily disabled
         }
         return new TreeFeature(false);
     }

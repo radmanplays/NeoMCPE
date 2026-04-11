@@ -375,7 +375,9 @@ void ItemInHandRenderer::render( float a )
 		}
 		glEnableClientState2(GL_VERTEX_ARRAY);
 		glEnableClientState2(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState2(GL_NORMAL_ARRAY);
 		renderItem(player, item);
+		glDisableClientState2(GL_NORMAL_ARRAY);
 		glDisableClientState2(GL_VERTEX_ARRAY);
 		glDisableClientState2(GL_TEXTURE_COORD_ARRAY);
 		glPopMatrix2();
@@ -394,7 +396,8 @@ void ItemInHandRenderer::render( float a )
 		glTranslatef2(0.8f * d, -0.75f * d - (1 - h) * 0.6f, -0.9f * d);
 
 		glRotatef2(45, 0, 1, 0);
-		glEnable2(GL_RESCALE_NORMAL);
+//		glEnable2(GL_RESCALE_NORMAL);
+		glEnable(GL_NORMALIZE);
 		glRotatef2(swing2 * 70, 0, 1, 0);
 		glRotatef2(-swing3 * 20, 0, 0, 1);
 		// glRotatef2(-swing2 * 80, 1, 0, 0);

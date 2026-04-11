@@ -12,7 +12,7 @@
 #if defined(ANDROID) || defined(__APPLE__) || defined(RPI)
     #define OPENGL_ES
 #endif
-
+#define GLES_SILENCE_DEPRECATION
 // Other systems might run it, if they #define OPENGL_ES
 // #if defined(OPENGL_ES) // || defined(ANDROID)
 	#define USE_VBO
