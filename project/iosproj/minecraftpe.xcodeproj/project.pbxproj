@@ -1179,6 +1179,8 @@
 		F99F0FAD2F8436CE00F2B29A /* FoliageColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */; };
 		F99F0FAF2F8436EB00F2B29A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAE2F8436EB00F2B29A /* Color.cpp */; };
 		F99F0FB02F8436EB00F2B29A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAE2F8436EB00F2B29A /* Color.cpp */; };
+		BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
+		BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -2466,6 +2468,7 @@
 		F99F0FA82F84369F00F2B29A /* GrassColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GrassColor.cpp; sourceTree = "<group>"; };
 		F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FoliageColor.cpp; sourceTree = "<group>"; };
 		F99F0FAE2F8436EB00F2B29A /* Color.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
+		BEEF202614CFF670005F0001 /* Lighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Lighting.cpp; path = ../../src/client/renderer/Lighting.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3533,6 +3536,7 @@
 				D5B50CF114CFF66F005F7284 /* TileRenderer.cpp */,
 				D5B50CF214CFF66F005F7284 /* TileRenderer.h */,
 				D5B50CF314CFF66F005F7284 /* VertecDecl.h */,
+				BEEF202614CFF670005F0001 /* Lighting.cpp */,
 			);
 			path = renderer;
 			sourceTree = "<group>";
@@ -5439,6 +5443,7 @@
 				D5D8C4C41639341100FD35F0 /* Motive.cpp in Sources */,
 				D5D8C4C8163934BB00FD35F0 /* HangingEntityItem.cpp in Sources */,
 				D5D8C4CC1639362F00FD35F0 /* NetherReactorPattern.cpp in Sources */,
+				BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5821,6 +5826,7 @@
 				042A91AF16B17517007ABBC6 /* NinePatch.cpp in Sources */,
 				042A91B016B17517007ABBC6 /* OptionsGroup.cpp in Sources */,
 				042A91B216B17517007ABBC6 /* TextBox.cpp in Sources */,
+				BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
