@@ -189,8 +189,7 @@ void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float po
 	Textures* textures = entityRenderDispatcher->textures;
 
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 
 	Level* level = getLevel();
 
@@ -223,6 +222,8 @@ void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float po
 				}
 			}
 			textures->loadAndBindTexture(("/misc/shadow.png"));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			tt.draw();
 
 			glColor4f2(1, 1, 1, 1);
