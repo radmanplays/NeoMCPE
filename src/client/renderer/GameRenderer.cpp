@@ -277,7 +277,7 @@ void GameRenderer::renderLevel(float a) {
 			TIMER_POP_PUSH("sky");
 			glFogf(GL_FOG_START, renderDistance  * 0.2f);
 			glFogf(GL_FOG_END, renderDistance *0.75);
-			levelRenderer->renderSky(a);
+			// levelRenderer->renderSky(a); // Removed duplicate call
 			glFogf(GL_FOG_START, renderDistance  * 0.6f);
 			glFogf(GL_FOG_END, renderDistance);
 		}
