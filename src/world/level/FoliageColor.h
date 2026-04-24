@@ -43,7 +43,7 @@ public:
 	}
 
 	static int getDefaultColor() {
-		return 0xFFFFFF;
+		return 0x48b518;
 	}
 
 private:

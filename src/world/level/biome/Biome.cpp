@@ -9,6 +9,7 @@
 #include "../../level/tile/TallGrass.h"
 
 #include "../../../util/Color.h"
+#include "../GrassColor.h"
 
 Biome* Biome::rainForest	 = NULL;
 Biome* Biome::swampland		 = NULL;
@@ -215,6 +216,26 @@ int Biome::getSkyColor( float temp )
 	if (temp > 1) temp = 1;
 //	return 0x80808080;This is the vanilla way, add it as OPTION_SKY or leave it like this bcus this function literally never gets used anyways if level has vanilla sky color - shredder
 	return Color::getHSBColor(224 / 360.0f - temp * 0.05f, 0.50f + temp * 0.1f, 1.0f).getRGB();
+}
+
+float Biome::getDownfall()
+{
+	return downfall;
+}
+
+
+float Biome::getTemperature()
+{
+	return temperature;
+}
+
+
+int Biome::getGrassColor()
+{
+    float temp = Mth::clamp(getTemperature(), 0.0f, 1.0f);
+    float rain = Mth::clamp(getDownfall(), 0.0f, 1.0f);
+
+    return GrassColor::get(temp, rain);
 }
 
 Biome::MobList& Biome::getMobs(const MobCategory& category)

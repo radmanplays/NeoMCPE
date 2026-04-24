@@ -1174,7 +1174,14 @@ Vec3 Level::getSkyColor(Entity* source, float a) {
 
 	float br = Mth::cos(td * Mth::PI * 2) * 2 + 0.5f;
 	if (br < 0.0f) br = 0.0f;
-	if (br > 0.75f) br = 0.75f; //@note; was 1.0f
+	if (dimension->FogType == 1) // @TODO - probably make this not dependent on dimension type honestly - shredder
+	{
+	if (br > 1.0f) br = 1.0f; //@ uses the normal javasky color ramp when java sky type is choosen,
+	} else 
+	{
+	if (br > 0.8f) br = 0.8f; //@note; was 1.0f
+	}
+
 
 	int xx = Mth::floor(source->x);
 	int zz = Mth::floor(source->z);

@@ -10,6 +10,7 @@ class ThinFenceTile;
 class StairTile;
 class LevelSource;
 class Material;
+class Minecraft;
 
 class TileRenderer
 {
@@ -60,6 +61,10 @@ public:
     void renderTile(Tile* tile, int data);
 	void renderGuiTile(Tile* tile, int data);
 
+	static void setUseTint(bool value) {
+       sideTinting = value;
+    }
+
     static bool canRender(int renderShape);
 private:
     float getWaterHeight(int x, int y, int z, const Material* m);
@@ -68,6 +73,7 @@ private:
 	int fixedTexture;
 	bool xFlipTexture;
 	bool noCulling;
+	static bool sideTinting;
 
 	bool applyAmbienceOcclusion;
 	float ll000, llx00, ll0y0, ll00z, llX00, ll0Y0, ll00Z;

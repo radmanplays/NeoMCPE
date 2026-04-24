@@ -1156,6 +1156,10 @@ void Minecraft::init()
 	FoliageColor::setUseTint(tint);
 	GrassColor::setUseTint(tint);
 
+	bool sideTint = options.getBooleanValue(OPTIONS_TINTED_SIDE);
+	TileRenderer::setUseTint(sideTint);
+
+
 	// Platform specific initialization here
 	font = new Font(&options, "font/default8.png", textures);
 
@@ -1408,7 +1412,7 @@ void Minecraft::_levelGenerated()
 
 	    if (level && level->dimension) {
         // For example, if you want FogType or any other option
-        level->dimension->FogType = options.getBooleanValue(OPTIONS_FOG_TYPE);
+        level->dimension->FogType = options.getIntValue(OPTIONS_FOG_TYPE);
 		}
 
 

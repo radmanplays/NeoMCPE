@@ -76,6 +76,9 @@ LevelRenderer::LevelRenderer( Minecraft* mc)
 	//for (int i = 0; i < numListsOrBuffers; ++i) printf("bufId %d: %d\t", i, chunkBuffers[i]);
 
 	glGenBuffers2(1, &skyBuffer);
+	glGenBuffers2(1, &voidBuffer);
+	glGenBuffers2(1, &starBuffer);
+	generateStars();
 	generateSky();
 #else
 	int maxChunksWidth = 1024 / CHUNK_SIZE;
@@ -94,6 +97,8 @@ LevelRenderer::~LevelRenderer()
 #ifdef OPENGL_ES
 	glDeleteBuffers(numListsOrBuffers, chunkBuffers);
 	glDeleteBuffers(1, &skyBuffer);
+	glDeleteBuffers(1, &voidBuffer);
+	glDeleteBuffers(1, &starBuffer);
 	delete[] chunkBuffers;
 #else
 	glDeleteLists(numListsOrBuffers, chunkLists);
@@ -121,6 +126,25 @@ void LevelRenderer::generateSky() {
 	}
 
 	t.end(true, skyBuffer);
+
+	yy = (float) (-16);
+	t.begin();
+
+	// pretty much the same thing as the sky one above except uses inverted values to generate the void plane. 
+
+	voidVertexCount = 0;
+	for (int xx = -s * d; xx <= s * d; xx += s) {
+		for (int zz = -s * d; zz <= s * d; zz += s) {
+			t.vertex((float) xx + 0,  yy, (float) zz + s);
+			t.vertex((float)(xx + s), yy, (float) zz + s);
+			t.vertex((float)(xx + s), yy, (float)(zz + 0));
+			t.vertex((float) xx + 0,  yy, (float)(zz + 0));
+			//LOGI("x, z: %d, %d\n", xx, zz);
+			voidVertexCount += 4;
+		}
+	}
+
+	t.end(true, voidBuffer);
 	//LOGI("skyvertexcount: %d\n", skyVertexCount);
 	//glEndList();
 }
@@ -146,10 +170,6 @@ void LevelRenderer::setLevel( Level* level )
 		level->addListener(this);
 		allChanged();
 	}
-	if (mc->options.getBooleanValue(OPTIONS_AMBIENT_OCCLUSION)) {
-		mc->useAmbientOcclusion = !mc->useAmbientOcclusion;
-		allChanged();
-	}
 }
 
 void LevelRenderer::allChanged()
@@ -167,6 +187,9 @@ void LevelRenderer::allChanged()
 	bool tint = mc->options.getBooleanValue(OPTIONS_FOLIAGE_TINT);
 	FoliageColor::setUseTint(tint);
 	GrassColor::setUseTint(tint);
+
+	bool sideTint = mc->options.getBooleanValue(OPTIONS_TINTED_SIDE);
+	TileRenderer::setUseTint(sideTint);
 
 
 	int dist = (512 >> 3) << (3 - lastViewDistance);
@@ -325,6 +348,37 @@ int LevelRenderer::render( Mob* player, int layer, float alpha )
 
 		allChanged(); 
 	}
+	bool SmoothLightState = mc->options.getBooleanValue(OPTIONS_AMBIENT_OCCLUSION);
+	if (SmoothLightState != mc->useAmbientOcclusion){
+		mc->useAmbientOcclusion = SmoothLightState;
+		allChanged();
+	}
+
+
+	bool tint = mc->options.getBooleanValue(OPTIONS_FOLIAGE_TINT);
+	if (tint != LastTint) {
+		LastTint = tint;
+
+
+		FoliageColor::setUseTint(tint);
+		GrassColor::setUseTint(tint);
+
+		allChanged(); 
+	}
+
+
+	bool sideTint = mc->options.getBooleanValue(OPTIONS_TINTED_SIDE);
+
+	if (sideTint != LastSideTint) {
+		LastSideTint = sideTint;
+
+
+		TileRenderer::setUseTint(sideTint);
+
+		allChanged(); 
+	}
+
+
 
 	TIMER_PUSH("sortchunks");
 	for (int i = 0; i < 10; i++) {
@@ -513,14 +567,14 @@ void LevelRenderer::render(const AABB& b) const
 {
 	Tesselator& t = Tesselator::instance;
 
-//	glColor4f2(1, 1, 1, 1);
+	//	glColor4f2(1, 1, 1, 1);
 
-//	textures->loadAndBindTexture("terrain.png"); // uh need to check java - shredder
+	//	textures->loadAndBindTexture("terrain.png"); // uh need to check java - shredder
 
 	//t.begin();
-//	t.color(255, 255, 255, 255); // again not needed, for some reason the vanilla source code tints it... white? maybe this was used for something else in MCPE's dev at one point? - shredder
+	//	t.color(255, 255, 255, 255); // again not needed, for some reason the vanilla source code tints it... white? maybe this was used for something else in MCPE's dev at one point? - shredder
 
-//	t.offset(((Mob*)mc->player)->getPos(0).negated()); // why does this even exist normally, it just makes the thing... not render
+	//	t.offset(((Mob*)mc->player)->getPos(0).negated()); // why does this even exist normally, it just makes the thing... not render
 
 	t.begin(GL_LINE_STRIP);
 	t.vertex(b.x0, b.y0, b.z0);
@@ -1016,6 +1070,57 @@ std::string LevelRenderer::gatherStats1() {
 //    int[] toRender = new int[50000];
 //    IntBuffer resultBuffer = MemoryTracker.createIntBuffer(64);
 
+   void LevelRenderer::generateStars() {
+	   // ported from java beta again,
+	   // converted the doubles into floats to be consistent, shouldnt affect much - shredder
+
+      Random random = Random(10842L);
+      Tesselator& t = Tesselator::instance;
+      t.begin();
+	  starVertexCount = 0;
+
+      for (int i = 0; i < 1500; i++) {
+         float d = random.nextFloat() * 2.0F - 1.0F;
+         float e = random.nextFloat() * 2.0F - 1.0F;
+         float f = random.nextFloat() * 2.0F - 1.0F;
+         float g = 0.25F + random.nextFloat() * 0.25F;
+         float h = d * d + e * e + f * f;
+         if (h < 1.0 && h > 0.01) {
+            h = 1.0 / Mth::sqrt(h);
+            d *= h;
+            e *= h;
+            f *= h;
+            float j = d * 100.0;
+            float k = e * 100.0;
+            float l = f * 100.0;
+            float m = Mth::atan2(d, f);
+            float n = Mth::sin(m);
+            float o = Mth::cos(m);
+            float p = Mth::atan2(Mth::sqrt(d * d + f * f), e);
+            float q = Mth::sin(p);
+            float r = Mth::cos(p);
+            float s = random.nextDouble() * Mth::PI * 2.0;
+            float t2 = Mth::sin(s);
+            float u = Mth::cos(s);
+
+            for (int v = 0; v < 4; v++) {
+               float w = 0.0;
+               float x = ((v & 2) - 1) * g;
+               float y = ((v + 1 & 2) - 1) * g;
+               float aa = x * u - y * t2;
+               float ab = y * u + x * t2;
+               float ad = aa * q + w * r;
+               float ae = w * q - aa * r;
+               float af = ae * n - ab * o;
+               float ah = ab * n + ae * o;
+               t.vertex(j + af, k + ad, l + ah);
+            }
+			starVertexCount += 4;
+         }
+      }
+
+      t.end(true, starBuffer);
+   }
 void LevelRenderer::renderSky(float alpha) {
 	if (mc->level->dimension->foggy) return;
 
@@ -1036,19 +1141,120 @@ void LevelRenderer::renderSky(float alpha) {
 	}
 	glColor4f2(sr, sg, Mth::Min(1.0f, sb), 1);
 
-	//Tesselator& t = Tesselator::instance;
-
+	Tesselator& t = Tesselator::instance;
+	// @TODO shredder - should not enable or disable depth mask if using legacy sky because mcpe sky rendering is awful and will render clouds above terrain
+	if(mc->options.getBooleanValue(OPTIONS_BETA_SKY)){
+		glDepthMask(false);
+	}
 	glEnable2(GL_FOG);
 	glColor4f2(sr, sg, sb, 1.0f);
 
 #ifdef OPENGL_ES
 	drawArrayVT(skyBuffer, skyVertexCount);
 #endif
-	glEnable2(GL_TEXTURE_2D);
+		glDisable(GL_FOG);
+	glDisable(GL_ALPHA_TEST);
+
+	// thanks to the mcpe 0.1 decomp project a bit for this part, was not getting the gl states correctly, gles is painful - shredder
+
+	// Sunrise
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	float* c = level->dimension->getSunriseColor(level->getTimeOfDay(alpha), alpha);
+	if (c != nullptr)
+	{
+		glDisable(GL_TEXTURE_2D);
+
+
+		glPushMatrix();
+		glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+		glRotatef(level->getTimeOfDay(alpha) > 0.5f ? 180 : 0, 0.0f, 0.0f, 1.0f);
+
+		t.begin(GL_TRIANGLE_FAN);
+		t.color(c[0], c[1], c[2], c[3]);
+		t.vertex(0.0f, 100.0f, 0.0f);
+		t.color(c[0], c[1], c[2], 0.0f);
+
+		int steps = 16;
+		for (int i = 0; i <= steps; i++)
+		{
+			float a = i * 3.1415927f * 2.0f / steps;
+			float sin = Mth::sin(a);
+			float cos = Mth::cos(a);
+			t.vertex((sin * 120.0f), (cos * 120.0f), (-cos * 40.0f * c[3]));
+		}
+
+		t.draw();
+		glPopMatrix();
+	}
+
+	// gets the time of day and rotates the sun and moon png based on the time
+	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glPushMatrix();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glTranslatef(sc.x, sc.y, sc.z);
+	glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(level->getTimeOfDay(alpha) * 360.0f, 1.0f, 0.0f, 0.0f);
+
+	float ss = 30.0f;
+
+
+		textures->loadAndBindTexture("terrain/sun.png");
+		t.begin();
+		t.vertexUV(-ss, 100.0f, -ss, 0.0f, 0.0f);
+		t.vertexUV(ss, 100.0f, -ss, 1.0f, 0.0f);
+		t.vertexUV(ss, 100.0f, ss, 1.0f, 1.0f);
+		t.vertexUV(-ss, 100.0f, ss, 0.0f, 1.0f);
+		t.draw();
+
+		ss = 20.0f;
+		textures->loadAndBindTexture("terrain/moon.png");
+		t.begin();
+		t.vertexUV(-ss, -100.0f, ss, 1.0f, 1.0f);
+		t.vertexUV(ss, -100.0f, ss, 0.0f, 1.0f);
+		t.vertexUV(ss, -100.0f, -ss, 0.0f, 0.0f);
+		t.vertexUV(-ss, -100.0f, -ss, 1.0f, 0.0f);
+		t.draw();
+	
+
+	glDisable(GL_TEXTURE_2D);
+
+	float a = level->getStarBrightness(alpha);
+	if (a > 0.0f)
+	{
+		glColor4f(a, a, a, a);
+		drawArrayVT(starBuffer, starVertexCount);
+	}
+
+	
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glDisable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_FOG);
+	glPopMatrix();
+
+	// ported over void plane (the blue bottom plane seen in java) because pocket edition lacks it @TODO test if it's buggy - shredder
+
+	glColor3f(sc.x * 0.2f + 0.04f, sc.y * 0.2f + 0.04f, sc.z * 0.6f + 0.1f);
+	glDisable(GL_TEXTURE_2D);
+	drawArrayVT(voidBuffer, voidVertexCount);
+	glEnable(GL_TEXTURE_2D);
+
+	// @TODO shredder - should not enable or disable depth mask if using legacy sky because mcpe sky rendering is awful and will render clouds above terrain
+	if(mc->options.getBooleanValue(OPTIONS_BETA_SKY)){
+		glDepthMask(true);
+	}
 }
 
 void LevelRenderer::renderClouds( float alpha ) {
 	//if (!mc->level->dimension->isNaturalDimension()) return;
+	if (mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)){
+		renderAdvancedClouds(alpha);
+		return;
+	}
 	glEnable2(GL_TEXTURE_2D);
 	glDisable(GL_CULL_FACE);
 	float yOffs = (float) (mc->player->yOld + (mc->player->y - mc->player->yOld) * alpha);
@@ -1093,6 +1299,142 @@ void LevelRenderer::renderClouds( float alpha ) {
 	}
 	t.endOverrideAndDraw();
 	glColor4f(1, 1, 1, 1.0f);
+	glDisable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
+}
+
+void LevelRenderer::renderAdvancedClouds(float alpha) {
+
+	// ported from java beta, tesselation code for the 3d clouds, renders broken if mcpe sky rendering option is used - shredder
+
+	glDisable(GL_CULL_FACE);
+
+	float px = mc->player->xOld + (mc->player->x - mc->player->xOld) * alpha;
+	float py = mc->player->yOld + (mc->player->y - mc->player->yOld) * alpha;
+	float pz = mc->player->zOld + (mc->player->z - mc->player->zOld) * alpha;
+
+	Tesselator& t = Tesselator::instance;
+	float ss = 12.0f; 
+	float h = 4.0f;  
+
+	float cloudTime = (float)ticks + alpha;
+
+	double xo = (px + cloudTime * 0.03f) / ss;
+	double zo = pz / ss + 0.33f;
+
+	float yy = 108.0f - py + 0.33f;
+
+	int xWraps = Mth::floor(xo / 2048.0);
+	int zWraps = Mth::floor(zo / 2048.0);
+	xo -= xWraps * 2048;
+	zo -= zWraps * 2048;
+
+	textures->loadAndBindTexture("environment/clouds.png");
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	Vec3 cc = level->getCloudColor(alpha);
+	float cr = cc.x;
+	float cg = cc.y;
+	float cb = cc.z;
+
+	float uvScale = 1.0f / 256.0f;
+	float uo = (float)Mth::floor(xo) * uvScale;
+	float vo = (float)Mth::floor(zo) * uvScale;
+
+	float xOffs = (float)(xo - Mth::floor(xo));
+	float zOffs = (float)(zo - Mth::floor(zo));
+
+	int D = 8;      
+	int radius = 3;  
+	float e = 1.0f / 1024.0f; 
+
+	glPushMatrix();
+	glScalef(ss, 1.0f, ss);
+
+	for (int pass = 0; pass < 2; pass++) {
+
+		if (pass == 0) glColorMask(false, false, false, false);
+		else glColorMask(true, true, true, true);
+
+		for (int xPos = -radius + 1; xPos <= radius; xPos++) {
+			for (int zPos = -radius + 1; zPos <= radius; zPos++) {
+				t.begin();
+				float xx = (float)(xPos * D);
+				float zz = (float)(zPos * D);
+				float xp = xx - xOffs;
+				float zp = zz - zOffs;
+
+
+				if (yy > -h - 1.0f) {
+					t.color(cr * 0.7f, cg * 0.7f, cb * 0.7f, 0.8f);
+					t.normal(0.0f, -1.0f, 0.0f);
+					t.vertexUV(xp + 0, yy + 0, zp + D, (xx + 0) * uvScale + uo, (zz + D) * uvScale + vo);
+					t.vertexUV(xp + D, yy + 0, zp + D, (xx + D) * uvScale + uo, (zz + D) * uvScale + vo);
+					t.vertexUV(xp + D, yy + 0, zp + 0, (xx + D) * uvScale + uo, (zz + 0) * uvScale + vo);
+					t.vertexUV(xp + 0, yy + 0, zp + 0, (xx + 0) * uvScale + uo, (zz + 0) * uvScale + vo);
+				}
+
+
+				if (yy <= h + 1.0f) {
+					t.color(cr, cg, cb, 0.8f);
+					t.normal(0.0f, 1.0f, 0.0f);
+					t.vertexUV(xp + 0, yy + h - e, zp + D, (xx + 0) * uvScale + uo, (zz + D) * uvScale + vo);
+					t.vertexUV(xp + D, yy + h - e, zp + D, (xx + D) * uvScale + uo, (zz + D) * uvScale + vo);
+					t.vertexUV(xp + D, yy + h - e, zp + 0, (xx + D) * uvScale + uo, (zz + 0) * uvScale + vo);
+					t.vertexUV(xp + 0, yy + h - e, zp + 0, (xx + 0) * uvScale + uo, (zz + 0) * uvScale + vo);
+				}
+
+				t.color(cr * 0.9f, cg * 0.9f, cb * 0.9f, 0.8f);
+
+
+				if (xPos > -1) {
+					t.normal(-1.0f, 0.0f, 0.0f);
+					for (int i = 0; i < D; i++) {
+						t.vertexUV(xp + i + 0, yy + 0, zp + D, (xx + i + 0.5f) * uvScale + uo, (zz + D) * uvScale + vo);
+						t.vertexUV(xp + i + 0, yy + h, zp + D, (xx + i + 0.5f) * uvScale + uo, (zz + D) * uvScale + vo);
+						t.vertexUV(xp + i + 0, yy + h, zp + 0, (xx + i + 0.5f) * uvScale + uo, (zz + 0) * uvScale + vo);
+						t.vertexUV(xp + i + 0, yy + 0, zp + 0, (xx + i + 0.5f) * uvScale + uo, (zz + 0) * uvScale + vo);
+					}
+				}
+				if (xPos <= 1) {
+					t.normal(1.0f, 0.0f, 0.0f);
+					for (int i = 0; i < D; i++) {
+						t.vertexUV(xp + i + 1 - e, yy + 0, zp + D, (xx + i + 0.5f) * uvScale + uo, (zz + D) * uvScale + vo);
+						t.vertexUV(xp + i + 1 - e, yy + h, zp + D, (xx + i + 0.5f) * uvScale + uo, (zz + D) * uvScale + vo);
+						t.vertexUV(xp + i + 1 - e, yy + h, zp + 0, (xx + i + 0.5f) * uvScale + uo, (zz + 0) * uvScale + vo);
+						t.vertexUV(xp + i + 1 - e, yy + 0, zp + 0, (xx + i + 0.5f) * uvScale + uo, (zz + 0) * uvScale + vo);
+					}
+				}
+
+				t.color(cr * 0.8f, cg * 0.8f, cb * 0.8f, 0.8f);
+
+
+				if (zPos > -1) {
+					t.normal(0.0f, 0.0f, -1.0f);
+					for (int i = 0; i < D; i++) {
+						t.vertexUV(xp + 0, yy + h, zp + i + 0, (xx + 0) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+						t.vertexUV(xp + D, yy + h, zp + i + 0, (xx + D) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+						t.vertexUV(xp + D, yy + 0, zp + i + 0, (xx + D) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+						t.vertexUV(xp + 0, yy + 0, zp + i + 0, (xx + 0) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+					}
+				}
+				if (zPos <= 1) {
+					t.normal(0.0f, 0.0f, 1.0f);
+					for (int i = 0; i < D; i++) {
+						t.vertexUV(xp + 0, yy + h, zp + i + 1 - e, (xx + 0) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+						t.vertexUV(xp + D, yy + h, zp + i + 1 - e, (xx + D) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+						t.vertexUV(xp + D, yy + 0, zp + i + 1 - e, (xx + D) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+						t.vertexUV(xp + 0, yy + 0, zp + i + 1 - e, (xx + 0) * uvScale + uo, (zz + i + 0.5f) * uvScale + vo);
+					}
+				}
+				t.endOverrideAndDraw();
+			}
+		}
+	}
+
+	glPopMatrix();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glDisable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
 }
@@ -1259,6 +1601,7 @@ void LevelRenderer::renderHitSelect( Player* player, const HitResult& h, int mod
 
 void LevelRenderer::onGraphicsReset()
 {
+	generateStars();
 	generateSky();
 
 	// Get new buffers

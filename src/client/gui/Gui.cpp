@@ -121,6 +121,9 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 	if (!minecraft->options.getBooleanValue(OPTIONS_HIDEGUI)) {
 		renderToolBar(a, ySlot, screenWidth);
 
+		font->drawShadow("Minecraft - Pocket Edition ", 2, 2, 0xffffffff);
+//	font->drawShadow("This is a demo, not the finished product", 2, 10 + 2, 0xffffffff);
+
 		glEnable(GL_BLEND);
 		bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
 		unsigned int max = 10;

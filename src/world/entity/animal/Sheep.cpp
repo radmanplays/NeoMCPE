@@ -1,5 +1,6 @@
 #include "Sheep.h"
 #include "../../item/DyePowderItem.h"
+#include "../../level/tile/TallGrass.h"
 #include "../../level/tile/LevelEvent.h"
 
 const float Sheep::COLOR[][3] = {
@@ -198,7 +199,7 @@ void Sheep::updateAi()
 		int yy = Mth::floor(y);
 		int zz = Mth::floor(z);
 
-		if (/*(level->getTile(xx, yy, zz) == Tile::tallgrass->id && level->getData(xx, yy, zz) == TallGrass::TALL_GRASS) || */ level->getTile(xx, yy - 1, zz) == ((Tile*)Tile::grass)->id) {
+		if ((level->getTile(xx, yy, zz) == Tile::tallgrass->id && level->getData(xx, yy, zz) == TallGrass::TALL_GRASS) ||  level->getTile(xx, yy - 1, zz) == ((Tile*)Tile::grass)->id) {
 			eatAnimationTick = EAT_ANIMATION_TICKS;
 			level->broadcastEntityEvent(this, EntityEvent::EAT_GRASS);
 		}
@@ -208,11 +209,11 @@ void Sheep::updateAi()
 		int zz = Mth::floor(z);
 
 		bool ate = false;
-		/*            if (level->getTile(xx, yy, zz) == Tile::tallgrass->id) {
-		level->levelEvent(LevelEvent::PARTICLES_DESTROY_BLOCK, xx, yy, zz, Tile::tallgrass->id + TallGrass::TALL_GRASS * 256);
+		            if (level->getTile(xx, yy, zz) == Tile::tallgrass->id) {
+		level->levelEvent(NULL, LevelEvent::PARTICLES_DESTROY_BLOCK, xx, yy, zz, Tile::tallgrass->id + TallGrass::TALL_GRASS * 256);
 		level->setTile(xx, yy, zz, 0);
 		ate = true;
-		} else */if (level->getTile(xx, yy - 1, zz) == ((Tile*)Tile::grass)->id) {
+		} else if (level->getTile(xx, yy - 1, zz) == ((Tile*)Tile::grass)->id) {
 			level->levelEvent(NULL, LevelEvent::PARTICLES_DESTROY_BLOCK, xx, yy - 1, zz, ((Tile*)Tile::grass)->id);
 			level->setTile(xx, yy - 1, zz, Tile::dirt->id);
 			ate = true;

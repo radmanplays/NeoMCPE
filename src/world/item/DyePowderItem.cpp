@@ -10,6 +10,7 @@
 #include "../level/tile/ClothTile.h"
 #include "../level/tile/CropTile.h"
 #include "../level/tile/StemTile.h"
+#include "../level/tile/TallGrass.h"
 
 const std::string DyePowderItem::COLOR_DESCS[] = {
 	"black", "red", "green", "brown", "blue", "purple", "cyan", "silver", "gray", "pink", "lime", "yellow", "lightBlue", "magenta", "orange", "white"
@@ -91,9 +92,9 @@ bool DyePowderItem::useOn( ItemInstance* itemInstance, Player* player, Level* le
 						  continue;
 
 					  if (level->getTile(xx, yy, zz) == 0) {
-						  /*if (random.nextInt(10) != 0) {
-						  level->setTileAndData(xx, yy, zz, Tile::tallgrass.id, TallGrass.TALL_GRASS);
-						  } else*/ if (random.nextInt(3) != 0) {
+						  if (random.nextInt(10) != 0) {
+						  level->setTileAndData(xx, yy, zz, Tile::tallgrass->id, TallGrass::TALL_GRASS);
+						  } else if (random.nextInt(3) != 0) {
 							  level->setTile(xx, yy, zz, Tile::flower->id);
 						  } else {
 							  level->setTile(xx, yy, zz, Tile::rose->id);

@@ -78,7 +78,13 @@ public:
     virtual float adjustScale(float scale);
     virtual float adjustDepth(float depth);
 
+	
+
     virtual int getSkyColor(float temp);
+	virtual int getGrassColor();
+
+	virtual float getDownfall();			
+	virtual float getTemperature();			
 
 	virtual MobList& getMobs(const MobCategory& category);
 	virtual float getCreatureProbability();
@@ -88,6 +94,8 @@ public:
 	char topMaterial;
 	char material;
 	int leafColor;
+	float temperature;
+    float downfall;
 private:
 	static Biome* map[64*64];
 };

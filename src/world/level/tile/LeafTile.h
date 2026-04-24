@@ -60,6 +60,7 @@ public:
 			return FoliageColor::getDefaultColor();
 		}
 
+		
  //       return FoliageColor::getDefaultColor(); we need to hook this up with OPTION_FOLIAGE_TINT
 		level->getBiomeSource()->getBiomeBlock(x, z, 1, 1);
 		float temperature = level->getBiomeSource()->temperatures[0];
