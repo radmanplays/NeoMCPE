@@ -58,6 +58,10 @@ OptionBool ambientOcclusion("ao", true);
 
 OptionBool useNormalLighting("normalLighting", true);
 
+OptionBool beautifulSky("beautifulSky", true);
+
+OptionBool useVignette("useVignette", true);
+
 OptionBool useTouchscreen("useTouchscreen", true);
 
 OptionBool serverVisible("servervisible", true);
@@ -75,6 +79,8 @@ OptionBool tintedSide("tintedSide", false);
 OptionBool blockOutline("blockOutline", false);
 
 OptionBool restoredAnims("restoredAnims", true);
+
+OptionInt debugStyle("debugStyle", 0, 0, 1);
 
 OptionInt keyForward("key.forward", Keyboard::KEY_W);
 OptionInt keyLeft("key.left", Keyboard::KEY_A);
@@ -154,6 +160,10 @@ void Options::initTable() {
 
 	m_options[OPTIONS_BLOCK_OUTLINE] = &blockOutline;
 
+	m_options[OPTIONS_VIGNETTE] = &useVignette;
+
+	m_options[OPTIONS_BEAUTIFUL_SKY] = &beautifulSky;
+
 	m_options[OPTIONS_NORMAL_LIGHTING] = &useNormalLighting;
 
 	m_options[OPTIONS_RESTORED_ANIMS] = &restoredAnims;
@@ -186,6 +196,8 @@ void Options::initTable() {
 
 	// more options yay
 	m_options[OPTIONS_FOG_TYPE] = &fogType;
+
+	m_options[OPTIONS_DEBUG_STYLE] = &debugStyle;
 
 	m_options[OPTIONS_BETA_SKY] = &betaSky;
 

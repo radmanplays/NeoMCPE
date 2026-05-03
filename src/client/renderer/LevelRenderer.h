@@ -69,6 +69,7 @@ public:
 	void levelEvent(Player* source, int type, int x, int y, int z, int data);
 
 	std::string gatherStats1();
+	std::string gatherStats2();
 
 	void render(const AABB& b) const;
 	void onGraphicsReset();

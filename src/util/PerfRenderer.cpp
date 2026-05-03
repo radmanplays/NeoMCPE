@@ -75,7 +75,7 @@ void PerfRenderer::renderFpsMeter( float tickTime )
 	glDisable2(GL_TEXTURE_2D);
 	Tesselator& t = Tesselator::instance;
 
-	t.begin(GL_TRIANGLES);
+	t.begin(GL_QUADS);
 	int hh1 = (int) (usPer60Fps / 200);
 	float count = (float)frameTimes.size();
 	t.color(0x20000000);
@@ -117,7 +117,8 @@ void PerfRenderer::renderFpsMeter( float tickTime )
 			t.color(0xff000000 + cc * 256);
 		}
 
-		float time = 10 * 1000 * frameTimes[i] / 200;
+//		float time = 10 * 1000 * frameTimes[i] / 200;
+		float time = frameTimes[i] * 4000.0f;
 		float time2 = 10 * 1000 * tickTimes[i] / 200;
 
 		t.vertex(i + 0.5f, _mc->height - time + 0.5f, 0);
@@ -210,12 +211,12 @@ void PerfRenderer::renderFpsMeter( float tickTime )
 		msg << result.name;
 		float xx = (float)(x - r);
 		float yy = (float)(y + r/2 + i * 8 + 20);
-		_font->drawShadow(msg.str(), xx, yy, result.getColor());
+		_font->drawShadow(msg.str(), xx + 10 + 10, yy, result.getColor());
 		std::string msg2 = toPercentString(result.percentage);
 		//LOGI("name: %s: perc: %f == %s @ %d, %d\n", msg.str().c_str(), result.percentage, msg2.c_str(), xx, yy);
-		_font->drawShadow(msg2, xx - 50 - _font->width(msg2), yy, result.getColor());
+		_font->drawShadow(msg2, xx + 10 + 10 - _font->width(msg2), yy, result.getColor());
 		msg2 = toPercentString(result.globalPercentage);
-		_font->drawShadow(msg2, xx - _font->width(msg2), yy, result.getColor());
+		_font->drawShadow(msg2, xx + 10 + 10 - _font->width(msg2), yy, result.getColor());
 	}
 }
 

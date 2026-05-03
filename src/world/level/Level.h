@@ -202,6 +202,9 @@ public:
 	bool checkAndHandleWater(const AABB& box, const Material* material, Entity* e);
     void extinguishFire(int x, int y, int z, int face);
 
+	std::string Level::gatherStats();
+	std::string Level::gatherChunkSourceStats();
+
 	//void addEntities(const EntityList& list);
 	//void removeEntities(const EntityList& list);
 	//void ensureAdded(Entity* entity);

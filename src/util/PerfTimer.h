@@ -6,7 +6,7 @@
 #include "StringUtils.h"
 
 //package util;
-#ifdef PROFILER
+//#ifdef PROFILER
 	#define TIMER_PUSH(x)		PerfTimer::push(x)
 	#define TIMER_POP()			PerfTimer::pop()
 	#define TIMER_POP_PUSH(x)	PerfTimer::popPush(x)
@@ -16,11 +16,11 @@
 //     #define TIMER_PUSH(x)       ServerProfiler::push(x)
 //     #define TIMER_POP()         ServerProfiler::pop()
 //     #define TIMER_POP_PUSH(x)	ServerProfiler::popPush(x)
-#else
-	#define TIMER_PUSH(x)		((void*)0)
-	#define TIMER_POP()			((void*)0)
-	#define TIMER_POP_PUSH(x)	((void*)0)
-#endif
+//#else
+//	#define TIMER_PUSH(x)		((void*)0)
+//	#define TIMER_POP()			((void*)0)
+//	#define TIMER_POP_PUSH(x)	((void*)0)
+//#endif
 
 class PerfTimer
 {

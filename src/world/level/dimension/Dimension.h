@@ -49,7 +49,7 @@ public:
 	bool hasCeiling;
 	float brightnessRamp[16];//Level::MAX_BRIGHTNESS + 1];
 	int id;
-
+	std::string getDimension();
 	// shredder added
 	int FogType; // lets us choose between what fog we want ig
 protected:

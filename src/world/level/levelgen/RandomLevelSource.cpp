@@ -11,6 +11,7 @@
 #include "../tile/Tile.h"
 #include "../tile/HeavyTile.h"
 #include "../../../util/Random.h"
+#include "../../level/tile/TallGrass.h"
 
 const float RandomLevelSource::SNOW_CUTOFF = 0.5f;
 const float RandomLevelSource::SNOW_SCALE = 0.3f;
@@ -225,7 +226,7 @@ void RandomLevelSource::postProcess(ChunkSource* parent, int xt, int zt) {
 	int zo = zt * 16;
 
 	Biome* biome = level->getBiomeSource()->getBiome(xo + 16, zo + 16);
-	//    Biome* biome = Biome::forest;
+//	    Biome* biome = Biome::forest;
 
 	random.setSeed(level->getSeed());
 	int xScale = random.nextInt() / 2 * 2 + 1;
@@ -419,17 +420,46 @@ void RandomLevelSource::postProcess(ChunkSource* parent, int xt, int zt) {
 		FlowerFeature feature(Tile::mushroom2->id);
 		feature.place(level, &random, x, y, z);
 	}
-	int grassCount = 1;
-	for (int i = 0; i < grassCount; i++) {
-	int x = xo + random.nextInt(16) + 8;
-	int y = random.nextInt(Level::genDepth);
-	int z = zo + random.nextInt(16) + 8;
-	Feature* grassFeature = biome->getGrassFeature(&random);
-	if (grassFeature) {
-	grassFeature->place(level, &random, x, y, z);
-	delete grassFeature;
-	}
-	}
+	// normally unused in mcpe but how its supposed to do it
+	//int grassCount = 1;
+	//for (int i = 0; i < grassCount; i++) {
+	//int x = xo + random.nextInt(16) + 8;
+	//int y = random.nextInt(Level::genDepth);
+	//int z = zo + random.nextInt(16) + 8;
+	//Feature* grassFeature = biome->getGrassFeature(&random);
+	//if (grassFeature) {
+	//grassFeature->place(level, &random, x, y, z);
+	//delete grassFeature;
+	//}
+	//}
+
+	// reworked code from above to generate ferns and shrubs to just like in beta java
+int grassCount = 0;
+
+if (biome == Biome::forest) { grassCount = 2; }
+else if (biome == Biome::rainForest) { grassCount = 10; }
+else if (biome == Biome::seasonalForest) { grassCount = 2; }
+else if (biome == Biome::taiga) { grassCount = 1; }
+else if (biome == Biome::plains) { grassCount = 10; }
+
+for (int i = 0; i < grassCount; i++) {
+    int grassMetadata = TallGrass::TALL_GRASS;
+    
+    
+    if (biome == Biome::rainForest && random.nextInt(3) != 0) {
+        grassMetadata = TallGrass::FERN;
+    }
+
+    int x = xo + random.nextInt(16) + 8;
+     
+    int z = zo + random.nextInt(16) + 8;
+	int y = level->getHeightmap(x, z);
+
+    TallgrassFeature grassFeature(Tile::tallgrass->id, grassMetadata);
+    grassFeature.place(level, &random, x, y, z);
+}
+
+
 	for (int i = 0; i < 10; i++) {
 		int x = xo + random.nextInt(16) + 8;
 		int y = random.nextInt(128);

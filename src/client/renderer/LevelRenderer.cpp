@@ -1063,9 +1063,9 @@ std::string LevelRenderer::gatherStats1() {
 }
 
 //
-//    /*public*/ std::string gatherStats2() {
-//        return "E: " + renderedEntities + "/" + totalEntities + ". B: " + culledEntities + ", I: " + ((totalEntities - culledEntities) - renderedEntities);
-//    }
+    std::string LevelRenderer::gatherStats2() {
+        return "E: " + std::to_string(renderedEntities) + "/" + std::to_string(totalEntities) + ". B: " + std::to_string(culledEntities) + ", I: " + std::to_string(((totalEntities - culledEntities) - renderedEntities));
+    }
 //
 //    int[] toRender = new int[50000];
 //    IntBuffer resultBuffer = MemoryTracker.createIntBuffer(64);
@@ -1158,6 +1158,7 @@ void LevelRenderer::renderSky(float alpha) {
 	// thanks to the mcpe 0.1 decomp project a bit for this part, was not getting the gl states correctly, gles is painful - shredder
 
 	// Sunrise
+	if (mc->options.getBooleanValue(OPTIONS_BEAUTIFUL_SKY)) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -1228,6 +1229,7 @@ void LevelRenderer::renderSky(float alpha) {
 		glColor4f(a, a, a, a);
 		drawArrayVT(starBuffer, starVertexCount);
 	}
+	}
 
 	
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1240,7 +1242,9 @@ void LevelRenderer::renderSky(float alpha) {
 
 	glColor3f(sc.x * 0.2f + 0.04f, sc.y * 0.2f + 0.04f, sc.z * 0.6f + 0.1f);
 	glDisable(GL_TEXTURE_2D);
-	drawArrayVT(voidBuffer, voidVertexCount);
+	if(mc->options.getBooleanValue(OPTIONS_BETA_SKY)){
+		drawArrayVT(voidBuffer, voidVertexCount);
+	}
 	glEnable(GL_TEXTURE_2D);
 
 	// @TODO shredder - should not enable or disable depth mask if using legacy sky because mcpe sky rendering is awful and will render clouds above terrain
@@ -1251,7 +1255,7 @@ void LevelRenderer::renderSky(float alpha) {
 
 void LevelRenderer::renderClouds( float alpha ) {
 	//if (!mc->level->dimension->isNaturalDimension()) return;
-	if (mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)){
+	if (mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS) && mc->options.getBooleanValue(OPTIONS_BETA_SKY)){
 		renderAdvancedClouds(alpha);
 		return;
 	}

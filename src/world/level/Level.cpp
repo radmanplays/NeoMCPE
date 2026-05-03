@@ -1735,13 +1735,13 @@ void Level::extinguishFire(int x, int y, int z, int face) {
 		setTile(x, y, z, 0);
 	}
 }
-//    String gatherStats() {
-//        return "All: " + this.entities.size();
-//    }
-//
-//    String gatherChunkSourceStats() {
-//        return chunkSource.gatherStats();
-//    }
+   std::string Level::gatherStats() {
+        return "All: " + std::to_string(entities.size());
+    }
+
+    std::string Level::gatherChunkSourceStats() {
+        return _chunkSource->gatherStats();
+   }
 //
 TileEntity* Level::getTileEntity(int x, int y, int z) {
 	LevelChunk* lc = getChunk(x >> 4, z >> 4);

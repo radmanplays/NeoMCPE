@@ -7,6 +7,7 @@
 #include "screens/ConsoleScreen.h"
 #include "../Minecraft.h"
 #include "../player/LocalPlayer.h"
+#include "../renderer/Chunk.h"
 #include "../renderer/Tesselator.h"
 #include "../renderer/TileRenderer.h"
 #include "../renderer/LevelRenderer.h"
@@ -103,10 +104,10 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 		}
 	}
 
-	// @todo - Shredder: I added this here but currently viginette is broken so i cant do much about it.
-	//	if (minecraft->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)){
-	//		this->renderVignette(this->minecraft->player->getBrightness(a), screenWidth, screenHeight);
-	//	}
+	// viginette has been fixed, was due to gl_blend not being enabled, my bad
+	if (minecraft->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS) && minecraft->options.getBooleanValue(OPTIONS_VIGNETTE)){
+			renderVignette(this->minecraft->player->getBrightness(a), screenWidth, screenHeight);
+		}
 	// shredder end
 
 	if(minecraft->player->getSleepTimer() > 0) {
@@ -121,7 +122,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 	if (!minecraft->options.getBooleanValue(OPTIONS_HIDEGUI)) {
 		renderToolBar(a, ySlot, screenWidth);
 
-		font->drawShadow("Minecraft - Pocket Edition ", 2, 2, 0xffffffff);
+	//	font->drawShadow("Minecraft - Pocket Edition ", 2, 2, 0xffffffff);
 //	font->drawShadow("This is a demo, not the finished product", 2, 10 + 2, 0xffffffff);
 
 		glEnable(GL_BLEND);
@@ -363,6 +364,7 @@ void Gui::renderVignette(float br, int w, int h) {
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(false);
+	glEnable(GL_BLEND);
 	glBlendFunc2(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 	glColor4f2(tbr, tbr, tbr, 1);
 
@@ -379,6 +381,7 @@ void Gui::renderVignette(float br, int w, int h) {
 	t.draw();
 	glDepthMask(true);
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 	glColor4f2(1, 1, 1, 1);
 	glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -729,13 +732,20 @@ void Gui::onLevelGenerated() {
 
 void Gui::renderDebugInfo() {
 	// FPS counter (updates once per second)
-	static float fps = 0.0f;
-	static float fpsLastTime = 0.0f;
+	static int fps = 0;
+	static int fpsLastTime = 0;
 	static int   fpsFrames = 0;
+	static int   displayChunkUpdates = 0;
 	float now = getTimeS();
 	fpsFrames++;
-	if (now - fpsLastTime >= 1.0f) {
+	if (now - fpsLastTime >= 1) {
 		fps = fpsFrames / (now - fpsLastTime);
+
+		displayChunkUpdates = Chunk::updates;
+    
+    // 3. RESET the actual game counter to 0 for the next second
+		Chunk::updates = 0;
+
 		fpsFrames = 0;
 		fpsLastTime = now;
 	}
@@ -773,6 +783,31 @@ void Gui::renderDebugInfo() {
 	long seed      = lvl ? lvl->getSeed() : 0;
 
 	// Build lines (NULL entry = blank gap)
+	Font* font = minecraft->font;
+
+	// @todo - add our own debug screen as an option alongside the restored java one, why does renderdebug have to be so jank - shredder
+
+	// if java beta's restored debug menu is enabled
+	if (minecraft->options.getIntValue(OPTIONS_DEBUG_STYLE) == 0){
+	font->drawShadow("Minecraft - Pocket Edition (" 
+                            + std::to_string((int)fps) + " fps, " 
+							+ std::to_string(displayChunkUpdates) + " chunk updates)", 2, 2, 0xffffff);
+	font->drawShadow(minecraft->gatherStats1(), 2, 12, 0xFFFFFF);
+	font->drawShadow(minecraft->gatherStats2(), 2, 22, 0xFFFFFF);
+    font->drawShadow(minecraft->gatherStats3(), 2, 32, 0xFFFFFF);
+    font->drawShadow(minecraft->gatherStats4(), 2, 42, 0xFFFFFF);
+
+	drawString(font, "x: " + std::to_string(minecraft->player->x), 2, 64, 0xE0E0E0);
+	drawString(font, "y: " + std::to_string(minecraft->player->y), 2, 72, 0xE0E0E0);
+	drawString(font, "z: " + std::to_string(minecraft->player->z), 2, 80, 0xE0E0E0);
+	drawString(font, "f: " + std::to_string(Mth::floor(minecraft->player->yRot * 4.0f / 360.0f + 0.5) & 0x3), 2, 88, 0xE0E0E0);
+	drawString(font, "Seed: " + std::to_string(lvl->getSeed()), 2, 104, 0xE0E0E0);
+	drawString(font, "Dimension: " + std::to_string(lvl->dimension->id) + " (" + lvl->dimension->getDimension() + ")", 2, 114, 0xE0E0E0);
+	drawString(font, "Biome: " + std::string(biomeName), 2, 124, 0xE0E0E0);
+	}
+	else if (minecraft->options.getIntValue(OPTIONS_DEBUG_STYLE) == 1){
+	
+
 	static char ln[8][96];
 	sprintf(ln[0], "Minecraft PE 0.6.1 alpha (mcpe64)");
 	sprintf(ln[1], "%.1f fps", fps);
@@ -787,8 +822,8 @@ void Gui::renderDebugInfo() {
 	const float LH  = (float)Font::DefaultLineHeight; // 10 font-pixels
 	const float MGN = 2.0f;  // left/top margin in font-pixels
 	const float PAD = 2.0f;  // horizontal padding for background
-	Font* font = minecraft->font;
-
+//	Font* font = minecraft->font;
+	
 	// 1) Draw semi-transparent background boxes behind each line
 	for (int i = 0; i < N; i++) {
 		if (ln[i][0] == '\0') continue;
@@ -810,6 +845,7 @@ void Gui::renderDebugInfo() {
 		font->draw(ln[i], MGN, y, col);
 	}
 	t.endOverrideAndDraw();
+	}
 }
 
 void Gui::renderPlayerList(Font* font, int screenWidth, int screenHeight) {

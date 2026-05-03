@@ -285,7 +285,7 @@ void GameRenderer::renderLevel(float a) {
 		mc->levelRenderer->cull(&frustum, a);
 		mc->levelRenderer->updateDirtyChunks(cameraEntity, false);
 		// this sky rendering code below was originally before the frustrum and culling stuff but sunset color breaks for some reason in that place, so i moved i after those two - shredder
-		if(mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)) {
+//		if(mc->options.getBooleanValue(OPTIONS_FANCY_GRAPHICS)) {
 			setupFog(-1);
 			TIMER_POP_PUSH("sky");
 			// @TODO - EXTREME JANK BELOW, it works but i have to do heavy cleanup here, also to test if the glfogf commands even affect fog in anyway.
@@ -298,7 +298,7 @@ void GameRenderer::renderLevel(float a) {
 			glFogf(GL_FOG_START, renderDistance  * 0.6f);
 			glFogf(GL_FOG_END, renderDistance);
 			}
-		}
+//		}
 		glEnable2(GL_FOG);
 		setupFog(1);
 		// MCPE renders clouds using this, but this method breaks 3d clouds and also breaks 2d clouds transparency viewed from above, add as a Legacy Sky or Fast Sky option. - shredder

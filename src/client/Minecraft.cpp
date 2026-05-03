@@ -8,6 +8,7 @@
 #include <string>
 #include <cstdlib>
 
+
 #if defined(APPLE_DEMO_PROMOTION)
     #define NO_NETWORK
 #endif
@@ -475,19 +476,20 @@ void Minecraft::update() {
 #ifndef STANDALONE_SERVER
 	Multitouch::resetThisUpdate();
 #endif
-	TIMER_POP();
+	
 #ifndef STANDALONE_SERVER
+	TIMER_POP();
 	checkGlError("Update finished");
 
 	if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
-#ifndef PLATFORM_DESKTOP
+//#ifndef PLATFORM_DESKTOP
 		if (!PerfTimer::enabled) {
 			PerfTimer::reset();
 			PerfTimer::enabled = true;
 		}
 		_perfRenderer->renderFpsMeter(1);
 		checkGlError("render debug");
-#endif
+//#endif
 	} else {
 		PerfTimer::enabled = false;
 	}
@@ -829,6 +831,12 @@ void Minecraft::tickInput() {
 				}
 			#endif
 
+			if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
+				if (key >= '0' && key <= '9') {
+					_perfRenderer->debugFpsMeterKeyPress(key - '0');
+				}
+			}
+
 			if (key == Keyboard::KEY_ESCAPE)
 				pauseGame(false);
 
@@ -840,6 +848,12 @@ void Minecraft::tickInput() {
 					//glPolygonMode(GL_BACK, isWireFrame? GL_LINE : GL_FILL);
 				}
 			#endif
+								if (key == Keyboard::KEY_P) {
+					static bool isWireFrame = false;
+					isWireFrame = !isWireFrame;
+					glPolygonMode(GL_FRONT, isWireFrame? GL_LINE : GL_FILL);
+					//glPolygonMode(GL_BACK, isWireFrame? GL_LINE : GL_FILL);
+				}
 		}
 		#ifdef WIN32
 			if (key == Keyboard::KEY_M) {
@@ -1410,10 +1424,10 @@ void Minecraft::_levelGenerated()
 		player->resetPos(false);
 	}
 
-	    if (level && level->dimension) {
-        // For example, if you want FogType or any other option
-        level->dimension->FogType = options.getIntValue(OPTIONS_FOG_TYPE);
-		}
+    if (level && level->dimension) {
+        
+       level->dimension->FogType = options.getIntValue(OPTIONS_FOG_TYPE);
+	}
 
 
 	this->cameraTargetPlayer = player;
@@ -1440,6 +1454,25 @@ void Minecraft::_levelGenerated()
 	//EntityRenderDispatcher::getInstance()->onGraphicsReset();
 	_hasSignaledGeneratingLevelFinished = true;
 }
+
+std::string Minecraft::gatherStats1() {
+    return levelRenderer->gatherStats1();
+}
+
+std::string Minecraft::gatherStats2() {
+    return levelRenderer->gatherStats2();
+}
+
+std::string Minecraft::gatherStats3() {
+	return ("P: " + particleEngine->countParticles() + ". T: " + (level->gatherStats()));
+}
+
+std::string Minecraft::gatherStats4() {
+    return level->gatherChunkSourceStats();
+}
+
+
+
 
 Player* Minecraft::respawnPlayer(int playerId) {
 	for (unsigned int i = 0; i < level->players.size(); ++i) {

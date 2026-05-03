@@ -87,6 +87,14 @@ public:
 
 	void update();
 
+	 std::string  gatherStats1();
+
+	 std::string  gatherStats2();
+
+     std::string  gatherStats4();
+
+     std::string  gatherStats3();
+
 	void tick(int nTick, int maxTick);
 	void tickInput();
 

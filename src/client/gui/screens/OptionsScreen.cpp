@@ -227,7 +227,9 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_ANAGLYPH_3D, minecraft)
 		.addOptionItem(OPTIONS_VIEW_BOBBING, minecraft)
 		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft)
-		.addOptionItem(OPTIONS_NORMAL_LIGHTING, minecraft);
+		.addOptionItem(OPTIONS_NORMAL_LIGHTING, minecraft)
+		.addOptionItem(OPTIONS_BEAUTIFUL_SKY, minecraft)
+		.addOptionItem(OPTIONS_VIGNETTE, minecraft);
 
 	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
 		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft)
@@ -237,7 +239,8 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_JAVA_HUD, minecraft)
 		.addOptionItem(OPTIONS_FOG_TYPE, minecraft)
 		.addOptionItem(OPTIONS_BETA_SKY, minecraft)
-		.addOptionItem(OPTIONS_RESTORED_ANIMS, minecraft);
+		.addOptionItem(OPTIONS_RESTORED_ANIMS, minecraft)
+		.addOptionItem(OPTIONS_DEBUG_STYLE, minecraft);
 		
 }
 

@@ -193,7 +193,8 @@ public:
     }
 
     std::string gatherStats() {
-        return "ChunkCache: 1024";
+   //     return "ChunkCache: 1024";
+			return ("ChunkCache: " + std::to_string(CHUNK_CACHE_WIDTH * CHUNK_CACHE_WIDTH));
     }
 	
 	void saveAll(bool onlyUnsaved) {

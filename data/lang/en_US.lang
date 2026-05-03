@@ -161,6 +161,18 @@ options.fogType.vanilla=Vanilla
 options.fogType.java=Beta Java
 options.fogType.unused=Unused
 
+options.debugStyle=Debug Menu Style
+options.debugStyle.javaBeta=Java Beta
+options.debugStyle.custom=Custom
+
+options.beautifulSky=Beautiful Skies
+
+options.useVignette=Vignette Overlay
+
+options.tintedSide=Tint Grass Sides
+
+options.betaSky=Java Beta Sky
+
 options.restoredAnims=Restored Animations
 
 options.normalLighting=Java Beta/Normals Shading

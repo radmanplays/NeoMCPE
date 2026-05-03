@@ -133,22 +133,29 @@ Dimension* Dimension::getNew( int id )
 	return NULL;
 }
 
+std::string Dimension::getDimension(){
+	int currentID = this->id;
+	if (currentID == Dimension::NORMAL) return "Overworld";
+	if (currentID == Dimension::NORMAL_DAYCYCLE) return "Overworld";
+	return "Unknown";
+}
+
 //
 // DimensionFactory
 //
 #include "../storage/LevelData.h"
-Dimension* DimensionFactory::createDefaultDimension(LevelData* data )
-{
-	int dimensionId = Dimension::NORMAL;
+	Dimension* DimensionFactory::createDefaultDimension(LevelData* data )
+	{
+		int dimensionId = Dimension::NORMAL;
 
-	switch(data->getGameType()) {
-	case GameType::Survival: dimensionId = Dimension::NORMAL_DAYCYCLE;
-		break;
-	case GameType::Creative:
-	default:
-		dimensionId = Dimension::NORMAL;
-		break;
-	}
+		switch(data->getGameType()) {
+		case GameType::Survival: dimensionId = Dimension::NORMAL_DAYCYCLE;
+			break;
+		case GameType::Creative:
+		default:
+			dimensionId = Dimension::NORMAL;
+			break;
+		}
 
 	return Dimension::getNew(dimensionId);
 }
