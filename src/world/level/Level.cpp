@@ -1736,7 +1736,9 @@ void Level::extinguishFire(int x, int y, int z, int face) {
 	}
 }
    std::string Level::gatherStats() {
-        return "All: " + std::to_string(entities.size());
+	   std::stringstream ss;
+	   ss << "All: " << entities.size();
+       return ss.str();
     }
 
     std::string Level::gatherChunkSourceStats() {

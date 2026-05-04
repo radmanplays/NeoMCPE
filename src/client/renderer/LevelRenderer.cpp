@@ -1064,7 +1064,9 @@ std::string LevelRenderer::gatherStats1() {
 
 //
     std::string LevelRenderer::gatherStats2() {
-        return "E: " + std::to_string(renderedEntities) + "/" + std::to_string(totalEntities) + ". B: " + std::to_string(culledEntities) + ", I: " + std::to_string(((totalEntities - culledEntities) - renderedEntities));
+		std::stringstream ss;
+		ss << "E: "<< renderedEntities << "/" << totalEntities << ". B: " << culledEntities << ", I: " << (totalEntities - culledEntities) - renderedEntities <<"\n";
+        return ss.str();
     }
 //
 //    int[] toRender = new int[50000];
