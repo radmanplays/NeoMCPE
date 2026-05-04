@@ -789,21 +789,37 @@ void Gui::renderDebugInfo() {
 
 	// if java beta's restored debug menu is enabled
 	if (minecraft->options.getIntValue(OPTIONS_DEBUG_STYLE) == 0){
-	font->drawShadow("Minecraft - Pocket Edition (" 
-                            + std::to_string((int)fps) + " fps, " 
-							+ std::to_string(displayChunkUpdates) + " chunk updates)", 2, 2, 0xffffff);
+
+	char buf[128];
+
+	sprintf(buf, "Minecraft - Pocket Edition (%d fps, %d chunk updates)", (int)fps, displayChunkUpdates);
+	font->drawShadow(buf, 2, 2, 0xffffff);
+
 	font->drawShadow(minecraft->gatherStats1(), 2, 12, 0xFFFFFF);
 	font->drawShadow(minecraft->gatherStats2(), 2, 22, 0xFFFFFF);
     font->drawShadow(minecraft->gatherStats3(), 2, 32, 0xFFFFFF);
     font->drawShadow(minecraft->gatherStats4(), 2, 42, 0xFFFFFF);
 
-	drawString(font, "x: " + std::to_string(minecraft->player->x), 2, 64, 0xE0E0E0);
-	drawString(font, "y: " + std::to_string(minecraft->player->y), 2, 72, 0xE0E0E0);
-	drawString(font, "z: " + std::to_string(minecraft->player->z), 2, 80, 0xE0E0E0);
-	drawString(font, "f: " + std::to_string(Mth::floor(minecraft->player->yRot * 4.0f / 360.0f + 0.5) & 0x3), 2, 88, 0xE0E0E0);
-	drawString(font, "Seed: " + std::to_string(lvl->getSeed()), 2, 104, 0xE0E0E0);
-	drawString(font, "Dimension: " + std::to_string(lvl->dimension->id) + " (" + lvl->dimension->getDimension() + ")", 2, 114, 0xE0E0E0);
-	drawString(font, "Biome: " + std::string(biomeName), 2, 124, 0xE0E0E0);
+	sprintf(buf, "x: %.8f", minecraft->player->x);
+	drawString(font, buf, 2, 64, 0xE0E0E0);
+
+	sprintf(buf, "y: %.8f", minecraft->player->y);
+	drawString(font, buf, 2, 72, 0xE0E0E0);
+
+	sprintf(buf, "z: %.8f", minecraft->player->z);
+	drawString(font, buf, 2, 80, 0xE0E0E0);
+
+	sprintf(buf, "f: %d",Mth::floor(minecraft->player->yRot * 4.0f / 360.0f + 0.5) & 0x3);
+	drawString(font, buf, 2, 88, 0xE0E0E0);
+
+	sprintf(buf, "Seed: %.ld", lvl->getSeed());
+	drawString(font, buf, 2, 104, 0xE0E0E0);
+
+	sprintf(buf, "Dimension: %d (%s)", lvl->dimension->id, lvl->dimension->getDimension().c_str());
+	drawString(font, buf, 2, 114, 0xE0E0E0);
+
+	sprintf(buf, "Biome: %s", biomeName);
+	drawString(font, buf, 2, 124, 0xE0E0E0);
 	}
 	else if (minecraft->options.getIntValue(OPTIONS_DEBUG_STYLE) == 1){
 	
