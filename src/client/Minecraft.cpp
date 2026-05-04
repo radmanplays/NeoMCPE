@@ -92,6 +92,9 @@
 #include "gamemode/CreatorMode.h"
 
 #include "../world/level/GrassColor.h"
+#include "renderer/LevelRenderer.h"
+#include "particle/ParticleEngine.h"
+#include "../world/level/Level.h"
 static void checkGlError(const char* tag) {
 #ifdef GLDEBUG
 	while (1) {
@@ -848,12 +851,6 @@ void Minecraft::tickInput() {
 					//glPolygonMode(GL_BACK, isWireFrame? GL_LINE : GL_FILL);
 				}
 			#endif
-								if (key == Keyboard::KEY_P) {
-					static bool isWireFrame = false;
-					isWireFrame = !isWireFrame;
-					glPolygonMode(GL_FRONT, isWireFrame? GL_LINE : GL_FILL);
-					//glPolygonMode(GL_BACK, isWireFrame? GL_LINE : GL_FILL);
-				}
 		}
 		#ifdef WIN32
 			if (key == Keyboard::KEY_M) {
