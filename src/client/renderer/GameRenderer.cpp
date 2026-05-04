@@ -273,6 +273,7 @@ void GameRenderer::renderLevel(float a) {
 		}
 
 
+
 		if (mc->options.getBooleanValue(OPTIONS_AMBIENT_OCCLUSION)) {
 			glShadeModel2(GL_SMOOTH);
 		}
