@@ -312,6 +312,7 @@ if(UNIX)
     target_compile_definitions("${PROJECT_NAME}-server" PUBLIC "STANDALONE_SERVER" "SERVER_PROFILER")
 
     target_include_directories("${PROJECT_NAME}-server" PUBLIC 
+        "${CMAKE_SOURCE_DIR}/glad/include/"
         "${CMAKE_SOURCE_DIR}/src/"
         "project/lib_projects/raknet/jni/RaknetSources"
     )
