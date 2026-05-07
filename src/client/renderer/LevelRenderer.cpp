@@ -1243,7 +1243,7 @@ void LevelRenderer::renderSky(float alpha) {
 	// ported over void plane (the blue bottom plane seen in java) because pocket edition lacks it @TODO test if it's buggy - shredder
 
 //	glColor3f(sc.x * 0.2f + 0.04f, sc.y * 0.2f + 0.04f, sc.z * 0.6f + 0.1f);
-	glColor4f(sc.x * 0.2f + 0.04f, sc.y * 0.2f + 0.04f, sc.z * 0.6f + 0.1f, 1.0f);
+//	glColor4f(sc.x * 0.2f + 0.04f, sc.y * 0.2f + 0.04f, sc.z * 0.6f + 0.1f, 1.0f);
 	glDisable(GL_TEXTURE_2D);
 	if(mc->options.getBooleanValue(OPTIONS_BETA_SKY)){
 		drawArrayVT(voidBuffer, voidVertexCount);
