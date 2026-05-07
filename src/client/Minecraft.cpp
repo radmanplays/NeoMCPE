@@ -1456,18 +1456,21 @@ std::string Minecraft::gatherStats1() {
 #ifndef STANDALONE_SERVER
     return levelRenderer->gatherStats1();
 #endif
+	return "Blank";
 }
 
 std::string Minecraft::gatherStats2() {
 #ifndef STANDALONE_SERVER
     return levelRenderer->gatherStats2();
 #endif
+	return "Blank";
 }
 
 std::string Minecraft::gatherStats3() {
 #ifndef STANDALONE_SERVER
 	return ("P: " + particleEngine->countParticles() + ". T: " + (level->gatherStats()));
 #endif
+	return "Blank";
 }
 
 std::string Minecraft::gatherStats4() {
