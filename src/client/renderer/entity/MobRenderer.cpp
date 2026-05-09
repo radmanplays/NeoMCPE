@@ -187,10 +187,12 @@ void MobRenderer::scale(Mob* mob, float a) {
 }
 
 void MobRenderer::renderName(Mob* mob, float x, float y, float z) {
-	/*
+	
 	std::stringstream ss; ss << mob->entityId;
+	if (entityRenderDispatcher->minecraft->options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
 	renderNameTag(mob, ss.str(), x, y, z, 64);
-	*/
+	}
+	
 }
 
 void MobRenderer::renderNameTag(Mob* mob, const std::string& name, float x, float y, float z, int maxDist) {
@@ -205,7 +207,11 @@ void MobRenderer::renderNameTag(Mob* mob, const std::string& name, float x, floa
 	float s = 1 / 60.0f * size;
 
 	glPushMatrix2();
-	glTranslatef2((float) x + 0, (float) y + 1.0f /*2.3f*/, (float) z);
+	if (mob->isPlayer()){
+		glTranslatef2((float) x + 0, (float) y + 1.0f, (float) z);
+	} else {
+		glTranslatef2((float) x + 0, (float) y + 2.3f, (float) z);
+	}
 
 	glRotatef2(-entityRenderDispatcher->playerRotY, 0, 1, 0);
 	glRotatef2(entityRenderDispatcher->playerRotX, 1, 0, 0);

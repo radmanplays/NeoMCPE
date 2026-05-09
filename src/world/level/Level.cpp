@@ -1165,7 +1165,13 @@ int Level::getSkyDarken(float a) {
 
 	float br = 1 - (Mth::cos(td * Mth::PI * 2) * 2 + 0.5f);
 	if (br < 0.0f) br = 0.0f;
-	if (br > 0.80f) br = 0.80f; //@note; was 1.0f
+	if (dimension->FogType == 1) // @TODO - probably make this not dependent on dimension type honestly - shredder
+	{
+	if (br > 1.0f) br = 1.0f; //@ uses the normal javasky color ramp when java sky type is choosen,
+	} else 
+	{
+	if (br > 0.8f) br = 0.8f; //@note; was 1.0f
+	}
 	return ((int) (br * 11));
 }
 

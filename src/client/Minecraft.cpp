@@ -1159,8 +1159,8 @@ void Minecraft::init()
 	// now i can finally initialize foliage color, probably not the best way to handle this but i cant be arsed rn
 	FoliageColor::init(foliagePixels);
 
-	TextureId grassId = (textures->loadTexture("misc/foliagecolor.png")); // loading the uh png for foliage color
-	int* grassPixels = textures->loadTexturePixels(grassId, "misc/foliagecolor.png");
+	TextureId grassId = (textures->loadTexture("misc/grasscolor.png")); // loading the uh png for foliage color
+	int* grassPixels = textures->loadTexturePixels(grassId, "misc/grasscolor.png");
 	GrassColor::init(grassPixels);
 	
 	bool tint = options.getBooleanValue(OPTIONS_FOLIAGE_TINT); // finally, toggleable foliage color
