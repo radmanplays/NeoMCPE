@@ -229,6 +229,12 @@ options.fancyGraphics=Fancy graphics
 options.renderDebug=Debug render
 options.anaglyph3d=3D anaglyph
 
+options.windowScale =Window Scaling
+
+options.menuStyle =Menu Style 
+options.menuStyle.pocket =Pocket Edition
+options.menuStyle.xperia =Xperia/Pi
+options.menuStyle.java =Java Beta
 
 performance.max=Max FPS
 performance.balanced=Balanced

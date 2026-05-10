@@ -106,7 +106,7 @@ class FireTexture: public DynamicTexture
 	float* heata;
 
 public:
-    FireTexture();
+    FireTexture(int id);
 	~FireTexture();
 
     void tick();

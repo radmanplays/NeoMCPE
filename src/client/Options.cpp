@@ -82,6 +82,10 @@ OptionBool restoredAnims("restoredAnims", true);
 
 OptionInt debugStyle("debugStyle", 0, 0, 1);
 
+OptionInt menuStyle("menuStyle",0, 0, 2);
+
+OptionBool windowScale("windowScale", false);
+
 OptionInt keyForward("key.forward", Keyboard::KEY_W);
 OptionInt keyLeft("key.left", Keyboard::KEY_A);
 OptionInt keyBack("key.back", Keyboard::KEY_S);
@@ -134,6 +138,7 @@ void Options::initTable() {
 
 
     m_options[OPTIONS_GUI_SCALE] = &guiScale;
+	m_options[OPTIONS_WINDOW_SCALE] = &windowScale;
 
 	m_options[OPTIONS_SKIN] = &skin;
 	m_options[OPTIONS_USERNAME] = &username;
@@ -169,6 +174,8 @@ void Options::initTable() {
 	m_options[OPTIONS_RESTORED_ANIMS] = &restoredAnims;
 
     m_options[OPTIONS_SERVER_VISIBLE] = &serverVisible;
+
+	m_options[OPTIONS_MENU_STYLE] = &menuStyle;
 
     m_options[OPTIONS_KEY_FORWARD] = &keyForward;
     m_options[OPTIONS_KEY_LEFT] = &keyLeft;

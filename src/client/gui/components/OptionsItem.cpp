@@ -56,6 +56,28 @@ void OptionsItem::render( Minecraft* minecraft, int xm, int ym ) {
 		}
 		text += ": " + scaleText;
 	}
+	if (m_optionId == OPTIONS_MENU_STYLE) {
+		int value = minecraft->options.getIntValue(OPTIONS_MENU_STYLE);
+		std::string scaleText;
+		switch (value) {
+		case 0: scaleText = I18n::get("options.menuStyle.pocket"); break;
+		case 1: scaleText = I18n::get("options.menuStyle.xperia"); break;
+		case 2: scaleText = I18n::get("options.menuStyle.java"); break;
+		}
+		text += ": " + scaleText;
+	}
+	if (m_optionId == OPTIONS_VIEW_DISTANCE) {
+		int value = minecraft->options.getIntValue(OPTIONS_VIEW_DISTANCE);
+		std::string scaleText;
+		switch (value) {
+		case 0: scaleText = I18n::get("options.renderDistance.far"); break;
+		case 1: scaleText = I18n::get("options.renderDistance.normal"); break;
+		case 2: scaleText = I18n::get("options.renderDistance.short"); break;
+		case 3: scaleText = I18n::get("options.renderDistance.tiny"); break;
+		default: scaleText = "Debug"; break;
+		}
+		text += ": " + scaleText;
+	}
 
 	minecraft->font->draw(text, (float)x, (float)y + yOffset, 0x909090, false);
 	super::render(minecraft, xm, ym);

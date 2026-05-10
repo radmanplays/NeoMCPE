@@ -197,6 +197,7 @@ void OptionsScreen::generateOptionScreens() {
 	optionPanes[1]->addOptionItem(OPTIONS_DIFFICULTY, minecraft)
 		.addOptionItem(OPTIONS_SERVER_VISIBLE, minecraft)
 		.addOptionItem(OPTIONS_THIRD_PERSON_VIEW, minecraft)
+		.addOptionItem(OPTIONS_WINDOW_SCALE, minecraft)
 		.addOptionItem(OPTIONS_GUI_SCALE, minecraft)
 		.addOptionItem(OPTIONS_SENSITIVITY, minecraft)
 		.addOptionItem(OPTIONS_MUSIC_VOLUME, minecraft)
@@ -223,6 +224,7 @@ void OptionsScreen::generateOptionScreens() {
 		// .addOptionItem(&Option::ANAGLYPH, minecraft)
 		.addOptionItem(OPTIONS_LIMIT_FRAMERATE, minecraft)
 		.addOptionItem(OPTIONS_VSYNC, minecraft)
+		.addOptionItem(OPTIONS_VIEW_DISTANCE, minecraft)
 		.addOptionItem(OPTIONS_RENDER_DEBUG, minecraft)
 		.addOptionItem(OPTIONS_ANAGLYPH_3D, minecraft)
 		.addOptionItem(OPTIONS_VIEW_BOBBING, minecraft)
@@ -233,6 +235,7 @@ void OptionsScreen::generateOptionScreens() {
 
 	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
 		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft)
+		.addOptionItem(OPTIONS_MENU_STYLE, minecraft)
 		.addOptionItem(OPTIONS_RPI_CURSOR, minecraft)
 		.addOptionItem(OPTIONS_FOLIAGE_TINT, minecraft)
 		.addOptionItem(OPTIONS_TINTED_SIDE, minecraft)

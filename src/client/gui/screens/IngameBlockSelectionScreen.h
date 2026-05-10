@@ -52,6 +52,7 @@ private:
 	bool _pendingQuit;
 
 	Button bArmor;
+	Button bCrafting;
 
 	RectangleArea _area;
 };

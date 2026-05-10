@@ -843,7 +843,7 @@ void Minecraft::tickInput() {
 			if (key == Keyboard::KEY_ESCAPE)
 				pauseGame(false);
 
-			#ifndef OPENGL_ES
+			#ifdef PLATFORM_DESKTOP
 				if (key == Keyboard::KEY_P) {
 					static bool isWireFrame = false;
 					isWireFrame = !isWireFrame;
@@ -864,12 +864,14 @@ void Minecraft::tickInput() {
 	
 	static bool prevMouseDownLeft = false;
 
-	if (Mouse::getButtonState(MouseAction::ACTION_LEFT) == 0) {
-		gameMode->stopDestroyBlock();
-	}
+	if (!useTouchscreen()) {
+		if (Mouse::getButtonState(MouseAction::ACTION_LEFT) == 0) {
+			gameMode->stopDestroyBlock();
+		}
 
-	if (!Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
-		gameMode->releaseUsingItem(player);
+		if (!Mouse::isButtonDown(MouseAction::ACTION_RIGHT)) {
+			gameMode->releaseUsingItem(player);
+		}
 	}
 
 	if (useTouchscreen()) {
@@ -1142,7 +1144,8 @@ void Minecraft::init()
 	textures->addDynamicTexture(new WaterSideTexture());
 	textures->addDynamicTexture(new LavaTexture());
 	textures->addDynamicTexture(new LavaSideTexture());
-	textures->addDynamicTexture(new FireTexture());
+	textures->addDynamicTexture(new FireTexture(0));
+	textures->addDynamicTexture(new FireTexture(1));
 	gui.texturesLoaded(textures);
 
 	levelRenderer = new LevelRenderer(this);
@@ -1191,6 +1194,27 @@ void Minecraft::setSize(int w, int h) {
 
 	width  = w;
 	height = h;
+	int screenWidth;
+	int screenHeight;
+//#ifdef PLATFORM_DESKTOP
+if (options.getBooleanValue(OPTIONS_WINDOW_SCALE)){ // scales with resolution using a formula instead of having hardcoded if checks
+	int guiScale = options.getIntValue(OPTIONS_GUI_SCALE);
+	 if (guiScale == 0) {
+        guiScale = 1000;
+    }
+	
+	// determine gui scale, optionally overriding auto
+
+
+	Gui::GuiScale = (float)Mth::Min(guiScale, Mth::Max(1, Mth::Min(width / 320, height / 240)));
+
+    // 2. Calculate the Inverse based on the NEW scale
+    Gui::InvGuiScale = 1.0f / Gui::GuiScale;
+	screenWidth  = (int)(width  * Gui::InvGuiScale);
+	screenHeight = (int)(height * Gui::InvGuiScale);
+
+} else {
+
 
 	int guiScale = options.getIntValue(OPTIONS_GUI_SCALE);
 
@@ -1228,8 +1252,8 @@ void Minecraft::setSize(int w, int h) {
 	}
 
 	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
-	int screenWidth  = (int)(width  * Gui::InvGuiScale);
-	int screenHeight = (int)(height * Gui::InvGuiScale);
+	screenWidth  = (int)(width  * Gui::InvGuiScale);
+	screenHeight = (int)(height * Gui::InvGuiScale);
 
 	// if (platform()) {
 	// 	float pixelsPerMillimeter = options.getProgressValue(&Option::PIXELS_PER_MILLIMETER);
@@ -1237,6 +1261,8 @@ void Minecraft::setSize(int w, int h) {
 	// 	pixelCalcUi.setPixelsPerMillimeter(pixelsPerMillimeter * Gui::InvGuiScale);
 	// }
 
+#endif
+}
 	Config config = createConfig(this);
 	gui.onConfigChanged(config);
     
@@ -1251,7 +1277,7 @@ void Minecraft::setSize(int w, int h) {
 	char resbuf[128];
 	sprintf(resbuf, "            %d x %d @ scale %.2f", width, height, Gui::GuiScale);
 	//gui.addMessage(resbuf);
-#endif
+
 #endif /* STANDALONE_SERVER */
 }
 

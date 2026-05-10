@@ -575,7 +575,7 @@ void LevelRenderer::render(const AABB& b) const
 	//	t.color(255, 255, 255, 255); // again not needed, for some reason the vanilla source code tints it... white? maybe this was used for something else in MCPE's dev at one point? - shredder
 
 	//	t.offset(((Mob*)mc->player)->getPos(0).negated()); // why does this even exist normally, it just makes the thing... not render
-
+	glLineWidth(2.0f); // make it more thick - shredder
 	t.begin(GL_LINE_STRIP);
 	t.vertex(b.x0, b.y0, b.z0);
 	t.vertex(b.x1, b.y0, b.z0);

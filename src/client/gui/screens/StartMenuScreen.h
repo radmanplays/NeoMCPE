@@ -23,10 +23,10 @@ public:
 	bool isInGameScreen();
 private:
 
-	Button bHost;
-	Button bJoin;
-	Button bOptions;
-	ImageButton bQuit; // X button in top-right corner
+	Button* bHost;
+	Button* bJoin;
+	Button* bOptions;
+	Button* bQuit; 
 
 	std::string copyright;
 	int copyrightPosX;

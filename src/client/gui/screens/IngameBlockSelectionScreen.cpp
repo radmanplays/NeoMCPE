@@ -12,6 +12,7 @@
 #include "../../renderer/Textures.h"
 #include "../../gamemode/GameMode.h"
 #include "ArmorScreen.h"
+#include "crafting/WorkbenchScreen.h"
 #include "../components/Button.h"
 
 #if defined(__APPLE__)
@@ -27,7 +28,8 @@ IngameBlockSelectionScreen::IngameBlockSelectionScreen()
 	InventoryRows(1),
 	InventoryCols(1),
 	InventorySize(1),
-	bArmor(1, "Armor")
+	bArmor(1, "Armor"),
+	bCrafting(1, "Crafting")
 {
 }
 
@@ -42,6 +44,19 @@ void IngameBlockSelectionScreen::init()
 							(float)getSlotPosY(0) - 4,
 							(float)getSlotPosX(InventoryCols) + 4, 
 							(float)getSlotPosY(InventoryRows) + 4);
+	
+	if (!minecraft->isCreativeMode()) {
+		bArmor.width = 42;
+		bCrafting.width = 42;
+
+		bArmor.x = 0;
+		bArmor.y = height - bArmor.height;
+
+		bCrafting.x = 0;
+		bCrafting.y = height - bCrafting.height - 30;
+		buttons.push_back(&bArmor);
+		buttons.push_back(&bCrafting);
+	}
 
 	ItemInstance* selected = inventory->getSelected();
 	if (!selected || selected->isNull()) {
@@ -58,13 +73,6 @@ void IngameBlockSelectionScreen::init()
 	}
 	if (!isAllowed(selectedItem))
 		selectedItem = 0;
-
-	if (!minecraft->isCreativeMode()) {
-		bArmor.width = 42;
-		bArmor.x = 0;
-		bArmor.y = height - bArmor.height;
-		buttons.push_back(&bArmor);
-	}
 }
 
 void IngameBlockSelectionScreen::removed()
@@ -124,7 +132,7 @@ void IngameBlockSelectionScreen::renderSlots()
 	//w.printEvery(1000, "render-blocksel");
 
 	glDisable2(GL_RESCALE_NORMAL);
-	Lighting::turnOn(minecraft);
+	Lighting::turnOff();
 }
 
 int IngameBlockSelectionScreen::getSlotPosX(int slotX) {
@@ -249,7 +257,7 @@ void IngameBlockSelectionScreen::mouseClicked(int x, int y, int buttonNum)
 			//minecraft->soundEngine->playUI("random.click", 1, 1);
 		} else {
 			_pendingQuit = !_area.isInside((float)x, (float)y)
-			            && !bArmor.isInside(x, y);
+			            && !bArmor.isInside(x, y) && !bCrafting.isInside(x, y);
 		}
 	}
 	if (!_pendingQuit)
@@ -337,6 +345,9 @@ void IngameBlockSelectionScreen::buttonClicked( Button* button )
 {
 	if (button == &bArmor) {
 		minecraft->setScreen(new ArmorScreen());
+	}
+	if (button == &bCrafting) {
+		minecraft->setScreen(new WorkbenchScreen(Recipe::SIZE_2X2));
 	}
 	super::buttonClicked(button);
 }

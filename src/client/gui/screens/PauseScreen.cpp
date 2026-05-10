@@ -10,18 +10,18 @@
 #include "client/gui/screens/OptionsScreen.h"
 
 PauseScreen::PauseScreen(bool wasBackPaused)
-:	saveStep(0),
+	:	saveStep(0),
 	visibleTime(0),
 	bContinue(0),
 	bQuit(0),
 	bOptions(0),
 	bQuitAndSaveLocally(0),
 	bServerVisibility(0),
-//	bThirdPerson(0),
+	//	bThirdPerson(0),
 	wasBackPaused(wasBackPaused),
 	// bSound(OPTIONS_SOUND_VOLUME, 1, 0),
 	bThirdPerson(OPTIONS_THIRD_PERSON_VIEW),
-    bHideGui(OPTIONS_HIDEGUI)
+	bHideGui(OPTIONS_HIDEGUI)
 {
 	ImageDef def;
 	def.setSrc(IntRectangle(160, 144, 39, 31));
@@ -34,7 +34,7 @@ PauseScreen::PauseScreen(bool wasBackPaused)
 	// bSound.setImageDef(def, true);
 	defSrc.y += defSrc.h;
 	bThirdPerson.setImageDef(def, true);
-    bHideGui.setImageDef(def, true);
+	bHideGui.setImageDef(def, true);
 	//void setImageDef(ImageDef& imageDef, bool setButtonSize);
 }
 
@@ -44,24 +44,31 @@ PauseScreen::~PauseScreen() {
 	delete bQuitAndSaveLocally;
 	delete bServerVisibility;
 	delete bOptions;
-//	delete bThirdPerson;
+	//	delete bThirdPerson;
 }
 
 void PauseScreen::init() {
-	if (/* minecraft->useTouchscreen() */ true) {
+	if (minecraft->options.getIntValue(OPTIONS_MENU_STYLE) == 0) {
 		bContinue = new Touch::TButton(1, "Back to game");
 		bOptions = new Touch::TButton(5, "Options");
 		bQuit = new Touch::TButton(2, "Quit to title");
 		bQuitAndSaveLocally = new Touch::TButton(3, "Quit and copy map");
 		bServerVisibility = new Touch::TButton(4, "");
-//		bThirdPerson = new Touch::TButton(5, "Toggle 3:rd person view");
-	} else {
+		//		bThirdPerson = new Touch::TButton(5, "Toggle 3:rd person view");
+	} else if (minecraft->options.getIntValue(OPTIONS_MENU_STYLE) == 1) {
 		bContinue = new Button(1, "Back to game");
 		bOptions = new Button(5, "Options");
 		bQuit = new Button(2, "Quit to title");
 		bQuitAndSaveLocally = new Button(3, "Quit and copy map");
 		bServerVisibility = new Button(4, "");
-//		bThirdPerson = new Button(5, "Toggle 3:rd person view");
+		//		bThirdPerson = new Button(5, "Toggle 3:rd person view");
+	} else {
+		bContinue = new Button(1, 0, 0, 200, 20, "Back to game");
+		bServerVisibility = new Button(4, 0, 0, 200, 20, "");
+		bOptions = new Button(5, 0, 0, 200, 20, "Options...");
+		bQuit = new Button(2, 0, 0, 200, 20, "Save and quit to title");
+		bQuitAndSaveLocally = new Button(3, 0, 0, 200, 20, "Copy and quit map");
+		//		bThirdPerson = new Button(5, "Toggle 3:rd person view");
 	}
 
 	buttons.push_back(bContinue);
@@ -72,12 +79,12 @@ void PauseScreen::init() {
 	bHideGui.updateImage(&minecraft->options);
 	// buttons.push_back(&bSound);
 	buttons.push_back(&bThirdPerson);
-    //buttons.push_back(&bHideGui);
+	//buttons.push_back(&bHideGui);
 
 	// If Back wasn't pressed, set up additional items (more than Quit to menu
 	// and Back to game) here
-    
-    #if !defined(APPLE_DEMO_PROMOTION) && !defined(RPI)
+
+#if !defined(APPLE_DEMO_PROMOTION) && !defined(RPI)
 	if (true || !wasBackPaused) {
 		if (minecraft->raknetInstance) {
 			if (minecraft->raknetInstance->isServer()) {
@@ -85,14 +92,14 @@ void PauseScreen::init() {
 				buttons.push_back(bServerVisibility);
 			}
 			else {
-                #if !defined(DEMO_MODE)
-                buttons.push_back(bQuitAndSaveLocally);
-				#endif
+#if !defined(DEMO_MODE)
+				buttons.push_back(bQuitAndSaveLocally);
+#endif
 			}
 		}
 	}
-    #endif
-//	buttons.push_back(bThirdPerson);
+#endif
+	//	buttons.push_back(bThirdPerson);
 
 	for (unsigned int i = 0; i < buttons.size(); ++i) {
 		// if (buttons[i] == &bSound) continue;
@@ -103,27 +110,48 @@ void PauseScreen::init() {
 }
 
 void PauseScreen::setupPositions() {
-    saveStep = 0;
+	saveStep = 0;
 	int yBase = 16;
+	if (minecraft->options.getIntValue(OPTIONS_MENU_STYLE) == 2){
+		yBase = 50;
 
-	bContinue->width = bOptions->width = bQuit->width = /*bThirdPerson->w =*/ 160;
-	bQuitAndSaveLocally->width = bServerVisibility->width = 160;
+		bContinue->width = bOptions->width = bQuit->width = /*bThirdPerson->w =*/ 200;
+		bQuitAndSaveLocally->width = bServerVisibility->width = 200;
 
-	bContinue->x = (width - bContinue->width) / 2;
-	bContinue->y = yBase + 32 * 1;
+		bContinue->x = (width - bContinue->width) / 2;
+		bContinue->y = yBase + 24 * 1;
 
-	bOptions->x = (width - bOptions->width) / 2;
-	bOptions->y = yBase + 32 * 2;
+		bQuitAndSaveLocally->x = bServerVisibility->x = (width - bQuitAndSaveLocally->width) / 2;
+		bQuitAndSaveLocally->y = bServerVisibility->y = yBase + 24 * 2;
 
-	bQuit->x = (width - bQuit->width) / 2;
-	bQuit->y = yBase + 32 * 3;
+		bOptions->x = (width - bOptions->width) / 2;
+		bOptions->y = yBase + 24 * 3 + 24;
+
+		bQuit->x = (width - bQuit->width) / 2;
+		bQuit->y = yBase + 24 * 4 + 24;
+
+	} else {
+		bContinue->width = bOptions->width = bQuit->width = /*bThirdPerson->w =*/ 160;
+		bQuitAndSaveLocally->width = bServerVisibility->width = 160;
+
+		bContinue->x = (width - bContinue->width) / 2;
+		bContinue->y = yBase + 32 * 1;
+
+		bOptions->x = (width - bOptions->width) / 2;
+		bOptions->y = yBase + 32 * 2;
+
+		bQuit->x = (width - bQuit->width) / 2;
+		bQuit->y = yBase + 32 * 3;
 
 #if APPLE_DEMO_PROMOTION
-    bQuit->y += 16;
+		bQuit->y += 16;
 #endif
-    
-	bQuitAndSaveLocally->x = bServerVisibility->x = (width - bQuitAndSaveLocally->width) / 2;
-	bQuitAndSaveLocally->y = bServerVisibility->y = yBase + 32 * 4;
+
+		bQuitAndSaveLocally->x = bServerVisibility->x = (width - bQuitAndSaveLocally->width) / 2;
+		bQuitAndSaveLocally->y = bServerVisibility->y = yBase + 32 * 4;
+	}
+
+
 
 	// bSound.y = bThirdPerson.y = 8;
 	// bSound.x = 4;
@@ -161,9 +189,9 @@ void PauseScreen::buttonClicked(Button* button) {
 		minecraft->setScreen(NULL);
 		//minecraft->grabMouse();
 	}
-    if (button->id == bQuit->id) {
+	if (button->id == bQuit->id) {
 		minecraft->leaveGame();
-    }
+	}
 	if (button->id == bQuitAndSaveLocally->id) {
 		minecraft->leaveGame(true);
 	}
@@ -197,5 +225,5 @@ void PauseScreen::updateServerVisibilityText()
 	ServerSideNetworkHandler* ss = (ServerSideNetworkHandler*) minecraft->netCallback;
 	bServerVisibility->msg = ss->allowsIncomingConnections()?
 		"Server is visible"
-	:   "Server is invisible";
+		:   "Server is invisible";
 }

@@ -23,49 +23,62 @@
 
 // Some kind of default settings, might be overridden in ::init
 StartMenuScreen::StartMenuScreen()
-:	bHost(    2, 0, 0, 160, 24, "Start Game"),
-	bJoin(    3, 0, 0, 160, 24, "Join Game"),
-	bOptions( 4, 0, 0, 160, 24, "Options"),
-	bQuit(    5, "")
 {
 }
 
 StartMenuScreen::~StartMenuScreen()
 {
+	delete bHost;
+	delete bJoin;
+	delete bOptions;
+	delete bQuit;
 }
 
 void StartMenuScreen::init()
 {
-	bJoin.active = bHost.active = bOptions.active = true;
+	if (minecraft->options.getIntValue(OPTIONS_MENU_STYLE) == 2){
+		bHost = new Button(    2, 0, 0, 200, 20, "Singleplayer");
+		bJoin = new Button(    3, 0, 0, 200, 20, "Multiplayer");
+		bOptions = new Button( 4, 0, 0, 200, 20, "Options...");
+		bQuit = new Button( 5, 0, 0, 200, 20, "Ouit Game");
+	} else {
+		bHost = new Button(    2, 0, 0, 160, 24, "Start Game");
+		bJoin = new Button(    3, 0, 0, 160, 24, "Join Game");
+		bOptions = new Button( 4, 0, 0, 160, 24, "Options");
+		bQuit = new Button( 5, 0, 0, 160, 24, "Ouit Game");
+	}
+	bJoin->active = bHost->active = bOptions->active = true;
 
 	if (minecraft->options.getStringValue(OPTIONS_USERNAME).empty()) {
 		return; // tick() will redirect to UsernameScreen
 	}
 
-	buttons.push_back(&bHost);
-	buttons.push_back(&bJoin);
+	buttons.push_back(bHost);
+	buttons.push_back(bJoin);
 	//buttons.push_back(&bTest);
+	buttons.push_back(bQuit);
 
-	tabButtons.push_back(&bHost);
-	tabButtons.push_back(&bJoin);
+	tabButtons.push_back(bHost);
+	tabButtons.push_back(bJoin);
+	tabButtons.push_back(bQuit);
 
 	#ifndef RPI
-		buttons.push_back(&bOptions);
-		tabButtons.push_back(&bOptions);
+		buttons.push_back(bOptions);
+		tabButtons.push_back(bOptions);
 	#endif
 
-    // add quit button (top right X icon) – match OptionsScreen style
-    {
-        ImageDef def;
-        def.name = "gui/touchgui.png";
-        def.width = 34;
-        def.height = 26;
-        def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
-        bQuit.setImageDef(def, true);
-        bQuit.scaleWhenPressed = false;
-        buttons.push_back(&bQuit);
-        // don't include in tab navigation
-    }
+    //// add quit button (top right X icon) – match OptionsScreen style
+    //{
+    //    ImageDef def;
+    //    def.name = "gui/touchgui.png";
+    //    def.width = 34;
+    //    def.height = 26;
+    //    def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
+    //    bQuit.setImageDef(def, true);
+    //    bQuit.scaleWhenPressed = false;
+    //    buttons.push_back(&bQuit);
+    //    // don't include in tab navigation
+    //}
 
 	copyright = "\xffMojang AB";//. Do not distribute!";
 
@@ -93,20 +106,30 @@ void StartMenuScreen::init()
 }
 
 void StartMenuScreen::setupPositions() {
-	int yBase = height / 2;
+	if (minecraft->options.getIntValue(OPTIONS_MENU_STYLE) == 2){
+		int yBase = (height / 2) - 20;
 
-	bHost.y =	 yBase;
-	bJoin.y =	 bHost.y + 24 + 4;
-	bOptions.y = bJoin.y + 24 + 4;
+		bHost->y =	 yBase;
+		bJoin->y =	 bHost->y + 24;
+		bOptions->y = bJoin->y + 24;
+		bQuit->y = bOptions->y + 24;
+	} else {
+		int yBase = height / 2;
+		bHost->y =	 yBase;
+		bJoin->y =	 bHost->y + 24 + 4;
+		bOptions->y = bJoin->y + 24 + 4;
+		bQuit->y = bOptions->y + 24 + 4;
+	}
 
 	// Center buttons
-	bHost.x = (width - bHost.width) / 2;
-	bJoin.x = (width - bJoin.width) / 2;
-	bOptions.x = (width - bOptions.width) / 2;
+	bHost->x = (width - bHost->width) / 2;
+	bJoin->x = (width - bJoin->width) / 2;
+	bOptions->x = (width - bOptions->width) / 2;
+	bQuit->x = (width - bQuit->width) / 2;
 
-    // position quit icon at top-right (use image-defined size)
-    bQuit.x = width - bQuit.width;
-    bQuit.y = 0;
+    //// position quit icon at top-right (use image-defined size)
+    //bQuit.x = width - bQuit.width;
+    //bQuit.y = 0;
 }
 
 void StartMenuScreen::tick() {
@@ -114,7 +137,7 @@ void StartMenuScreen::tick() {
 
 void StartMenuScreen::buttonClicked(Button* button) {
 
-	if (button->id == bHost.id)
+	if (button->id == bHost->id)
 	{
         #if defined(DEMO_MODE) || defined(APPLE_DEMO_PROMOTION)
 			minecraft->setScreen( new SimpleChooseLevelScreen("_DemoLevel") );
@@ -122,16 +145,16 @@ void StartMenuScreen::buttonClicked(Button* button) {
 			minecraft->screenChooser.setScreen(SCREEN_SELECTWORLD);
 		#endif
 	}
-	if (button->id == bJoin.id)
+	if (button->id == bJoin->id)
 	{
 		minecraft->locateMultiplayer();
 		minecraft->screenChooser.setScreen(SCREEN_JOINGAME);
 	}
-	if (button->id == bOptions.id)
+	if (button->id == bOptions->id)
 	{
 		minecraft->setScreen(new OptionsScreen());
 	}
-	if (button == &bQuit)
+	if (button->id == bQuit->id)
 	{
 		minecraft->quit();
 	}

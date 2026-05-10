@@ -393,8 +393,8 @@ void LavaSideTexture::tick() {
 		}
 }
 
-FireTexture::FireTexture()
-	:   super(((Tile*)Tile::fire)->tex),
+FireTexture::FireTexture(int id)
+	:   super(((Tile*)Tile::fire)->tex + id * 16),
 	_tick(0),
 	_frame(0)
 {
