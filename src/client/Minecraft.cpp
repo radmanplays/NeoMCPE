@@ -10,11 +10,11 @@
 
 
 #if defined(APPLE_DEMO_PROMOTION)
-    #define NO_NETWORK
+#define NO_NETWORK
 #endif
 
 #if defined(RPI)
-	#define CREATORMODE
+#define CREATORMODE
 #endif
 #include "../network/RakNetInstance.h"
 #include "../network/ClientSideNetworkHandler.h"
@@ -98,8 +98,8 @@
 static void checkGlError(const char* tag) {
 #ifdef GLDEBUG
 	while (1) {
-        const int errCode = glGetError();
-        if (errCode == GL_NO_ERROR) break;
+		const int errCode = glGetError();
+		if (errCode == GL_NO_ERROR) break;
 
 		LOGE("################\nOpenGL-error @ %s : #%d\n", tag, errCode);
 	}
@@ -117,7 +117,7 @@ const char* Minecraft::progressMessages[] = {
 int Minecraft::customDebugId = Minecraft::CDI_NONE;
 
 #if defined(_MSC_VER)
-	#pragma warning( disable : 4355 ) // 'this' pointer in initialization list which is perfectly legal
+#pragma warning( disable : 4355 ) // 'this' pointer in initialization list which is perfectly legal
 #endif
 
 bool Minecraft::useAmbientOcclusion = false;
@@ -175,17 +175,17 @@ Minecraft::Minecraft() :
 	width(1), height(1),
 	//_respawnPlayerTicks(-1),
 #ifdef __APPLE__
-    _isSuperFast(false),
+	_isSuperFast(false),
 #endif
 	_powerVr(false),
 	commandPort(4711),
 	reserved_d1(0),reserved_d2(0),
 	reserved_f1(0),reserved_f2(0), options(this)
 {
-//#ifdef ANDROID
+	//#ifdef ANDROID
 
 #if defined(NO_NETWORK)
-    raknetInstance = new IRakNetInstance();
+	raknetInstance = new IRakNetInstance();
 #else
 	raknetInstance = new RakNetInstance();
 #endif
@@ -265,7 +265,7 @@ void Minecraft::setLevel(Level* level, const std::string& message /* ="" */, Loc
 
 	if (level != NULL) {
 		level->raknetInstance = raknetInstance;
-        gameMode->initLevel(level);
+		gameMode->initLevel(level);
 
 		if (!player && forceInsertPlayer)
 		{
@@ -296,19 +296,19 @@ void Minecraft::setLevel(Level* level, const std::string& message /* ="" */, Loc
 			// Non-threaded
 			generateLevel("Currently not used", level);
 		}
-    } else {
-        player = NULL;
-    }
+	} else {
+		player = NULL;
+	}
 
-    this->lastTickTime = 0;
+	this->lastTickTime = 0;
 	this->_running = true;
 }
 
 void Minecraft::leaveGame(bool renameLevel /*=false*/)
 {
-    if (isGeneratingLevel || !_hasSignaledGeneratingLevelFinished)
-        return;
-    
+	if (isGeneratingLevel || !_hasSignaledGeneratingLevelFinished)
+		return;
+
 	isGeneratingLevel = false;
 	bool saveLevel = level && (!level->isClientSide || renameLevel);
 
@@ -366,19 +366,19 @@ void Minecraft::prepareLevel(const std::string& title) {
 	int Max = CHUNK_CACHE_WIDTH * CHUNK_CACHE_WIDTH;
 	int pp = 0;
 	for (int x = 8; x < (CHUNK_CACHE_WIDTH * CHUNK_WIDTH); x += CHUNK_WIDTH) {
-        for (int z = 8; z < (CHUNK_CACHE_WIDTH * CHUNK_WIDTH); z += CHUNK_WIDTH) {
-            progressStagePercentage = 100 * pp++ / Max;
-            //printf("level generation progress %d\n", progressStagePercentage);
+		for (int z = 8; z < (CHUNK_CACHE_WIDTH * CHUNK_WIDTH); z += CHUNK_WIDTH) {
+			progressStagePercentage = 100 * pp++ / Max;
+			//printf("level generation progress %d\n", progressStagePercentage);
 			B.start();
-            level->getTile(x, 64, z);
+			level->getTile(x, 64, z);
 			B.stop();
 			L.start();
 			if (level->isNew())
 				while (level->updateLights())
 					;
 			L.stop();
-        }
-    }
+		}
+	}
 	A.stop();
 	level->setUpdateLights(true);
 
@@ -466,33 +466,33 @@ void Minecraft::update() {
 	}
 	TIMER_POP();
 
-	#ifndef STANDALONE_SERVER
-		if (gameMode != NULL) gameMode->render(timer.a);
-		TIMER_PUSH("sound");
-		soundEngine->update(player, timer.a);
-		TIMER_POP_PUSH("render");
-		gameRenderer->render(timer.a);
-		TIMER_POP();
-	#else
+#ifndef STANDALONE_SERVER
+	if (gameMode != NULL) gameMode->render(timer.a);
+	TIMER_PUSH("sound");
+	soundEngine->update(player, timer.a);
+	TIMER_POP_PUSH("render");
+	gameRenderer->render(timer.a);
+	TIMER_POP();
+#else
 	CThread::sleep(1);
-	#endif
+#endif
 #ifndef STANDALONE_SERVER
 	Multitouch::resetThisUpdate();
 #endif
-	
+
 #ifndef STANDALONE_SERVER
 	TIMER_POP();
 	checkGlError("Update finished");
 
 	if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
-//#ifndef PLATFORM_DESKTOP
+		//#ifndef PLATFORM_DESKTOP
 		if (!PerfTimer::enabled) {
 			PerfTimer::reset();
 			PerfTimer::enabled = true;
 		}
 		_perfRenderer->renderFpsMeter(1);
 		checkGlError("render debug");
-//#endif
+		//#endif
 	} else {
 		PerfTimer::enabled = false;
 	}
@@ -569,17 +569,17 @@ void Minecraft::tick(int nTick, int maxTick) {
 #ifndef STANDALONE_SERVER
 	textures->loadAndBindTexture("terrain.png");
 	if (!pause && !(screen && !screen->renderGameBehind())) {
-		#if !defined(RPI)
-			#ifdef __APPLE__
-			if (isSuperFast())
-			#endif
-			{
+#if !defined(RPI)
+#ifdef __APPLE__
+		if (isSuperFast())
+#endif
+		{
 			if (nTick == maxTick) {
 				TIMER_POP_PUSH("textures");
 				textures->tick(true);
 			}
-			}
-		#endif
+		}
+#endif
 	}
 	TIMER_POP_PUSH("particles");
 	if (!pause) {
@@ -641,8 +641,8 @@ void Minecraft::tickInput() {
 	while (Mouse::next()) {
 		//if (Mouse::getButtonState(MouseAction::ACTION_LEFT))
 		//	LOGI("mouse-down-at: %d, %d\n", Mouse::getX(), Mouse::getY());
-        	int passedTime = getTimeMs() - lastTickTime;
-        	if (passedTime > 200) continue; // @note: As long Mouse::clear CLEARS the whole buffer, it's safe to break here
+		int passedTime = getTimeMs() - lastTickTime;
+		if (passedTime > 200) continue; // @note: As long Mouse::clear CLEARS the whole buffer, it's safe to break here
 		// But since it might be rewritten anyway (and hopefully there aren't a lot of messages, we just continue.
 
 		const MouseAction& e = Mouse::getEvent();
@@ -673,14 +673,14 @@ void Minecraft::tickInput() {
 		}
 		/*
 		if (mouseDiggable && options.useMouseForDigging) {
-			if (Mouse::getEventButton() == MouseAction::ACTION_LEFT && Mouse::getEventButtonState()) {
-				handleMouseClick(MouseAction::ACTION_LEFT);
-				lastClickTick = ticks;
-			}
-			if (Mouse::getEventButton() == MouseAction::ACTION_RIGHT && Mouse::getEventButtonState()) {
-				handleMouseClick(MouseAction::ACTION_RIGHT);
-				lastClickTick = ticks;
-			}
+		if (Mouse::getEventButton() == MouseAction::ACTION_LEFT && Mouse::getEventButtonState()) {
+		handleMouseClick(MouseAction::ACTION_LEFT);
+		lastClickTick = ticks;
+		}
+		if (Mouse::getEventButton() == MouseAction::ACTION_RIGHT && Mouse::getEventButtonState()) {
+		handleMouseClick(MouseAction::ACTION_RIGHT);
+		lastClickTick = ticks;
+		}
 		}
 		*/
 	}
@@ -701,20 +701,20 @@ void Minecraft::tickInput() {
 				if (slot >= 0 && slot < gui.getNumSlots())
 					player->inventory->selectSlot(slot);
 
-				#if defined(WIN32)
-					if (digit >= 1 && GetAsyncKeyState(VK_CONTROL) < 0) {
-						// Set adventure settings here!
-						AdventureSettingsPacket p(level->adventureSettings);
-						p.toggle((AdventureSettingsPacket::Flags)(1 << slot));
-						p.fillIn(level->adventureSettings);
-						raknetInstance->send(p);
-					}
-					if (digit == 0) {
-						Pos pos((int)player->x, (int)player->y-1, (int)player->z);
-						SetSpawnPositionPacket p(pos);
-						raknetInstance->send(p);
-					}
-				#endif
+#if defined(WIN32)
+				if (digit >= 1 && GetAsyncKeyState(VK_CONTROL) < 0) {
+					// Set adventure settings here!
+					AdventureSettingsPacket p(level->adventureSettings);
+					p.toggle((AdventureSettingsPacket::Flags)(1 << slot));
+					p.fillIn(level->adventureSettings);
+					raknetInstance->send(p);
+				}
+				if (digit == 0) {
+					Pos pos((int)player->x, (int)player->y-1, (int)player->z);
+					SetSpawnPositionPacket p(pos);
+					raknetInstance->send(p);
+				}
+#endif
 			}
 
 			if (key == Keyboard::KEY_LEFT_CTRL) {
@@ -738,7 +738,7 @@ void Minecraft::tickInput() {
 				/*
 				ImprovedNoise noise;
 				for (int i = 0; i < 16; ++i)
-					printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
+				printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
 				*/
 			}
 
@@ -751,88 +751,88 @@ void Minecraft::tickInput() {
 				options.set(OPTIONS_VIEW_DISTANCE, (dst + 1) % 4);
 			}
 
-			#ifdef CHEATS
-				if (key == Keyboard::KEY_U) {
-					onGraphicsReset();
-					player->heal(100);
+#ifdef CHEATS
+			if (key == Keyboard::KEY_U) {
+				onGraphicsReset();
+				player->heal(100);
+			}
+
+			if (key == Keyboard::KEY_B || key == 108) // Toggle the game mode
+				setIsCreativeMode(!isCreativeMode());
+
+			if (key == Keyboard::KEY_P) // Step forward in time
+				level->setTime( level->getTime() + 1000);
+
+			if (key == Keyboard::KEY_G) {
+				setScreen(new ArmorScreen());
+				/*
+				std::vector<AABB>& boxs = level->getCubes(NULL, AABB(128.1f, 73, 128.1f, 128.9f, 74.9f, 128.9f));
+				LOGI("boxes: %d\n", (int)boxs.size());
+				*/
+			}
+
+			if (key == Keyboard::KEY_Y) {
+				textures->reloadAll();
+				player->hurtTo(2);
+			}
+			if (key == Keyboard::KEY_Z || key == 108) {
+				for (int i = 0; i < 1; ++i) {
+					Mob* mob = NULL;
+					int forceId = 0;//MobTypes::Sheep;
+
+					int types[] = {
+						MobTypes::Sheep,
+						MobTypes::Pig,
+						MobTypes::Chicken,
+						MobTypes::Cow,
+					};
+
+					int mobType = (forceId > 0)? forceId : types[Mth::random(sizeof(types) / sizeof(int))];
+					mob = MobFactory::CreateMob(mobType, level);
+
+					//((Animal*)mob)->setAge(-1000);
+					float dx = 4 - 8 * Mth::random() + 4 * Mth::sin(Mth::DEGRAD * player->yRot);
+					float dz = 4 - 8 * Mth::random() + 4 * Mth::cos(Mth::DEGRAD * player->yRot);
+					if (mob && !MobSpawner::addMob(level, mob, player->x + dx, player->y, player->z + dz, Mth::random()*360, 0, true))
+						delete mob;
 				}
+			}
 
-				if (key == Keyboard::KEY_B || key == 108) // Toggle the game mode
-					setIsCreativeMode(!isCreativeMode());
-
-				if (key == Keyboard::KEY_P) // Step forward in time
-					level->setTime( level->getTime() + 1000);
-
-				if (key == Keyboard::KEY_G) {
-					setScreen(new ArmorScreen());
-					/*
-					std::vector<AABB>& boxs = level->getCubes(NULL, AABB(128.1f, 73, 128.1f, 128.9f, 74.9f, 128.9f));
-					LOGI("boxes: %d\n", (int)boxs.size());
-					*/
+			if (key == Keyboard::KEY_X) {
+				const EntityList& entities = level->getAllEntities();
+				for (int i = entities.size()-1; i >= 0; --i) {
+					Entity* e = entities[i];
+					if (!e->isPlayer())
+						level->removeEntity(e);
 				}
+			}
 
-				if (key == Keyboard::KEY_Y) {
-					textures->reloadAll();
-					player->hurtTo(2);
-				}
-				if (key == Keyboard::KEY_Z || key == 108) {
-					for (int i = 0; i < 1; ++i) {
-						Mob* mob = NULL;
-						int forceId = 0;//MobTypes::Sheep;
+			if (key == Keyboard::KEY_C /*|| key == 4*/) {
+				player->inventory->clearInventoryWithDefault();
+				// @todo: Add saving here for benchmarking
+			}
+			if (key == Keyboard::KEY_H) {
+				setScreen( new PrerenderTilesScreen() );
+			}
 
-						int types[] = {
-							MobTypes::Sheep,
-							MobTypes::Pig,
-							MobTypes::Chicken,
-							MobTypes::Cow,
-						};
+			if (key == Keyboard::KEY_O) {
+				for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
+					if (player->inventory->getItem(i))
+						player->inventory->dropSlot(i, false);
+			}
+			if (key == Keyboard::KEY_M) {
+				Difficulty difficulty = (Difficulty)options.getIntValue(OPTIONS_DIFFICULTY);
+				options.set(OPTIONS_DIFFICULTY, (difficulty == Difficulty::PEACEFUL)?
+					Difficulty::NORMAL : Difficulty::PEACEFUL);
+				//setIsCreativeMode( !isCreativeMode() );
+			}
 
-						int mobType = (forceId > 0)? forceId : types[Mth::random(sizeof(types) / sizeof(int))];
-						mob = MobFactory::CreateMob(mobType, level);
-
-						//((Animal*)mob)->setAge(-1000);
-						float dx = 4 - 8 * Mth::random() + 4 * Mth::sin(Mth::DEGRAD * player->yRot);
-						float dz = 4 - 8 * Mth::random() + 4 * Mth::cos(Mth::DEGRAD * player->yRot);
-						if (mob && !MobSpawner::addMob(level, mob, player->x + dx, player->y, player->z + dz, Mth::random()*360, 0, true))
-							delete mob;
-					}
+			if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
+				if (key >= '0' && key <= '9') {
+					_perfRenderer->debugFpsMeterKeyPress(key - '0');
 				}
-
-				if (key == Keyboard::KEY_X) {
-					const EntityList& entities = level->getAllEntities();
-					for (int i = entities.size()-1; i >= 0; --i) {
-						Entity* e = entities[i];
-						if (!e->isPlayer())
-							level->removeEntity(e);
-					}
-				}
-
-				if (key == Keyboard::KEY_C /*|| key == 4*/) {
-					player->inventory->clearInventoryWithDefault();
-					// @todo: Add saving here for benchmarking
-				}
-				if (key == Keyboard::KEY_H) {
-					setScreen( new PrerenderTilesScreen() );
-				}
-
-				if (key == Keyboard::KEY_O) {
-					for (int i = Inventory::MAX_SELECTION_SIZE; i < player->inventory->getContainerSize(); ++i)
-						if (player->inventory->getItem(i))
-							player->inventory->dropSlot(i, false);
-				}
-				if (key == Keyboard::KEY_M) {
-					Difficulty difficulty = (Difficulty)options.getIntValue(OPTIONS_DIFFICULTY);
-					options.set(OPTIONS_DIFFICULTY, (difficulty == Difficulty::PEACEFUL)?
-						Difficulty::NORMAL : Difficulty::PEACEFUL);
-					//setIsCreativeMode( !isCreativeMode() );
-				}
-
-				if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
-					if (key >= '0' && key <= '9') {
-						_perfRenderer->debugFpsMeterKeyPress(key - '0');
-					}
-				}
-			#endif
+			}
+#endif
 
 			if (options.getBooleanValue(OPTIONS_RENDER_DEBUG)) {
 				if (key >= '0' && key <= '9') {
@@ -843,25 +843,25 @@ void Minecraft::tickInput() {
 			if (key == Keyboard::KEY_ESCAPE)
 				pauseGame(false);
 
-			#ifdef PLATFORM_DESKTOP
-				if (key == Keyboard::KEY_P) {
-					static bool isWireFrame = false;
-					isWireFrame = !isWireFrame;
-					glPolygonMode(GL_FRONT, isWireFrame? GL_LINE : GL_FILL);
-					//glPolygonMode(GL_BACK, isWireFrame? GL_LINE : GL_FILL);
-				}
-			#endif
-		}
-		#ifdef WIN32
-			if (key == Keyboard::KEY_M) {
-				for (int i = 0; i < 5 * SharedConstants::TicksPerSecond; ++i)
-					level->tick();
+#ifdef PLATFORM_DESKTOP
+			if (key == Keyboard::KEY_P) {
+				static bool isWireFrame = false;
+				isWireFrame = !isWireFrame;
+				glPolygonMode(GL_FRONT, isWireFrame? GL_LINE : GL_FILL);
+				//glPolygonMode(GL_BACK, isWireFrame? GL_LINE : GL_FILL);
 			}
-		#endif
+#endif
+		}
+#ifdef WIN32
+		if (key == Keyboard::KEY_M) {
+			for (int i = 0; i < 5 * SharedConstants::TicksPerSecond; ++i)
+				level->tick();
+		}
+#endif
 	}
 
 	TIMER_POP_PUSH("handlemouse");
-	
+
 	static bool prevMouseDownLeft = false;
 
 	if (!useTouchscreen()) {
@@ -934,35 +934,35 @@ void Minecraft::handleBuildAction(BuildActionIntention* action) {
 	}
 	if(player->isUsingItem())
 		return;
-    bool mayUse = true;
+	bool mayUse = true;
 
 	if (!hitResult.isHit()) {
 		if (action->isRemove() && !gameMode->isCreativeType()) {
 			missTime = 10;
 		}
-    } else if (hitResult.type == ENTITY) {
-        if (action->isAttack()) {
+	} else if (hitResult.type == ENTITY) {
+		if (action->isAttack()) {
 			player->swing();
 			//LOGI("attacking!\n");
 			InteractPacket packet(InteractPacket::Attack, player->entityId, hitResult.entity->entityId);
 			raknetInstance->send(packet);
-            gameMode->attack(player, hitResult.entity);
+			gameMode->attack(player, hitResult.entity);
 		} else if (action->isInteract()) {
 			if (hitResult.entity->interactPreventDefault())
 				mayUse = false;
 			//LOGI("interacting!\n");
 			InteractPacket packet(InteractPacket::Interact, player->entityId, hitResult.entity->entityId);
 			raknetInstance->send(packet);
-            gameMode->interact(player, hitResult.entity);
-        }
-    } else if (hitResult.type == TILE) {
+			gameMode->interact(player, hitResult.entity);
+		}
+	} else if (hitResult.type == TILE) {
 		int x = hitResult.x;
-        int y = hitResult.y;
-        int z = hitResult.z;
-        int face = hitResult.f;
+		int y = hitResult.y;
+		int z = hitResult.z;
+		int face = hitResult.f;
 
 		int oldTileId = level->getTile(x, y, z);
-        Tile* oldTile = Tile::tiles[oldTileId];
+		Tile* oldTile = Tile::tiles[oldTileId];
 
 		//bool tryDestroyBlock = false;
 
@@ -971,8 +971,8 @@ void Minecraft::handleBuildAction(BuildActionIntention* action) {
 				return;
 
 			//LOGI("tile: %s - %d, %d, %d. b: %f - %f\n", oldTile->getDescriptionId().c_str(), x, y, z, oldTile->getBrightness(level, x, y, z), oldTile->getBrightness(level, x, y+1, z));
-            level->extinguishFire(x, y, z, hitResult.f);
-			
+			level->extinguishFire(x, y, z, hitResult.f);
+
 			if (action->isFirstRemove()) {
 				gameMode->startDestroyBlock(x, y, z, hitResult.f);
 			} else {
@@ -981,16 +981,16 @@ void Minecraft::handleBuildAction(BuildActionIntention* action) {
 
 			particleEngine->crack(x, y, z, hitResult.f);
 			player->swing();
-        }
+		}
 		else {
 			ItemInstance* item = player->inventory->getSelected();
- 			if (gameMode->useItemOn(player, level, item, x, y, z, face, hitResult.pos)) {
-			    mayUse = false;
-			    player->swing();
-			#ifdef RPI
-				} else if (item && item->id == ((Item*)Item::sword_iron)->id) {
-					player->swing();
-			#endif
+			if (gameMode->useItemOn(player, level, item, x, y, z, face, hitResult.pos)) {
+				mayUse = false;
+				player->swing();
+#ifdef RPI
+			} else if (item && item->id == ((Item*)Item::sword_iron)->id) {
+				player->swing();
+#endif
 			}
 			if (item && item->count <= 0) {
 				player->inventory->clearSlot(player->inventory->selected);
@@ -1016,7 +1016,7 @@ void Minecraft::handleBuildAction(BuildActionIntention* action) {
 
 bool Minecraft::isOnlineClient()
 {
-    return (level != NULL && level->isClientSide);
+	return (level != NULL && level->isClientSide);
 }
 
 bool Minecraft::isOnline()
@@ -1083,8 +1083,8 @@ void Minecraft::setScreen( Screen* screen )
 
 		if (screen->isInGameScreen() && level) {
 			level->saveLevelData();
-            level->saveGame();
-        }
+			level->saveGame();
+		}
 
 		//noRender = false;
 	} else {
@@ -1121,7 +1121,7 @@ void Minecraft::releaseMouse()
 
 bool Minecraft::useTouchscreen() {
 #if defined(TARGET_OS_IPHONE)
-    return true;
+	return true;
 #elif defined(RPI)
 	return false;
 #endif
@@ -1153,7 +1153,7 @@ void Minecraft::init()
 	particleEngine = new ParticleEngine(level, textures);
 
 	// 4j's code for reference
-//	FoliageColor::init(textures->loadTexturePixels(L"misc/foliagecolor.png"));
+	//	FoliageColor::init(textures->loadTexturePixels(L"misc/foliagecolor.png"));
 
 
 	// my code
@@ -1165,7 +1165,7 @@ void Minecraft::init()
 	TextureId grassId = (textures->loadTexture("misc/grasscolor.png")); // loading the uh png for foliage color
 	int* grassPixels = textures->loadTexturePixels(grassId, "misc/grasscolor.png");
 	GrassColor::init(grassPixels);
-	
+
 	bool tint = options.getBooleanValue(OPTIONS_FOLIAGE_TINT); // finally, toggleable foliage color
 	FoliageColor::setUseTint(tint);
 	GrassColor::setUseTint(tint);
@@ -1190,82 +1190,82 @@ void Minecraft::init()
 
 void Minecraft::setSize(int w, int h) {
 #ifndef STANDALONE_SERVER
-    transformResolution(&w, &h);
+	transformResolution(&w, &h);
 
 	width  = w;
 	height = h;
 	int screenWidth;
 	int screenHeight;
-//#ifdef PLATFORM_DESKTOP
-if (options.getBooleanValue(OPTIONS_WINDOW_SCALE)){ // scales with resolution using a formula instead of having hardcoded if checks
-	int guiScale = options.getIntValue(OPTIONS_GUI_SCALE);
-	 if (guiScale == 0) {
-        guiScale = 1000;
-    }
-	
-	// determine gui scale, optionally overriding auto
-
-
-	Gui::GuiScale = (float)Mth::Min(guiScale, Mth::Max(1, Mth::Min(width / 320, height / 240)));
-
-    // 2. Calculate the Inverse based on the NEW scale
-    Gui::InvGuiScale = 1.0f / Gui::GuiScale;
-	screenWidth  = (int)(width  * Gui::InvGuiScale);
-	screenHeight = (int)(height * Gui::InvGuiScale);
-
-} else {
-
-
-	int guiScale = options.getIntValue(OPTIONS_GUI_SCALE);
-
-	// determine gui scale, optionally overriding auto
-	if (guiScale != 0) {
-		// manual selection: 1->small, 2->medium, 3->large, 4->larger, 5->largest
-		switch (guiScale) {
-		case 1: Gui::GuiScale = 2.0f; break;
-		case 2: Gui::GuiScale = 3.0f; break;
-		case 3: Gui::GuiScale = 4.0f; break;
-		case 4: Gui::GuiScale = 5.0f; break;
-		case 5: Gui::GuiScale = 6.0f; break;
-		default: Gui::GuiScale = 1.0f; break; // auto
+	//#ifdef PLATFORM_DESKTOP
+	if (options.getBooleanValue(OPTIONS_WINDOW_SCALE)){ // scales with resolution using a formula instead of having hardcoded if checks
+		int guiScale = options.getIntValue(OPTIONS_GUI_SCALE);
+		if (guiScale == 0) {
+			guiScale = 1000;
 		}
+
+		// determine gui scale, optionally overriding auto
+
+
+		Gui::GuiScale = (float)Mth::Min(guiScale, Mth::Max(1, Mth::Min(width / 320, height / 240)));
+
+
+
 	} else {
-		// auto compute from resolution
-		if (width >= 1000) {
-        #ifdef __APPLE__
-            Gui::GuiScale = (width > 2000)? 8.0f : 4.0f;
-        #else
-            Gui::GuiScale = 4.0f;
-        #endif
-    }
-		else if (width >= 800) {
+
+
+		int guiScale = options.getIntValue(OPTIONS_GUI_SCALE);
+
+		// determine gui scale, optionally overriding auto
+		if (guiScale != 0) {
+			// manual selection: 1->small, 2->medium, 3->large, 4->larger, 5->largest
+			switch (guiScale) {
+			case 1: Gui::GuiScale = 2.0f; break;
+			case 2: Gui::GuiScale = 3.0f; break;
+			case 3: Gui::GuiScale = 4.0f; break;
+			case 4: Gui::GuiScale = 5.0f; break;
+			case 5: Gui::GuiScale = 6.0f; break;
+			default: Gui::GuiScale = 1.0f; break; // auto
+			}
+		} else {
+			// auto compute from resolution
+			if (width >= 1000) {
 #ifdef __APPLE__
-        Gui::GuiScale = 4.0f;
+				Gui::GuiScale = (width > 2000)? 8.0f : 4.0f;
 #else
-		Gui::GuiScale = 3.0f;
+				Gui::GuiScale = 4.0f;
 #endif
-    }
-		else if (width >= 400)
-			Gui::GuiScale = 2.0f;
-		else
-			Gui::GuiScale = 1.0f;
+			}
+			else if (width >= 800) {
+#ifdef __APPLE__
+				Gui::GuiScale = 4.0f;
+#else
+				Gui::GuiScale = 3.0f;
+#endif
+			}
+			else if (width >= 400)
+				Gui::GuiScale = 2.0f;
+			else
+				Gui::GuiScale = 1.0f;
+		}
+
+
+
+		// if (platform()) {
+		// 	float pixelsPerMillimeter = options.getProgressValue(&Option::PIXELS_PER_MILLIMETER);
+		// 	pixelCalc.setPixelsPerMillimeter(pixelsPerMillimeter);
+		// 	pixelCalcUi.setPixelsPerMillimeter(pixelsPerMillimeter * Gui::InvGuiScale);
+		// }
+
 	}
+
 
 	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
 	screenWidth  = (int)(width  * Gui::InvGuiScale);
 	screenHeight = (int)(height * Gui::InvGuiScale);
 
-	// if (platform()) {
-	// 	float pixelsPerMillimeter = options.getProgressValue(&Option::PIXELS_PER_MILLIMETER);
-	// 	pixelCalc.setPixelsPerMillimeter(pixelsPerMillimeter);
-	// 	pixelCalcUi.setPixelsPerMillimeter(pixelsPerMillimeter * Gui::InvGuiScale);
-	// }
-
-#endif
-}
 	Config config = createConfig(this);
 	gui.onConfigChanged(config);
-    
+
 	if (screen)
 		screen->setSize(screenWidth, screenHeight);
 
@@ -1277,7 +1277,7 @@ if (options.getBooleanValue(OPTIONS_WINDOW_SCALE)){ // scales with resolution us
 	char resbuf[128];
 	sprintf(resbuf, "            %d x %d @ scale %.2f", width, height, Gui::GuiScale);
 	//gui.addMessage(resbuf);
-
+#endif
 #endif /* STANDALONE_SERVER */
 }
 
@@ -1294,9 +1294,9 @@ void Minecraft::reloadOptions() {
 
 	LOGI("Reloading-options\n");
 
-    // @todo @fix Android and iOS behaves a bit differently when leaving
-    //            an options screen (Android recreates OpenGL surface)
-    setSize(width, height);
+	// @todo @fix Android and iOS behaves a bit differently when leaving
+	//            an options screen (Android recreates OpenGL surface)
+	setSize(width, height);
 }
 
 void Minecraft::_reloadInput() {
@@ -1307,17 +1307,17 @@ void Minecraft::_reloadInput() {
 	if (useTouchHolder) {
 		inputHolder = new TouchInputHolder(this, &options);
 	} else {
-		#if defined(ANDROID) || defined(__APPLE__) 
-			inputHolder = new CustomInputHolder(
-				new XperiaPlayInput(&options),
-				new ControllerTurnInput(2, ControllerTurnInput::MODE_DELTA),
-				new IBuildInput());
-		#else
-			inputHolder = new CustomInputHolder(
-				new KeyboardInput(&options),
-				new MouseTurnInput(MouseTurnInput::MODE_DELTA, width/2, height/2),
-				new MouseBuildInput());
-		#endif
+#if defined(ANDROID) || defined(__APPLE__) 
+		inputHolder = new CustomInputHolder(
+			new XperiaPlayInput(&options),
+			new ControllerTurnInput(2, ControllerTurnInput::MODE_DELTA),
+			new IBuildInput());
+#else
+		inputHolder = new CustomInputHolder(
+			new KeyboardInput(&options),
+			new MouseTurnInput(MouseTurnInput::MODE_DELTA, width/2, height/2),
+			new MouseBuildInput());
+#endif
 	}
 
 	mouseHandler.setTurnInput(inputHolder->getTurnInput());
@@ -1360,7 +1360,7 @@ bool Minecraft::joinMultiplayerFromString( const std::string& server )
 {	
 	std::string ip = "";
 	std::string port = "19132";
-	
+
 	size_t pos = server.find(":");
 
 	if (pos != std::string::npos) {
@@ -1371,7 +1371,7 @@ bool Minecraft::joinMultiplayerFromString( const std::string& server )
 	}
 
 	printf("%s \n", port.c_str());
-	
+
 	if (isLookingForMultiplayer && netCallback) {
 		isLookingForMultiplayer = false;
 		printf("test");
@@ -1382,18 +1382,18 @@ bool Minecraft::joinMultiplayerFromString( const std::string& server )
 }
 
 void Minecraft::hostMultiplayer(int port) {
-    // Tear down last instance
-    raknetInstance->disconnect();
-    delete netCallback;
-    netCallback = NULL;
+	// Tear down last instance
+	raknetInstance->disconnect();
+	delete netCallback;
+	netCallback = NULL;
 
 #if !defined(NO_NETWORK)
 	netCallback = new ServerSideNetworkHandler(this, raknetInstance);
-    #ifdef STANDALONE_SERVER
-        raknetInstance->host("Server", port, 16);
-    #else
-        raknetInstance->host(options.getStringValue(OPTIONS_USERNAME), port);
-    #endif
+#ifdef STANDALONE_SERVER
+	raknetInstance->host("Server", port, 16);
+#else
+	raknetInstance->host(options.getStringValue(OPTIONS_USERNAME), port);
+#endif
 #endif
 }
 
@@ -1447,9 +1447,9 @@ void Minecraft::_levelGenerated()
 		player->resetPos(false);
 	}
 
-    if (level && level->dimension) {
-        
-       level->dimension->FogType = options.getIntValue(OPTIONS_FOG_TYPE);
+	if (level && level->dimension) {
+
+		level->dimension->FogType = options.getIntValue(OPTIONS_FOG_TYPE);
 	}
 
 
@@ -1480,14 +1480,14 @@ void Minecraft::_levelGenerated()
 
 std::string Minecraft::gatherStats1() {
 #ifndef STANDALONE_SERVER
-    return levelRenderer->gatherStats1();
+	return levelRenderer->gatherStats1();
 #endif
 	return "Blank";
 }
 
 std::string Minecraft::gatherStats2() {
 #ifndef STANDALONE_SERVER
-    return levelRenderer->gatherStats2();
+	return levelRenderer->gatherStats2();
 #endif
 	return "Blank";
 }
@@ -1500,7 +1500,7 @@ std::string Minecraft::gatherStats3() {
 }
 
 std::string Minecraft::gatherStats4() {
-    return level->gatherChunkSourceStats();
+	return level->gatherChunkSourceStats();
 }
 
 
@@ -1553,7 +1553,7 @@ void Minecraft::onGraphicsReset()
 {
 #ifndef STANDALONE_SERVER
 	textures->clear();
-	
+
 	font->onGraphicsReset();
 	gui.onGraphicsReset();
 
@@ -1592,12 +1592,12 @@ LevelStorageSource* Minecraft::getLevelSource()
 
 void Minecraft::audioEngineOn() {
 #ifndef STANDALONE_SERVER
-    soundEngine->enable(true);
+	soundEngine->enable(true);
 #endif
 }
 void Minecraft::audioEngineOff() {
 #ifndef STANDALONE_SERVER
-    soundEngine->enable(false);
+	soundEngine->enable(false);
 #endif
 }
 
@@ -1668,17 +1668,17 @@ void Minecraft::optionUpdated(OptionId option, bool value ) {
 }
 
 void Minecraft::optionUpdated(OptionId option, float value ) {
-// #ifndef STANDALONE_SERVER
-// 	if(option == OPTIONS_PIXELS_PER_MILLIMETER) {
-// 		pixelCalcUi.setPixelsPerMillimeter(value * Gui::InvGuiScale);
-// 		pixelCalc.setPixelsPerMillimeter(value);
-// 	}
-// #endif
+	// #ifndef STANDALONE_SERVER
+	// 	if(option == OPTIONS_PIXELS_PER_MILLIMETER) {
+	// 		pixelCalcUi.setPixelsPerMillimeter(value * Gui::InvGuiScale);
+	// 		pixelCalc.setPixelsPerMillimeter(value);
+	// 	}
+	// #endif
 }
 
 void Minecraft::optionUpdated(OptionId option, int value ) {
-    if(option == OPTIONS_GUI_SCALE) {
-        // reapply screen scaling using current window size
-        setSize(width, height);
-    }
+	if(option == OPTIONS_GUI_SCALE) {
+		// reapply screen scaling using current window size
+		setSize(width, height);
+	}
 }
