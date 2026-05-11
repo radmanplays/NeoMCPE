@@ -101,12 +101,22 @@ void GameRenderer::setupCamera(float a, int eye) {
 
 	float stereoScale = 0.07f;
 	if (mc->options.getBooleanValue(OPTIONS_ANAGLYPH_3D)) glTranslatef2(-(eye * 2 - 1) * stereoScale, 0, 0);
-	if (zoom != 1) {
-		glTranslatef2((float) zoom_x, (float) -zoom_y, 0);
-		glScalef2(zoom, zoom, 1);
-		gluPerspective(_setupCameraFov = getFov(a, true), mc->width / (float) mc->height, 0.05f, renderDistance);
+	if (mc->options.getBooleanValue(OPTIONS_BETA_SKY)){
+		if (zoom != 1) {
+			glTranslatef2((float) zoom_x, (float) -zoom_y, 0);
+			glScalef2(zoom, zoom, 1);
+			gluPerspective(_setupCameraFov = getFov(a, true), mc->width / (float) mc->height, 0.05f, renderDistance * 2.0f);
+		} else {
+			gluPerspective(_setupCameraFov = getFov(a, true), mc->width / (float) mc->height, 0.05f, renderDistance * 2.0f);
+		}
 	} else {
-		gluPerspective(_setupCameraFov = getFov(a, true), mc->width / (float) mc->height, 0.05f, renderDistance);
+		if (zoom != 1) {
+			glTranslatef2((float) zoom_x, (float) -zoom_y, 0);
+			glScalef2(zoom, zoom, 1);
+			gluPerspective(_setupCameraFov = getFov(a, true), mc->width / (float) mc->height, 0.05f, renderDistance);
+		} else {
+			gluPerspective(_setupCameraFov = getFov(a, true), mc->width / (float) mc->height, 0.05f, renderDistance);
+		}
 	}
 
 	glMatrixMode(GL_MODELVIEW);
@@ -340,10 +350,12 @@ void GameRenderer::renderLevel(float a) {
 		setupFog(0);
 		glEnable2(GL_BLEND);
 		glDisable2(GL_CULL_FACE);
-		glDepthMask(GL_FALSE);
+		glDepthMask(GL_FALSE); // @TODO commenting this out fixes Ice transparency and clouds are no longer visilbe underwater like normal beta - shredder
 		glDisable2(GL_ALPHA_TEST);
 		mc->textures->loadAndBindTexture("terrain.png");
-		//if (mc->options.fancyGraphics) {
+		// @TODO - below is a commented out double render system that fixes ice transparency, but probs harm performance, add it as an option - shredder
+
+		//if (mc->options.fancyGraphics) { 
 		//    glColorMask(false, false, false, false);
 		//    int visibleWaterChunks = levelRenderer->render(cameraEntity, 1, a);
 		//    glColorMask(true, true, true, true);
@@ -677,7 +689,7 @@ void GameRenderer::pick(float a) {
 	float range = mc->gameMode->getPickRange();
 	bool isPicking = true;
 
-	bool freeform = mc->useTouchscreen(); //&& !mc->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA);
+	bool freeform = mc->useTouchscreen() && !mc->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA);
 
 	if (freeform) {
 		isPicking = updateFreeformPickDirection(a, pickDirection);

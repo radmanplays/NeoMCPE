@@ -26,6 +26,7 @@
 #include "../../client/player/LocalPlayer.h"
 
 #include "../../world/level/GrassColor.h"
+#include "Lighting.h"
 
 #ifdef GFX_SMALLER_CHUNKS
 /* static */ const int LevelRenderer::CHUNK_SIZE = 8;
@@ -1157,23 +1158,22 @@ void LevelRenderer::renderSky(float alpha) {
 		glDisable(GL_FOG);
 	glDisable(GL_ALPHA_TEST);
 
-	// thanks to the mcpe 0.1 decomp project a bit for this part, was not getting the gl states correctly, gles is painful - shredder
+	// re ported this again from beta 1.6.6, thanks to the mcpe 0.1 decomp team's code for some bit of help about the void layer - shredder 
 
 	// Sunrise
 	if (mc->options.getBooleanValue(OPTIONS_BEAUTIFUL_SKY)) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	Lighting::turnOff();
 	float* c = level->dimension->getSunriseColor(level->getTimeOfDay(alpha), alpha);
 	if (c != nullptr)
 	{
 		glDisable(GL_TEXTURE_2D);
-
+//		glShadeModel(GL_SMOOTH); //
 
 		glPushMatrix();
 		glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 		glRotatef(level->getTimeOfDay(alpha) > 0.5f ? 180 : 0, 0.0f, 0.0f, 1.0f);
-
 		t.begin(GL_TRIANGLE_FAN);
 		t.color(c[0], c[1], c[2], c[3]);
 		t.vertex(0.0f, 100.0f, 0.0f);
@@ -1190,11 +1190,12 @@ void LevelRenderer::renderSky(float alpha) {
 
 		t.draw();
 		glPopMatrix();
+//		glShadeModel(GL_FLAT); //
 	}
 
 	// gets the time of day and rotates the sun and moon png based on the time
 	glEnable(GL_TEXTURE_2D);
-	glBlendFunc(GL_ONE, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glPushMatrix();
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1326,8 +1327,8 @@ void LevelRenderer::renderAdvancedClouds(float alpha) {
 
 	float cloudTime = (float)ticks + alpha;
 
-	double xo = (px + cloudTime * 0.03f) / ss;
-	double zo = pz / ss + 0.33f;
+	float xo = (px + cloudTime * 0.03f) / ss;
+	float zo = pz / ss + 0.33f;
 
 	float yy = 108.0f - py + 0.33f;
 

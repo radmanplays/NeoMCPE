@@ -51,13 +51,13 @@ void Chicken::aiStep()
 	flap += flapping * 2;
 
 	//@todo
-	//if (!isBaby()) {
-	//	if (!level->isClientSide && --eggTime <= 0) {
-	//		level->playSound(this, "mob.chickenplop", 1.0f, (random.nextFloat() - random.nextFloat()) * 0.2f + 1.0f);
-	//		spawnAtLocation(Item::egg->id, 1);
-	//		eggTime = random.nextInt(SharedConstants::TicksPerSecond * 60 * 5) + SharedConstants::TicksPerSecond * 60 * 5;
-	//	}
-	//}
+	if (!isBaby()) {
+		if (!level->isClientSide && --eggTime <= 0) {
+			level->playSound(this, "mob.chickenplop", 1.0f, (random.nextFloat() - random.nextFloat()) * 0.2f + 1.0f);
+			spawnAtLocation(Item::egg->id, 1);
+			eggTime = random.nextInt(SharedConstants::TicksPerSecond * 60 * 5) + SharedConstants::TicksPerSecond * 60 * 5;
+		}
+	}
 }
 
 void Chicken::addAdditonalSaveData( CompoundTag* tag )
