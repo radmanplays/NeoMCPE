@@ -1,31 +1,22 @@
-# MinecraftPE
-> [!Warning]
-> Github repository **isnt main**. All issues and pull requests should be send in [Gitea Repository](https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1).
+# NeoMCPE
 
-> [!Important]
-> We have a discord server, where you can report bugs or send feedback https://discord.gg/c58YesBxve
+Source code for **Minecraft Pocket Edition 0.6.1 alpha** with various fixes and improvements and backported features.
 
-Source code for **Minecraft Pocket Edition 0.6.1 alpha** with various fixes and improvements.
+This project aims to preserve and try to backport newer Minecraft PE alpha versions or possibly release versions and improve this early version of Minecraft PE.
 
-This project aims to preserve and improve this early version of Minecraft PE.
+**inspired by [NeoLegacy](https://github.com/neoStudiosLCE/neoLegacy)**
 
 # TODO / Roadmap
-- [x] Add platform GLFW
-- [x] Compile for Linux
-- [x] Compile for android aarch64
-    - [x] Touch control improvements
-    - [ ] Screen fixes
-- [ ] Rewrite platform logic
-- [x] Fix sound
-- [x] Do a server connection GUI
-- [ ] Controller support
-- [x] Minecraft server hosting
-- [x] Screen fixess
-- [x] Fix fog
-- [x] Add sprinting
-- [x] Chat (semi working) and commands
-- [x] Implementing options
-- [x] Better F3
+![Roadmap](.github/todo.png)
+
+- Port Alpha 0.7.0 (55.56% complete)
+
+# Acknowledgments
+
+Huge thanks to the following projects:
+
+- [Kolyah35/minecraft-pe-0.6.1](https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1) - for the base for this project
+- [neoStudiosLCE/neoLegacy](https://github.com/neoStudiosLCE/neoLegacy) - for inspiring me to make this project
 
 # Build
 
