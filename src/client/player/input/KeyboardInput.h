@@ -19,6 +19,7 @@ public:
     static const int KEY_RIGHT = 3;
     static const int KEY_JUMP = 4;
     static const int KEY_SNEAK = 5;
+    static const int KEY_SPRINT = 7;
 	static const int KEY_CRAFT = 6;
 
     KeyboardInput(Options* options);

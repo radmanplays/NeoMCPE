@@ -108,9 +108,9 @@ void OptionsScreen::setupPositions() {
 	bHeader->width = width - btnClose->width;
 	bHeader->height = btnClose->height;
 
-	// Credits button (bottom-right)
+	// Credits button (bottom-left)
 	if (btnCredits != NULL) {
-		btnCredits->x = width - btnCredits->width;
+		btnCredits->x = 0;
 		btnCredits->y = height - btnCredits->height;
 	}
 
@@ -121,6 +121,7 @@ void OptionsScreen::setupPositions() {
 			(*it)->x = categoryButtons[0]->width;
 			(*it)->y = bHeader->height;
 			(*it)->width = width - categoryButtons[0]->width;
+			(*it)->height = height - bHeader->height;
 
 			(*it)->setupPositions();
 		}
@@ -209,6 +210,7 @@ void OptionsScreen::generateOptionScreens() {
 	// // Controls Pane
 	optionPanes[2]->addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
 		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft)
+		.addOptionItem(OPTIONS_DPAD_SIZE, minecraft)
 		.addOptionItem(OPTIONS_AUTOJUMP, minecraft)	
 		.addOptionItem(OPTIONS_BLOCK_OUTLINE, minecraft)
 		.addOptionItem(OPTIONS_IS_JOY_TOUCH_AREA, minecraft);
@@ -259,6 +261,12 @@ void OptionsScreen::mouseReleased(int x, int y, int buttonNum) {
 		currentOptionsGroup->mouseReleased(minecraft, x, y, buttonNum);
 
 	super::mouseReleased(x, y, buttonNum);
+}
+
+void OptionsScreen::mouseWheel(int dx, int dy, int xm, int ym) {
+	if (currentOptionsGroup != NULL && currentOptionsGroup->pointInside(xm, ym) && dy != 0) {
+		currentOptionsGroup->scrollByPixels((float)dy * 18.0f);
+	}
 }
 
 void OptionsScreen::keyPressed(int eventKey) {

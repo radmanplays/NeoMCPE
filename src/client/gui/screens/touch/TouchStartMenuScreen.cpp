@@ -173,6 +173,8 @@ void StartMenuScreen::render( int xm, int ym, float a )
 
 #if defined(RPI)
 	TextureId id = minecraft->textures->loadTexture("gui/pi_title.png");
+#elif defined(_WIN32)
+	TextureId id = minecraft->textures->loadTexture("gui/win_title.png");
 #else
 	TextureId id = minecraft->textures->loadTexture("gui/title.png");
 #endif

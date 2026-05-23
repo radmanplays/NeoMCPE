@@ -17,6 +17,7 @@ void KeyboardInput::setKey( int key, bool state )
 	if (key == options->getIntValue(OPTIONS_KEY_LEFT)) id = KEY_LEFT;
 	if (key == options->getIntValue(OPTIONS_KEY_RIGHT)) id = KEY_RIGHT;
 	if (key == options->getIntValue(OPTIONS_KEY_JUMP)) id = KEY_JUMP;
+    if (key == options->getIntValue(OPTIONS_KEY_SPRINT)) id = KEY_SPRINT;
 	if (key == options->getIntValue(OPTIONS_KEY_SNEAK)) id = KEY_SNEAK;
 	if (id >= 0) {
 		keys[id] = state;
@@ -45,6 +46,7 @@ void KeyboardInput::tick( Player* player )
 	if (keys[KEY_RIGHT]) xa--;
 	jumping = keys[KEY_JUMP];
 	sneaking = keys[KEY_SNEAK];
+	sprinting = keys[KEY_SPRINT];
 	if (sneaking) {
 		xa *= 0.3f;
 		ya *= 0.3f;

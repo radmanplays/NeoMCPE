@@ -52,7 +52,7 @@ OptionInt viewDistance("renderDistance", 2, 0, 4);
 OptionBool anaglyph3d("anaglyph3d", false);
 OptionBool limitFramerate("limitFramerate", false);
 OptionBool vsync("vsync", true);
-OptionBool fancyGraphics("fancyGraphics", true);
+OptionBool fancyGraphics("fancyGraphics", false);
 OptionBool viewBobbing("viewBobbing", true);
 OptionBool ambientOcclusion("ao", true);
 
@@ -60,13 +60,13 @@ OptionBool useNormalLighting("normalLighting", true);
 
 OptionBool beautifulSky("beautifulSky", true);
 
-OptionBool useVignette("useVignette", true);
+OptionBool useVignette("useVignette", false);
 
 OptionBool useTouchscreen("useTouchscreen", true);
 
 OptionBool serverVisible("servervisible", true);
 
-OptionBool foliageTint("foliagetint", true);
+OptionBool foliageTint("foliagetint", false);
 
 OptionInt fogType("fogType", 0, 0, 2);
 
@@ -91,6 +91,7 @@ OptionInt keyLeft("key.left", Keyboard::KEY_A);
 OptionInt keyBack("key.back", Keyboard::KEY_S);
 OptionInt keyRight("key.right", Keyboard::KEY_D);
 OptionInt keyJump("key.jump", Keyboard::KEY_SPACE);
+OptionInt keySprint("key.sprint", Keyboard::KEY_LEFT_CTRL);
 OptionInt keyInventory("key.inventory", Keyboard::KEY_E);
 OptionInt keySneak("key.sneak", Keyboard::KEY_LSHIFT);
 OptionInt keyDrop("key.drop", Keyboard::KEY_Q);
@@ -182,6 +183,7 @@ void Options::initTable() {
     m_options[OPTIONS_KEY_BACK] = &keyBack;
     m_options[OPTIONS_KEY_RIGHT] = &keyRight;
     m_options[OPTIONS_KEY_JUMP] = &keyJump;
+	m_options[OPTIONS_KEY_SPRINT] = &keySprint;
     m_options[OPTIONS_KEY_INVENTORY] = &keyInventory;
     m_options[OPTIONS_KEY_SNEAK] = &keySneak;
     m_options[OPTIONS_KEY_DROP] = &keyDrop;

@@ -717,10 +717,6 @@ void Minecraft::tickInput() {
 #endif
 			}
 
-			if (key == Keyboard::KEY_LEFT_CTRL) {
-				player->setSprinting(true);
-			}
-
 			if (key == Keyboard::KEY_E) {
 				screenChooser.setScreen(SCREEN_BLOCKSELECTION);
 			}

@@ -386,6 +386,8 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, RequestC
 	if (!chunk)
         return;
 
+	memset(chunk->updateMap, 0xFF, CHUNK_COLUMNS);
+
 	ChunkDataPacket cpacket(chunk->x, chunk->z, chunk);
 
 	RakNet::BitStream bitStream;

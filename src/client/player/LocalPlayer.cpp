@@ -513,6 +513,10 @@ void LocalPlayer::aiStep() {
 		if (!forwardHeld) {
 			sprinting = false;
 		}
+		
+		if (input->sprinting && forwardHeld && minecraft->options.getBooleanValue(OPTIONS_ALLOW_SPRINT)) {
+			sprinting = true;
+		}
 		if (sprintDoubleTapTimer > 0) sprintDoubleTapTimer--;
 		prevForwardHeld = forwardHeld;
 	}

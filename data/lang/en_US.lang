@@ -247,6 +247,7 @@ options.key.left=Left
 options.key.back=Back
 options.key.right=Right
 options.key.jump=Jump
+options.key.jump=Sprint
 options.key.inventory=Inventory
 options.key.drop=Drop
 options.key.chat=Chat

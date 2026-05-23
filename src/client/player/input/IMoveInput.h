@@ -16,6 +16,7 @@ protected:
 		wasJumping(false),
 		jumping(false),
 		sneaking(false),
+		sprinting(false),
 		wantUp(false),
 		wantDown(false),
 		isChangingFlightHeight(false)
@@ -38,6 +39,8 @@ public:
 	bool wasJumping;
 	bool jumping;
 	bool sneaking;
+
+	bool sprinting;
 
 	bool wantUp;
 	bool wantDown;
