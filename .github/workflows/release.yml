@@ -208,6 +208,16 @@ jobs:
           distribution: temurin
           java-version: 25
 
+      - name: Decode keystore and set env
+        run: |
+          if [[ -n "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" ]]; then
+            echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > ${{ github.workspace }}/release.keystore
+            echo "RELEASE_KEYSTORE=${{ github.workspace }}/release.keystore" >> $GITHUB_ENV
+            echo "RELEASE_STORE_PASS=${{ secrets.RELEASE_STORE_PASS }}" >> $GITHUB_ENV
+            echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
+            echo "RELEASE_KEY_PASS=${{ secrets.RELEASE_KEY_PASS }}" >> $GITHUB_ENV
+          fi
+
       - name: Run Android build script
         run: |
           chmod +x ./build.sh

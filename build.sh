@@ -38,6 +38,12 @@ ANDROID_PLATFORM_API="${ANDROID_PLATFORM_API:-}"
 # MATRIX_ABI takes precedence over the default but is overridden by --abi on the CLI.
 TARGET_ABI="${MATRIX_ABI:-arm64-v8a}"
 
+# release keystore overrides (leave empty to use debug keystore)
+RELEASE_KEYSTORE="${RELEASE_KEYSTORE:-}"
+RELEASE_STORE_PASS="${RELEASE_STORE_PASS:-}"
+RELEASE_KEY_ALIAS="${RELEASE_KEY_ALIAS:-androiddebugkey}"
+RELEASE_KEY_PASS="${RELEASE_KEY_PASS:-}"
+
 function fail() {
   echo "ERROR: $1" >&2
   exit 1
@@ -84,7 +90,7 @@ function find_android_platform_dir() {
 ANDROID_BUILD_TOOLS_DIR="$(find_build_tools_dir)"
 ANDROID_PLATFORM_DIR="$(find_android_platform_dir)"
 
-KEYSTORE_FILE="$BUILD_DIR/debug.keystore"
+KEYSTORE_FILE="$BUILD_DIR/debug.keystore"  # will be overridden if release keystore provided
 PACKAGE_NAME="com.mojang.minecraftpe"
 
 # android tool binaries
@@ -315,8 +321,21 @@ ensure_dir "$BUILD_DIR/lib/armeabi-v7a"
 ensure_dir "$BUILD_DIR/gen"
 ensure_dir "$BUILD_DIR/stubs"
 
-# create a debug keystore if it doesn't exist
-if [[ ! -f "$KEYSTORE_FILE" ]]; then
+# decide which keystore to use (release overrides debug)
+if [[ -n "$RELEASE_KEYSTORE" && -n "$RELEASE_STORE_PASS" && -n "$RELEASE_KEY_PASS" ]]; then
+    KEYSTORE_FILE="$RELEASE_KEYSTORE"
+    STORE_PASS="$RELEASE_STORE_PASS"
+    KEY_ALIAS="$RELEASE_KEY_ALIAS"
+    KEY_PASS="$RELEASE_KEY_PASS"
+else
+    KEYSTORE_FILE="$BUILD_DIR/debug.keystore"
+    STORE_PASS="android"
+    KEY_ALIAS="androiddebugkey"
+    KEY_PASS="android"
+fi
+
+# create a debug keystore if it doesn't exist (only when using debug mode)
+if [[ ! -f "$KEYSTORE_FILE" && -z "$RELEASE_KEYSTORE" ]]; then
   echo "  generating debug.keystore..."
   "$KEYTOOL" -genkeypair \
     -keystore "$KEYSTORE_FILE" -storepass android -keypass android \
@@ -439,7 +458,7 @@ popd >/dev/null
 rm -rf "$TMP_ASSETS_DIR"
 
 "$ZIPALIGN" -p 4 "$APK_UNSIGNED" "$APK_ALIGNED"
-"$APKSIGNER" sign --ks "$KEYSTORE_FILE" --ks-pass pass:android --key-pass pass:android --out "$APK_SIGNED" "$APK_ALIGNED"
+"$APKSIGNER" sign --ks "$KEYSTORE_FILE" --ks-pass pass:"$STORE_PASS" --key-pass pass:"$KEY_PASS" --ks-key-alias "$KEY_ALIAS" --out "$APK_SIGNED" "$APK_ALIGNED"
 
 echo "  signed -> $APK_SIGNED"
 
