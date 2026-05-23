@@ -185,6 +185,7 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance(Tile::snow));
 		addItem(new ItemInstance(Tile::glass));
         addItem(new ItemInstance(Tile::lightGem));
+		addItem(new ItemInstance(Item::cake));
 
 		addItem(new ItemInstance(Tile::netherReactor));
 		
@@ -246,6 +247,10 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance(Item::dye_powder, 1, DyePowderItem::WHITE));
 		addItem(new ItemInstance(Item::hoe_iron));
 		addItem(new ItemInstance(Item::flintAndSteel));
+
+		addItem(new ItemInstance(Item::bucket_empty));
+		addItem(new ItemInstance(Item::bucket_water));
+		addItem(new ItemInstance(Item::bucket_lava));
 #ifdef RPI
 		Sel[0] = addItem(new ItemInstance(Item::sword_iron));
 #else

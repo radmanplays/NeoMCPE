@@ -125,8 +125,9 @@ void TouchscreenInput_TestFps::onConfigChanged(const Config& c) {
 	*/
 
 	// Code for "D-pad with jump in center"
-	float Bw = w * 0.11f;//0.08f;
-	float Bh = Bw;//0.15f;
+	float dpadScale = _options->getProgressValue(OPTIONS_DPAD_SIZE);
+	float Bw = w * 0.11f * dpadScale;
+	float Bh = Bw;
     
     // If too large (like playing on Tablet)
     PixelCalc& pc = _minecraft->pixelCalc;

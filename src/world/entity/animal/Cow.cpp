@@ -29,11 +29,12 @@ void Cow::readAdditionalSaveData( CompoundTag* tag ) {
 }
 
 bool Cow::interact( Player* player ) {
-	//ItemInstance item = player->inventory.getSelected();
-	//if (item != NULL && item.id == Item::bucket_empty->id) {
-	//    player->inventory.setItem(player->inventory.selected, /*new*/ ItemInstance(Item::milk));
-	//    return true;
-	//}
+	ItemInstance* item = player->inventory->getSelected();
+	if (item != NULL && item->id == Item::bucket_empty->id) {
+		ItemInstance milk(Item::milk);
+		player->inventory->setItem(player->inventory->selected, &milk);
+		return true;
+	}
 	return super::interact(player);
 }
 

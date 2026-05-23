@@ -439,10 +439,11 @@ void Gui::onConfigChanged( const Config& c ) {
 	// Create outer feedback circle
 	//
 #ifdef ANDROID
-	const float mm = 50; //20
+	const float baseMm = 50; // base millimeters for the feedback circle
 #else
-	const float mm = 50; //20
+	const float baseMm = 50;
 #endif
+	const float mm = baseMm * c.minecraft->options.getProgressValue(OPTIONS_DPAD_SIZE);
 	const float maxRadius = minecraft->pixelCalcUi.millimetersToPixels(mm);
 	const float radius = Mth::Min(80.0f/2, maxRadius);
 	//LOGI("radius, maxradius: %f, %f\n", radius, maxRadius);

@@ -31,6 +31,7 @@
 #include "LiquidTileDynamic.h"
 #include "LiquidTileStatic.h"
 #include "MelonTile.h"
+#include "CakeTile.h"
 #include "MultiTextureTile.h"
 #include "Mushroom.h"
 #include "ObsidianTile.h"

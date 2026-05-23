@@ -150,7 +150,13 @@ void FurnaceTileEntity::tick()
 			if (litTime > 0) {
 				changed = true;
 				if (!items[SLOT_FUEL].isNull()) {
-					if (--items[SLOT_FUEL].count == 0) items[SLOT_FUEL].setNull();
+					if (--items[SLOT_FUEL].count == 0) {
+						if (items[SLOT_FUEL].getItem()->id == Item::bucket_lava->id) {
+							items[SLOT_FUEL] = ItemInstance(Item::bucket_empty);
+						} else {
+							items[SLOT_FUEL].setNull();
+						}
+					}
 				}
 			}
 		}
@@ -233,7 +239,7 @@ int FurnaceTileEntity::getBurnDuration(const ItemInstance& itemInstance) {
 
 	if (id == Item::stick->id)  return BURN_INTERVAL / 2;
 	if (id == Item::coal->id)   return BURN_INTERVAL * 8;
-		//case Item::bucket_lava->id: return BURN_INTERVAL * 100;
+	if (id == Item::bucket_lava->id) return BURN_INTERVAL * 100;
 		//case Tile::sapling->id:     return BURN_INTERVAL / 2;
 		//case Item::blazeRod->id:    return BURN_INTERVAL * 12;
 

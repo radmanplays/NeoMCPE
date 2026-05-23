@@ -1668,6 +1668,15 @@ void Minecraft::optionUpdated(OptionId option, bool value ) {
 }
 
 void Minecraft::optionUpdated(OptionId option, float value ) {
+	if (option == OPTIONS_DPAD_SIZE) {
+		Config config = createConfig(this);
+#ifndef STANDALONE_SERVER
+		gui.onConfigChanged(config);
+		if (inputHolder) inputHolder->onConfigChanged(config);
+#endif
+		return;
+	}
+
 	// #ifndef STANDALONE_SERVER
 	// 	if(option == OPTIONS_PIXELS_PER_MILLIMETER) {
 	// 		pixelCalcUi.setPixelsPerMillimeter(value * Gui::InvGuiScale);

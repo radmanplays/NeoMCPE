@@ -48,7 +48,7 @@ private:
 	void bobHurt(float a);
 	void bobView(float a);
 
-	bool updateFreeformPickDirection(float a, Vec3& outDir);
+	bool updateFreeformPickDirection(float a, Vec3& outDir, bool allowLiquid = false);
 	void prepareAndRenderClouds(LevelRenderer* levelRenderer, float a);
 
 public:

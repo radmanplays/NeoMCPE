@@ -210,6 +210,7 @@ void OptionsScreen::generateOptionScreens() {
 	// // Controls Pane
 	optionPanes[2]->addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
 		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft)
+		.addOptionItem(OPTIONS_DPAD_SIZE, minecraft)
 		.addOptionItem(OPTIONS_AUTOJUMP, minecraft)	
 		.addOptionItem(OPTIONS_BLOCK_OUTLINE, minecraft)
 		.addOptionItem(OPTIONS_IS_JOY_TOUCH_AREA, minecraft);

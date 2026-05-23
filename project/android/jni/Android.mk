@@ -33,6 +33,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/gui/components/GuiElementContainer.cpp \
 ../../../src/client/gui/components/ImageButton.cpp \
 ../../../src/client/gui/components/ItemPane.cpp \
+../../../src/world/item/BucketItem.cpp \
 ../../../src/client/gui/components/InventoryPane.cpp \
 ../../../src/client/gui/components/LargeImageButton.cpp \
 ../../../src/client/gui/components/NinePatch.cpp \
@@ -235,6 +236,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/world/level/storage/LevelStorageSource.cpp \
 ../../../src/world/level/storage/RegionFile.cpp \
 ../../../src/world/level/tile/BedTile.cpp \
+../../../src/world/level/tile/CakeTile.cpp \
 ../../../src/world/level/tile/ChestTile.cpp \
 ../../../src/world/level/tile/CropTile.cpp \
 ../../../src/world/level/tile/DoorTile.cpp \

@@ -1,4 +1,5 @@
 #include "ItemInclude.h"
+#include "BucketItem.h"
 #include "ItemCategory.h"
 #include "../level/tile/Tile.h"
 #include "ItemInstance.h"
@@ -101,9 +102,9 @@ Item* Item::painting = NULL;
 Item* Item::sign = NULL;
 Item* Item::door_wood = NULL;
 
-//Item* Item::bucket_empty = NULL;
-//Item* Item::bucket_water = NULL;
-//Item* Item::bucket_lava = NULL;
+Item* Item::bucket_empty = NULL;
+Item* Item::bucket_water = NULL;
+Item* Item::bucket_lava = NULL;
 
 //Item* Item::minecart = NULL;
 //Item* Item::saddle = NULL;
@@ -114,7 +115,7 @@ Item* Item::snowBall = NULL;
 //Item* Item::boat = NULL;
 
 Item* Item::leather = NULL;
-//Item* Item::milk = NULL;
+Item* Item::milk = NULL;
 Item* Item::brick = NULL;
 Item* Item::clay = NULL;
 Item* Item::reeds = NULL;
@@ -137,7 +138,7 @@ Item* Item::seeds_melon = NULL;
 Item* Item::dye_powder = NULL;
 Item* Item::bone = NULL;
 Item* Item::sugar = NULL;
-//Item* Item::cake = NULL;
+Item* Item::cake = NULL;
 
 Item* Item::bed = NULL;
 
@@ -240,9 +241,9 @@ void Item::initItems() {
 	//Item::apple_gold = (new FoodItem(66, 42, false))->setIcon(11, 0)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("appleGold");
 	Item::sign = (new SignItem(67))->setIcon(10, 2)->setCategory(ItemCategory::Decorations)->setDescriptionId("sign");
 	Item::door_wood = (new DoorItem(68, Material::wood))->setIcon(11, 2)->setCategory(ItemCategory::Structures)->setDescriptionId("doorWood");
-	//Item::bucket_empty = (new BucketItem(69, 0))->setIcon(10, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucket");
-	//Item::bucket_water = (new BucketItem(70, Tile::water.id))->setIcon(11, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucketWater")->setCraftingRemainingItem(Item.bucket_empty);
-	//Item::bucket_lava = (new BucketItem(71, Tile::lava.id))->setIcon(12, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucketLava")->setCraftingRemainingItem(Item.bucket_empty);
+	Item::bucket_empty = (new BucketItem(69, 0))->setIcon(10, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucket");
+	Item::bucket_water = (new BucketItem(70, Tile::water->id))->setIcon(11, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucketWater")->setCraftingRemainingItem(Item::bucket_empty)->setMaxStackSize(1);
+	Item::bucket_lava = (new BucketItem(71, Tile::lava->id))->setIcon(12, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucketLava")->setCraftingRemainingItem(Item::bucket_empty)->setMaxStackSize(1);
 	//Item::minecart = (new MinecartItem(72, Minecart.RIDEABLE))->setIcon(7, 8)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("minecart");
 	//Item::saddle = (new SaddleItem(73))->setIcon(8, 6)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("saddle");
 	Item::door_iron = (new DoorItem(74, Material::metal))->setIcon(12, 2)->setCategory(ItemCategory::Structures)->setDescriptionId("doorIron");
@@ -250,7 +251,7 @@ void Item::initItems() {
 	Item::snowBall = (new SnowballItem(76))->setIcon(14, 0)->setCategory(ItemCategory::Decorations)->setDescriptionId("snowball");
 	//Item::boat = (new BoatItem(77))->setIcon(8, 8)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("boat");
 	Item::leather = (new Item(78))->setIcon(7, 6)->setCategory(ItemCategory::Tools)->setDescriptionId("leather");
-	//Item::milk = (new BucketItem(79, -1))->setIcon(13, 4)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("milk")->setCraftingRemainingItem(Item.bucket_empty);
+	Item::milk = (new BucketItem(79, -1))->setIcon(13, 4)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("milk")->setCraftingRemainingItem(Item::bucket_empty)->setMaxStackSize(1);
 	Item::brick = (new Item(80))->setIcon(6, 1)->setCategory(ItemCategory::Structures)->setDescriptionId("brick");
 	Item::clay = (new Item(81))->setIcon(9, 3)->setCategory(ItemCategory::Structures)->setDescriptionId("clay");
 	Item::reeds = (new TilePlanterItem(82, Tile::reeds))->setIcon(11, 1)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("reeds");
@@ -269,7 +270,7 @@ void Item::initItems() {
 	Item::dye_powder = (new DyePowderItem(95))->setIcon(14, 4)->setCategory(ItemCategory::Decorations)->setDescriptionId("dyePowder");
 	Item::bone = (new Item(96))->setIcon(12, 1)->setCategory(ItemCategory::Tools)->setDescriptionId("bone")->handEquipped();
 	Item::sugar = (new Item(97))->setIcon(13, 0)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("sugar")->handEquipped();
-	//Item::cake = (new TilePlanterItem(98, Tile::cake))->setMaxStackSize(1)->setIcon(13, 1)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("cake");
+	Item::cake = (new TilePlanterItem(98, Tile::cake))->setMaxStackSize(1)->setIcon(13, 1)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("cake");
 	Item::bed = (new BedItem(99))->setMaxStackSize(1)->setIcon(13, 2)->setCategory(ItemCategory::Structures)->setDescriptionId("bed");
 	//Item::diode = (new TilePlanterItem(100, Tile::diode_off))->setIcon(6, 5)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("diode");
 	Item::shears = (ShearsItem*)(new ShearsItem(103))->setIcon(13, 5)->setCategory(ItemCategory::Tools)->setDescriptionId("shears");

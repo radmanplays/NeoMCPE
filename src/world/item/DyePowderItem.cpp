@@ -66,12 +66,34 @@ bool DyePowderItem::useOn( ItemInstance* itemInstance, Player* player, Level* le
 			  }
 			  itemInstance->count--;
 			  return true;
-		  } else if (tile == Tile::crops->id) {
+		} else if (tile == Tile::crops->id) {
 			  if (!level->isClientSide) {
 				  ((CropTile*) Tile::crops)->growCropsToMax(level, x, y, z);
 			  }
 			  itemInstance->count--;
-		  } else if (tile == Tile::grass->id) {
+			  return true;
+		} else if (tile == Tile::reeds->id) {
+			// bonemeal
+			int topY = y;
+			while (level->getTile(x, topY + 1, z) == Tile::reeds->id) topY++;
+
+			if (level->isEmptyTile(x, topY + 1, z)) {
+				int height = 1;
+				while (level->getTile(x, topY - height, z) == Tile::reeds->id) height++;
+
+				if (height < 3) {
+					if (!level->isClientSide) {
+						while (height < 3 && level->isEmptyTile(x, topY + 1, z)) {
+							level->setTile(x, topY + 1, z, Tile::reeds->id);
+							topY++;
+							height++;
+						}
+					}
+					itemInstance->count--;
+					return true;
+				}
+			}
+		} else if (tile == Tile::grass->id) {
 			  if (!level->isClientSide) {
 				  
 				  for (int j = 0; j < 32; j++) {

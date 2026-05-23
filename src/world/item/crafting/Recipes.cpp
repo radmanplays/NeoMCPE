@@ -177,14 +177,14 @@ Recipes::Recipes()
 
 		definition('#', Tile::wood, 'X', Item::stick));
 
-	//addShapedRecipe(ItemInstance(Item::cake, 1), //
-	//	"AAA", //
-	//	"BEB", //
-	//	"CCC", //
+	addShapedRecipe(ItemInstance(Item::cake, 1), //
+		"AAA", //
+		"BEB", //
+		"CCC", //
 
-	//	definition(	'A', Item::milk,//
-	//				'B', Item::sugar,//
-	//				'C', Item::wheat, 'E', Item::egg));
+		definition(	'A', Item::milk,//
+					'B', Item::sugar,//
+					'C', Item::wheat, 'E', Item::egg));
 
 	addShapedRecipe(ItemInstance(Item::sugar, 1), //
 		"#", //
@@ -297,11 +297,11 @@ Recipes::Recipes()
 
 	//	definition('#', Tile::wood));
 
-	//addShapedRecipe(ItemInstance(Item::bucket_empty, 1), //
-	//	"# #", //
-	//	" # ", //
+	addShapedRecipe(ItemInstance(Item::bucket_empty, 1), //
+		"# #", //
+		" # ", //
 
-	//	definition('#', Item::ironIngot));
+		definition('#', Item::ironIngot));
 
 	addShapedRecipe(ItemInstance(Item::flintAndSteel, 1), //
 		"A ", //

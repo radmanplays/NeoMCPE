@@ -28,6 +28,7 @@
 #include "Textures.h"
 #include "../gui/components/ImageButton.h"
 #include "Tesselator.h"
+#include "../../world/item/Item.h"
 
 static int _shTicks = -1;
 
@@ -635,7 +636,7 @@ void GameRenderer::updateAllChunks() {
 	mc->levelRenderer->updateDirtyChunks(mc->cameraTargetPlayer, true);
 }
 
-bool GameRenderer::updateFreeformPickDirection(float a, Vec3& outDir) {
+bool GameRenderer::updateFreeformPickDirection(float a, Vec3& outDir, bool allowLiquid) {
 
 	if (!mc->inputHolder->allowPicking()) {
 		_shTicks = 1;
@@ -670,7 +671,7 @@ bool GameRenderer::updateFreeformPickDirection(float a, Vec3& outDir) {
 	//sw.stop();
 	//sw.printEvery(30, "unproject ");
 
-	const HitResult& hit = mc->hitResult = mc->level->clip(p0, p1, false);
+	const HitResult& hit = mc->hitResult = mc->level->clip(p0, p1, allowLiquid);
 
 	// If in 3rd person view - verify that the hit target is within range
 	if (!firstPerson && hit.isHit()) {
@@ -692,10 +693,27 @@ void GameRenderer::pick(float a) {
 
 	bool freeform = mc->useTouchscreen() && !mc->options.getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA);
 
+	bool allowLiquidPick = false;
+	if (mc->cameraTargetPlayer->isPlayer()) {
+		Player* pl = (Player*) mc->cameraTargetPlayer;
+		if (pl->inventory) {
+			ItemInstance* sel = pl->inventory->getSelected();
+			if (sel && Item::bucket_empty && sel->id == Item::bucket_empty->id) {
+				allowLiquidPick = true;
+			}
+		}
+	}
+
 	if (freeform) {
-		isPicking = updateFreeformPickDirection(a, pickDirection);
+		isPicking = updateFreeformPickDirection(a, pickDirection, allowLiquidPick);
 	} else {
-		mc->hitResult = mc->cameraTargetPlayer->pick(range, a);
+		if (allowLiquidPick) {
+			Vec3 from = mc->cameraTargetPlayer->getPos(a);
+			Vec3 to = from + mc->cameraTargetPlayer->getViewVector(a) * range;
+			mc->hitResult = mc->level->clip(from, to, true);
+		} else {
+			mc->hitResult = mc->cameraTargetPlayer->pick(range, a);
+		}
 		pickDirection = mc->cameraTargetPlayer->getViewVector(a);
 	}
 

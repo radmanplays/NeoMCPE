@@ -64,6 +64,8 @@ OptionBool useVignette("useVignette", false);
 
 OptionBool useTouchscreen("useTouchscreen", true);
 
+OptionFloat dpadSize("dpadSize", 1.5f, 0.5f, 1.5f);
+
 OptionBool serverVisible("servervisible", true);
 
 OptionBool foliageTint("foliagetint", false);
@@ -163,6 +165,8 @@ void Options::initTable() {
 	m_options[OPTIONS_AMBIENT_OCCLUSION] = &ambientOcclusion;
 
     m_options[OPTIONS_USE_TOUCHSCREEN] = &useTouchscreen;
+
+	m_options[OPTIONS_DPAD_SIZE] = &dpadSize;
 
 	m_options[OPTIONS_BLOCK_OUTLINE] = &blockOutline;
 

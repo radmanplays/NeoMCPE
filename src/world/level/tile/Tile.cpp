@@ -128,6 +128,7 @@ Tile* Tile::cactus      = NULL;
 
 Tile* Tile::melon       = NULL;
 Tile* Tile::melonStem   = NULL;
+Tile* Tile::cake        = NULL;
 
 Tile* Tile::bed         = NULL;
 Tile* Tile::tallgrass   = NULL;
@@ -236,6 +237,7 @@ void Tile::initTiles() {
 	//hellSand = (new HellSandTile(88, 8 + 6 * 16, Material::sand))->init()->setDestroyTime(0.5f)->setSoundType(SOUND_SAND)->setDescriptionId("hellsand");
 
 	lightGem	= (new LightGemTile(89, 9 + 16 * 6, Material::glass))->init()->setDestroyTime(0.3f)->setCategory(ItemCategory::Structures)->setSoundType(SOUND_GLASS)->setLightEmission(1.0f)->setDescriptionId("lightgem");
+	cake    	= (new CakeTile(92))->init()->setDestroyTime(0.5f)->setSoundType(SOUND_CLOTH)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("cake");
 	invisible_bedrock = (new InvisibleTile(95, 0, Material::stone))->init()->setDestroyTime(-1)->setExplodeable(6000000);//->setSoundType(SOUND_SILENT);
 	trapdoor = (new TrapDoorTile(96, Material::wood))->init()->setDestroyTime(3.0f)->setSoundType(SOUND_WOOD)->setCategory(ItemCategory::Structures)->setDescriptionId("trapdoor");//->sendTileData();
 
