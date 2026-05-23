@@ -19,7 +19,7 @@ void Skeleton::aiStep() {
 		float br = getBrightness(1);
 		if (br > 0.5f) {
 			if (level->canSeeSky(Mth::floor(x), Mth::floor(y), Mth::floor(z)) && random.nextFloat() * 3.5f < (br - 0.4f)) {
-				hurt(NULL, 1);
+			//	hurt(NULL, 1); // no use anymore since i restored setOnFire - shredder
 
 				for (int i = 0; i < 5; ++i) {
 					float xa = (2.0f * random.nextFloat() - 1.0f) * (2.0f * random.nextFloat() - 1.0f) * 0.02f;
@@ -27,7 +27,7 @@ void Skeleton::aiStep() {
 					float za = (2.0f * random.nextFloat() - 1.0f) * (2.0f * random.nextFloat() - 1.0f) * 0.02f;
 					level->addParticle(PARTICLETYPE(explode), x + random.nextFloat() * bbWidth * 2 - bbWidth, y + random.nextFloat() * bbHeight, z + random.nextFloat() * bbWidth * 2 - bbWidth, xa, ya, za);
 				}
-				//setOnFire(8); //@todo
+				setOnFire(8); //@todo
 			}
 		}
 	}

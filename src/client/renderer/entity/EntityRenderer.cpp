@@ -133,6 +133,8 @@ void EntityRenderer::postRender(Entity* entity, float x, float y, float z, float
 	}
 		if (entity->isOnFire()) renderFlame(entity, x, y, z, a);
 }
+// duplicate renderflame below is the pre b1.6.6 way flame rendered on player and mobs, probs gonna make it an option. - shredder
+/*
 void EntityRenderer::renderFlame(Entity* e, float x, float y, float z, float a) {
 	glDisable(GL_LIGHTING);
 	int tex = ((Tile*)Tile::fire)->tex;
@@ -177,6 +179,75 @@ void EntityRenderer::renderFlame(Entity* e, float x, float y, float z, float a) 
 	t.draw();
 	glPopMatrix2();
 	glEnable2(GL_LIGHTING);
+}
+*/
+// new renderflame ported from b1.6.6, fixes player height offset and also uses the newer style - shredder
+void EntityRenderer::renderFlame(Entity* e, float x, float y, float z, float a) {
+    glDisable(GL_LIGHTING);
+    int tex = ((Tile*)Tile::fire)->tex;
+
+    int xt = (tex & 0xf) << 4;
+    int yt = tex & 0xf0;
+
+    float u0 = (xt) / 256.0f;
+    float u1 = (xt + 15.99f) / 256.0f;
+    float v0 = (yt) / 256.0f;
+    float v1 = (yt + 15.99f) / 256.0f;
+
+    glPushMatrix2();
+    glTranslatef2((float) x, (float) y, (float) z);
+
+    float s = e->bbWidth * 1.4f;
+    glScalef2(s, s, s);
+    bindTexture("terrain.png");
+    Tesselator& t = Tesselator::instance;
+
+    float r = 0.5f; 
+    float xo = 0.0f;
+
+    float h = e->bbHeight / s;
+	float yo = (float)(e->y - e->bb.y0) / s; 
+
+    glRotatef2(-entityRenderDispatcher->playerRotY, 0, 1, 0);
+    glTranslatef2(0, 0, -0.3f + ((int) h) * 0.02f);
+    glColor4f2(1, 1, 1, 1);
+    
+    float zo = 0.0f; 
+    int cycle_counter = 0;
+
+    t.begin();
+    while (h > 0.0f) {
+        float current_u0 = u0;
+        float current_u1 = u1;
+        float current_v0 = v0;
+        float current_v1 = v1;
+
+        if (cycle_counter % 2 != 0) {
+            current_v0 = (yt + 16) / 256.0f;
+            current_v1 = (yt + 16 + 15.99f) / 256.0f;
+        }
+
+        if ((cycle_counter / 2) % 2 == 0) {
+            float tmp = current_u1;
+            current_u1 = current_u0;
+            current_u0 = tmp;
+        }
+
+        t.vertexUV(r - xo, 0.0f - yo, zo, current_u1, current_v1);
+        t.vertexUV(-r - xo, 0.0f - yo, zo, current_u0, current_v1);
+        t.vertexUV(-r - xo, 1.4f - yo, zo, current_u0, current_v0);
+        t.vertexUV(r - xo, 1.4f - yo, zo, current_u1, current_v0);
+        
+        h -= 0.45f;
+        yo -= 0.45f;
+        r *= 0.9f;   
+        zo += 0.03f;
+        cycle_counter++;
+    }
+    t.draw();
+    
+    glPopMatrix2();
+    glEnable2(GL_LIGHTING);
 }
 
 void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float pow, float a) { //
@@ -229,6 +300,8 @@ void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float po
 			glColor4f2(1, 1, 1, 1);
 			glDisable2(GL_BLEND);
 			glDepthMask(true);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
 Level* EntityRenderer::getLevel() {

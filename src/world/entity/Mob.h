@@ -52,6 +52,7 @@ public:
     virtual bool isPickable();
     virtual bool isPushable();
 
+	virtual bool isOnFire();
 	virtual bool isShootable();
 
 	MoveControl* getMoveControl();

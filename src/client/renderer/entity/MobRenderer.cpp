@@ -218,6 +218,8 @@ void MobRenderer::renderNameTag(Mob* mob, const std::string& name, float x, floa
 
 	glScalef2(-s, -s, s);
 
+	glDisable(GL_LIGHTING);
+
 	glDepthMask(false);
 	glDisable2(GL_DEPTH_TEST);
 	glEnable2(GL_BLEND);
@@ -241,6 +243,7 @@ void MobRenderer::renderNameTag(Mob* mob, const std::string& name, float x, floa
 
 	glDepthMask(true);
 	font->draw(name, (float) fnameWidth, 0, 0xffffffff);
+	glEnable(GL_LIGHTING);
 	glDisable2(GL_BLEND);
 	glColor4f2(1, 1, 1, 1);
 	glPopMatrix2();

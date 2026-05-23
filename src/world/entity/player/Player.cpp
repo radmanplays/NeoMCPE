@@ -216,6 +216,7 @@ bool Player::checkBed() {
 	return (level->getTile(bedPosition.x, bedPosition.y, bedPosition.z) == Tile::bed->id);
 }
 
+
 void Player::tick() {
 	bool shouldSleep = entityData.getFlag<SharedFlagsInformation::SharedFlagsInformationType>(DATA_PLAYER_FLAGS_ID, PLAYER_SLEEP_FLAG);
 	if(shouldSleep != isSleeping()) {
@@ -246,11 +247,24 @@ void Player::tick() {
 	}
     super::tick();
 
+
 	if (!level->isClientSide) {
+		// @TODO - Awful Hack Start, MCPE 0.6 doesn't deal damage with fire to players for some reason on mp, so we force it here to do it, need a better way honestly - shredder
+		if (level->containsFireTile(this->bb)) {
+            hurt(NULL, 1); 
+            
+            if (!isInWater()) {
+                if (onFire <= 0) {
+                    onFire = 20 * 15; 
+                }
+            }
+        }
+		// Awful hack ends here
+
 		foodData.tick(this);
-	//	if (containerMenu != NULL && !containerMenu->stillValid(this)) {
-	//		closeContainer();
-	//	}
+		//	if (containerMenu != NULL && !containerMenu->stillValid(this)) {
+		//		closeContainer();
+		//	}
 	}
 }
 

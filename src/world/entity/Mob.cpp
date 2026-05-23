@@ -169,13 +169,27 @@ void Mob::playAmbientSound()
 		level->playSound(this, ambient, getSoundVolume(), getVoicePitch());
 	}
 }
-
+bool Mob::isOnFire() {
+    return onFire > 0 || getSharedFlag(SharedFlagsInformation::FLAG_ONFIRE);
+}
 void Mob::baseTick()
 {
 	oAttackAnim = attackAnim;
 	super::baseTick();
 
 	TIMER_PUSH("mobBaseTick");
+
+// @TODO - check if this section i added to make fire render in mp doesnt break crap - shredder
+	if (!level->isClientSide) {
+        // Server side: Tell the client if this mob/player is still burning
+        setSharedFlag(SharedFlagsInformation::FLAG_ONFIRE, onFire > 0);
+    } else {
+        // Client side: If the server flag says we aren't on fire, extinguish local visual timer
+        if (!getSharedFlag(SharedFlagsInformation::FLAG_ONFIRE)) {
+            onFire = 0;
+        }
+    }
+// todo ends here
 
 	if (((ambientSoundTime++ & 15) == 0) && random.nextInt(2000) < ambientSoundTime) {
 	    ambientSoundTime = -getAmbientSoundInterval();

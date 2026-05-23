@@ -89,6 +89,8 @@ public:
 	virtual bool isAlive();
 	virtual bool isOnFire();
 
+	virtual void setOnFire(int numberOfSeconds);
+
 	virtual bool isPlayer();
 	virtual bool isCreativeModeAllowed();
 

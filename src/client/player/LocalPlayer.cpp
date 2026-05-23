@@ -355,7 +355,11 @@ LocalPlayer::LocalPlayer(Minecraft* minecraft, Level* level, const std::string& 
 	armorTypeHash(0),
 	sprinting(false),
 	sprintDoubleTapTimer(0),
-	prevForwardHeld(false)
+	prevForwardHeld(false),
+	xBob(0.0f),
+	yBob(0.0f),
+	xBobO(0.0f),
+	yBobO(0.0f)
 {
 	this->dimension = dimension;
 	_init();
@@ -550,6 +554,10 @@ void LocalPlayer::aiStep() {
 
 	//if (onGround && abilities.flying)
 	//	abilities.flying = false;
+	yBobO = yBob;
+	xBobO = xBob;
+	xBob += (xRot - xBob) * 0.5;
+	yBob += (yRot - yBob) * 0.5;
 
 	if (interpolateOnly())
 		updateAi();

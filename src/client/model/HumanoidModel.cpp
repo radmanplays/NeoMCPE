@@ -40,10 +40,9 @@ HumanoidModel::HumanoidModel( float g /*= 0*/, float yOffset /*= 0*/, int texW /
 	head.addBox(-4, -8, -4, 8, 8, 8, g); // Head
 	head.setPos(0, 0 + yOffset, 0);
 
-	if (modernSkin) {
-		hair.addBox(-4, -8, -4, 8, 8, 8, g + 0.5f); // Outer head layer (hat)
-		hair.setPos(0, 0 + yOffset, 0);
-	}
+	hair.addBox(-4, -8, -4, 8, 8, 8, g + 0.5f); // Outer head layer (hat)
+	hair.setPos(0, 0 + yOffset, 0);
+
 
 	body.addBox(-4, 0, -2, 8, 12, 4, g); // Body
 	body.setPos(0, 0 + yOffset, 0);
@@ -99,17 +98,17 @@ void HumanoidModel::render(Entity* e, float time, float r, float bob, float yRot
 	setupAnim(time, r, bob, yRot, xRot, scale);
 	
 	// Sync overlay with head rotation/position
-	if (texWidth == 64 && texHeight == 64) {
-		hair.xRot = head.xRot;
-		hair.yRot = head.yRot;
-		hair.zRot = head.zRot;
-		hair.y = head.y;
-	}
+	
+	hair.xRot = head.xRot;
+	hair.yRot = head.yRot;
+	hair.zRot = head.zRot;
+	hair.y = head.y;
+	
 
 	head.render(scale);
-	if (texWidth == 64 && texHeight == 64) {
-		hair.render(scale);
-	}
+	
+	hair.render(scale);
+	
 	body.render(scale);
 	arm0.render(scale);
 	arm1.render(scale);
@@ -123,12 +122,12 @@ void HumanoidModel::render( HumanoidModel* model, float scale )
 	head.yRot = model->head.yRot;
 	head.y = model->head.y;
 	head.xRot = model->head.xRot;
-	if (texWidth == 64 && texHeight == 64) {
-		hair.yRot = head.yRot;
-		hair.xRot = head.xRot;
-		hair.zRot = head.zRot;
-		hair.y = head.y;
-	}
+	
+	hair.yRot = head.yRot;
+	hair.xRot = head.xRot;
+	hair.zRot = head.zRot;
+	hair.y = head.y;
+	
 
 	arm0.xRot = model->arm0.xRot;
 	arm0.zRot = model->arm0.zRot;
@@ -273,7 +272,7 @@ void HumanoidModel::onGraphicsReset()
 	arm1.onGraphicsReset();
 	leg0.onGraphicsReset();
 	leg1.onGraphicsReset();
-	//hair.onGraphicsReset();
+	hair.onGraphicsReset();
 }
 
 //void renderHair(float scale) {

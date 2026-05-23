@@ -22,6 +22,10 @@ public:
 	virtual void reset();
 
 	void tick();
+
+	float yBob, xBob;	// shredder added from b1.8/4j for the hand swaying animation
+	float yBobO, xBobO; // shredder added from b1.8/4j for the hand swaying animation
+
     void move(float xa, float ya, float za);
 
     void aiStep();

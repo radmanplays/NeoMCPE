@@ -236,26 +236,26 @@ void RandomLevelSource::postProcess(ChunkSource* parent, int xt, int zt) {
 
 	// @todo - add generation options to enable or disable extra features like lava lakes or water lakes as they affect seed parity with the original vanilla game - shredder
 
-	// //@todo: hide those chunks if they are aren't visible
-	if (random.nextInt(4) == 0) {
-		int x = xo + random.nextInt(16) + 8;
-		int y = random.nextInt(128);
-		int z = zo + random.nextInt(16) + 8;
-		LakeFeature feature(Tile::calmWater->id);
-		feature.place(level, &random, x, y, z);
-		//        LOGI("Adding underground lake @ (%d,%d,%d)\n", x, y, z);
-	}
+	//// //@todo: hide those chunks if they are aren't visible
+	//if (random.nextInt(4) == 0) {
+	//	int x = xo + random.nextInt(16) + 8;
+	//	int y = random.nextInt(128);
+	//	int z = zo + random.nextInt(16) + 8;
+	//	LakeFeature feature(Tile::calmWater->id);
+	//	feature.place(level, &random, x, y, z);
+	//	//        LOGI("Adding underground lake @ (%d,%d,%d)\n", x, y, z);
+	//}
 
-	////@todo: hide those chunks if they are aren't visible
-	if (random.nextInt(8) == 0) {
-		int x = xo + random.nextInt(16) + 8;
-		int y = random.nextInt(random.nextInt(120) + 8);
-		int z = zo + random.nextInt(16) + 8;
-		if (y < 64 || random.nextInt(10) == 0) {
-			LakeFeature feature(Tile::calmLava->id);
-			feature.place(level, &random, x, y, z);
-		}
-	}
+	//////@todo: hide those chunks if they are aren't visible
+	//if (random.nextInt(8) == 0) {
+	//	int x = xo + random.nextInt(16) + 8;
+	//	int y = random.nextInt(random.nextInt(120) + 8);
+	//	int z = zo + random.nextInt(16) + 8;
+	//	if (y < 64 || random.nextInt(10) == 0) {
+	//		LakeFeature feature(Tile::calmLava->id);
+	//		feature.place(level, &random, x, y, z);
+	//	}
+	//}
 
 	static float totalTime = 0;
 	const float st = getTimeS();
@@ -434,30 +434,30 @@ void RandomLevelSource::postProcess(ChunkSource* parent, int xt, int zt) {
 	//}
 
 	// reworked code from above to generate ferns and shrubs to just like in beta java
-int grassCount = 0;
-
-if (biome == Biome::forest) { grassCount = 2; }
-else if (biome == Biome::rainForest) { grassCount = 10; }
-else if (biome == Biome::seasonalForest) { grassCount = 2; }
-else if (biome == Biome::taiga) { grassCount = 1; }
-else if (biome == Biome::plains) { grassCount = 10; }
-
-for (int i = 0; i < grassCount; i++) {
-    int grassMetadata = TallGrass::TALL_GRASS;
-    
-    
-    if (biome == Biome::rainForest && random.nextInt(3) != 0) {
-        grassMetadata = TallGrass::FERN;
-    }
-
-    int x = xo + random.nextInt(16) + 8;
-     
-    int z = zo + random.nextInt(16) + 8;
-	int y = level->getHeightmap(x, z);
-
-    TallgrassFeature grassFeature(Tile::tallgrass->id, grassMetadata);
-    grassFeature.place(level, &random, x, y, z);
-}
+//int grassCount = 0;
+//
+//if (biome == Biome::forest) { grassCount = 2; }
+//else if (biome == Biome::rainForest) { grassCount = 10; }
+//else if (biome == Biome::seasonalForest) { grassCount = 2; }
+//else if (biome == Biome::taiga) { grassCount = 1; }
+//else if (biome == Biome::plains) { grassCount = 10; }
+//
+//for (int i = 0; i < grassCount; i++) {
+//    int grassMetadata = TallGrass::TALL_GRASS;
+//    
+//    
+//    if (biome == Biome::rainForest && random.nextInt(3) != 0) {
+//        grassMetadata = TallGrass::FERN;
+//    }
+//
+//    int x = xo + random.nextInt(16) + 8;
+//     
+//    int z = zo + random.nextInt(16) + 8;
+//	int y = level->getHeightmap(x, z);
+//
+//    TallgrassFeature grassFeature(Tile::tallgrass->id, grassMetadata);
+//    grassFeature.place(level, &random, x, y, z);
+//}
 
 
 	for (int i = 0; i < 10; i++) {
@@ -557,8 +557,8 @@ LevelChunk* RandomLevelSource::getChunk(int xOffs, int zOffs) {
 	buildSurfaces(xOffs, zOffs, blocks, biomes);
 
 	// Carve caves into the chunk
-	caveFeature.apply(this, level, xOffs, zOffs, blocks, LevelChunk::ChunkBlockCount);
-	canyonFeature.apply(this, level, xOffs, zOffs, blocks, LevelChunk::ChunkBlockCount);
+//	caveFeature.apply(this, level, xOffs, zOffs, blocks, LevelChunk::ChunkBlockCount);
+//	canyonFeature.apply(this, level, xOffs, zOffs, blocks, LevelChunk::ChunkBlockCount);
 	levelChunk->recalcHeightmap();
 
 	return levelChunk;

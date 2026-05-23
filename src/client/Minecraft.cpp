@@ -857,6 +857,7 @@ void Minecraft::tickInput() {
 			for (int i = 0; i < 5 * SharedConstants::TicksPerSecond; ++i)
 				level->tick();
 		}
+
 #endif
 	}
 
@@ -882,6 +883,9 @@ void Minecraft::tickInput() {
 			handleBuildAction(&bai);
 		} else {
 			gameMode->stopDestroyBlock();
+			if (player && player->isUsingItem()) {
+                gameMode->releaseUsingItem(player);
+            }
 		}
 	} else {
 		// Desktop: left mouse = destroy/attack

@@ -280,6 +280,9 @@ void ItemInHandRenderer::render( float a )
 	float h = oHeight + (height - oHeight) * a;
 	Player* player = mc->player;
 	// if (selectedTile==NULL) return;
+	LocalPlayer* localPlayer = (LocalPlayer*)(player);
+
+	float xr = player->xRotO + (player->xRot - player->xRotO) * a; // shredder added for hand swaying
 
 	glPushMatrix2();
 	glRotatef2(player->xRotO + (player->xRot - player->xRotO) * a, 1, 0, 0);
@@ -287,6 +290,16 @@ void ItemInHandRenderer::render( float a )
 	glEnable(GL_RESCALE_NORMAL);
 	Lighting::turnOn(mc);
 	glPopMatrix2();
+
+	 if (localPlayer) // shredder added, basically does the hand swaying animation from b1.8
+	{
+        float xrr = localPlayer->xBobO + (localPlayer->xBob - localPlayer->xBobO) * a;
+        float yrr = localPlayer->yBobO + (localPlayer->yBob - localPlayer->yBobO) * a;
+		// 4J - was using player->xRot and yRot directly here rather than interpolating between old & current with a
+		float yr = player->yRotO + (player->yRot - player->yRotO) * a;
+        glRotatef((xr - xrr) * 0.1f, 1, 0, 0);
+        glRotatef((yr - yrr) * 0.1f, 0, 1, 0);
+    }
 
 	float br = mc->level->getBrightness(Mth::floor(player->x), Mth::floor(player->y), Mth::floor(player->z));
 

@@ -224,58 +224,58 @@ void Gui::handleClick(int button, int x, int y) {
 	}
 }
 
-void Gui::handleKeyPressed(int key)
-{
-	bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
-	if (isChatting) {
-		// Allow scrolling the chat history with the mouse/keyboard when chat is open
-		if (key == 38) { // VK_UP
-			scrollChat(1);
-			return;
-		} else if (key == 40) { // VK_DOWN
-			scrollChat(-1);
-			return;
-		} else if (key == 33) { // VK_PRIOR (Page Up)
-			// Scroll by a page
-			int screenHeight = (int)(minecraft->height * InvGuiScale);
-			int maxVisible = (screenHeight - 48) / 9;
-			scrollChat(maxVisible);
-			return;
-		} else if (key == 34) { // VK_NEXT (Page Down)
-			int screenHeight = (int)(minecraft->height * InvGuiScale);
-			int maxVisible = (screenHeight - 48) / 9;
-			scrollChat(-maxVisible);
-			return;
+	void Gui::handleKeyPressed(int key)
+	{
+		bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
+		if (isChatting) {
+			// Allow scrolling the chat history with the mouse/keyboard when chat is open
+			if (key == 38) { // VK_UP
+				scrollChat(1);
+				return;
+			} else if (key == 40) { // VK_DOWN
+				scrollChat(-1);
+				return;
+			} else if (key == 33) { // VK_PRIOR (Page Up)
+				// Scroll by a page
+				int screenHeight = (int)(minecraft->height * InvGuiScale);
+				int maxVisible = (screenHeight - 48) / 9;
+				scrollChat(maxVisible);
+				return;
+			} else if (key == 34) { // VK_NEXT (Page Down)
+				int screenHeight = (int)(minecraft->height * InvGuiScale);
+				int maxVisible = (screenHeight - 48) / 9;
+				scrollChat(-maxVisible);
+				return;
+			}
 		}
-	}
 
-	if (key == Keyboard::KEY_F1) {
-		minecraft->options.toggle(OPTIONS_HIDEGUI);
-	}
+		if (key == Keyboard::KEY_F1) {
+			minecraft->options.toggle(OPTIONS_HIDEGUI);
+		}
 
-	if (key == 99)
-	{
-		if (minecraft->player->inventory->selected > 0)
+		if (key == 99)
 		{
-			minecraft->player->inventory->selected--;
+			if (minecraft->player->inventory->selected > 0)
+			{
+				minecraft->player->inventory->selected--;
+			}
+		}
+		else if (key == 4)
+		{
+			if (minecraft->player->inventory->selected < (getNumSlots() - 2))
+			{
+				minecraft->player->inventory->selected++;
+			}
+		}
+		else if (key == 100)
+		{
+			minecraft->screenChooser.setScreen(SCREEN_BLOCKSELECTION);
+		}
+		else if (key == minecraft->options.getIntValue(OPTIONS_KEY_DROP)) 
+		{
+			minecraft->player->inventory->dropSlot(minecraft->player->inventory->selected, false);
 		}
 	}
-	else if (key == 4)
-	{
-		if (minecraft->player->inventory->selected < (getNumSlots() - 2))
-		{
-			minecraft->player->inventory->selected++;
-		}
-	}
-	else if (key == 100)
-	{
-		minecraft->screenChooser.setScreen(SCREEN_BLOCKSELECTION);
-	}
-	else if (key == minecraft->options.getIntValue(OPTIONS_KEY_DROP)) 
-	{
-		minecraft->player->inventory->dropSlot(minecraft->player->inventory->selected, false);
-	}
-}
 
 void Gui::scrollChat(int delta) {
 	if (delta == 0)
@@ -782,6 +782,25 @@ void Gui::renderDebugInfo() {
 	long day       = worldTime / Level::TICKS_PER_DAY;
 	long seed      = lvl ? lvl->getSeed() : 0;
 
+	// Block looking at
+	std::string CurrentTile = "Air";
+	if (minecraft->hitResult.type == TILE) {
+		int LookingX = minecraft->hitResult.x;
+		int LookingY = minecraft->hitResult.y;
+		int LookingZ = minecraft->hitResult.z;
+
+		int tileID = minecraft->level->getTile(LookingX, LookingY, LookingZ);
+		if (tileID > 0 && tileID < 256){
+			Tile* LookingTile = Tile::tiles[tileID];
+			if (LookingTile != NULL) {
+				CurrentTile = LookingTile->getDescriptionId();
+			} else {
+				CurrentTile = "Unknown Tile";
+			}
+		} else {
+			CurrentTile = "Air";
+		}
+	}
 	// Build lines (NULL entry = blank gap)
 	Font* font = minecraft->font;
 
@@ -820,6 +839,9 @@ void Gui::renderDebugInfo() {
 
 	sprintf(buf, "Biome: %s", biomeName);
 	drawString(font, buf, 2, 124, 0xE0E0E0);
+
+	sprintf(buf, "Looking at: %s", CurrentTile.c_str());
+		drawString(font, buf, 2, 134, 0xE0E0E0);
 	}
 	else if (minecraft->options.getIntValue(OPTIONS_DEBUG_STYLE) == 1){
 	

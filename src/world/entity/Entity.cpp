@@ -465,6 +465,15 @@ void Entity::tick()
 	baseTick();
 }
 
+void Entity::setOnFire(int numberOfSeconds)
+{
+    int newValue = numberOfSeconds * 20;
+    if (onFire < newValue)
+    {
+        onFire = newValue;
+    }
+}
+
 void Entity::baseTick()
 {
 	TIMER_PUSH("entityBaseTick");

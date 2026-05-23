@@ -347,6 +347,7 @@ void GameRenderer::renderLevel(float a) {
 		Lighting::turnOff();
 		glDisable2(GL_BLEND);
 		glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		Lighting::turnOff();
 		setupFog(0);
 		glEnable2(GL_BLEND);
 		glDisable2(GL_CULL_FACE);
