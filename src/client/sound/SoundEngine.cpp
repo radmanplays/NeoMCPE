@@ -144,6 +144,7 @@ void SoundEngine::init( Minecraft* mc, Options* options )
 	sounds.add("random.eat", SA_eat1);
 	sounds.add("random.eat", SA_eat2);
 	sounds.add("random.eat", SA_eat3);
+	sounds.add("random.burp", SA_burp1);
 	sounds.add("random.fuse", SA_fuse);
 
 #endif

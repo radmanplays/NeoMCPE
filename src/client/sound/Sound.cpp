@@ -111,6 +111,7 @@
 #include "data/eat1.pcm"
 #include "data/eat2.pcm"
 #include "data/eat3.pcm"
+#include "data/burp1.pcm"
 #include "data/fuse.pcm"
 
 SoundDesc SA_cloth1((char*)PCM_cloth1);
@@ -221,6 +222,7 @@ SoundDesc SA_creeperdeath((char*)PCM_creeperdeath);
 SoundDesc SA_eat1((char*)PCM_eat1);
 SoundDesc SA_eat2((char*)PCM_eat2);
 SoundDesc SA_eat3((char*)PCM_eat3);
+SoundDesc SA_burp1((char*)PCM_burp1);
 SoundDesc SA_fuse((char*)PCM_fuse);
 
 #endif /*!PRE_ANDROID23 && !__APPLE__*/

@@ -129,6 +129,7 @@ public class SoundPlayer
 			new SoundId(R.raw.eat1, "random.eat"),
 			new SoundId(R.raw.eat2, "random.eat"),
 			new SoundId(R.raw.eat3, "random.eat"),
+			new SoundId(R.raw.burp1, "random.burp"),
 			new SoundId(R.raw.fuse, "random.fuse"),
 
 			new SoundId(R.raw.zpig1, "mob.zombiepig.zpig"),
