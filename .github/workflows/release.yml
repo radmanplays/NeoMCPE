@@ -10,10 +10,6 @@ on:
         description: 'Release version (e.g., 1.2.3)'
         required: true
         type: string
-      release_notes:
-        description: 'Release notes (markdown supported)'
-        required: false
-        type: text
 
 env:
   BUILD_TYPE: Release
@@ -289,6 +285,18 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Read release notes
+        id: notes
+        run: |
+          if [ -f "NOTES.md" ]; then
+            NOTES=$(cat NOTES.md)
+          else
+            NOTES="NeoMCPE ${{ steps.version.outputs.version }}"
+          fi
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
 
@@ -323,8 +331,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: Release ${{ steps.version.outputs.version }}
-          body: |
-            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_notes || format('MinecraftPE {0}', steps.version.outputs.version) }}
+          body: ${{ steps.notes.outputs.notes }}
           files: |
             ./minecraftpe-${{ steps.version.outputs.version }}-windows.zip
             ./minecraftpe-${{ steps.version.outputs.version }}-linux.zip
