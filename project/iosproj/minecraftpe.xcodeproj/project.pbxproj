@@ -1253,10 +1253,10 @@
 		042A91AB16B17517007ABBC6 /* TextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBox.cpp; sourceTree = "<group>"; };
 		042A91AC16B17517007ABBC6 /* TextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBox.h; path = ../../src/client/gui/components/TextBox.h; sourceTree = SOURCE_ROOT; };
 		044129061682FF9600B70EE6 /* MouseHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseHandler.cpp; sourceTree = "<group>"; };
-		275A418BB4966ABAD7242355 /* BucketItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BucketItem.h; path = ..\..\src\world\item\BucketItem.h; sourceTree = SOURCE_ROOT; };
-		402547329C01813978E5519D /* CakeTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CakeTile.h; path = ..\..\src\world\level\tile\CakeTile.h; sourceTree = SOURCE_ROOT; };
-		475146CAA02DC7781719E7EC /* CakeTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CakeTile.cpp; path = ..\..\src\world\level\tile\CakeTile.cpp; sourceTree = SOURCE_ROOT; };
-		4FB84402957EED76B68641A6 /* BucketItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BucketItem.cpp; path = ..\..\src\world\item\BucketItem.cpp; sourceTree = SOURCE_ROOT; };
+		275A418BB4966ABAD7242355 /* BucketItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BucketItem.h; path = ../../src/world/item/BucketItem.h; sourceTree = SOURCE_ROOT; };
+		402547329C01813978E5519D /* CakeTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CakeTile.h; path = ../../src/world/level/tile/CakeTile.h; sourceTree = SOURCE_ROOT; };
+		475146CAA02DC7781719E7EC /* CakeTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CakeTile.cpp; path = ../../src/world/level/tile/CakeTile.cpp; sourceTree = SOURCE_ROOT; };
+		4FB84402957EED76B68641A6 /* BucketItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BucketItem.cpp; path = ../../src/world/item/BucketItem.cpp; sourceTree = SOURCE_ROOT; };
 		9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateNewWorld_iphone.xib; path = minecraftpe/dialogs/CreateNewWorld_iphone.xib; sourceTree = "<group>"; };
 		9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = worldname_iphone5_3.png; sourceTree = "<group>"; };
 		9D959AFF16036BEE00E23A6F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -5953,8 +5953,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -5980,8 +5980,8 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6007,8 +6007,8 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = "-DDEMO_MODE";
 				PRODUCT_NAME = minecraftpe.demo;
@@ -6030,8 +6030,8 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6095,8 +6095,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -6127,8 +6127,8 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6230,8 +6230,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -6269,8 +6269,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)\\..\\..\\src\\world\\item",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+					"$(SRCROOT)//..//..//src//world//item",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
