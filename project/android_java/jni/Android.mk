@@ -25,6 +25,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/gui/components/Button.cpp \
 ../../../src/client/gui/components/ImageButton.cpp \
 ../../../src/client/gui/components/ItemPane.cpp \
+../../../src/world/item/BucketItem.cpp \
 ../../../src/client/gui/components/InventoryPane.cpp \
 ../../../src/client/gui/components/LargeImageButton.cpp \
 ../../../src/client/gui/components/RolledSelectionListH.cpp \
@@ -163,6 +164,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/world/inventory/FillingContainer.cpp \
 ../../../src/world/inventory/FurnaceMenu.cpp \
 ../../../src/world/item/BedItem.cpp \
+../../../src/world/level/tile/CakeTile.cpp \
 ../../../src/world/item/DyePowderItem.cpp \
 ../../../src/world/item/Item.cpp \
 ../../../src/world/item/ItemInstance.cpp \

@@ -43,10 +43,18 @@
 		042A91B016B17517007ABBC6 /* OptionsGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 042A91A716B17517007ABBC6 /* OptionsGroup.cpp */; };
 		042A91B216B17517007ABBC6 /* TextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 042A91AB16B17517007ABBC6 /* TextBox.cpp */; };
 		044129071682FF9600B70EE6 /* MouseHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 044129061682FF9600B70EE6 /* MouseHandler.cpp */; };
+		1701443E9D9ACF83AFE153B9 /* CakeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 475146CAA02DC7781719E7EC /* CakeTile.cpp */; };
+		1E144E7EA33BF542B5074103 /* CakeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 402547329C01813978E5519D /* CakeTile.h */; };
+		2A82410FB753D5CD90A09580 /* CakeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 402547329C01813978E5519D /* CakeTile.h */; };
 		9D293CE716071C08000305C8 /* CreateNewWorld_iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */; };
 		9D293CE816071C08000305C8 /* CreateNewWorld_iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */; };
 		9D293CEB160720D6000305C8 /* worldname_iphone5_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */; };
 		9D293CEC160720D6000305C8 /* worldname_iphone5_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */; };
+		BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
+		BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
+		C81E40F896F9BF1FDF3E3D7A /* BucketItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 275A418BB4966ABAD7242355 /* BucketItem.h */; };
+		CEAF441881B94A73E50EA846 /* BucketItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB84402957EED76B68641A6 /* BucketItem.cpp */; };
+		D37343DE9C76FE3979F99F12 /* BucketItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB84402957EED76B68641A6 /* BucketItem.cpp */; };
 		D506D3E2161288BD0099FA65 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D959AFF16036BEE00E23A6F /* Default-568h@2x.png */; };
 		D51DC73614581D4E00E3D761 /* itemframe.png in Resources */ = {isa = PBXBuildFile; fileRef = D51DC73514581D4E00E3D761 /* itemframe.png */; };
 		D51DC74314592B8B00E3D761 /* PVRTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = D51DC74214592B8A00E3D761 /* PVRTexture.m */; };
@@ -1146,6 +1154,8 @@
 		D5F3B7DD14548E7900D25470 /* IASKPSToggleSwitchSpecifierViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5F3B7C814548E7900D25470 /* IASKPSToggleSwitchSpecifierViewCell.xib */; };
 		D5F3B7DE14548E7900D25470 /* IASKSpecifierValuesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5F3B7C914548E7900D25470 /* IASKSpecifierValuesView.xib */; };
 		D5F3B7E51454930400D25470 /* InAppSettings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D5F3B7E41454930400D25470 /* InAppSettings.bundle */; };
+		DAC341FD9FE1034C00624011 /* BucketItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 275A418BB4966ABAD7242355 /* BucketItem.h */; };
+		E95B40DC85CEFB2FCB05787B /* CakeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 475146CAA02DC7781719E7EC /* CakeTile.cpp */; };
 		F912B8CF2F6C3D5200BC60DF /* TextBox.h in Sources */ = {isa = PBXBuildFile; fileRef = 042A91AC16B17517007ABBC6 /* TextBox.h */; };
 		F99D341F2F736AA100DC153E /* HttpClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99D341E2F736AA100DC153E /* HttpClient.cpp */; };
 		F99D34202F736AA100DC153E /* HttpClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99D341E2F736AA100DC153E /* HttpClient.cpp */; };
@@ -1179,8 +1189,6 @@
 		F99F0FAD2F8436CE00F2B29A /* FoliageColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */; };
 		F99F0FAF2F8436EB00F2B29A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAE2F8436EB00F2B29A /* Color.cpp */; };
 		F99F0FB02F8436EB00F2B29A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99F0FAE2F8436EB00F2B29A /* Color.cpp */; };
-		BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
-		BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1245,9 +1253,14 @@
 		042A91AB16B17517007ABBC6 /* TextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBox.cpp; sourceTree = "<group>"; };
 		042A91AC16B17517007ABBC6 /* TextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBox.h; path = ../../src/client/gui/components/TextBox.h; sourceTree = SOURCE_ROOT; };
 		044129061682FF9600B70EE6 /* MouseHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseHandler.cpp; sourceTree = "<group>"; };
+		275A418BB4966ABAD7242355 /* BucketItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BucketItem.h; path = ..\..\src\world\item\BucketItem.h; sourceTree = SOURCE_ROOT; };
+		402547329C01813978E5519D /* CakeTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CakeTile.h; path = ..\..\src\world\level\tile\CakeTile.h; sourceTree = SOURCE_ROOT; };
+		475146CAA02DC7781719E7EC /* CakeTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CakeTile.cpp; path = ..\..\src\world\level\tile\CakeTile.cpp; sourceTree = SOURCE_ROOT; };
+		4FB84402957EED76B68641A6 /* BucketItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BucketItem.cpp; path = ..\..\src\world\item\BucketItem.cpp; sourceTree = SOURCE_ROOT; };
 		9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateNewWorld_iphone.xib; path = minecraftpe/dialogs/CreateNewWorld_iphone.xib; sourceTree = "<group>"; };
 		9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = worldname_iphone5_3.png; sourceTree = "<group>"; };
 		9D959AFF16036BEE00E23A6F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		BEEF202614CFF670005F0001 /* Lighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Lighting.cpp; path = Lighting.cpp; sourceTree = "<group>"; };
 		D51A8B01146A200000E5D720 /* minecraftpedemo-info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "minecraftpedemo-info.plist"; sourceTree = "<group>"; };
 		D51DC73514581D4E00E3D761 /* itemframe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemframe.png; sourceTree = "<group>"; };
 		D51DC74114592B8A00E3D761 /* PVRTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRTexture.h; sourceTree = "<group>"; };
@@ -2468,7 +2481,6 @@
 		F99F0FA82F84369F00F2B29A /* GrassColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GrassColor.cpp; sourceTree = "<group>"; };
 		F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FoliageColor.cpp; sourceTree = "<group>"; };
 		F99F0FAE2F8436EB00F2B29A /* Color.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
-		BEEF202614CFF670005F0001 /* Lighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Lighting.cpp; path = Lighting.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4355,6 +4367,10 @@
 				F99D34462F736FE800DC153E /* KeyOption.cpp */,
 				F99D34492F7370CF00DC153E /* Slider.h */,
 				F99D344A2F7370CF00DC153E /* Slider.cpp */,
+				4FB84402957EED76B68641A6 /* BucketItem.cpp */,
+				275A418BB4966ABAD7242355 /* BucketItem.h */,
+				475146CAA02DC7781719E7EC /* CakeTile.cpp */,
+				402547329C01813978E5519D /* CakeTile.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -4573,6 +4589,27 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		459F41539F5D9178C026729E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C81E40F896F9BF1FDF3E3D7A /* BucketItem.h in Headers */,
+				1E144E7EA33BF542B5074103 /* CakeTile.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		549E44DBB7D1D446D2FE9C00 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAC341FD9FE1034C00624011 /* BucketItem.h in Headers */,
+				2A82410FB753D5CD90A09580 /* CakeTile.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		D58BB46C146A0B910002C9F5 /* minecraftpe.demo */ = {
 			isa = PBXNativeTarget;
@@ -4581,6 +4618,7 @@
 				D58BB46D146A0B910002C9F5 /* Sources */,
 				D58BB552146A0B920002C9F5 /* Frameworks */,
 				D58BB55B146A0B920002C9F5 /* Resources */,
+				549E44DBB7D1D446D2FE9C00 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -4598,6 +4636,7 @@
 				D5CF9C3E144C225000E4244F /* Sources */,
 				D5CF9C3F144C225000E4244F /* Frameworks */,
 				D5CF9C40144C225000E4244F /* Resources */,
+				459F41539F5D9178C026729E /* Headers */,
 			);
 			buildRules = (
 			);
@@ -5444,6 +5483,8 @@
 				D5D8C4C8163934BB00FD35F0 /* HangingEntityItem.cpp in Sources */,
 				D5D8C4CC1639362F00FD35F0 /* NetherReactorPattern.cpp in Sources */,
 				BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */,
+				CEAF441881B94A73E50EA846 /* BucketItem.cpp in Sources */,
+				E95B40DC85CEFB2FCB05787B /* CakeTile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5827,6 +5868,8 @@
 				042A91B016B17517007ABBC6 /* OptionsGroup.cpp in Sources */,
 				042A91B216B17517007ABBC6 /* TextBox.cpp in Sources */,
 				BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */,
+				D37343DE9C76FE3979F99F12 /* BucketItem.cpp in Sources */,
+				1701443E9D9ACF83AFE153B9 /* CakeTile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5909,6 +5952,10 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5932,6 +5979,10 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-DDEMO_MODE",
@@ -5955,6 +6006,10 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				OTHER_CFLAGS = "-DDEMO_MODE";
 				PRODUCT_NAME = minecraftpe.demo;
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -5974,6 +6029,10 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-DDEMO_MODE",
@@ -6035,6 +6094,10 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6063,6 +6126,10 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "minecraftpe/minecraftpedemo-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-DDEMO_MODE",
@@ -6162,6 +6229,10 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6197,6 +6268,10 @@
 				INFOPLIST_FILE = "minecraftpe/minecraftpe-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)\\..\\..\\src\\world\\item",
+					"$(SRCROOT)\\..\\..\\src\\world\\level\\tile",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -195,6 +195,7 @@ Icon\r
 options.txt
 local.cmake
 games/
+ios.py
 
 # Dependency cache
 vcpkg_installed/
