@@ -201,3 +201,5 @@ ios.py
 vcpkg_installed/
 .cache/
 conan/
+buildwindows.bat
+buildandroid.bat

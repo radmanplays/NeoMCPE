@@ -7,6 +7,8 @@
 #include "../../item/crafting/Recipe.h"
 #include "../../item/CoalItem.h"
 #include "../../level/tile/SandStoneTile.h"
+#include "../../item/MonsterPlacerItem.h"
+#include "../EntityTypes.h"
 
 Inventory::Inventory( Player* player, bool creativeMode )
 :   super(	36 + Inventory::MAX_SELECTION_SIZE,
@@ -185,7 +187,6 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance(Tile::snow));
 		addItem(new ItemInstance(Tile::glass));
         addItem(new ItemInstance(Tile::lightGem));
-		addItem(new ItemInstance(Item::cake));
 
 		addItem(new ItemInstance(Tile::netherReactor));
 		
@@ -213,6 +214,10 @@ void Inventory::setupDefault() {
 		Sel[3] = addItem(new ItemInstance(Tile::torch));
 #endif
 		addItem(new ItemInstance(Tile::thinGlass));
+
+		addItem(new ItemInstance(Item::bucket_empty));
+		addItem(new ItemInstance(Item::bucket_water));
+		addItem(new ItemInstance(Item::bucket_lava));
 
 		addItem(new ItemInstance(Item::door_wood));
 		addItem(new ItemInstance(Tile::trapdoor));
@@ -246,11 +251,10 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance(Item::seeds_melon));
 		addItem(new ItemInstance(Item::dye_powder, 1, DyePowderItem::WHITE));
 		addItem(new ItemInstance(Item::hoe_iron));
+		addItem(new ItemInstance(Item::cake));
+		addItem(new ItemInstance(Item::egg));
 		addItem(new ItemInstance(Item::flintAndSteel));
 
-		addItem(new ItemInstance(Item::bucket_empty));
-		addItem(new ItemInstance(Item::bucket_water));
-		addItem(new ItemInstance(Item::bucket_lava));
 #ifdef RPI
 		Sel[0] = addItem(new ItemInstance(Item::sword_iron));
 #else
@@ -258,6 +262,12 @@ void Inventory::setupDefault() {
 #endif
 		addItem(new ItemInstance(Item::bow));
 		addItem(new ItemInstance(Item::sign));
+	
+		addItem(new ItemInstance(Item::monsterPlacer, 1, MobTypes::Chicken));
+		addItem(new ItemInstance(Item::monsterPlacer, 1, MobTypes::Cow));
+		addItem(new ItemInstance(Item::monsterPlacer, 1, MobTypes::Pig));
+		addItem(new ItemInstance(Item::monsterPlacer, 1, MobTypes::Sheep));
+
 	} else {
 #if defined(WIN32)
 		// Survival

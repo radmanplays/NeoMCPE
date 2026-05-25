@@ -114,6 +114,8 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 		itemId = 232 + (item->getAuxValue() & LeafTile::LEAF_TYPE_MASK); // 232 to 235 @leaves
 	} else if (itemId == Item::dye_powder->id) {
 		itemId = 236 + item->getAuxValue(); // 236 to 251 @dye_powder
+	} else if (itemId == Item::monsterPlacer->id) {
+		itemId = 252 + item->getAuxValue(); // 252 to 255 @monster_placer
 	}
 
 	RenderCall& renderObject = renderObjects[itemId];

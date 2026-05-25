@@ -33,4 +33,8 @@
 #include "HangingEntityItem.h"
 #include "SignItem.h"
 
+#include "BucketItem.h"
+#include "MonsterPlacerItem.h"
+#include "SaddleItem.h"
+
 #endif /*NET_MINECRAFT_WORLD_ITEM__ItemInclude_H__*/

@@ -198,6 +198,8 @@ public:
 	static Item* chicken_raw;
 	static Item* chicken_cooked;
 
+    static Item* monsterPlacer;
+
 	static Item* netherbrick;
 	static Item* netherQuartz;
 

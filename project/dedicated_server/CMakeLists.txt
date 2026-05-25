@@ -91,6 +91,7 @@ set(CompileFiles ../../src/main.cpp
 ../../src/world/item/HoeItem.cpp
 ../../src/world/item/BucketItem.cpp
 ../../src/world/level/tile/CakeTile.cpp
+../../src/world/item/MonsterPlacerItem.cpp
 ../../src/world/item/PickaxeItem.cpp
 ../../src/world/item/ShovelItem.cpp
 ../../src/world/item/crafting/ArmorRecipes.cpp

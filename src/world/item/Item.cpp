@@ -1,5 +1,4 @@
 #include "ItemInclude.h"
-#include "BucketItem.h"
 #include "ItemCategory.h"
 #include "../level/tile/Tile.h"
 #include "ItemInstance.h"
@@ -107,7 +106,7 @@ Item* Item::bucket_water = NULL;
 Item* Item::bucket_lava = NULL;
 
 //Item* Item::minecart = NULL;
-//Item* Item::saddle = NULL;
+Item* Item::saddle = NULL;
 Item* Item::door_iron = NULL;
 //Item* Item::redStone = NULL;
 Item* Item::snowBall = NULL;
@@ -148,6 +147,8 @@ Item* Item::beef_raw = NULL;
 Item* Item::beef_cooked = NULL;
 Item* Item::chicken_raw = NULL;
 Item* Item::chicken_cooked = NULL;
+
+Item* Item::monsterPlacer = NULL;
 
 Item* Item::netherbrick = NULL;
 Item* Item::netherQuartz = NULL;
@@ -245,7 +246,7 @@ void Item::initItems() {
 	Item::bucket_water = (new BucketItem(70, Tile::water->id))->setIcon(11, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucketWater")->setCraftingRemainingItem(Item::bucket_empty)->setMaxStackSize(1);
 	Item::bucket_lava = (new BucketItem(71, Tile::lava->id))->setIcon(12, 4)->setCategory(ItemCategory::Tools)->setDescriptionId("bucketLava")->setCraftingRemainingItem(Item::bucket_empty)->setMaxStackSize(1);
 	//Item::minecart = (new MinecartItem(72, Minecart.RIDEABLE))->setIcon(7, 8)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("minecart");
-	//Item::saddle = (new SaddleItem(73))->setIcon(8, 6)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("saddle");
+	Item::saddle = (new SaddleItem(73))->setIcon(8, 6)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("saddle");
 	Item::door_iron = (new DoorItem(74, Material::metal))->setIcon(12, 2)->setCategory(ItemCategory::Structures)->setDescriptionId("doorIron");
 	//Item::redStone = (new RedStoneItem(75))->setIcon(8, 3)->setCategory(ItemCategory::Mechanisms)->setDescriptionId("redstone");
 	Item::snowBall = (new SnowballItem(76))->setIcon(14, 0)->setCategory(ItemCategory::Decorations)->setDescriptionId("snowball");
@@ -280,7 +281,7 @@ void Item::initItems() {
 	Item::beef_cooked = (new FoodItem(108, 8, /*FoodConstants.FOOD_SATURATION_GOOD,*/ true))->setIcon(10, 6)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("beefCooked");
 	Item::chicken_raw = (new FoodItem(109, 2, /*FoodConstants.FOOD_SATURATION_LOW,*/ true))->setIcon(9, 7)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("chickenRaw");
 	Item::chicken_cooked = (new FoodItem(110, 6, /*FoodConstants.FOOD_SATURATION_NORMAL,*/ true))->setIcon(10, 7)->setCategory(ItemCategory::FoodArmor)->setDescriptionId("chickenCooked");
-
+	Item::monsterPlacer = (new MonsterPlacerItem(127))->setIcon(10, 0)->setCategory(ItemCategory::Tools)->setDescriptionId("monsterPlacer");
 	Item::netherbrick = (new Item(149))->setIcon(5, 9)->setDescriptionId("netherbrickItem")->setCategory(ItemCategory::Structures);
 	Item::netherQuartz = (new Item(150))->setIcon(5, 10)->setDescriptionId("netherquartz")->setCategory(ItemCategory::Mechanisms);
 
