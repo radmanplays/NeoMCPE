@@ -195,6 +195,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/world/item/HangingEntityItem.cpp \
 ../../../src/world/item/HatchetItem.cpp \
 ../../../src/world/item/HoeItem.cpp \
+../../../src/world/item/MonsterPlacerItem.cpp \
 ../../../src/world/item/PickaxeItem.cpp \
 ../../../src/world/item/ShovelItem.cpp \
 ../../../src/world/item/crafting/ArmorRecipes.cpp \

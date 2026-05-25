@@ -46,12 +46,16 @@
 		1701443E9D9ACF83AFE153B9 /* CakeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 475146CAA02DC7781719E7EC /* CakeTile.cpp */; };
 		1E144E7EA33BF542B5074103 /* CakeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 402547329C01813978E5519D /* CakeTile.h */; };
 		2A82410FB753D5CD90A09580 /* CakeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 402547329C01813978E5519D /* CakeTile.h */; };
+		5BCF42C8863D39DC93F4931A /* MonsterPlacerItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AA4D27A9C7867E9BB7EDDB /* MonsterPlacerItem.cpp */; };
+		8BAD43608BA7132F57A2F1D3 /* MonsterPlacerItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */; };
 		9D293CE716071C08000305C8 /* CreateNewWorld_iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */; };
 		9D293CE816071C08000305C8 /* CreateNewWorld_iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */; };
 		9D293CEB160720D6000305C8 /* worldname_iphone5_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */; };
 		9D293CEC160720D6000305C8 /* worldname_iphone5_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */; };
+		B7874D8581157F2EC0E4DF32 /* MonsterPlacerItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AA4D27A9C7867E9BB7EDDB /* MonsterPlacerItem.cpp */; };
 		BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
 		BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
+		C4B34E7EB13CEC921A5EF5D9 /* MonsterPlacerItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */; };
 		C81E40F896F9BF1FDF3E3D7A /* BucketItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 275A418BB4966ABAD7242355 /* BucketItem.h */; };
 		CEAF441881B94A73E50EA846 /* BucketItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB84402957EED76B68641A6 /* BucketItem.cpp */; };
 		D37343DE9C76FE3979F99F12 /* BucketItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB84402957EED76B68641A6 /* BucketItem.cpp */; };
@@ -1253,10 +1257,12 @@
 		042A91AB16B17517007ABBC6 /* TextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBox.cpp; sourceTree = "<group>"; };
 		042A91AC16B17517007ABBC6 /* TextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBox.h; path = ../../src/client/gui/components/TextBox.h; sourceTree = SOURCE_ROOT; };
 		044129061682FF9600B70EE6 /* MouseHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseHandler.cpp; sourceTree = "<group>"; };
+		07AA4D27A9C7867E9BB7EDDB /* MonsterPlacerItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MonsterPlacerItem.cpp; path = ../../src/world/item/MonsterPlacerItem.cpp; sourceTree = SOURCE_ROOT; };
 		275A418BB4966ABAD7242355 /* BucketItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BucketItem.h; path = ../../src/world/item/BucketItem.h; sourceTree = SOURCE_ROOT; };
 		402547329C01813978E5519D /* CakeTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CakeTile.h; path = ../../src/world/level/tile/CakeTile.h; sourceTree = SOURCE_ROOT; };
 		475146CAA02DC7781719E7EC /* CakeTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CakeTile.cpp; path = ../../src/world/level/tile/CakeTile.cpp; sourceTree = SOURCE_ROOT; };
 		4FB84402957EED76B68641A6 /* BucketItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BucketItem.cpp; path = ../../src/world/item/BucketItem.cpp; sourceTree = SOURCE_ROOT; };
+		535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MonsterPlacerItem.h; path = ../../src/world/item/MonsterPlacerItem.h; sourceTree = SOURCE_ROOT; };
 		9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateNewWorld_iphone.xib; path = minecraftpe/dialogs/CreateNewWorld_iphone.xib; sourceTree = "<group>"; };
 		9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = worldname_iphone5_3.png; sourceTree = "<group>"; };
 		9D959AFF16036BEE00E23A6F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -4371,6 +4377,8 @@
 				275A418BB4966ABAD7242355 /* BucketItem.h */,
 				475146CAA02DC7781719E7EC /* CakeTile.cpp */,
 				402547329C01813978E5519D /* CakeTile.h */,
+				07AA4D27A9C7867E9BB7EDDB /* MonsterPlacerItem.cpp */,
+				535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -4596,6 +4604,7 @@
 			files = (
 				C81E40F896F9BF1FDF3E3D7A /* BucketItem.h in Headers */,
 				1E144E7EA33BF542B5074103 /* CakeTile.h in Headers */,
+				C4B34E7EB13CEC921A5EF5D9 /* MonsterPlacerItem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4605,6 +4614,7 @@
 			files = (
 				DAC341FD9FE1034C00624011 /* BucketItem.h in Headers */,
 				2A82410FB753D5CD90A09580 /* CakeTile.h in Headers */,
+				8BAD43608BA7132F57A2F1D3 /* MonsterPlacerItem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5485,6 +5495,7 @@
 				BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */,
 				CEAF441881B94A73E50EA846 /* BucketItem.cpp in Sources */,
 				E95B40DC85CEFB2FCB05787B /* CakeTile.cpp in Sources */,
+				5BCF42C8863D39DC93F4931A /* MonsterPlacerItem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5870,6 +5881,7 @@
 				BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */,
 				D37343DE9C76FE3979F99F12 /* BucketItem.cpp in Sources */,
 				1701443E9D9ACF83AFE153B9 /* CakeTile.cpp in Sources */,
+				B7874D8581157F2EC0E4DF32 /* MonsterPlacerItem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5955,6 +5967,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -5982,6 +5995,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6009,6 +6023,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				OTHER_CFLAGS = "-DDEMO_MODE";
 				PRODUCT_NAME = minecraftpe.demo;
@@ -6032,6 +6047,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6097,6 +6113,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -6129,6 +6146,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6232,6 +6250,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -6271,6 +6290,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
+					"$(SRCROOT)//..//..//src//world//item",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
