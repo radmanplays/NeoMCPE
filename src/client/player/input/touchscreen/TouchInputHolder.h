@@ -333,6 +333,13 @@ public:
 			allowPicking = true;
 			//LOGI("down? %d, up? %d (%d, %d)\n", z && (m.data == MouseAction::DATA_DOWN), z && (m.data == MouseAction::DATA_UP), m.x, m.y); 
 
+			if (m.data == MouseAction::DATA_UP) {
+				if (player->isUsingItem()) {
+					player->releaseUsingItem();
+					handled = true;
+				}
+			}
+
 			if (_totalMoveDelta <= MaxBuildMovement && (m.data == MouseAction::DATA_UP && !handled)) {
 				const float since = now - _lastBuildDownTime;
 				//LOGI("move: (%d) %.2f - %f\n", state, _totalMoveDelta, since);
