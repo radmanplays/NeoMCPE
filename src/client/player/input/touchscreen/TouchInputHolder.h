@@ -312,7 +312,7 @@ public:
 				*bai = BuildActionIntention((_forceCanUse?0:BuildActionIntention::BAI_FIRSTREMOVE) | BuildActionIntention::BAI_INTERACT);
 				_sentFirstRemove = true;
 			} else {
-				*bai = BuildActionIntention((_forceCanUse?0:BuildActionIntention::BAI_REMOVE) | BuildActionIntention::BAI_INTERACT);
+				*bai = BuildActionIntention((_forceCanUse?0:BuildActionIntention::BAI_REMOVE));
 			}
 			return true;
 		}
