@@ -74,16 +74,27 @@ public:
     }
 
     void onPlace(Level* level, int x, int y, int z) {
-        if (level->isSolidBlockingTile(x - 1, y, z)) {
-            level->setData(x, y, z, 1);
-        } else if (level->isSolidBlockingTile(x + 1, y, z)) {
-            level->setData(x, y, z, 2);
-        } else if (level->isSolidBlockingTile(x, y, z - 1)) {
-            level->setData(x, y, z, 3);
-        } else if (level->isSolidBlockingTile(x, y, z + 1)) {
-            level->setData(x, y, z, 4);
-        } else if (isConnection(level, x, y - 1, z)) {
-            level->setData(x, y, z, 5);
+        int dir = level->getData(x, y, z);
+        bool hasValidDir = false;
+
+        if (dir == 1 && level->isSolidBlockingTile(x - 1, y, z)) hasValidDir = true;
+        else if (dir == 2 && level->isSolidBlockingTile(x + 1, y, z)) hasValidDir = true;
+        else if (dir == 3 && level->isSolidBlockingTile(x, y, z - 1)) hasValidDir = true;
+        else if (dir == 4 && level->isSolidBlockingTile(x, y, z + 1)) hasValidDir = true;
+        else if (dir == 5 && isConnection(level, x, y - 1, z)) hasValidDir = true;
+
+        if (!hasValidDir) {
+            if (level->isSolidBlockingTile(x - 1, y, z)) {
+                level->setData(x, y, z, 1);
+            } else if (level->isSolidBlockingTile(x + 1, y, z)) {
+                level->setData(x, y, z, 2);
+            } else if (level->isSolidBlockingTile(x, y, z - 1)) {
+                level->setData(x, y, z, 3);
+            } else if (level->isSolidBlockingTile(x, y, z + 1)) {
+                level->setData(x, y, z, 4);
+            } else if (isConnection(level, x, y - 1, z)) {
+                level->setData(x, y, z, 5);
+            }
         }
         checkCanSurvive(level, x, y, z);
     }
