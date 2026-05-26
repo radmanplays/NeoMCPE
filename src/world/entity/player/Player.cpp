@@ -325,7 +325,17 @@ void Player::stopUsingItem() {
 
 void Player::releaseUsingItem() {
 	if(!useItem.isNull()) {
+		ItemInstance* selected = inventory->getSelected();
+		bool doOverwrite = selected && ItemInstance::matches(&useItem, selected);
+
 		useItem.releaseUsing(level, this, useItemDuration);
+
+		if (doOverwrite) {
+			*selected = useItem;
+			if (selected->count <= 0) {
+				inventory->clearSlot(inventory->selected);
+			}
+		}
 	}
 	stopUsingItem();
 }

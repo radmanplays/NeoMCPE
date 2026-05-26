@@ -29,10 +29,11 @@ public:
 		if (pow < 0.1) return;
 		if (pow > 1) pow = 1;
 
-
-		itemInstance->hurt(1);
+		if (!player->abilities.instabuild) {
+			itemInstance->hurt(1);
+			player->inventory->removeResource(Item::arrow->id);
+		}
 		level->playSound(player, "random.bow", 1.0f, 1.0f / (random.nextFloat() * 0.4f + 1.2f) + pow * 0.5f);
-		player->inventory->removeResource(Item::arrow->id);
 		if (!level->isClientSide) {
 			Arrow* arrow =	new Arrow(level, player, pow * 2.0f);
 			if (pow == 1)
