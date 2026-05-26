@@ -27,8 +27,6 @@ public:
 
     void tick(Level* level, int x, int y, int z, Random* random) {
 		//@fire
-		return;
-
 		if (material == Material::lava) {
             int h = random->nextInt(3);
             for (int i = 0; i < h; i++) {
