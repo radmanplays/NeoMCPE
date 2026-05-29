@@ -216,7 +216,7 @@ void JoinGameScreen::render( int xm, int ym, float a )
 	hasNetwork = hasNetwork && !GetAsyncKeyState(VK_TAB);
 #endif
 
-	renderBackground();
+	renderMenuBackground(a);
 	if (hasNetwork) gamesList->render(xm, ym, a);
 	else gamesList->renderDirtBackground();
 	Screen::render(xm, ym, a);

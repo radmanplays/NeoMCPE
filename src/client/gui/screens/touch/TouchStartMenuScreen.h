@@ -5,8 +5,27 @@
 #include "../../components/LargeImageButton.h"
 #include "../../components/ImageButton.h"
 #include "../../components/TextBox.h"
+#include "../../components/Button.h"
+
+class NinePatchLayer;
+class Textures;
 
 namespace Touch {
+
+	
+class OptionsButton : public ImageButton
+{
+public:
+        OptionsButton(int id, const std::string& msg);
+        virtual ~OptionsButton();
+        void init(Textures* textures);
+        void setSize(float w, float h);
+        virtual void renderBg(Minecraft* minecraft, int xm, int ym) override;
+		virtual void renderFace(Minecraft* minecraft, int xm, int ym) override;
+private:
+        NinePatchLayer* bg;
+        NinePatchLayer* bgSelected;
+};
 
 class StartMenuScreen: public Screen
 {
@@ -25,16 +44,16 @@ public:
 	bool isInGameScreen();
 private:
 	
-	LargeImageButton bHost;
-	LargeImageButton bJoin;
-	LargeImageButton bOptions;
-	ImageButton bQuit; // X close icon
+	Touch::TButton bHost;
+	// Touch::TButton bJoin;
+	Touch::OptionsButton bOptions;
+	Touch::TButton bQuit; // X close icon
 
 	std::string copyright;
-	int copyrightPosX;
+	int copyrightPosY;
 
 	std::string version;
-	int versionPosX;
+	int versionPosY;
 
 	std::string username;
 };

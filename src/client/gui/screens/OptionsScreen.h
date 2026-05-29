@@ -34,8 +34,9 @@ public:
 	virtual void tick();
 
 private:
+	void drawCategoryIcon(Touch::TButton* button, int u, int v, int iconW, int iconH);
 	Touch::THeader* bHeader;
-	ImageButton* btnClose;
+	Button* btnClose;
 
 	Button* btnCredits;   // <-- ADD THIS
 

@@ -273,7 +273,9 @@ void Gui::handleClick(int button, int x, int y) {
 		}
 		else if (key == minecraft->options.getIntValue(OPTIONS_KEY_DROP)) 
 		{
-			minecraft->player->inventory->dropSlot(minecraft->player->inventory->selected, false);
+			if (minecraft->player != NULL && !minecraft->player->abilities.instabuild) {
+				minecraft->player->inventory->dropSlot(minecraft->player->inventory->selected, false);
+			}
 		}
 	}
 

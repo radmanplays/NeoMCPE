@@ -1,6 +1,8 @@
 #include "Button.h"
 #include "../../Minecraft.h"
 #include "../../renderer/Textures.h"
+#include "NinePatch.h"
+#include "../../renderer/Tesselator.h"
 
 Button::Button(int id, const std::string& msg)
 :	GuiElement(true, true, 0, 0, 200, 24),
@@ -146,16 +148,31 @@ void TButton::renderBg( Minecraft* minecraft, int xm, int ym )
 	bool hovered = active && (minecraft->useTouchscreen()? (_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : isInside(xm, ym));
 	// bool hovered = active && (_currentlyDown && isInside(xm, ym));
 
-	minecraft->textures->loadAndBindTexture("gui/touchgui.png");
-
 	//printf("ButtonId: %d - Hovered? %d (cause: %d, %d, %d, %d, <> %d, %d)\n", id, hovered, x, y, x+w, y+h, xm, ym);
 	if (active)
 		glColor4f2(1, 1, 1, 1);
 	else
 		glColor4f2(0.5f, 0.5f, 0.5f, 1);
 
-	blit(x, y, hovered?66:0, 0, width, height, 66, 26);
-	//blit(x + w / 2, y, 200 - w / 2, 46 + yImage * 20, w / 2, h, 0, 20);
+	static NinePatchLayer* normalPatch = nullptr;
+	static NinePatchLayer* pressedPatch = nullptr;
+
+	if (!normalPatch) {
+		NinePatchFactory factory(minecraft->textures, "gui/spritesheet.png");
+		IntRectangle normalRect = {8, 32, 8, 8};
+		normalPatch = factory.createSymmetrical(normalRect, 3, 3, (float)width, (float)height);
+		IntRectangle pressedRect = {0, 32, 8, 8};
+		pressedPatch = factory.createSymmetrical(pressedRect, 3, 3, (float)width, (float)height);
+	}
+
+	Tesselator& t = Tesselator::instance;
+	if (hovered || selected) {
+		pressedPatch->setSize((float)width, (float)height);
+		pressedPatch->draw(t, (float)x, (float)y);
+	} else {
+		normalPatch->setSize((float)width, (float)height);
+		normalPatch->draw(t, (float)x, (float)y);
+	}
 }
 
 
@@ -199,21 +216,16 @@ void THeader::render( Minecraft* minecraft, int xm, int ym ) {
 
 void THeader::renderBg( Minecraft* minecraft, int xm, int ym )
 {
-	minecraft->textures->loadAndBindTexture("gui/touchgui.png");
-
 	//printf("ButtonId: %d - Hovered? %d (cause: %d, %d, %d, %d, <> %d, %d)\n", id, hovered, x, y, x+w, y+h, xm, ym);
-	glColor4f2(1, 1, 1, 1);
-
-	// Left cap
-	blit(x, y, 150, 26, 2, height-1, 2, 25);
-	// Middle
-	blit(x+2, y, 153, 26, width-3, height-1, 8, 25);
-	// Right cap
+	glEnable(GL_BLEND);
+	minecraft->textures->loadAndBindTexture("gui/touchgui.png");
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	blit(x, y, 150, 26, 2, height - 1, 2, 25);
+	blit(x + 2, y, 153, 26, width - 3, height - 1, 8, 25);
 	blit(x+width-2, y, 162, 26, 2, height-1, 2, 25);
-	// Shadow
-	glEnable2(GL_BLEND);
-	glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	blit(x, y+height-1, 153, 52, width, 3, 8, 3);
+	
+	glDisable(GL_BLEND);
 }
 
 };

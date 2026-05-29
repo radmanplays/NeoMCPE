@@ -24,7 +24,7 @@ public:
 private:
 
 	Button* bHost;
-	Button* bJoin;
+	// Button* bJoin;
 	Button* bOptions;
 	Button* bQuit; 
 

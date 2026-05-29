@@ -6,6 +6,7 @@
 #include "../../Minecraft.h"
 #include "../../../AppPlatform.h"
 #include "CreditsScreen.h"
+#include "../../renderer/Textures.h"
 
 #include "../components/ImageButton.h"
 #include "../components/OptionsGroup.h"
@@ -51,26 +52,30 @@ OptionsScreen::~OptionsScreen() {
 	categoryButtons.clear();
 }
 
+struct IconRect {
+    int u, v, w, h;
+};
+
+static const IconRect categoryIcons[] = {
+    { 134, 0, 28, 28 },  // Game
+    { 106, 0, 28, 28 },  // Controls
+    { 134, 28, 28, 28 },  // Graphics
+    { 106, 28, 28, 28 },  // Sound
+    { 134, 56, 28, 28 },  // Tweaks
+};
+
 void OptionsScreen::init() {
 	bHeader = new Touch::THeader(0, "Options");
 
-	btnClose = new ImageButton(1, "");
+	btnClose = new Touch::TButton(2, 0, 0, 38, 18, "Back");
 
-	ImageDef def;
-	def.name = "gui/touchgui.png";
-	def.width = 34;
-	def.height = 26;
+	categoryButtons.push_back(new Touch::TButton(2, 0, 0, 28, 28, ""));
+	categoryButtons.push_back(new Touch::TButton(3, 0, 0, 28, 28, ""));
+	categoryButtons.push_back(new Touch::TButton(4, 0, 0, 28, 28, ""));
+	categoryButtons.push_back(new Touch::TButton(5, 0, 0, 28, 28, ""));
+	categoryButtons.push_back(new Touch::TButton(6, 0, 0, 28, 28, ""));
 
-	def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
-	btnClose->setImageDef(def, true);
-
-	categoryButtons.push_back(new Touch::TButton(2, "General"));
-	categoryButtons.push_back(new Touch::TButton(3, "Game"));
-	categoryButtons.push_back(new Touch::TButton(4, "Controls"));
-	categoryButtons.push_back(new Touch::TButton(5, "Graphics"));
-	categoryButtons.push_back(new Touch::TButton(6, "Tweaks"));
-
-	btnCredits = new Touch::TButton(11, "Credits");
+	btnCredits = new Touch::TButton(11, 0, 0, 38, 14, "Credits");
 
 	buttons.push_back(bHeader);
 	buttons.push_back(btnClose);
@@ -87,52 +92,52 @@ void OptionsScreen::init() {
 }
 
 void OptionsScreen::setupPositions() {
-	int buttonHeight = btnClose->height;
+    int headerHeight = bHeader->height;
+    int totalButtons = categoryButtons.size();
 
-	btnClose->x = width - btnClose->width;
-	btnClose->y = 0;
+    int usedHeight = headerHeight + 3;
+    int buttonsTotalHeight = totalButtons * 28 + (totalButtons - 1);
+    int v3 = (height - usedHeight - buttonsTotalHeight) / 2;
+    if (v3 < 0) v3 = 0;
 
-	int offsetNum = 1;
+    for (size_t i = 0; i < categoryButtons.size(); ++i) {
+        Touch::TButton* btn = categoryButtons[i];
+        btn->x = 5;
+        btn->y = headerHeight + 3 + v3 + 29 * i;
+    }
 
-	for (std::vector<Touch::TButton*>::iterator it = categoryButtons.begin(); it != categoryButtons.end(); ++it) {
+    btnClose->x = 4;
+    btnClose->y = 4;
 
-		(*it)->x = 0;
-		(*it)->y = offsetNum * buttonHeight;
-		(*it)->selected = false;
+    bHeader->x = 0;
+    bHeader->y = 0;
+    bHeader->width = width;
+    bHeader->height = headerHeight;
 
-		offsetNum++;
-	}
+    if (btnCredits != NULL) {
+        btnCredits->x = 0;
+        btnCredits->y = height - btnCredits->height - 2;
+    }
 
-	bHeader->x = 0;
-	bHeader->y = 0;
-	bHeader->width = width - btnClose->width;
-	bHeader->height = btnClose->height;
+    for (std::vector<OptionsGroup*>::iterator it = optionPanes.begin(); it != optionPanes.end(); ++it) {
+        if (categoryButtons.size() > 0 && categoryButtons[0] != NULL) {
+            (*it)->x = categoryButtons[0]->width + 20;
+            (*it)->y = bHeader->height + 3;
+            (*it)->width = width - (*it)->x;
+            (*it)->height = height - bHeader->height - 3;
+            (*it)->setupPositions();
+        }
+    }
 
-	// Credits button (bottom-left)
-	if (btnCredits != NULL) {
-		btnCredits->x = 0;
-		btnCredits->y = height - btnCredits->height;
-	}
-
-	for (std::vector<OptionsGroup*>::iterator it = optionPanes.begin(); it != optionPanes.end(); ++it) {
-
-		if (categoryButtons.size() > 0 && categoryButtons[0] != NULL) {
-
-			(*it)->x = categoryButtons[0]->width;
-			(*it)->y = bHeader->height;
-			(*it)->width = width - categoryButtons[0]->width;
-			(*it)->height = height - bHeader->height;
-
-			(*it)->setupPositions();
-		}
-	}
+    selectCategory(0);
 
 	// don't override user selection on resize
 }
 
 
 void OptionsScreen::render(int xm, int ym, float a) {
-	renderBackground();
+
+	renderBackground(a);
 
 	int xmm = xm * width / minecraft->width;
 	int ymm = ym * height / minecraft->height - 1;
@@ -140,7 +145,24 @@ void OptionsScreen::render(int xm, int ym, float a) {
 	if (currentOptionsGroup != NULL)
 		currentOptionsGroup->render(minecraft, xmm, ymm);
 
+	fill(0, 0, 38, this->height, 0xFF958782);// the thing behind the category buttons
+
 	super::render(xm, ym, a);
+
+    for (size_t i = 0; i < categoryButtons.size(); ++i) {
+        if (i < sizeof(categoryIcons) / sizeof(categoryIcons[0])) {
+            const IconRect& icon = categoryIcons[i];
+            drawCategoryIcon(categoryButtons[i], icon.u, icon.v, icon.w, icon.h);
+        }
+    }
+}
+
+void OptionsScreen::drawCategoryIcon(Touch::TButton* button, int u, int v, int iconW, int iconH) {
+    int iconX = button->x + (button->width - iconW) / 2;
+    int iconY = button->y + (button->height - iconH) / 2;
+    
+    minecraft->textures->loadAndBindTexture("gui/touchgui2.png");
+    blit(iconX, iconY, u, v, iconW, iconH);
 }
 
 void OptionsScreen::removed() {
@@ -184,57 +206,58 @@ void OptionsScreen::selectCategory(int index) {
 void OptionsScreen::generateOptionScreens() {
 	// how the fuck it works
 
-	optionPanes.push_back(new OptionsGroup("options.group.general"));
 	optionPanes.push_back(new OptionsGroup("options.group.game"));
-	optionPanes.push_back(new OptionsGroup("options.group.controls"));
+	optionPanes.push_back(new OptionsGroup("options.group.input"));
 	optionPanes.push_back(new OptionsGroup("options.group.graphics"));
+	optionPanes.push_back(new OptionsGroup("options.group.audio"));
 	optionPanes.push_back(new OptionsGroup("options.group.tweaks"));
 
-	// General Pane
-	optionPanes[0]->addOptionItem(OPTIONS_USERNAME, minecraft)
-		.addOptionItem(OPTIONS_SENSITIVITY, minecraft);
-
 	// Game Pane
-	optionPanes[1]->addOptionItem(OPTIONS_DIFFICULTY, minecraft)
+	optionPanes[0]->addOptionItem(OPTIONS_USERNAME, minecraft)
+		.addOptionItem(OPTIONS_DIFFICULTY, minecraft)
 		.addOptionItem(OPTIONS_SERVER_VISIBLE, minecraft)
 		.addOptionItem(OPTIONS_THIRD_PERSON_VIEW, minecraft)
 		.addOptionItem(OPTIONS_WINDOW_SCALE, minecraft)
 		.addOptionItem(OPTIONS_GUI_SCALE, minecraft)
-		.addOptionItem(OPTIONS_SENSITIVITY, minecraft)
-		.addOptionItem(OPTIONS_MUSIC_VOLUME, minecraft)
-		.addOptionItem(OPTIONS_SOUND_VOLUME, minecraft)
-		.addOptionItem(OPTIONS_SMOOTH_CAMERA, minecraft)
-		.addOptionItem(OPTIONS_DESTROY_VIBRATION, minecraft)
-		.addOptionItem(OPTIONS_IS_LEFT_HANDED, minecraft);
+		.addOptionItem(OPTIONS_SMOOTH_CAMERA, minecraft);
 
-	// // Controls Pane
-	optionPanes[2]->addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
+	// Controls Pane
+	optionPanes[1]->addOptionItem(OPTIONS_SENSITIVITY, minecraft)
+		.addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
+		.addOptionItem(OPTIONS_IS_LEFT_HANDED, minecraft)
 		.addOptionItem(OPTIONS_USE_TOUCHSCREEN, minecraft)
+		.addOptionItem(OPTIONS_IS_JOY_TOUCH_AREA, minecraft)
 		.addOptionItem(OPTIONS_DPAD_SIZE, minecraft)
-		.addOptionItem(OPTIONS_AUTOJUMP, minecraft)	
-		.addOptionItem(OPTIONS_BLOCK_OUTLINE, minecraft)
-		.addOptionItem(OPTIONS_IS_JOY_TOUCH_AREA, minecraft);
+		.addOptionItem(OPTIONS_DESTROY_VIBRATION, minecraft)
+		.addOptionItem(OPTIONS_AUTOJUMP, minecraft);
 
 	for (int i = OPTIONS_KEY_FORWARD; i <= OPTIONS_KEY_USE; i++) {
-		optionPanes[2]->addOptionItem((OptionId)i, minecraft);
+		optionPanes[1]->addOptionItem((OptionId)i, minecraft);
 	}
 
-	// // Graphics Pane
-	optionPanes[3]->addOptionItem(OPTIONS_FANCY_GRAPHICS, minecraft)
+	// Graphics Pane
+	optionPanes[2]->addOptionItem(OPTIONS_VIEW_DISTANCE, minecraft)
 		// .addOptionItem(&Option::VIEW_BOBBING, minecraft)
 		// .addOptionItem(&Option::AMBIENT_OCCLUSION, minecraft)
 		// .addOptionItem(&Option::ANAGLYPH, minecraft)
-		.addOptionItem(OPTIONS_LIMIT_FRAMERATE, minecraft)
-		.addOptionItem(OPTIONS_VSYNC, minecraft)
-		.addOptionItem(OPTIONS_VIEW_DISTANCE, minecraft)
+		.addOptionItem(OPTIONS_FANCY_GRAPHICS, minecraft)
+		.addOptionItem(OPTIONS_BEAUTIFUL_SKY, minecraft)
+		// .addOptionItem(OPTIONS_ANIMATED_WATER, minecraft)
 		.addOptionItem(OPTIONS_RENDER_DEBUG, minecraft)
 		.addOptionItem(OPTIONS_ANAGLYPH_3D, minecraft)
 		.addOptionItem(OPTIONS_VIEW_BOBBING, minecraft)
 		.addOptionItem(OPTIONS_AMBIENT_OCCLUSION, minecraft)
 		.addOptionItem(OPTIONS_NORMAL_LIGHTING, minecraft)
-		.addOptionItem(OPTIONS_BEAUTIFUL_SKY, minecraft)
-		.addOptionItem(OPTIONS_VIGNETTE, minecraft);
+		.addOptionItem(OPTIONS_LIMIT_FRAMERATE, minecraft)
+		.addOptionItem(OPTIONS_VSYNC, minecraft)
+		.addOptionItem(OPTIONS_VIGNETTE, minecraft)
+		.addOptionItem(OPTIONS_BLOCK_OUTLINE, minecraft);
 
+	// Sound Pane
+	optionPanes[3]->addOptionItem(OPTIONS_MUSIC_VOLUME, minecraft)
+		.addOptionItem(OPTIONS_SOUND_VOLUME, minecraft);
+
+	// Tweaks Pane
 	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
 		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft)
 		.addOptionItem(OPTIONS_MENU_STYLE, minecraft)
@@ -246,6 +269,7 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_BETA_SKY, minecraft)
 		.addOptionItem(OPTIONS_RESTORED_ANIMS, minecraft)
 		.addOptionItem(OPTIONS_DEBUG_STYLE, minecraft);
+	
 		
 }
 

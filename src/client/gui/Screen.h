@@ -38,6 +38,7 @@ public:
     virtual void renderBackground();
     virtual void renderBackground(int vo);
     virtual void renderDirtBackground(int vo);
+	virtual void renderMenuBackground(float a);
 	// query
 	virtual bool renderGameBehind();
 	virtual bool hasClippingArea(IntRectangle& out);

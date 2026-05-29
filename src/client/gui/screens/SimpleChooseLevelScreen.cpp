@@ -145,7 +145,7 @@ void SimpleChooseLevelScreen::tick()
 
 void SimpleChooseLevelScreen::render( int xm, int ym, float a )
 {
-    renderDirtBackground(0);
+    renderMenuBackground(a);
     glEnable2(GL_BLEND);
 
     const char* modeDesc = NULL;

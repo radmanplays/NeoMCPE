@@ -146,6 +146,22 @@ void Screen::renderDirtBackground( int vo )
 	t.draw();
 }
 
+void Screen::renderMenuBackground( float a )
+{
+	glDisable2(GL_FOG);
+	Tesselator& t = Tesselator::instance;
+	minecraft->textures->loadAndBindTexture("gui/titleBG.png");
+	glColor4f2(1, 1, 1, 1);
+	float fvo = (float) a;
+	t.begin();
+	t.color(255, 255, 255, 255);
+	t.vertexUV(0, (float)height, 0, 0, 1.0f);
+	t.vertexUV((float)width, (float)height, 0, 1.0f, 1.0f);
+	t.vertexUV((float)width, 0, 0, 1.0f, 0);
+	t.vertexUV(0, 0, 0, 0, 0);
+	t.draw();
+}
+
 bool Screen::isPauseScreen()
 {
 	return true;

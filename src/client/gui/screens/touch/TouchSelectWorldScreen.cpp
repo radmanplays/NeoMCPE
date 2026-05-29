@@ -515,7 +515,7 @@ void SelectWorldScreen::render( int xm, int ym, float a )
 {
 	//Performance::watches.get("sws-full").start();
 	//Performance::watches.get("sws-renderbg").start();
-	renderBackground();
+	renderMenuBackground(a);
 	//Performance::watches.get("sws-renderbg").stop();
 	//Performance::watches.get("sws-worlds").start();
 

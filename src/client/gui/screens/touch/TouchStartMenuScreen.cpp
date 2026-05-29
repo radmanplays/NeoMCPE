@@ -6,6 +6,7 @@
 #include "../../Font.h"
 #include "../../components/ScrolledSelectionList.h"
 #include "../../components/GuiElement.h"
+#include "../../components/NinePatch.h"
 
 #include "../../../Minecraft.h"
 #include "../../../renderer/Tesselator.h"
@@ -27,26 +28,11 @@ namespace Touch {
 
 // Some kind of default settings, might be overridden in ::init
 StartMenuScreen::StartMenuScreen()
-:	bHost(    2, "Start Game"),
-	bJoin(    3, "Join Game"),
-	bOptions( 4, "Options"),
-	bQuit(    5, "")
+:	bHost(    2, "Play"),
+	// bJoin(    3, "Join Game"),
+	bOptions( 4, ""),
+	bQuit(    5, "Quit Game")
 {
-	ImageDef def;
-	bJoin.width = 75;
-	def.width = def.height = (float) bJoin.width;
-
-	def.setSrc(IntRectangle(0, 26, (int)def.width, (int)def.width));
-	def.name = "gui/touchgui.png";
-	IntRectangle& defSrc = *def.getSrc();
-
-	bOptions.setImageDef(def, true);
-
-	defSrc.y += defSrc.h;
-	bHost.setImageDef(def, true);
-
-	defSrc.y += defSrc.h;
-	bJoin.setImageDef(def, true);
 }
 
 StartMenuScreen::~StartMenuScreen()
@@ -55,25 +41,17 @@ StartMenuScreen::~StartMenuScreen()
 
 void StartMenuScreen::init()
 {
-	buttons.push_back(&bHost);
-	buttons.push_back(&bJoin);
-	buttons.push_back(&bOptions);
+	bOptions.init(minecraft->textures);
 
-	// add quit icon (same look as options header)
-	{
-		ImageDef def;
-		def.name = "gui/touchgui.png";
-		def.width = 34;
-		def.height = 26;
-		def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
-		bQuit.setImageDef(def, true);
-		bQuit.scaleWhenPressed = false;
-		buttons.push_back(&bQuit);
-	}
+	buttons.push_back(&bHost);
+	// buttons.push_back(&bJoin);
+	buttons.push_back(&bOptions);
+	buttons.push_back(&bQuit);
 
 	tabButtons.push_back(&bHost);
-	tabButtons.push_back(&bJoin);
+	// tabButtons.push_back(&bJoin);
 	tabButtons.push_back(&bOptions);
+	tabButtons.push_back(&bQuit);
 
 	#ifdef DEMO_MODE
 		buttons.push_back(&bBuy);
@@ -104,31 +82,37 @@ void StartMenuScreen::init()
         version = versionString + " (Demo)";
     #endif
 
-	bJoin.active = bHost.active = bOptions.active = true;
+	// bJoin.active = 
+	bHost.active = bOptions.active = bQuit.active = true;
 }
 
 void StartMenuScreen::setupPositions() {
-	int yBase = 2 + height / 3;
+	bHost.width = 100;
+	bHost.height = 30;
+	bOptions.width = 30;
+	bOptions.height = 30;
+	bQuit.width = 100;
+	bQuit.height = 30;
 	int buttonWidth = bHost.width;
 	float spacing = (width - (3.0f * buttonWidth)) / 4;
 
 	//#ifdef ANDROID
-	bHost.y =	 yBase;
-	bJoin.y =	 yBase;
-	bOptions.y = yBase;
+	bHost.y =	 80 - bHost.height;
+	// bJoin.y =	 yBase;
+	bOptions.y = height - bOptions.height - 4;
 	//#endif
 
 	// Center buttons
-	bJoin.x		= 0*buttonWidth + (int)(1*spacing);
-	bHost.x		= 1*buttonWidth + (int)(2*spacing);
-	bOptions.x	= 2*buttonWidth + (int)(3*spacing);
+	// bJoin.x		= 0*buttonWidth + (int)(1*spacing);
+	bHost.x		= (width/2) - 50;
+	bOptions.x	= width - bOptions.width - 4;
     
 	// quit icon top-right (use size assigned in init)
-	bQuit.x = width - bQuit.width;
-	bQuit.y = 0;
+	bQuit.x = bHost.x;
+	bQuit.y = bHost.y + bQuit.height + 15;
 
-	copyrightPosX = width - minecraft->font->width(copyright) - 1;
-	versionPosX = (width - minecraft->font->width(version)) / 2;// - minecraft->font->width(version) - 2;
+	copyrightPosY = height - 10;
+	versionPosY = height - 20;
 }
 
 void StartMenuScreen::buttonClicked(::Button* button) {
@@ -141,15 +125,15 @@ void StartMenuScreen::buttonClicked(::Button* button) {
 			minecraft->screenChooser.setScreen(SCREEN_SELECTWORLD);
 		#endif
 	}
-	if (button->id == bJoin.id)
-	{
-        #ifdef APPLE_DEMO_PROMOTION
-            minecraft->platform()->createUserInput(DialogDefinitions::DIALOG_DEMO_FEATURE_DISABLED);
-        #else
-            minecraft->locateMultiplayer();
-            minecraft->screenChooser.setScreen(SCREEN_JOINGAME);
-        #endif
-	}
+	// if (button->id == bJoin.id)
+	// {
+    //     #ifdef APPLE_DEMO_PROMOTION
+    //         minecraft->platform()->createUserInput(DialogDefinitions::DIALOG_DEMO_FEATURE_DISABLED);
+    //     #else
+    //         minecraft->locateMultiplayer();
+    //         minecraft->screenChooser.setScreen(SCREEN_JOINGAME);
+    //     #endif
+	// }
 	if (button->id == bOptions.id)
 	{
 		minecraft->setScreen(new OptionsScreen());
@@ -164,7 +148,7 @@ bool StartMenuScreen::isInGameScreen() { return false; }
 
 void StartMenuScreen::render( int xm, int ym, float a )
 {
-	renderBackground();
+	renderMenuBackground(a);
 
 	// Show current username in the top-left corner
 	drawString(font, username, 2, 2, 0xffffffff);
@@ -199,12 +183,12 @@ void StartMenuScreen::render( int xm, int ym, float a )
 			t.vertexUV(x-wh, y+0, blitOffset, 0, 0);
 		t.draw();
 
-		drawString(font, version, versionPosX, (int)(y+h)+2, /*50,*/ 0xffcccccc);//0x666666);
-		drawString(font, copyright, copyrightPosX, height - 10, 0xffffff);
+		drawString(font, version, 1, versionPosY, 0xffffff);
+		drawString(font, copyright, 1, copyrightPosY, 0xffffff);
 		glColor4f2(1, 1, 1, 1);
-		if (Textures::isTextureIdValid(minecraft->textures->loadAndBindTexture("gui/logo/github.png")))
-			blit(2, height - 10, 0, 0, 8, 8, 256, 256);
-		drawString(font, "Kolyah35/minecraft-pe-0.6.1", 12, height - 10, 0xffcccccc);
+		// if (Textures::isTextureIdValid(minecraft->textures->loadAndBindTexture("gui/logo/github.png")))
+		// 	blit(2, height - 10, 0, 0, 8, 8, 256, 256);
+		// drawString(font, "Kolyah35/minecraft-pe-0.6.1", 12, height - 10, 0xffcccccc);
 		//patch->draw(t, 0, 20);
 	}
 	Screen::render(xm, ym, a);
@@ -213,13 +197,13 @@ void StartMenuScreen::render( int xm, int ym, float a )
 
 
 void StartMenuScreen::mouseClicked(int x, int y, int buttonNum) {
-	const int logoX = 2;
-	const int logoW = 8 + 2 + font->width("Kolyah35/minecraft-pe-0.6.1");
-	const int logoY = height - 10;
-	const int logoH = 10;
-	if (x >= logoX && x <= logoX + logoW && y >= logoY && y <= logoY + logoH)
-		minecraft->platform()->openURL("https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1");
-	else
+	// const int logoX = 2;
+	// const int logoW = 8 + 2 + font->width("Kolyah35/minecraft-pe-0.6.1");
+	// const int logoY = height - 10;
+	// const int logoH = 10;
+	// if (x >= logoX && x <= logoX + logoW && y >= logoY && y <= logoY + logoH)
+	// 	minecraft->platform()->openURL("https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1");
+	// else
 		Screen::mouseClicked(x, y, buttonNum);
 }
 
@@ -227,6 +211,61 @@ bool StartMenuScreen::handleBackEvent( bool isDown ) {
 	minecraft->quit();
 	return true;
 }
+
+OptionsButton::OptionsButton(int id, const std::string& msg)
+:        ImageButton(id, msg),
+        bg(NULL),
+        bgSelected(NULL)
+{
+}
+OptionsButton::~OptionsButton()
+{
+        delete bg;
+        delete bgSelected;
+}
+void OptionsButton::init(Textures* textures)
+{
+        NinePatchFactory builder(textures, "gui/spritesheet.png");
+        bg = builder.createSymmetrical(IntRectangle(112, 0, 8, 67), 2, 2);
+        bgSelected = builder.createSymmetrical(IntRectangle(120, 0, 8, 67), 2, 2);
+}
+void OptionsButton::setSize(float w, float h)
+{
+        this->width = (int)w;
+        this->height = (int)h;
+        if (bg && bgSelected) {
+                bg->setSize(w, h);
+                bgSelected->setSize(w, h);
+        }
+}
+void OptionsButton::renderBg(Minecraft* minecraft, int xm, int ym)
+{
+        if (!bg || !bgSelected)
+                return;
+        bool hovered = active && (minecraft->useTouchscreen()?
+                (_currentlyDown && xm >= x && ym >= y && xm < x + width && ym < y + height) : isInside(xm, ym));
+        if (hovered || selected)
+                bgSelected->draw(Tesselator::instance, (float)x, (float)y);
+        else
+                bg->draw(Tesselator::instance, (float)x, (float)y);
+		OptionsButton::renderFace(minecraft, xm, ym);
+}
+	
+void OptionsButton::renderFace(Minecraft* minecraft, int xm, int ym)
+{
+        minecraft->textures->loadAndBindTexture("gui/touchgui.png");
+        
+        if (!active) {
+                glColor4f2(0.5f, 0.5f, 0.5f, 1.0f);
+        } else {
+                glColor4f2(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+        int iconX = x + (width - 20) / 2;
+        int iconY = y + (height - 19) / 2;
+        
+        blit(iconX, iconY, 218, 0, 22, 21);
+}
+
 
 } // namespace Touch
 

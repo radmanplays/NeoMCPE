@@ -81,7 +81,7 @@ void CreditsScreen::tick() {
 }
 
 void CreditsScreen::render(int xm, int ym, float a) {
-    renderBackground();
+    renderMenuBackground(a);
     int w = width;
     Font* font = minecraft->font;
     float y = _scrollY;
