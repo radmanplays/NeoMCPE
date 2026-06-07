@@ -1267,7 +1267,7 @@
 		475146CAA02DC7781719E7EC /* CakeTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CakeTile.cpp; path = ../../src/world/level/tile/CakeTile.cpp; sourceTree = SOURCE_ROOT; };
 		4FB84402957EED76B68641A6 /* BucketItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BucketItem.cpp; path = ../../src/world/item/BucketItem.cpp; sourceTree = SOURCE_ROOT; };
 		535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MonsterPlacerItem.h; path = ../../src/world/item/MonsterPlacerItem.h; sourceTree = SOURCE_ROOT; };
-		755E4985A956D6B727D4D8A3 /* CustomLevelSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CustomLevelSource.h; path = ..\..\src\world\level\levelgen\CustomLevelSource.h; sourceTree = SOURCE_ROOT; };
+		755E4985A956D6B727D4D8A3 /* CustomLevelSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CustomLevelSource.h; path = ../../src/world/level/levelgen/CustomLevelSource.h; sourceTree = SOURCE_ROOT; };
 		9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateNewWorld_iphone.xib; path = minecraftpe/dialogs/CreateNewWorld_iphone.xib; sourceTree = "<group>"; };
 		9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = worldname_iphone5_3.png; sourceTree = "<group>"; };
 		9D959AFF16036BEE00E23A6F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -2492,7 +2492,7 @@
 		F99F0FA82F84369F00F2B29A /* GrassColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GrassColor.cpp; sourceTree = "<group>"; };
 		F99F0FAB2F8436CE00F2B29A /* FoliageColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FoliageColor.cpp; sourceTree = "<group>"; };
 		F99F0FAE2F8436EB00F2B29A /* Color.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
-		FE314233B8EDAB568BE06613 /* CustomLevelSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CustomLevelSource.cpp; path = ..\..\src\world\level\levelgen\CustomLevelSource.cpp; sourceTree = SOURCE_ROOT; };
+		FE314233B8EDAB568BE06613 /* CustomLevelSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CustomLevelSource.cpp; path = ../../src/world/level/levelgen/CustomLevelSource.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5979,7 +5979,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -6007,7 +6007,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6035,7 +6035,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				OTHER_CFLAGS = "-DDEMO_MODE";
 				PRODUCT_NAME = minecraftpe.demo;
@@ -6059,7 +6059,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6125,7 +6125,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -6158,7 +6158,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6262,7 +6262,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -6302,7 +6302,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
-					"$(SRCROOT)\\..\\..\\src\\world\\level\\levelgen",
+					"$(SRCROOT)//..//..//src//world//level//levelgen",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
