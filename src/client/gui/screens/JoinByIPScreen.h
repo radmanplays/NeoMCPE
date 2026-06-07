@@ -5,6 +5,8 @@
 #include "../components/ImageButton.h"
 #include "../components/TextBox.h"
 
+class NinePatchLayer;
+
 class JoinByIPScreen: public Screen
 {
 public:
@@ -24,5 +26,6 @@ private:
     TextBox tIP;
     Touch::THeader bHeader;
 	Touch::TButton bJoin;
-	ImageButton bBack;
+	Touch::TButton bBack;
+	NinePatchLayer* guiBackground;
 };

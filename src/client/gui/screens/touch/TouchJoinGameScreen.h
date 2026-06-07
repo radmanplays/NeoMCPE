@@ -30,7 +30,7 @@ public:
 
 protected:
 
-	virtual int getNumberOfItems() { return (int)copiedServerList.size(); }
+	virtual int getNumberOfItems() { int n = (int)copiedServerList.size(); return n < 20 ? 20 : n; }
 
 	virtual void selectCancel();
 	virtual void selectStart(int item);

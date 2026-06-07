@@ -60,6 +60,7 @@ public:
 	TButton(int id, int x, int y, int w, int h, const std::string& msg);
 protected:
 	virtual void renderBg(Minecraft* minecraft, int xm, int ym);
+	virtual void renderFace(Minecraft* minecraft, int xm, int ym);
 };
 
 // "Header" in Touchscreen mode

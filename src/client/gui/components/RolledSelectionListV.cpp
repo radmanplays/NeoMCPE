@@ -28,17 +28,25 @@ RolledSelectionListV::RolledSelectionListV( Minecraft* minecraft_, int width_, i
 	yoo(0.0f),
 	yInertia(0.0f),
 	_componentSelected(false),
-	_renderDirtBackground(true),
-	_renderTopBorder(true),
-	_renderBottomBorder(true),
+	_renderDirtBackground(false),
+	_renderTopBorder(false),
+	_renderBottomBorder(false),
 	_lastyoo(0),
 	_yinertia(0),
 	_stickPixels(0),
 	_lastxm(0),
-	_lastym(0)
+	_lastym(0),
+	_renderItemBackground(true),
+	_itemBgNormal(nullptr),
+	_itemBgSelected(nullptr),
+	_hoverItem(-1)
 {
 	yo = yoo = 0;//(float)(-itemHeight) * 0.5f;
 	_lastyoo = yoo;
+
+	NinePatchFactory factory(minecraft->textures, "gui/spritesheet.png");
+	_itemBgNormal = factory.createSymmetrical(IntRectangle(8, 32, 8, 8), 2, 2);
+	_itemBgSelected = factory.createSymmetrical(IntRectangle(0, 32, 8, 8), 2, 2);
 }
 
 void RolledSelectionListV::setRenderSelection( bool _renderSelection )
@@ -48,6 +56,10 @@ void RolledSelectionListV::setRenderSelection( bool _renderSelection )
 
 void RolledSelectionListV::setComponentSelected(bool selected) {
 	_componentSelected = selected;
+}
+
+void RolledSelectionListV::setRenderItemBackground(bool render) {
+	_renderItemBackground = render;
 }
 
 void RolledSelectionListV::setRenderHeader( bool _renderHeader, int _headerHeight )
@@ -81,7 +93,7 @@ int RolledSelectionListV::getItemAtYPositionRaw(int y) {
 bool RolledSelectionListV::capYPosition()
 {
 	float max = getMaxPosition() - (y1 - y0 - 4);
-	if (max < 0) max /= 2;
+	if (max < 0) max = 0;
 	if (yo < 0) yo = 0;
 	if (yo > max) yo = max;
 	return false;
@@ -99,10 +111,17 @@ void RolledSelectionListV::tick() {
 	if (Mouse::isButtonDown(MouseAction::ACTION_LEFT))
 	{
 		_yinertia = _lastyoo - yoo;
+		yInertia = 0;
 	}
 	_lastyoo = yoo;
-	
-	//yInertia = Mth::absDecrease(yInertia, 1.0f, 0);
+
+	// Smoothly decay inertia with friction
+	if (!Mouse::isButtonDown(MouseAction::ACTION_LEFT))
+	{
+		yInertia *= 0.9f;
+		if (Mth::abs(yInertia) < 0.5f)
+			yInertia = 0.0f;
+	}
 
 	yoo = yo - yInertia;
 
@@ -130,7 +149,8 @@ void RolledSelectionListV::render( int xm, int ym, float a )
 		if (ym >= y0 && ym <= y1) {
 			if (dragState == NO_DRAG) {
 				lastSelectionTime = getTimeMs();
-				lastSelection = convertSelection( getItemAtPosition(width/2, ym), xm, ym );
+				int hovered = getItemAtPosition(xm, ym);
+				lastSelection = convertSelection( hovered, xm, ym );
 				selectStart(lastSelection);
 				//LOGI("Sel : %d\n", lastSelection);
 				selectionY = ym;
@@ -163,10 +183,8 @@ void RolledSelectionListV::render( int xm, int ym, float a )
 
 			if (std::abs(yInertia) <= 10 /*&& getTimeMs() - lastSelectionTime < 300 */)
 			{
-				//float clickSlotPos = (ym - x0 - headerHeight + (int) yo - 4);
-				int slot = convertSelection( getItemAtPosition(width/2, ym), xm, ym);
-				//LOGI("slot: %d, lt: %d. diff: %d - %d\n", slot, lastSelection, selectionX, xm);
-				if (xm >= x0 && xm <= x1 && slot >= 0 && slot == lastSelection && std::abs(selectionY - ym) < 10)
+				int slot = convertSelection( getItemAtPosition(xm, ym), xm, ym);
+				if (slot >= 0 && slot == lastSelection && std::abs(selectionY - ym) < 10)
 					selectItem(slot, false);
 			} else {
 				selectCancel();
@@ -187,12 +205,13 @@ void RolledSelectionListV::render( int xm, int ym, float a )
 	yDrag = (float)ym;
 
 	evaluate(xm, ym);
+	updateHoverItem(xm, ym);
 	capYPosition();
 
 	Tesselator& t = Tesselator::instance;
 
 	const int HalfWidth = 48;
-	int rowX = (int)(width / 2 - HalfWidth + 8);
+	int rowX = (int)(x0);
 	int rowBaseY = (int)(y0 + 4 - (int) yo);
 
 	if (_renderDirtBackground)
@@ -203,7 +222,7 @@ void RolledSelectionListV::render( int xm, int ym, float a )
 	//int rowY = (int)(height / 2 - HalfHeight + 8);
 	if (doRenderHeader) {
 		const int HalfWidth = 48;
-		int rowX = (int)(width / 2 - HalfWidth + 8);
+		int rowX = (int)(x0);
 		int rowBaseY = (int)(y0 + 4 - (int) yo);
 		renderHeader(rowX, rowBaseY, t);
 	}
@@ -212,7 +231,7 @@ void RolledSelectionListV::render( int xm, int ym, float a )
 	for (int i = 0; i < itemCount; i++) {
 
 		float y = (float)(rowBaseY + (i) * itemHeight + headerHeight);
-		float h = itemHeight - 4.0f;
+		float h = itemHeight;
 
 		if (y > y1 || (y + h) < y0) {
 			continue;
@@ -245,6 +264,16 @@ void RolledSelectionListV::render( int xm, int ym, float a )
 
 			//t.draw();
 			//glEnable2(GL_TEXTURE_2D);
+		}
+		if (_renderItemBackground && _itemBgNormal && _itemBgSelected) {
+			float bx = (float)rowX - 2.0f;
+			float by = y;
+			float bw = (float)(x1 - x0) + 4.0f - getItemBgWidthOffset();
+			float bh = h;
+			bool selected = renderSelection && (isSelectedItem(i) || isHoveredItem(i));
+			NinePatchLayer* bg = selected ? _itemBgSelected : _itemBgNormal;
+			bg->setSize(bw, bh);
+			bg->draw(t, bx, by);
 		}
 		renderItem(i, rowX, (int)y, (int)h, t);
 	}
@@ -320,6 +349,15 @@ void RolledSelectionListV::evaluate(int xm, int ym)
 	if (std::abs(selectionY - ym) >= 10) {
 		lastSelection = -1;
 		selectCancel();
+	}
+}
+
+void RolledSelectionListV::updateHoverItem(int xm, int ym)
+{
+	if (xm >= x0 && xm <= x1 && ym >= y0 && ym <= y1) {
+		_hoverItem = getItemAtPosition(xm, ym);
+	} else {
+		_hoverItem = -1;
 	}
 }
 

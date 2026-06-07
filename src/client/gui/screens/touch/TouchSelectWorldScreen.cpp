@@ -3,8 +3,10 @@
 #include "../ProgressScreen.h"
 #include "../DialogDefinitions.h"
 #include "../../components/ImageButton.h" //weird!
+#include "../../components/NinePatch.h"
 #include "../../../renderer/Textures.h"
 #include "../../../renderer/Tesselator.h"
+#include "../../../renderer/gles.h"
 #include "../../../../world/level/LevelSettings.h"
 #include "../../../../AppPlatform.h"
 #include "../../../../util/StringUtils.h"
@@ -25,37 +27,92 @@ TouchWorldSelectionList::TouchWorldSelectionList( Minecraft* minecraft, int widt
 :	_height(height),
 	hasPickedLevel(false),
 	pickedIndex(-1),
+	hasPickedLanServer(false),
+	pickedLanIndex(-1),
 	currentTick(0),
 	stoppedTick(-1),
 	mode(0),
-	_newWorldSelected(false),
-	RolledSelectionListH(minecraft, width, height, 0, width, 24, height-32, 120)
+	selectedItem(-1),
+	_listEditMode(false),
+	_listEditButtonCount(0),
+	_editBtnNormal(nullptr),
+	_editBtnPressed(nullptr),
+	RolledSelectionListV(minecraft, width - 22, height - 6, 12, width - 12, 28, height - 6, 32)
 {
+	_renderTopBorder = false;
 	_renderBottomBorder = false;
 	//setRenderSelection(false);
 }
 
+void TouchWorldSelectionList::setEditMode(bool edit) {
+	_listEditMode = edit;
+	if (edit && _editBtnNormal == nullptr) {
+		NinePatchFactory factory(minecraft->textures, "gui/spritesheet.png");
+		_editBtnNormal = factory.createSymmetrical(IntRectangle(112, 0, 8, 67), 2, 2, 30.0f, 30.0f);
+		_editBtnPressed = factory.createSymmetrical(IntRectangle(120, 0, 8, 67), 2, 2, 30.0f, 30.0f);
+	}
+}
+
+bool TouchWorldSelectionList::isEditButtonHovered(int i, int xm, int ym) const {
+	if (i < 0 || i >= _listEditButtonCount) return false;
+	return xm >= _listEditButtonX[i] && xm < _listEditButtonX[i] + 30 &&
+		   ym >= _listEditButtonY[i] && ym < _listEditButtonY[i] + 30;
+}
+
+float TouchWorldSelectionList::getItemBgWidthOffset() {
+	return _listEditMode ? 32.0f : 0.0f;
+}
+
+int TouchWorldSelectionList::getItemAtPosition(int x, int y) {
+	if (_listEditMode) {
+		int editBtnLeft = (int)x1 - 30;
+		if (x >= editBtnLeft && x <= (int)x1 && y >= y0 && y <= y1) {
+			return -1;
+		}
+	}
+	return RolledSelectionListV::getItemAtPosition(x, y);
+}
+
+void TouchWorldSelectionList::updateHoverItem(int xm, int ym) {
+	if (_listEditMode) {
+		int hoverExRight = (int)x1 - 30;
+		if (xm >= x0 && xm < hoverExRight && ym >= y0 && ym <= y1) {
+			_hoverItem = getItemAtPosition(xm, ym);
+		} else {
+			_hoverItem = -1;
+		}
+	} else {
+		RolledSelectionListV::updateHoverItem(xm, ym);
+	}
+}
+
 int TouchWorldSelectionList::getNumberOfItems() {
-	return (int)levels.size() + 1;
+    if (_listEditMode)
+        return (int)levels.size();
+    return (int)levels.size() + (int)lanServers.size();
 }
 
 void TouchWorldSelectionList::selectItem( int item, bool doubleClick ) {
-	if (selectedItem < 0)
+	if (item < 0 || item >= getNumberOfItems())
 		return;
 
-	const int delta = item - selectedItem;
-	
-	if (delta == -1)
-		stepLeft();
-	if (delta == +1)
-		stepRight();
-	if (delta == 0 ) {
-		if (!hasPickedLevel) {
-			hasPickedLevel = true;
-			pickedIndex = item;
-			if (item < (int)levels.size())
-				pickedLevel = levels[item];
+	selectedItem = item;
+
+	int localWorldCount = (int)levels.size();
+	if (item >= localWorldCount) {
+		int lanIndex = item - localWorldCount;
+		if (!hasPickedLanServer) {
+			hasPickedLanServer = true;
+			pickedLanIndex = lanIndex;
 		}
+		return;
+	}
+
+	if (!hasPickedLevel) {
+		hasPickedLevel = true;
+		pickedIndex = item;
+		if (item < (int)levels.size())
+			pickedLevel = levels[item];
 	}
 }
 
@@ -63,82 +120,80 @@ bool TouchWorldSelectionList::isSelectedItem( int item ) {
 	return item == selectedItem;
 }
 
-void TouchWorldSelectionList::selectStart(int item, int localX, int localY) {
-	if (selectedItem != (int) levels.size() || item != selectedItem)
-		return;
-	_newWorldSelected = true;
-}
-
-void TouchWorldSelectionList::selectCancel() {
-	_newWorldSelected = false;
+std::string TouchWorldSelectionList::getLastPlayedString( int lastPlayed ) {
+	int32_t diff = getEpochTimeS() - lastPlayed;
+	char s[32];
+	if(diff > 86399) {
+		if(diff > 172799) {
+			if(diff > 604799) {
+				if(diff > 2419199) {
+					return "long ago";
+				}
+				sprintf(s, "%d weeks ago", diff / 604800);
+			} else {
+				sprintf(s, "%d days ago", diff / 86400);
+			}
+			return s;
+		} else {
+			return "Yesterday";
+		}
+	} else {
+		return "Today";
+	}
 }
 
 void TouchWorldSelectionList::renderItem( int i, int x, int y, int h, Tesselator& t ) {
-	int centerx = x + itemWidth/2;
-	float a0 = Mth::Max(1.1f - std::abs( width / 2 - centerx ) * 0.0055f, 0.2f);
+	int centerx = x + 48;
+	int centerY = y + h/2;
+	float a0 = Mth::Max(1.1f - std::abs( _height / 2 - centerY ) * 0.0055f, 0.2f);
 	if (a0 > 1) a0 = 1;
-	int textColor =  (int)(255.0f * a0) * 0x010101;
-	int textColor2 = (int)(140.0f * a0) * 0x010101;
-	const int TX = centerx - itemWidth / 2 + 5;
-	const int TY = y + 44; //@kindle-res:42
+	int textColor =  (int)(255.0f) * 0x010101;
+	int textColor2 = (int)(170.0f) * 0x010101;
+	const int TX = x + 5;
+	const int TY = y + 8; //@kindle-res:42
 
-	if (i < (int)levels.size()) {
-		// Draw the worlds
-		StringVector v = _descriptions[i];
-		drawString(minecraft->font, v[0].c_str(), TX, TY +  0, textColor);
-		drawString(minecraft->font, v[1].c_str(), TX, TY + 10, textColor2);
-		drawString(minecraft->font, v[2].c_str(), TX, TY + 20, textColor2);
-		drawString(minecraft->font, v[3].c_str(), TX, TY + 30, textColor2);
+	int localWorldCount = (int)levels.size();
 
-		minecraft->textures->loadAndBindTexture(_imageNames[i]);
-		t.color(0.3f, 1.0f, 0.2f);
-
-		//float x0 = (float)x;
-		//float x1 = (float)x + (float)itemWidth;
-
-		const float IY = (float)y - 8; // @kindle-res: -3
-		t.begin();
-			t.color(textColor);
-			t.vertexUV((float)(centerx-32), IY,      blitOffset, 0, 0.125f);
-			t.vertexUV((float)(centerx-32), IY + 48, blitOffset, 0, 0.875f); //@kindle-res: +44
-			t.vertexUV((float)(centerx+32), IY + 48, blitOffset, 1, 0.875f); //@kindle-res: +44
-			t.vertexUV((float)(centerx+32), IY,      blitOffset, 1, 0.125f);
-		t.draw();
-	} else {
-		// Draw the "Create new world" icon
-		drawCenteredString(minecraft->font, "Create new", centerx, TY +  12, textColor);
-
-		minecraft->textures->loadAndBindTexture("gui/touchgui.png");
-
-		const bool selected = _newWorldSelected;
-
-		const float W = 54.0f;
-		const float H = 54.0f;
-		const float IY = (float)y;
-		const float u0 = (168.0f    ) / 256.0f;
-		const float u1 = (168.0f + W) / 256.0f;
-		float v0 = (32.0f     ) / 256.0f;
-		float v1 = (32.0f  + H) / 256.0f;
-		if (selected) {
-			v0 += H / 256.0f;
-			v1 += H / 256.0f;
+	if (i >= localWorldCount) {
+		int lanIndex = i - localWorldCount;
+		if (lanIndex >= 0 && lanIndex < (int)_lanDescriptions.size()) {
+			StringVector& v = _lanDescriptions[lanIndex];
+			int lanIconColor = 0x4080FF;
+			fill(TX, TY + 2, TX + 6, TY + 10, lanIconColor);
+			drawString(minecraft->font, v[0].c_str(), TX, TY +  0, 0xBABAFE);
+			drawString(minecraft->font, std::string("World on wifi: ") + v[1].c_str(), TX, TY + 10, textColor2);
 		}
+		return;
+	}
 
-		t.begin();
-		t.color(textColor);
-		t.vertexUV((float)centerx - W*0.5f, IY,     blitOffset, u0, v0);
-		t.vertexUV((float)centerx - W*0.5f, IY + H, blitOffset, u0, v1);
-		t.vertexUV((float)centerx + W*0.5f, IY + H, blitOffset, u1, v1);
-		t.vertexUV((float)centerx + W*0.5f, IY,     blitOffset, u1, v0);
-		t.draw();
+	// Draw the worlds
+	StringVector v = _descriptions[i];
+	drawString(minecraft->font, v[0].c_str(), TX, TY +  0, textColor);
+	drawString(minecraft->font, v[3].c_str(), TX, TY + 10, textColor2);
+	std::string lastPlayedStr = getLastPlayedString(levels[i].lastPlayed);
+	drawString(minecraft->font, lastPlayedStr.c_str(), TX + minecraft->font->width(v[3].c_str()) + 10, TY + 10, textColor2);
+
+	if (_listEditMode && i < _listEditButtonCount && _editBtnNormal && _editBtnPressed) {
+		int btnX = (int)x1 - 30;
+		int btnY = y + (h - 31) / 2;
+		_listEditButtonX[i] = (float)btnX;
+		_listEditButtonY[i] = (float)btnY;
+		bool hovered = isEditButtonHovered(i, _lastxm, _lastym);
+		_listEditButtonHovered[i] = hovered;
+		NinePatchLayer* patch = hovered ? _editBtnPressed : _editBtnNormal;
+		patch->setSize(32.0f, 32.0f);
+		patch->draw(t, (float)btnX, (float)btnY);
+		minecraft->textures->loadAndBindTexture("gui/gui.png");
+		glColor4f2(1.0f, 1.0f, 1.0f, 1.0f);
+		blit(btnX + 11, btnY + 11, 182, 10, 11, 11);
 	}
 }
 
 void TouchWorldSelectionList::stepLeft() {
 	if (selectedItem > 0) {
-		int xoffset = (int)(xo - ((float)(selectedItem * itemWidth) + ((float)(itemWidth-width)) * 0.5f));
-		td.start = xo;
-		td.stop = xo - itemWidth - xoffset;
+		int yoffset = (int)(yo - ((float)(selectedItem * itemHeight) + ((float)(itemHeight-height)) * 0.5f));
+		td.start = yo;
+		td.stop = yo - itemHeight - yoffset;
 		td.cur = 0;
 		td.dur = 8;
 		mode = 1;
@@ -148,9 +203,9 @@ void TouchWorldSelectionList::stepLeft() {
 
 void TouchWorldSelectionList::stepRight() {
 	if (selectedItem >= 0 && selectedItem < getNumberOfItems()-1) {
-		int xoffset = (int)(xo - ((float)(selectedItem * itemWidth) + ((float)(itemWidth-width)) * 0.5f));
-		td.start = xo;
-		td.stop = xo + itemWidth - xoffset;
+		int yoffset = (int)(yo - ((float)(selectedItem * itemHeight) + ((float)(itemHeight-height)) * 0.5f));
+		td.start = yo;
+		td.stop = yo + itemHeight - yoffset;
 		td.cur = 0;
 		td.dur = 8;
 		mode = 1;
@@ -162,15 +217,15 @@ void TouchWorldSelectionList::commit() {
 	for (unsigned int i = 0; i < levels.size(); ++i) {
 		LevelSummary& level = levels[i];
 
-		std::stringstream ss;
-		ss << level.name << "/preview.png";
-		TextureId id = Textures::InvalidId;//minecraft->textures->loadTexture(ss.str(), false);
+		// std::stringstream ss;
+		// ss << level.name << "/preview.png";
+		// TextureId id = Textures::InvalidId;//minecraft->textures->loadTexture(ss.str(), false);
 
-		if (id != Textures::InvalidId) {
-			_imageNames.push_back( ss.str() );
-		} else {
-			_imageNames.push_back("gui/default_world.png");
-		}
+		// if (id != Textures::InvalidId) {
+		// 	_imageNames.push_back( ss.str() );
+		// } else {
+		// 	_imageNames.push_back("gui/default_world.png");
+		// }
 
 		StringVector lines;
 		lines.push_back(levels[i].name);
@@ -178,8 +233,18 @@ void TouchWorldSelectionList::commit() {
 		lines.push_back(levels[i].id);
 		lines.push_back(LevelSettings::gameTypeToString(level.gameType));
 		_descriptions.push_back(lines);
+	}
+}
 
-		selectedItem = 0;
+void TouchWorldSelectionList::commitLanServers(const ServerList& lanServers)
+{
+	this->lanServers = lanServers;
+	_lanDescriptions.clear();
+	for (unsigned int i = 0; i < lanServers.size(); ++i) {
+		StringVector lines;
+		lines.push_back(std::string(lanServers[i].name.C_String()));
+		lines.push_back(std::string(lanServers[i].address.ToString(false)));
+		_lanDescriptions.push_back(lines);
 	}
 }
 
@@ -192,122 +257,63 @@ static float quadraticInOut(float t, float dur, float start, float stop) {
 
 void TouchWorldSelectionList::tick()
 {
-	RolledSelectionListH::tick();
+	yo += yInertia;
+
+	// friction
+    yInertia *= 0.85f;
+	
+    if (std::abs(yInertia) < 0.01f) {
+        yInertia = 0;
+    }
+
+	RolledSelectionListV::tick();
 
 	++currentTick;
-
-	if (Mouse::isButtonDown(MouseAction::ACTION_LEFT) || dragState == 0)
-		return;
-
-	// Handle the tween (when in "mode 1")
-	selectedItem = -1; 
-	if (mode == 1) {
-		if (++td.cur == td.dur) {
-			mode = 0;
-			xInertia = 0;
-			xoo = xo = td.stop;
-			selectedItem = getItemAtPosition(width/2, height/2);
-		} else {
-			tweenInited();
-		}
-		return;
-	}
-
-	// It's still going fast, let it run
-	float speed = Mth::abs(xInertia);
-	bool slowEnoughToBeBothered = speed < 5.0f;
-	if (!slowEnoughToBeBothered) {
-		xInertia = xInertia * .9f;
-		return;
-	}
-
-	xInertia *= 0.8f;
-
-	if (speed < 1 && dragState < 0) {
-		const int offsetx = (width-itemWidth) / 2;
-		const float pxo = xo + offsetx;
-		int index = getItemAtXPositionRaw((int)(pxo - 10*xInertia));
-		int indexPos = index*itemWidth;
-
-		// Pick closest
-		float diff = (float)indexPos - pxo;
-		if (diff < -itemWidth/2) {
-			diff += itemWidth;
-			index++;
-			//indexPos += itemWidth;
-		}
-		if (Mth::abs(diff) < 1 && speed < 0.1f) {
-			selectedItem = getItemAtPosition(width/2, height/2);
-			return;
-		}
-
-		td.start = xo;
-		td.stop = xo + diff;
-		td.cur = 0;
-		td.dur = (float) Mth::Min(7, 1 + (int)(Mth::abs(diff) * 0.25f));
-		mode = 1;
-		//LOGI("inited-t %d\n", dragState);
-		tweenInited();
-	}
 }
 
 float TouchWorldSelectionList::getPos( float alpha )
 {
-	if (mode != 1) return RolledSelectionListH::getPos(alpha);
+	if (mode != 1) return RolledSelectionListV::getPos(alpha);
 
-	float x0 = quadraticInOut(td.cur, td.dur, td.start, td.stop);
-	float x1 = quadraticInOut(td.cur+1, td.dur, td.start, td.stop);
-	return x0 + (x1-x0)*alpha;
+	float y0 = quadraticInOut(td.cur, td.dur, td.start, td.stop);
+	float y1 = quadraticInOut(td.cur+1, td.dur, td.start, td.stop);
+	return y0 + (y1-y0)*alpha;
 }
 
-bool TouchWorldSelectionList::capXPosition() {
-	bool capped = RolledSelectionListH::capXPosition();
+bool TouchWorldSelectionList::capYPosition() {
+	bool capped = RolledSelectionListV::capYPosition();
 	if (capped) mode = 0;
 	return capped;
 }
 
 void TouchWorldSelectionList::tweenInited() {
-	float x0 = quadraticInOut(td.cur,   td.dur, td.start, td.stop);
-	float x1 = quadraticInOut(td.cur+1, td.dur, td.start, td.stop);
-	_xinertia = 0;
-	xInertia = x0-x1; // yes, it's all backwards and messed up..
+	float y0 = quadraticInOut(td.cur,   td.dur, td.start, td.stop);
+	float y1 = quadraticInOut(td.cur+1, td.dur, td.start, td.stop);
+	_yinertia = 0;
+	yInertia = y0-y1; // yes, it's all backwards and messed up..
 }
 
 //
 // Select World Screen
 //
 SelectWorldScreen::SelectWorldScreen()
-:	bDelete (1, ""),
-	bCreate (2, "Create new"),
-	bBack   (3, "Back"),
-	bHeader (0, "Select world"),
+:	bHeader (0, "Play"),
+	bCreate (2, 0, 0, 38, 18, "New"),
+	bJoinByIp(5, 0, 0, 54, 18, "Join By IP"),
+	bEdit   (6, 0, 0, 38, 18, "Edit"),
+	bBack   (3, 0, 0, 38, 18, "Back"),
 	bWorldView(4, ""),
 	worldsList(NULL),
-	_hasStartedLevel(false)
+	guiBackground(NULL),
+	_hasStartedLevel(false),
+	_editMode(false)
 {
-	bDelete.active = false;
-
-	// Delete button
-	ImageDef def;
-	def.name = "gui/touchgui.png";
-	def.width = 34;
-	def.height = 26;
-
-	def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
-	bDelete.setImageDef(def, true);
-
-	// Create new, and Back button
-/*
-	def.src.y = 26; // @  0, 26
-	def.src.w = def.w = 66; // 66, 26 size
-	bBack.setImageDef(def, true);
-	bCreate.setImageDef(def, true);
-*/
 }
 
 SelectWorldScreen::~SelectWorldScreen()
 {
 	delete worldsList;
+	if (guiBackground) delete guiBackground;
 }
 
 void SelectWorldScreen::init()
@@ -315,50 +321,103 @@ void SelectWorldScreen::init()
 	worldsList = new TouchWorldSelectionList(minecraft, width, height);
 	loadLevelSource();
 	worldsList->commit();
+	NinePatchFactory builder(minecraft->textures, "gui/spritesheet.png");
+	guiBackground = builder.createSymmetrical(IntRectangle(34, 43, 14, 14), 3, 3, 32, 32);
 
-	buttons.push_back(&bDelete);
-	buttons.push_back(&bCreate);
-	buttons.push_back(&bBack);
 	buttons.push_back(&bHeader);
+	buttons.push_back(&bCreate);
+	buttons.push_back(&bJoinByIp);
+	buttons.push_back(&bEdit);
+	buttons.push_back(&bBack);
 
 	_mouseHasBeenUp = !Mouse::getButtonState(MouseAction::ACTION_LEFT);
 
 	tabButtons.push_back(&bWorldView);
-	tabButtons.push_back(&bDelete);
 	tabButtons.push_back(&bCreate);
+	tabButtons.push_back(&bJoinByIp);
 	tabButtons.push_back(&bBack);
+
+	minecraft->raknetInstance->clearServerList();
+	minecraft->locateMultiplayer();
 }
 
 void SelectWorldScreen::setupPositions() {
 	//#ifdef ANDROID
-	bCreate.y =	0;
-	bBack.y   = 0;
+	bCreate.y =	4;
+	bJoinByIp.y = 4;
+	bBack.y   = 4;
+	bEdit.y   = 4;
 	bHeader.y = 0;
-	bDelete.y = height - 30;
 
 	// Center buttons
-	bDelete.x   = (width - bDelete.width) / 2;
-	bCreate.x   = width - bCreate.width;//width / 2					- bCreate.w / 2;
-	bBack.x     = 0;//width / 2 + 4 + bCreate.w - bBack.w / 2;
-	bHeader.x   = bBack.width;
-	bHeader.width   = width - (bBack.width + bCreate.width);
-	bHeader.height   = bCreate.height;
+	bHeader.x   = 0;
+	bHeader.width   = width;
+	bHeader.height   = 26;
+	bEdit.x     = width - bEdit.width - 4;
+	bCreate.x   = bEdit.x - bCreate.width - 4;
+	bJoinByIp.x = bCreate.x - bJoinByIp.width - 4;
+	bBack.x     =  4;
+	if (guiBackground) {
+		const int listX = 10;
+		const int listY = 32;
+		const int listW = width - 20;
+		const int listH = height - 38;
+		guiBackground->setSize((float)listW + 6.0f, (float)listH + 6.0f);
+	}
 }
 
 void SelectWorldScreen::buttonClicked(Button* button)
 {
+	if (button->id == bEdit.id) {
+		if (!_editMode) {
+			_editMode = true;
+			bEdit.msg = "Cancel";
+			bEdit.selected = true;
+			bCreate.visible = false;
+			bCreate.active = false;
+			bJoinByIp.visible = false;
+			bJoinByIp.active = false;
+			bBack.visible = false;
+			bBack.active = false;
+			bHeader.visible = false;
+			bHeader.active = false;
+			bWorldView.visible = false;
+			bWorldView.active = false;
+			worldsList->_listEditButtonCount = 0;
+			for (unsigned int i = 0; i < worldsList->levels.size() && i < 32; ++i) {
+				worldsList->_listEditButtonIds[worldsList->_listEditButtonCount] = 100 + i;
+				worldsList->_listEditButtonHovered[worldsList->_listEditButtonCount] = false;
+				worldsList->_listEditButtonCount++;
+			}
+			worldsList->setEditMode(true);
+		} else {
+			_editMode = false;
+			bEdit.msg = "Edit";
+			bEdit.selected = false;
+			setupPositions();
+			bCreate.visible = true;
+			bCreate.active = true;
+			bJoinByIp.visible = true;
+			bJoinByIp.active = true;
+			bBack.visible = true;
+			bBack.active = true;
+			bHeader.visible = true;
+			bHeader.active = true;
+			bWorldView.visible = true;
+			bWorldView.active = true;
+			worldsList->setEditMode(false);
+			worldsList->_listEditButtonCount = 0;
+		}
+		return;
+	}
 	if (button->id == bCreate.id) {
 		if (!_hasStartedLevel) {
 			std::string name = getUniqueLevelName("World");
 			minecraft->setScreen(new SimpleChooseLevelScreen(name));
 		}
 	}
-	if (button->id == bDelete.id) {
-		if (isIndexValid(worldsList->selectedItem)) {
-			LevelSummary level = worldsList->levels[worldsList->selectedItem];
-			LOGI("level: %s, %s\n", level.id.c_str(), level.name.c_str());
-			minecraft->setScreen( new TouchDeleteWorldScreen(level) );
-		}
+	if (button->id == bJoinByIp.id) {
+		minecraft->screenChooser.setScreen(SCREEN_JOINBYIP);
 	}
 	if (button->id == bBack.id) {
 		minecraft->cancelLocateMultiplayer();
@@ -382,7 +441,7 @@ bool SelectWorldScreen::handleBackEvent(bool isDown)
 
 bool SelectWorldScreen::isIndexValid( int index )
 {
-	return worldsList && index >= 0 && index < worldsList->getNumberOfItems() - 1;
+	return worldsList && index >= 0 && index < worldsList->getNumberOfItems();
 }
 
 static char ILLEGAL_FILE_CHARACTERS[] = {
@@ -393,20 +452,26 @@ void SelectWorldScreen::mouseWheel(int dx, int dy, int xm, int ym)
 {
 	if (!worldsList) return;
 	if (dy == 0) return;
-	int num = worldsList->getNumberOfItems();
-	int idx = worldsList->selectedItem;
-	if (dy > 0) {
-		if (idx > 0) {
-			idx--;
-			worldsList->stepLeft();
-		}
-	} else {
-		if (idx < num - 1) {
-			idx++;
-			worldsList->stepRight();
+
+    // worldsList->yo -= dy * worldsList->itemHeight;
+    // worldsList->yoo = worldsList->yo;
+
+	//really scuffed scrolling isnt accurate to real 0.7.0
+	worldsList->yInertia += (dy * 5.0f);
+	worldsList->mode = 0;
+}
+
+void SelectWorldScreen::mouseClicked(int x, int y, int buttonNum)
+{
+	if (_editMode && buttonNum == MouseAction::ACTION_LEFT) {
+		for (int i = 0; i < worldsList->_listEditButtonCount; ++i) {
+			if (worldsList->isEditButtonHovered(i, x, y)) {
+				minecraft->setScreen(new TouchDeleteWorldScreen(worldsList->levels[i]));
+				return;
+			}
 		}
 	}
-	worldsList->selectedItem = idx;
+	Screen::mouseClicked(x, y, buttonNum);
 }
 
 void SelectWorldScreen::tick()
@@ -485,6 +550,27 @@ void SelectWorldScreen::tick()
 
 	worldsList->tick();
 
+	const ServerList& currentLanServers = minecraft->raknetInstance->getServerList();
+	ServerList filteredLanServers;
+	for (unsigned int i = 0; i < currentLanServers.size(); ++i) {
+		if (currentLanServers[i].name.GetLength() > 0)
+			filteredLanServers.push_back(currentLanServers[i]);
+	}
+	worldsList->commitLanServers(filteredLanServers);
+
+	if (worldsList->hasPickedLanServer) {
+		int lanIdx = worldsList->pickedLanIndex;
+		if (lanIdx >= 0 && lanIdx < (int)worldsList->lanServers.size()) {
+			const PingedCompatibleServer& server = worldsList->lanServers[lanIdx];
+			minecraft->joinMultiplayer(server);
+			minecraft->setScreen(new ProgressScreen());
+			_hasStartedLevel = true;
+			worldsList->hasPickedLanServer = false;
+			return;
+		}
+		worldsList->hasPickedLanServer = false;
+	}
+
 	if (worldsList->hasPickedLevel) {
 		if (worldsList->pickedIndex == worldsList->levels.size()) {
 			worldsList->hasPickedLevel = false;
@@ -508,7 +594,6 @@ void SelectWorldScreen::tick()
 		//hasSelection = true;
 	}
 
-	bDelete.active = isIndexValid(worldsList->selectedItem);
 }
 
 void SelectWorldScreen::render( int xm, int ym, float a )
@@ -521,6 +606,18 @@ void SelectWorldScreen::render( int xm, int ym, float a )
 
 	worldsList->setComponentSelected(bWorldView.selected);
 
+	Tesselator& t = Tesselator::instance;
+	if (guiBackground) {
+		const int listX = 10;
+		const int listY = 32;
+		const int listW = width - 20;
+		const int listH = height - 37;
+		guiBackground->draw(t, (float)(listX - 3), (float)(listY - 3));
+		// i love scissoring
+		glEnable2(GL_SCISSOR_TEST);
+		glScissor(listX, height - (listY + listH - 7), width * 2, listH * 2);
+	}
+
 	if (_mouseHasBeenUp)
 		worldsList->render(xm, ym, a);
 	else {
@@ -528,16 +625,18 @@ void SelectWorldScreen::render( int xm, int ym, float a )
 		_mouseHasBeenUp = !Mouse::getButtonState(MouseAction::ACTION_LEFT);
 	}
 
-	//Performance::watches.get("sws-worlds").stop();
-	//Performance::watches.get("sws-screen").start();
-	Screen::render(xm, ym, a);
-	//Performance::watches.get("sws-screen").stop();
+	if (guiBackground) {
+		glDisable2(GL_SCISSOR_TEST);
+	}
+
+	glEnable2(GL_BLEND);
+	glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//minecraft->textures->loadAndBindTexture("gui/selectworld/trash.png");
 
 	//Performance::watches.get("sws-string").start();
 	//Performance::watches.get("sws-string").stop();
-
+	Screen::render(xm, ym, a);
 	//Performance::watches.get("sws-full").stop();
 	//Performance::watches.printEvery(128);
 }
@@ -553,7 +652,6 @@ void SelectWorldScreen::loadLevelSource()
 			worldsList->levels.push_back( levels[i] );
 	}
 }
-
 
 std::string SelectWorldScreen::getUniqueLevelName( const std::string& level )
 {

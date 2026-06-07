@@ -13,7 +13,9 @@ LevelData::LevelData()
 	playerDataVersion(-1),
 	storageVersion(0),
 	gameType(GameType::Default),	spawnMobs(false),
-	allowCheats(false),	loadedPlayerTag(NULL)
+	allowCheats(false),
+	customGeneration(false),
+	loadedPlayerTag(NULL)
 {
 	//LOGI("ctor 1: %p\n", this);
 	spawnMobs = (gameType == GameType::Survival);
@@ -21,7 +23,9 @@ LevelData::LevelData()
 
 LevelData::LevelData( const LevelSettings& settings, const std::string& levelName, int generatorVersion /*= -1*/ )
 :	seed(settings.getSeed()),
-	gameType(settings.getGameType()),	allowCheats(settings.getAllowCheats()),	levelName(levelName),
+	gameType(settings.getGameType()),	allowCheats(settings.getAllowCheats()),
+	customGeneration(settings.getCustomGeneration()),
+	levelName(levelName),
 	xSpawn(128),
 	ySpawn(64),
 	zSpawn(128),
@@ -62,6 +66,7 @@ LevelData::LevelData( const LevelData& rhs )
 	generatorVersion(rhs.generatorVersion),
 	spawnMobs(rhs.spawnMobs),
 	allowCheats(rhs.allowCheats),
+	customGeneration(rhs.customGeneration),
 	loadedPlayerTag(NULL),
 	playerData(rhs.playerData)
 {
@@ -85,6 +90,7 @@ LevelData& LevelData::operator=( const LevelData& rhs )
 		dimension	= rhs.dimension;
 		spawnMobs	= rhs.spawnMobs;
 		allowCheats	= rhs.allowCheats;
+		customGeneration = rhs.customGeneration;
 		playerData  = rhs.playerData;
 		playerDataVersion	= rhs.playerDataVersion;
 		generatorVersion	= rhs.generatorVersion;
@@ -374,4 +380,14 @@ bool LevelData::getAllowCheats() const
 void LevelData::setAllowCheats( bool allow )
 {
 	allowCheats = allow;
+}
+
+bool LevelData::getCustomGeneration() const
+{
+	return customGeneration;
+}
+
+void LevelData::setCustomGeneration( bool custom )
+{
+	customGeneration = custom;
 }

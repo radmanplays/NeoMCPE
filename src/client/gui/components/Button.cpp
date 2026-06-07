@@ -175,6 +175,21 @@ void TButton::renderBg( Minecraft* minecraft, int xm, int ym )
 	}
 }
 
+void TButton::renderFace(Minecraft* mc, int xm, int ym) {
+	Font* font = mc->font;
+	bool isHovered = hovered(mc, xm, ym);
+	int yOffset = isHovered ? 1 : 0;
+
+	if (!active) {
+		drawCenteredString(font, msg, x + width / 2, y + (height - 8) / 2 + yOffset, 0xffa0a0a0);
+	} else {
+		if (isHovered) {
+			drawCenteredString(font, msg, x + width / 2, y + (height - 8) / 2 + yOffset, 0xffffa0);
+		} else {
+			drawCenteredString(font, msg, x + width / 2, y + (height - 8) / 2 + yOffset, 0xe0e0e0);
+		}
+	}
+}
 
 //
 // Header spacing in Touchscreen mode

@@ -2,6 +2,7 @@
 #define NET_MINECRAFT_CLIENT_GUI_COMPONENTS__RolledSelectionListV_H__
 
 #include "../GuiComponent.h"
+#include "NinePatch.h"
 class Minecraft;
 class Tesselator;
 
@@ -23,6 +24,7 @@ public:
 	virtual void renderHoleBackground(/*float x0, float x1,*/ float y0, float y1, int a0, int a1);
 	virtual void setRenderSelection(bool _renderSelection);
 	virtual void setComponentSelected(bool selected);
+	void setRenderItemBackground(bool render);
 protected:
 	void setRenderHeader(bool _renderHeader, int _headerHeight);
 
@@ -51,6 +53,10 @@ protected:
 	virtual void onPreRender();
 	virtual void onPostRender();
 	void renderDirtBackground();
+
+	virtual void updateHoverItem(int xm, int ym);
+	virtual bool isHoveredItem(int item) { return item == _hoverItem; }
+	virtual float getItemBgWidthOffset() { return 0.0f; }
 protected:
 	Minecraft* minecraft;
 
@@ -89,6 +95,13 @@ private:
 	float _lastyoo;
 
 	float _stickPixels;
+
+	bool _renderItemBackground;
+	NinePatchLayer* _itemBgNormal;
+	NinePatchLayer* _itemBgSelected;
+
+protected:
+	int _hoverItem;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_COMPONENTS__RolledSelectionListV_H__*/

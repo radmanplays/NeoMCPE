@@ -6,10 +6,14 @@
 #include "../../TweenData.h"
 #include "../../components/ImageButton.h"
 #include "../../components/Button.h"
-#include "../../components/RolledSelectionListH.h"
+#include "../../components/RolledSelectionListV.h"
+#include "../../components/NinePatch.h"
 #include "../../../Minecraft.h"
 #include "../../../../world/level/storage/LevelStorageSource.h"
+#include "../../../../network/RakNetInstance.h"
 
+
+class NinePatchLayer;
 
 namespace Touch {
 
@@ -18,7 +22,7 @@ class SelectWorldScreen;
 //
 // Scrolling World selection list
 //
-class TouchWorldSelectionList : public RolledSelectionListH
+class TouchWorldSelectionList : public RolledSelectionListV
 {
 public:
 	TouchWorldSelectionList(Minecraft* _minecraft, int _width, int _height);
@@ -27,6 +31,13 @@ public:
 	void stepRight();
 
 	void commit();
+	void commitLanServers(const ServerList& lanServers);
+	void setEditMode(bool edit);
+	bool isEditMode() const { return _listEditMode; }
+	int getEditButtonCount() const { return _listEditButtonCount; }
+	int getEditButtonId(int i) const { return _listEditButtonIds[i]; }
+	bool isEditButtonHovered(int i, int xm, int ym) const;
+	std::string getLastPlayedString(int lastPlayedString);
 protected:
 	virtual int getNumberOfItems();
 	virtual void selectItem(int item, bool doubleClick);
@@ -36,21 +47,25 @@ protected:
 	virtual void renderItem(int i, int x, int y, int h, Tesselator& t);
 	virtual float getPos(float alpha);
 	virtual void touched() { mode = 0; }
-	virtual bool capXPosition();
+	virtual bool capYPosition();
+	virtual float getItemBgWidthOffset();
+	virtual void updateHoverItem(int xm, int ym);
+	virtual int getItemAtPosition(int x, int y);
 
-	virtual void selectStart(int item, int localX, int localY);
-	virtual void selectCancel();
 private:
 	TweenData td;
 	void tweenInited();
 
 	int selectedItem;
-	bool _newWorldSelected; // Is the PLUS button pressed?
 	int _height;
 	LevelSummaryList levels;
 	std::vector<StringVector> _descriptions;
-	StringVector _imageNames;
-	
+
+	ServerList lanServers;
+	std::vector<StringVector> _lanDescriptions;
+	bool hasPickedLanServer;
+	int pickedLanIndex;
+
 	bool hasPickedLevel;
 	LevelSummary pickedLevel;
 	int pickedIndex;
@@ -59,6 +74,14 @@ private:
 	int currentTick;
 	float accRatio;
 	int mode;
+	bool _listEditMode;
+	int _listEditButtonCount;
+	int _listEditButtonIds[32];
+	float _listEditButtonX[32];
+	float _listEditButtonY[32];
+	bool _listEditButtonHovered[32];
+	NinePatchLayer* _editBtnNormal;
+	NinePatchLayer* _editBtnPressed;
 	
 	friend class SelectWorldScreen;
 };
@@ -96,6 +119,7 @@ public:
 	virtual bool handleBackEvent(bool isDown) override;
 	virtual void buttonClicked(Button* button) override;
 	virtual void keyPressed(int eventKey) override;
+	virtual void mouseClicked(int x, int y, int buttonNum) override;
 
 	// support for mouse wheel when desktop code uses touch variant
 	virtual void mouseWheel(int dx, int dy, int xm, int ym) override;
@@ -105,16 +129,18 @@ private:
 	void loadLevelSource();
 	std::string getUniqueLevelName(const std::string& level);
 
-	ImageButton bDelete;
 	TButton bCreate;
-	THeader bHeader;
+	TButton bJoinByIp;
+	TButton bEdit;
+	Touch::THeader bHeader;
 	TButton bBack;
 	Button bWorldView;
 	TouchWorldSelectionList* worldsList;
 	LevelSummaryList levels;
-
+	NinePatchLayer* guiBackground;
 	bool _mouseHasBeenUp;
 	bool _hasStartedLevel;
+	bool _editMode;
 	//LevelStorageSource* levels;
 };
 };
