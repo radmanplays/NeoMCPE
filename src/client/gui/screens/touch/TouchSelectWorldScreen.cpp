@@ -1,4 +1,5 @@
 #include "TouchSelectWorldScreen.h"
+#include "../../Gui.h"
 #include "../StartMenuScreen.h"
 #include "../ProgressScreen.h"
 #include "../DialogDefinitions.h"
@@ -615,7 +616,11 @@ void SelectWorldScreen::render( int xm, int ym, float a )
 		guiBackground->draw(t, (float)(listX - 3), (float)(listY - 3));
 		// i love scissoring
 		glEnable2(GL_SCISSOR_TEST);
-		glScissor(listX, height - (listY + listH - 7), width * 2, listH * 2);
+		int scissorX = (int)((listX - 1) * Gui::GuiScale);
+		int scissorY = (int)((height - (listY + listH)) * Gui::GuiScale);
+		int scissorW = (int)((listW + 2) * Gui::GuiScale);
+		int scissorH = (int)((listH + 2) * Gui::GuiScale);
+		glScissor(scissorX, scissorY, scissorW, scissorH);
 	}
 
 	if (_mouseHasBeenUp)

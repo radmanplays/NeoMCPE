@@ -57,12 +57,12 @@ void SimpleChooseLevelScreen::init()
     if (/* minecraft->useTouchscreen() */ true) {
         bGamemode = new Touch::TButton(1, "Creative mode");
         bCheats  = new Touch::TButton(4, "Cheats: Off");
-        bCustomGeneration = new Touch::TButton(5, "Custom Generation: Off");
+        bCustomGeneration = new Touch::TButton(5, "Custom Gen: Off");
         bCreate  = new Touch::TButton(3, "Generate World");
     } else {
         bGamemode = new Button(1, "Creative mode");
         bCheats  = new Button(4, "Cheats: Off");
-        bCustomGeneration = new Button(5, "Custom Generation: Off");
+        bCustomGeneration = new Button(5, "Custom Gen: Off");
         bCreate  = new Button(3, "Create");
     }
 
