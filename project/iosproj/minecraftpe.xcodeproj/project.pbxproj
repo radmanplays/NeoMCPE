@@ -5961,7 +5961,10 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../src",
+					"$(SRCROOT)/../../lib/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -6006,8 +6009,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
-				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
+				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = app;
 			};
@@ -6114,7 +6117,10 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../src",
+					"$(SRCROOT)/../../lib/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -6164,8 +6170,8 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1B194957-98CF-49B7-A0E7-76692B4B722D";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
-				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
+				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = app;
 			};
@@ -6302,8 +6308,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
-				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
+				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = app;
 			};
@@ -6344,8 +6350,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
-				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views";
+				SYSTEM_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../src $(SRCROOT)/../lib_projects/InAppSettingsKit/Models $(SRCROOT)/../../src/client/gui/components $(SRCROOT)/../../src/world $(SRCROOT)/../../src/platform/input $(SRCROOT)/../../project/lib_projects/InAppSettingsKit/Views $(SRCROOT)/../../lib/include";
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = app;
 			};
