@@ -106,14 +106,14 @@ void SimpleChooseLevelScreen::setupPositions()
 
     bGamemode->y = height / 2 + 10;
     bCheats->y = height / 2 + 10;
-    bCustomGeneration->y = height / 2 + 10;
-
-    bCheats->x = width / 2 + width / 4 - (width / 2 - 12) / 2 - 3;
-    bCustomGeneration->x = width / 2 + width / 4 - (width / 2 - 12) / 2 - 3 + (width / 2 - 12) - bCustomGeneration->width;
-    bGamemode->x = bCheats->x - bCheats->width - ((width / 2 - 12) - bCheats->width * 2);
+    bGamemode->x = width / 2 + width / 4 - (width / 2 - 12) / 2 - 3;
+    bCheats->x = width / 2 + width / 4 - (width / 2 - 12) / 2 - 3 + (width / 2 - 12) - bCheats->width;
 
     bCreate->x = width / 2 - bCreate->width / 2;
     bCreate->y = bGamemode->y + bGamemode->height + 10;
+
+    bCustomGeneration->x = width / 2 + width / 4 - (width / 2 - 12) / 2 - 3 + (width / 2 - 12) - bCustomGeneration->width;
+    bCustomGeneration->y = bCreate->y;
 
     tLevelName.width = 100;
     tSeed.width = 100;
@@ -153,11 +153,10 @@ void SimpleChooseLevelScreen::render( int xm, int ym, float a )
         modeDesc = "Easily destroy and place blocks. No damage, flying and other cool stuff.";
     }
     if (modeDesc) {
-        if (strstr(modeDesc, "\n") != nullptr) {
-            drawCenteredString(minecraft->font, modeDesc, ((width / 2) + minecraft->font->width(modeDesc) / 2) + 2, bHeader->height + 20, 0xffffff);
-        } else {
-            drawCenteredString(minecraft->font, modeDesc, ((width / 2) + minecraft->font->width(modeDesc) / 2) + 2, bHeader->height + 16, 0xffffff);
-        }
+        float wrapWidth = (float)(width - 10) - ((width / 2) + 2);
+        float startX = (width / 2) + 2;
+        float startY = (float)(bHeader->height + 16);
+        minecraft->font->drawWordWrap(modeDesc, startX, startY, wrapWidth, 0xffffff);
     }
 
     int seedLabelY = tLevelName.y + tLevelName.height + 13;
@@ -223,7 +222,7 @@ void SimpleChooseLevelScreen::buttonClicked( Button* button )
 
     if (button == bCustomGeneration) {
         customGenerationEnabled = !customGenerationEnabled;
-        bCustomGeneration->msg = customGenerationEnabled ? "Custom Generation: On" : "Custom Generation: Off";
+        bCustomGeneration->msg = customGenerationEnabled ? "Custom Gen: On" : "Custom Gen: Off";
         return;
     }
 

@@ -51,10 +51,7 @@ public:
             if (material == Material::lava) {
                 if (depth < 8 && newDepth < 8) {
                     if (newDepth > depth) {
-                        if (random->nextInt(4) != 0) {
-                            newDepth = depth;
-                            becomeStatic = false;
-                        }
+                        becomeStatic = false;
                     }
                 }
             }

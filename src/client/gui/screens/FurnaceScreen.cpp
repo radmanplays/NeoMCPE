@@ -259,7 +259,7 @@ void FurnaceScreen::render(int xm, int ym, float a) {
 
 	minecraft->textures->loadAndBindTexture("gui/spritesheet.png");
 	int yy = btnResult.y + 8;
-	int fpx = furnace->getLitProgress(14) + 2;
+	int fpx = Mth::clamp(furnace->getLitProgress(14) + 2, 0, 16);
 	int xx0 = btnIngredient.x + 8;
 	blit(xx0, yy, 80, 40, 16, 16, 32, 32);
 	blit(xx0, yy + 16 - fpx, 112, 40 + 32-fpx-fpx, 16, fpx, 32, fpx+fpx);

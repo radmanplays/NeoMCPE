@@ -458,6 +458,16 @@ void PaneCraftingScreen::craftSelectedItem()
             if (toRemove.count > 0) {
                 minecraft->player->inventory->removeResource(toRemove);
             }
+
+			// Give back crafting remaining items (e.g. empty buckets from milk buckets)
+			Item* ingredientItem = Item::items[req.item.id];
+			if (ingredientItem && ingredientItem->hasCraftingRemainingItem()) {
+				Item* remainder = ingredientItem->getCraftingRemainingItem();
+				ItemInstance remainderInstance(remainder->id, req.item.count, 0);
+				if (!minecraft->player->inventory->add(&remainderInstance)) {
+					minecraft->player->drop(new ItemInstance(remainderInstance), false);
+				}
+			}
 		}
 		// ... add the new one! (in this order, to fill empty slots better)
 		// if it doesn't fit, throw it on the ground!

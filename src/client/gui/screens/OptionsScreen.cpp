@@ -96,8 +96,9 @@ void OptionsScreen::setupPositions() {
     int totalButtons = categoryButtons.size();
 
     int usedHeight = headerHeight + 3;
+    int bottomMargin = (btnCredits != NULL) ? btnCredits->height + 2 : 0;
     int buttonsTotalHeight = totalButtons * 28 + (totalButtons - 1);
-    int v3 = (height - usedHeight - buttonsTotalHeight) / 2;
+    int v3 = (height - usedHeight - bottomMargin - buttonsTotalHeight) / 2;
     if (v3 < 0) v3 = 0;
 
     for (size_t i = 0; i < categoryButtons.size(); ++i) {
