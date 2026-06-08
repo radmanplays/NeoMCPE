@@ -38,6 +38,7 @@
 #include "gui/screens/ConsoleScreen.h"
 #include "gui/screens/ChatScreen.h"
 #include "sound/SoundEngine.h"
+#include "sound/MusicManager.h"
 #include "player/input/touchscreen/TouchscreenInput.h"
 #include "renderer/Chunk.h"
 #include "gui/screens/PrerenderTilesScreen.h"
@@ -192,6 +193,8 @@ Minecraft::Minecraft() :
 #ifndef STANDALONE_SERVER
 	soundEngine = new SoundEngine(20.0f);
 	soundEngine->init(this, &options);
+	musicManager = new MusicManager();
+	musicManager->init(&options);
 #endif
 	//setupPieces();
 }
@@ -205,6 +208,7 @@ Minecraft::~Minecraft()
 	delete gameRenderer;
 	delete particleEngine;
 
+	delete musicManager;
 	delete soundEngine;
 #endif
 	delete gameMode;
@@ -470,6 +474,7 @@ void Minecraft::update() {
 	if (gameMode != NULL) gameMode->render(timer.a);
 	TIMER_PUSH("sound");
 	soundEngine->update(player, timer.a);
+	if (musicManager) musicManager->tick();
 	TIMER_POP_PUSH("render");
 	gameRenderer->render(timer.a);
 	TIMER_POP();
@@ -1593,11 +1598,13 @@ LevelStorageSource* Minecraft::getLevelSource()
 void Minecraft::audioEngineOn() {
 #ifndef STANDALONE_SERVER
 	soundEngine->enable(true);
+	if (musicManager) musicManager->setVolume(options.getProgressValue(OPTIONS_MUSIC_VOLUME));
 #endif
 }
 void Minecraft::audioEngineOff() {
 #ifndef STANDALONE_SERVER
 	soundEngine->enable(false);
+	if (musicManager) musicManager->stop();
 #endif
 }
 

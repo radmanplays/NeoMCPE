@@ -125,6 +125,7 @@
     <ClCompile Include="..\..\src\client\renderer\TileRenderer.cpp" />
     <ClCompile Include="..\..\src\client\sound\Sound.cpp" />
     <ClCompile Include="..\..\src\client\sound\SoundEngine.cpp" />
+    <ClCompile Include="..\..\src\client\sound\MusicManager.cpp" />
     <ClCompile Include="..\..\src\locale\I18n.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\nbt\Tag.cpp" />
@@ -521,6 +522,8 @@
     <ClInclude Include="..\..\src\client\sound\Sound.h" />
     <ClInclude Include="..\..\src\client\sound\SoundEngine.h" />
     <ClInclude Include="..\..\src\client\sound\SoundRepository.h" />
+    <ClInclude Include="..\..\src\client\sound\MusicManager.h" />
+    <ClInclude Include="..\..\lib\include\stb\stb_vorbis.c" />
     <ClInclude Include="..\..\src\client\Timer.h" />
     <ClInclude Include="..\..\src\client\User.h" />
     <ClInclude Include="..\..\src\ErrorCodes.h" />
