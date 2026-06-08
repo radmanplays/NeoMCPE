@@ -7,8 +7,13 @@
 #include <cstring>
 
 #if (defined(__APPLE__) || defined(PLATFORM_DESKTOP)) && !defined(NO_SOUND)
+#if defined(__APPLE__)
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#else
 #include <AL/al.h>
 #include <AL/alc.h>
+#endif
 #define STB_VORBIS_NO_STDIO
 #include "stb/stb_vorbis.c"
 #endif
