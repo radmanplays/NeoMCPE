@@ -16,6 +16,11 @@
 #endif
 #define STB_VORBIS_NO_STDIO
 #include "stb/stb_vorbis.c"
+#elif defined(ANDROID) && !defined(PRE_ANDROID23) && !defined(RPI)
+#include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
+#define STB_VORBIS_NO_STDIO
+#include "stb/stb_vorbis.c"
 #endif
 
 static const int MUSIC_DELAY_MIN = 600;
@@ -28,8 +33,15 @@ MusicManager::MusicManager()
     , m_isPlaying(false)
     , m_volume(1.0f)
 #if defined(ANDROID) && !defined(PRE_ANDROID23) && !defined(RPI)
-    , m_mediaPlayer(NULL)
-    , m_currentSoundId(0)
+    , m_audioPlayer(NULL)
+    , m_bufferQueueItf(NULL)
+    , m_volumeItf(NULL)
+    , m_playItf(NULL)
+    , m_currentSampleOffset(0)
+    , m_totalSamples(0)
+    , m_channels(0)
+    , m_sampleRate(0)
+    , m_androidPlayerCreated(false)
 #elif (defined(__APPLE__) || defined(PLATFORM_DESKTOP)) && !defined(NO_SOUND)
     , m_alSource(0)
     , m_alInitialized(false)
@@ -49,9 +61,10 @@ MusicManager::~MusicManager()
 #endif
 }
 
-void MusicManager::init(Options* options)
+void MusicManager::init(Options* options, SoundSystem* soundSystem)
 {
     m_options = options;
+    m_soundSystem = soundSystem;
     m_musicDelay = Mth::random(MUSIC_DELAY_MAX - MUSIC_DELAY_MIN) + MUSIC_DELAY_MIN;
     m_currentTrackIndex = -1;
     m_isPlaying = false;
@@ -163,15 +176,116 @@ void MusicManager::setVolume(float volume)
     if (m_alInitialized && m_alSource != 0) {
         alSourcef(m_alSource, AL_GAIN, m_volume);
     }
+#elif defined(ANDROID) && !defined(PRE_ANDROID23) && !defined(RPI)
+    if (m_volumeItf) {
+        SLmillibel maxVol = 0;
+        (*(SLVolumeItf)m_volumeItf)->GetMaxVolumeLevel((SLVolumeItf)m_volumeItf, &maxVol);
+        (*(SLVolumeItf)m_volumeItf)->SetVolumeLevel((SLVolumeItf)m_volumeItf, maxVol - (SLmillibel)((1.0f - m_volume) * 2000.0f));
+    }
 #endif
 }
 
 #if defined(ANDROID) && !defined(PRE_ANDROID23) && !defined(RPI)
 
 bool MusicManager::loadTracksAndroid() { return true; }
-void MusicManager::playOnAndroid(int index) {}
-void MusicManager::stopOnAndroid() { m_currentSoundId = 0; }
-bool MusicManager::isPlayingOnAndroid() { return false; }
+
+void MusicManager::bufferCallback(void* context, void* player) {
+    MusicManager* self = (MusicManager*)context;
+    self->fillNextBuffer();
+}
+
+void MusicManager::fillNextBuffer() {
+    if (!m_bufferQueueItf || m_currentSampleOffset >= m_totalSamples) return;
+    int samplesPerBuffer = m_sampleRate * 2;
+    int remaining = m_totalSamples - m_currentSampleOffset;
+    int toCopy = (remaining < samplesPerBuffer) ? remaining : samplesPerBuffer;
+    int bytesToCopy = toCopy * m_channels * sizeof(short);
+    SLAndroidSimpleBufferQueueItf queue = (SLAndroidSimpleBufferQueueItf)m_bufferQueueItf;
+    SLresult res = (*queue)->Enqueue(queue, &m_pcmData[m_currentSampleOffset * m_channels], bytesToCopy);
+    if (res == SL_RESULT_SUCCESS) m_currentSampleOffset += toCopy;
+}
+
+void MusicManager::playOnAndroid(int index) {
+    if (index < 0 || index >= (int)m_tracks.size()) return;
+    MusicTrack& track = m_tracks[index];
+    stopOnAndroid();
+
+    std::string path = track.filePath;
+    FILE* f = fopen(path.c_str(), "rb");
+    if (!f) { path = "data/" + path; f = fopen(path.c_str(), "rb"); }
+    if (!f) { LOGE("Music: cannot open %s\n", track.filePath.c_str()); return; }
+
+    fseek(f, 0, SEEK_END);
+    long fileSize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    unsigned char* fileData = new unsigned char[fileSize];
+    fread(fileData, 1, fileSize, f);
+    fclose(f);
+
+    int numChannels = 0, sampleRateOut = 0;
+    short* decoded = NULL;
+    int numSamples = stb_vorbis_decode_memory(fileData, (int)fileSize, &numChannels, &sampleRateOut, &decoded);
+    delete[] fileData;
+    if (numSamples <= 0 || !decoded) { LOGE("Music: decode failed %s\n", track.filePath.c_str()); return; }
+
+    m_channels = numChannels;
+    m_sampleRate = sampleRateOut;
+    m_totalSamples = numSamples;
+    m_currentSampleOffset = 0;
+    m_pcmData.resize((size_t)numSamples * numChannels);
+    memcpy(&m_pcmData[0], decoded, (size_t)numSamples * numChannels * sizeof(short));
+    free(decoded);
+    LOGI("Music: decoded %s (%d samples, %d Hz, %d ch)\n", track.filePath.c_str(), numSamples, sampleRateOut, numChannels);
+
+    SLDataLocator_AndroidSimpleBufferQueue locBufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
+    SLDataFormat_PCM formatPcm = {
+        SL_DATAFORMAT_PCM, (SLuint32)m_channels, (SLuint32)(m_sampleRate * 1000),
+        SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
+        m_channels == 1 ? SL_SPEAKER_FRONT_CENTER : (SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT),
+        SL_BYTEORDER_LITTLEENDIAN
+    };
+    SLDataSource audioSrc = {&locBufq, &formatPcm};
+
+    SoundSystemSL* soundSys = (SoundSystemSL*)m_soundSystem;
+    if (!soundSys) { LOGE("Music: no sound system\n"); return; }
+    SLObjectItf outputMix = soundSys->getOutputMix();
+    SLEngineItf eng = soundSys->getEngine();
+    if (!eng || !outputMix) { LOGE("Music: no engine/outputmix\n"); return; }
+
+    SLDataLocator_OutputMix locOutmix = {SL_DATALOCATOR_OUTPUTMIX, outputMix};
+    SLDataSink audioSnk = {&locOutmix, NULL};
+    SLInterfaceID ids[] = {SL_IID_BUFFERQUEUE, SL_IID_VOLUME};
+    SLboolean req[] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
+
+    SLresult res = (*eng)->CreateAudioPlayer(eng, (SLObjectItf*)&m_audioPlayer, &audioSrc, &audioSnk, 2, ids, req);
+    if (res != SL_RESULT_SUCCESS) { LOGE("Music: CreateAudioPlayer failed %d\n", res); return; }
+    (*(SLObjectItf)m_audioPlayer)->Realize((SLObjectItf)m_audioPlayer, SL_BOOLEAN_FALSE);
+    (*(SLObjectItf)m_audioPlayer)->GetInterface((SLObjectItf)m_audioPlayer, SL_IID_PLAY, &m_playItf);
+    (*(SLObjectItf)m_audioPlayer)->GetInterface((SLObjectItf)m_audioPlayer, SL_IID_BUFFERQUEUE, &m_bufferQueueItf);
+    (*(SLObjectItf)m_audioPlayer)->GetInterface((SLObjectItf)m_audioPlayer, SL_IID_VOLUME, &m_volumeItf);
+
+    fillNextBuffer();
+    fillNextBuffer();
+    (*(SLAndroidSimpleBufferQueueItf)m_bufferQueueItf)->RegisterCallback((SLAndroidSimpleBufferQueueItf)m_bufferQueueItf, &MusicManager::bufferCallback, this);
+
+    SLmillibel maxVol = 0;
+    (*(SLVolumeItf)m_volumeItf)->GetMaxVolumeLevel((SLVolumeItf)m_volumeItf, &maxVol);
+    (*(SLVolumeItf)m_volumeItf)->SetVolumeLevel((SLVolumeItf)m_volumeItf, maxVol - (SLmillibel)((1.0f - m_volume) * 2000.0f));
+    (*(SLPlayItf)m_playItf)->SetPlayState((SLPlayItf)m_playItf, SL_PLAYSTATE_PLAYING);
+    m_androidPlayerCreated = true;
+}
+
+void MusicManager::stopOnAndroid() {
+    if (m_audioPlayer) { (*(SLObjectItf)m_audioPlayer)->Destroy((SLObjectItf)m_audioPlayer); m_audioPlayer = NULL; m_bufferQueueItf = NULL; m_volumeItf = NULL; m_playItf = NULL; m_androidPlayerCreated = false; }
+    m_pcmData.clear(); m_currentSampleOffset = 0; m_totalSamples = 0;
+}
+
+bool MusicManager::isPlayingOnAndroid() {
+    if (!m_androidPlayerCreated || !m_playItf) return false;
+    SLuint32 state = 0;
+    (*(SLPlayItf)m_playItf)->GetPlayState((SLPlayItf)m_playItf, &state);
+    return state == SL_PLAYSTATE_PLAYING && m_currentSampleOffset < m_totalSamples;
+}
 
 #elif (defined(__APPLE__) || defined(PLATFORM_DESKTOP)) && !defined(NO_SOUND)
 

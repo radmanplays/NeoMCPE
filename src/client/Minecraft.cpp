@@ -194,7 +194,7 @@ Minecraft::Minecraft() :
 	soundEngine = new SoundEngine(20.0f);
 	soundEngine->init(this, &options);
 	musicManager = new MusicManager();
-	musicManager->init(&options);
+	musicManager->init(&options, soundEngine->getSoundSystem());
 #endif
 	//setupPieces();
 }
