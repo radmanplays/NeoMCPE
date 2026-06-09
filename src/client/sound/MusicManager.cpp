@@ -215,9 +215,15 @@ void MusicManager::playOnAndroid(int index) {
     if (m_minecraft && m_minecraft->platform()) {
         std::string assetPath = track.filePath;
         if (assetPath.substr(0, 5) == "data/") assetPath = assetPath.substr(5);
-        assetPath = "assets/" + assetPath;
         blob = m_minecraft->platform()->readAssetFile(assetPath);
+        if (!blob.data || blob.size <= 0) {
+            blob = m_minecraft->platform()->readAssetFile(track.filePath);
+        }
+        if (!blob.data || blob.size <= 0) {
+            blob = m_minecraft->platform()->readAssetFile("assets/" + assetPath);
+        }
     }
+    
     if (!blob.data || blob.size <= 0) {
         LOGE("Music: cannot load asset %s (size=%d)\n", track.filePath.c_str(), blob.size);
         return;
@@ -225,7 +231,7 @@ void MusicManager::playOnAndroid(int index) {
 
     int numChannels = 0, sampleRateOut = 0;
     short* decoded = NULL;
-    int numSamples = stb_vorbis_decode_memory(blob.data, blob.size, &numChannels, &sampleRateOut, &decoded);
+    int numSamples = stb_vorbis_decode_memory((const unsigned char*)blob.data, blob.size, &numChannels, &sampleRateOut, &decoded);
     if (numSamples <= 0 || !decoded) { LOGE("Music: decode failed %s\n", track.filePath.c_str()); return; }
 
     m_channels = numChannels;
@@ -254,14 +260,15 @@ void MusicManager::playOnAndroid(int index) {
 
     SLDataLocator_OutputMix locOutmix = {SL_DATALOCATOR_OUTPUTMIX, outputMix};
     SLDataSink audioSnk = {&locOutmix, NULL};
-    SLInterfaceID ids[] = {SL_IID_BUFFERQUEUE, SL_IID_VOLUME};
+    SLInterfaceID ids[] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_VOLUME};
     SLboolean req[] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
 
     SLresult res = (*eng)->CreateAudioPlayer(eng, (SLObjectItf*)&m_audioPlayer, &audioSrc, &audioSnk, 2, ids, req);
     if (res != SL_RESULT_SUCCESS) { LOGE("Music: CreateAudioPlayer failed %d\n", res); return; }
     (*(SLObjectItf)m_audioPlayer)->Realize((SLObjectItf)m_audioPlayer, SL_BOOLEAN_FALSE);
     (*(SLObjectItf)m_audioPlayer)->GetInterface((SLObjectItf)m_audioPlayer, SL_IID_PLAY, &m_playItf);
-    (*(SLObjectItf)m_audioPlayer)->GetInterface((SLObjectItf)m_audioPlayer, SL_IID_BUFFERQUEUE, &m_bufferQueueItf);
+    
+    (*(SLObjectItf)m_audioPlayer)->GetInterface((SLObjectItf)m_audioPlayer, SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &m_bufferQueueItf);
     (*(SLObjectItf)m_audioPlayer)->GetInterface((SLObjectItf)m_audioPlayer, SL_IID_VOLUME, &m_volumeItf);
 
     fillNextBuffer();
