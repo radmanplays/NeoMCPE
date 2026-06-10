@@ -3,7 +3,6 @@ build/
 out/
 bin/
 lib/
-!lib/include/stb/
 build-apk/
 cmake-build-*/
 CMakeFiles/
