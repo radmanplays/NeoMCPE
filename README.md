@@ -10,7 +10,7 @@ This project aims to preserve and try to backport newer Minecraft PE alpha versi
 ![Roadmap](.github/todo.png)
 
 - Port Alpha 0.7.0 (100% complete 🎉)
-- Port Alpha 0.7.1 (WIP)
+- Port Alpha 0.7.1 (100% complete 🎉)
 - Port Alpha 0.7.2 (Not started)
 - Port Alpha 0.7.3 (Not started)
 - Port Alpha 0.7.4 (Not started)

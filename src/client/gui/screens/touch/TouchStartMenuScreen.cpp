@@ -97,7 +97,7 @@ void StartMenuScreen::setupPositions() {
 	float spacing = (width - (3.0f * buttonWidth)) / 4;
 
 	//#ifdef ANDROID
-	bHost.y =	 80 - bHost.height;
+	bHost.y = (height / 2) - 1;
 	// bJoin.y =	 yBase;
 	bOptions.y = height - bOptions.height - 4;
 	//#endif
@@ -109,7 +109,7 @@ void StartMenuScreen::setupPositions() {
     
 	// quit icon top-right (use size assigned in init)
 	bQuit.x = bHost.x;
-	bQuit.y = bHost.y + bQuit.height + 15;
+	bQuit.y = bHost.y + bQuit.height + 10;
 
 	copyrightPosY = height - 10;
 	versionPosY = height - 20;
@@ -157,8 +157,6 @@ void StartMenuScreen::render( int xm, int ym, float a )
 
 #if defined(RPI)
 	TextureId id = minecraft->textures->loadTexture("gui/pi_title.png");
-#elif defined(_WIN32)
-	TextureId id = minecraft->textures->loadTexture("gui/win_title.png");
 #else
 	TextureId id = minecraft->textures->loadTexture("gui/title.png");
 #endif
@@ -167,20 +165,19 @@ void StartMenuScreen::render( int xm, int ym, float a )
 	if (data) {
 		minecraft->textures->bind(id);
 
-		const float x = (float)width / 2;
-		const float y = 4;
-		const float wh = 0.5f * Mth::Min((float)width/2.0f, (float)data->w / 2);
-		const float scale = 2.0f * wh / (float)data->w;
-		const float h = scale * (float)data->h;
+		const float x = ((float)width - std::min((float)data->w, (float)width)) / 2;
+		const float y = 14;
+		const float w = std::min((float)data->w, (float)width);
+		const float h = std::min((float)data->w, (float)width) * ((float)data->h / (float)data->w);
 
 		// Render title text
 		Tesselator& t = Tesselator::instance;
 		glColor4f2(1, 1, 1, 1);
 		t.begin();
-			t.vertexUV(x-wh, y+h, blitOffset, 0, 1);
-			t.vertexUV(x+wh, y+h, blitOffset, 1, 1);
-			t.vertexUV(x+wh, y+0, blitOffset, 1, 0);
-			t.vertexUV(x-wh, y+0, blitOffset, 0, 0);
+			t.vertexUV(x, y+h, blitOffset, 0, 1);
+			t.vertexUV(x+w, y+h, blitOffset, 1, 1);
+			t.vertexUV(x+w, y+0, blitOffset, 1, 0);
+			t.vertexUV(x, y+0, blitOffset, 0, 0);
 		t.draw();
 
 		drawString(font, version, 1, versionPosY, 0xffffff);

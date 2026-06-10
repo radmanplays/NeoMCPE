@@ -16,15 +16,7 @@ CreditsScreen::~CreditsScreen() {
 
 void CreditsScreen::init() {
     bHeader = new Touch::THeader(0, "Credits");
-    btnBack = new ImageButton(1, "");
-    {
-        ImageDef def;
-        def.name = "gui/touchgui.png";
-        def.width = 34;
-        def.height = 26;
-        def.setSrc(IntRectangle(150, 0, (int)def.width, (int)def.height));
-        btnBack->setImageDef(def, true);
-    }
+    btnBack = new Touch::TButton(1, 0, 0, 38, 18, "Back");
     buttons.push_back(bHeader);
     buttons.push_back(btnBack);
 
@@ -51,13 +43,12 @@ void CreditsScreen::init() {
 
 void CreditsScreen::setupPositions() {
     int buttonHeight = btnBack->height;
-    btnBack->x = width - btnBack->width;
-    btnBack->y = 0;
+    btnBack->x = 4;
+    btnBack->y = 4;
     if (bHeader) {
         bHeader->x = 0;
         bHeader->y = 0;
-        bHeader->width = width - btnBack->width;
-        bHeader->height = btnBack->height;
+        bHeader->width = width;
     }
 
     // reset scroll starting position when screen size changes

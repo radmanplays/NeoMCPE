@@ -22,7 +22,7 @@ public:
     virtual void mouseClicked(int x, int y, int buttonNum);
 private:
     Touch::THeader* bHeader;
-    ImageButton* btnBack;
+    Touch::TButton* btnBack;
 
     std::vector<std::string> _lines;
     float _scrollY;
