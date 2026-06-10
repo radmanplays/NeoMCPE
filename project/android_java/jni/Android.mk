@@ -107,7 +107,6 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/client/renderer/tileentity/SignRenderer.cpp \
 ../../../src/client/renderer/tileentity/TileEntityRenderDispatcher.cpp \
 ../../../src/client/renderer/tileentity/TileEntityRenderer.cpp \
-../../../lib/include/stb/stb_vorbis.c \
 ../../../src/client/sound/Sound.cpp \
 ../../../src/client/sound/SoundEngine.cpp \
 ../../../src/client/sound/MusicManager.cpp \
