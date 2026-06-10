@@ -27,6 +27,7 @@ public:
 	float yBobO, xBobO; // shredder added from b1.8/4j for the hand swaying animation
 
     void move(float xa, float ya, float za);
+	virtual void attack(Entity* entity);
 
     void aiStep();
     void updateAi();
@@ -73,6 +74,7 @@ public:
 	void swing();
 	virtual void openTextEdit( TileEntity* tileEntity );
 	virtual float getWalkingSpeedModifier();
+	virtual void jumpFromGround();
 private:
 	void calculateFlight(float xa, float ya, float za);
 	bool isSolidTile(int x, int y, int z);

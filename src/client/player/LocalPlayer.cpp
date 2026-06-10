@@ -622,6 +622,18 @@ void LocalPlayer::move(float xa, float ya, float za) {
     }
 }
 
+void LocalPlayer::attack(Entity* entity) {
+    super::attack(entity);
+
+    if (this->sprinting) { 
+        float radians = yRot * 0.017453292F;
+        entity->xd -= (float)sin(radians) * 0.5f;
+        entity->zd += (float)cos(radians) * 0.5f;
+        entity->yd += 0.1f;
+        setSprinting(false); 
+    }
+}
+
 void LocalPlayer::updateAi() {
     super::updateAi();
     this->xxa = input->xa;
@@ -649,6 +661,15 @@ void LocalPlayer::releaseAllKeys()
 
 float LocalPlayer::getWalkingSpeedModifier() {
 	return sprinting ? 1.3f : 1.0f;
+}
+
+void LocalPlayer::jumpFromGround() {
+    Mob::jumpFromGround();
+    if (sprinting) {
+        float f = yRot * 0.017453292F;
+        xd -= (float)(sin(f) * 0.2);
+        zd += (float)(cos(f) * 0.2);
+    }
 }
 
 float LocalPlayer::getFieldOfViewModifier() {
