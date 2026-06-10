@@ -6,7 +6,6 @@
 
 class Options;
 class SoundSystem;
-class Minecraft;
 
 enum MusicType {
     MUSIC_TYPE_CALM,
@@ -28,7 +27,7 @@ public:
     MusicManager();
     ~MusicManager();
 
-    void init(Options* options, SoundSystem* soundSystem, Minecraft* minecraft);
+    void init(Options* options, SoundSystem* soundSystem);
     void tick();
     void stop();
     bool isPlaying() const;
@@ -41,7 +40,6 @@ private:
 
     Options* m_options;
     SoundSystem* m_soundSystem;
-    Minecraft* m_minecraft;
     std::vector<MusicTrack> m_tracks;
     int m_musicDelay;
     int m_currentTrackIndex;

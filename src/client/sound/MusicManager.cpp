@@ -61,11 +61,10 @@ MusicManager::~MusicManager()
 #endif
 }
 
-void MusicManager::init(Options* options, SoundSystem* soundSystem, Minecraft* minecraft)
+void MusicManager::init(Options* options, SoundSystem* soundSystem)
 {
     m_options = options;
     m_soundSystem = soundSystem;
-    m_minecraft = minecraft;
     m_musicDelay = Mth::random(MUSIC_DELAY_MAX - MUSIC_DELAY_MIN) + MUSIC_DELAY_MIN;
     m_currentTrackIndex = -1;
     m_isPlaying = false;
@@ -211,18 +210,22 @@ void MusicManager::playOnAndroid(int index) {
     MusicTrack& track = m_tracks[index];
     stopOnAndroid();
 
-    BinaryBlob blob;
-    if (m_minecraft && m_minecraft->platform()) {
-        blob = m_minecraft->platform()->readAssetFile(track.filePath);
-    }
-    if (!blob.data || blob.size <= 0) {
-        LOGE("Music: cannot load asset %s (size=%d)\n", track.filePath.c_str(), blob.size);
-        return;
-    }
+    std::string path = track.filePath;
+    FILE* f = fopen(path.c_str(), "rb");
+    if (!f) { path = "data/" + path; f = fopen(path.c_str(), "rb"); }
+    if (!f) { LOGE("Music: cannot open %s\n", track.filePath.c_str()); return; }
+
+    fseek(f, 0, SEEK_END);
+    long fileSize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    unsigned char* fileData = new unsigned char[fileSize];
+    fread(fileData, 1, fileSize, f);
+    fclose(f);
 
     int numChannels = 0, sampleRateOut = 0;
     short* decoded = NULL;
-    int numSamples = stb_vorbis_decode_memory(blob.data, blob.size, &numChannels, &sampleRateOut, &decoded);
+    int numSamples = stb_vorbis_decode_memory(fileData, (int)fileSize, &numChannels, &sampleRateOut, &decoded);
+    delete[] fileData;
     if (numSamples <= 0 || !decoded) { LOGE("Music: decode failed %s\n", track.filePath.c_str()); return; }
 
     m_channels = numChannels;
