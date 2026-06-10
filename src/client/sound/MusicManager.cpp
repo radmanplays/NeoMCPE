@@ -213,10 +213,7 @@ void MusicManager::playOnAndroid(int index) {
 
     BinaryBlob blob;
     if (m_minecraft && m_minecraft->platform()) {
-        std::string assetPath = track.filePath;
-        if (assetPath.substr(0, 5) == "data/") assetPath = assetPath.substr(5);
-        assetPath = "assets/" + assetPath;
-        blob = m_minecraft->platform()->readAssetFile(assetPath);
+        blob = m_minecraft->platform()->readAssetFile(track.filePath);
     }
     if (!blob.data || blob.size <= 0) {
         LOGE("Music: cannot load asset %s (size=%d)\n", track.filePath.c_str(), blob.size);
