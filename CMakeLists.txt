@@ -244,7 +244,6 @@ file(GLOB CLIENT_SOURCES
     "src/client/renderer/tileentity/*.cpp"
 
     "src/client/sound/*.cpp"
-    "src/client/sound/MusicManager.cpp"
     
     "src/locale/*.cpp"
     

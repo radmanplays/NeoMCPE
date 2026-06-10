@@ -153,7 +153,6 @@
     <ClCompile Include="..\..\src\client\renderer\Textures.cpp" />
     <ClCompile Include="..\..\src\client\renderer\TileRenderer.cpp" />
     <ClCompile Include="..\..\src\client\sound\Sound.cpp" />
-    <ClInclude Include="..\..\src\client\sound\MusicManager.h" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\nbt\Tag.cpp" />
     <ClCompile Include="..\..\src\network\ClientSideNetworkHandler.cpp" />
