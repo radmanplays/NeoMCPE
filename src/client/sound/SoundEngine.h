@@ -57,7 +57,6 @@ public:
 	void playUI(const std::string& name, float volume, float pitch);
 
 	float _getVolumeMult(float x, float y, float z);
-	SoundSystem* getSoundSystem() { return &soundSystem; }
 private:
 	void loadLibrary() {}
     SoundDesc _pp(const std::string& fn);

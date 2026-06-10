@@ -47,9 +47,6 @@ public:
     virtual void stop(const std::string& name){}
 	virtual void playAt(const SoundDesc& sound, float x, float y, float z, float volume, float pitch);
 
-	SLObjectItf getOutputMix() { return objOutput; }
-	SLEngineItf getEngine() { return engEngine; }
-
 private:
 	bool checkErr( SLresult res );
 

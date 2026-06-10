@@ -5,7 +5,6 @@
 #include <vector>
 
 class Options;
-class SoundSystem;
 
 enum MusicType {
     MUSIC_TYPE_CALM,
@@ -27,7 +26,7 @@ public:
     MusicManager();
     ~MusicManager();
 
-    void init(Options* options, SoundSystem* soundSystem);
+    void init(Options* options);
     void tick();
     void stop();
     bool isPlaying() const;
@@ -39,7 +38,6 @@ private:
     int pickNextTrack();
 
     Options* m_options;
-    SoundSystem* m_soundSystem;
     std::vector<MusicTrack> m_tracks;
     int m_musicDelay;
     int m_currentTrackIndex;
@@ -47,22 +45,13 @@ private:
     float m_volume;
 
 #if defined(ANDROID) && !defined(PRE_ANDROID23) && !defined(RPI)
-    void* m_audioPlayer;
-    void* m_bufferQueueItf;
-    void* m_volumeItf;
-    void* m_playItf;
-    std::vector<short> m_pcmData;
-    int m_currentSampleOffset;
-    int m_totalSamples;
-    int m_channels;
-    int m_sampleRate;
-    bool m_androidPlayerCreated;
+    void* m_mediaPlayer;
+    int m_currentSoundId;
+    std::vector<int> m_soundIds;
     bool loadTracksAndroid();
     void playOnAndroid(int index);
     void stopOnAndroid();
     bool isPlayingOnAndroid();
-    void fillNextBuffer();
-    static void bufferCallback(void* context, void* player);
 #elif (defined(__APPLE__) || defined(PLATFORM_DESKTOP)) && !defined(NO_SOUND)
     unsigned int m_alSource;
     unsigned int m_alBuffers[2];
