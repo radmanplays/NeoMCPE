@@ -2,6 +2,7 @@
 #include "../player/Player.h"
 #include "../../level/Level.h"
 #include "../../item/Item.h"
+#include "../../item/BucketItem.h"
 
 Cow::Cow( Level* level )
 :	super(level)
@@ -30,8 +31,8 @@ void Cow::readAdditionalSaveData( CompoundTag* tag ) {
 
 bool Cow::interact( Player* player ) {
 	ItemInstance* item = player->inventory->getSelected();
-	if (item != NULL && item->id == Item::bucket_empty->id) {
-		ItemInstance milk(Item::milk);
+	if (item != NULL && item->getItem() == Item::bucket && item->getAuxValue() == BucketItem::EMPTY) {
+		ItemInstance milk(Item::bucket, 1, BucketItem::MILK);
 		player->inventory->setItem(player->inventory->selected, &milk);
 		return true;
 	}

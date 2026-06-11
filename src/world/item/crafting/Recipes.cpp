@@ -182,7 +182,7 @@ Recipes::Recipes()
 		"BEB", //
 		"CCC", //
 
-		definition(	'A', Item::milk,//
+		definition(	'A', ItemInstance(Item::bucket, 1, BucketItem::MILK),//
 					'B', Item::sugar,//
 					'C', Item::wheat, 'E', Item::egg));
 
@@ -297,7 +297,7 @@ Recipes::Recipes()
 
 	//	definition('#', Tile::wood));
 
-	addShapedRecipe(ItemInstance(Item::bucket_empty, 1), //
+	addShapedRecipe(ItemInstance(Item::bucket, 1), //
 		"# #", //
 		" # ", //
 

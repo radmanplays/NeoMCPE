@@ -29,6 +29,7 @@
 #include "../gui/components/ImageButton.h"
 #include "Tesselator.h"
 #include "../../world/item/Item.h"
+#include "../../world/item/BucketItem.h"
 
 static int _shTicks = -1;
 
@@ -698,7 +699,7 @@ void GameRenderer::pick(float a) {
 		Player* pl = (Player*) mc->cameraTargetPlayer;
 		if (pl->inventory) {
 			ItemInstance* sel = pl->inventory->getSelected();
-			if (sel && Item::bucket_empty && sel->id == Item::bucket_empty->id) {
+			if (sel && Item::bucket && sel->getItem() == Item::bucket && sel->getAuxValue() == BucketItem::EMPTY) {
 				allowLiquidPick = true;
 			}
 		}

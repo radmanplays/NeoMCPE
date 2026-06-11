@@ -8,6 +8,7 @@
 #include "../../item/CoalItem.h"
 #include "../../level/tile/SandStoneTile.h"
 #include "../../item/MonsterPlacerItem.h"
+#include "../../item/BucketItem.h"
 #include "../EntityTypes.h"
 
 Inventory::Inventory( Player* player, bool creativeMode )
@@ -215,9 +216,9 @@ void Inventory::setupDefault() {
 #endif
 		addItem(new ItemInstance(Tile::thinGlass));
 
-		addItem(new ItemInstance(Item::bucket_empty));
-		addItem(new ItemInstance(Item::bucket_water));
-		addItem(new ItemInstance(Item::bucket_lava));
+		addItem(new ItemInstance(Item::bucket));
+		addItem(new ItemInstance(Item::bucket, 1, BucketItem::WATER));
+		addItem(new ItemInstance(Item::bucket, 1, BucketItem::LAVA));
 
 		addItem(new ItemInstance(Item::door_wood));
 		addItem(new ItemInstance(Tile::trapdoor));

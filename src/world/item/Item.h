@@ -149,9 +149,7 @@ public:
     static Item* sign;
     static Item* door_wood;
 
-    static Item* bucket_empty;
-    static Item* bucket_water;
-    static Item* bucket_lava;
+    static Item* bucket;
 
     static Item* minecart;
     static Item* saddle;

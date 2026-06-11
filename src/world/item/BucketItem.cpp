@@ -8,8 +8,38 @@
 #include "../phys/HitResult.h"
 #include "../phys/AABB.h"
 
+BucketItem::BucketItem(int id)
+    : super(id)
+{
+    setStackedByData(true);
+    setMaxDamage(0);
+    setMaxStackSize(64);
+}
+
+int BucketItem::getIcon(int itemAuxValue)
+{
+    switch (itemAuxValue) {
+        case WATER: return 11 * Item::ICON_COLUMNS + 4;
+        case LAVA:  return 12 * Item::ICON_COLUMNS + 4;
+        case MILK:  return 13 * Item::ICON_COLUMNS + 4;
+        default:    return 10 * Item::ICON_COLUMNS + 4;
+    }
+}
+
+std::string BucketItem::getDescriptionId(const ItemInstance* itemInstance) const
+{
+    switch (itemInstance->getAuxValue()) {
+        case WATER: return "bucketWater";
+        case LAVA:  return "bucketLava";
+        case MILK:  return "milk";
+        default:    return "bucket";
+    }
+}
+
 bool BucketItem::useOn(ItemInstance* instance, Player* player, Level* level, int x, int y, int z, int face, float clickX, float clickY, float clickZ) {
-    if (contains == 0) {
+    int aux = instance->getAuxValue();
+
+    if (aux == EMPTY) {
         int tx = x;
         int ty = y;
         int tz = z;
@@ -17,42 +47,40 @@ bool BucketItem::useOn(ItemInstance* instance, Player* player, Level* level, int
         int data = level->getData(tx, ty, tz);
 
         if ((tileId == Tile::water->id || tileId == Tile::calmWater->id) && data == 0) {
-            const Item* filled = Item::bucket_water;
             if (player != NULL && player->abilities.instabuild) {
                 if (!level->isClientSide) level->setTile(tx, ty, tz, 0);
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, WATER))) {
+                    player->drop(new ItemInstance(this, 1, WATER), true);
                 }
                 return true;
             }
             if (!level->isClientSide) level->setTile(tx, ty, tz, 0);
             if (instance->count == 1) {
-                instance->id = filled->id;
+                instance->setAuxValue(WATER);
             } else {
                 instance->count--;
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, WATER))) {
+                    player->drop(new ItemInstance(this, 1, WATER), true);
                 }
             }
             return true;
         }
 
         if ((tileId == Tile::lava->id || tileId == Tile::calmLava->id) && data == 0) {
-            const Item* filled = Item::bucket_lava;
             if (player != NULL && player->abilities.instabuild) {
                 if (!level->isClientSide) level->setTile(tx, ty, tz, 0);
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, LAVA))) {
+                    player->drop(new ItemInstance(this, 1, LAVA), true);
                 }
                 return true;
             }
             if (!level->isClientSide) level->setTile(tx, ty, tz, 0);
             if (instance->count == 1) {
-                instance->id = filled->id;
+                instance->setAuxValue(LAVA);
             } else {
                 instance->count--;
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, LAVA))) {
+                    player->drop(new ItemInstance(this, 1, LAVA), true);
                 }
             }
             return true;
@@ -71,42 +99,40 @@ bool BucketItem::useOn(ItemInstance* instance, Player* player, Level* level, int
         data = level->getData(x, y, z);
 
         if ((tileId == Tile::water->id || tileId == Tile::calmWater->id) && data == 0) {
-            const Item* filled = Item::bucket_water;
             if (player != NULL && player->abilities.instabuild) {
                 if (!level->isClientSide) level->setTile(x, y, z, 0);
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, WATER))) {
+                    player->drop(new ItemInstance(this, 1, WATER), true);
                 }
                 return true;
             }
             if (!level->isClientSide) level->setTile(x, y, z, 0);
             if (instance->count == 1) {
-                instance->id = filled->id;
+                instance->setAuxValue(WATER);
             } else {
                 instance->count--;
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, WATER))) {
+                    player->drop(new ItemInstance(this, 1, WATER), true);
                 }
             }
             return true;
         }
 
         if ((tileId == Tile::lava->id || tileId == Tile::calmLava->id) && data == 0) {
-            const Item* filled = Item::bucket_lava;
             if (player != NULL && player->abilities.instabuild) {
                 if (!level->isClientSide) level->setTile(x, y, z, 0);
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, LAVA))) {
+                    player->drop(new ItemInstance(this, 1, LAVA), true);
                 }
                 return true;
             }
             if (!level->isClientSide) level->setTile(x, y, z, 0);
             if (instance->count == 1) {
-                instance->id = filled->id;
+                instance->setAuxValue(LAVA);
             } else {
                 instance->count--;
-                if (!player->inventory->add(new ItemInstance(filled))) {
-                    player->drop(new ItemInstance(filled), true);
+                if (!player->inventory->add(new ItemInstance(this, 1, LAVA))) {
+                    player->drop(new ItemInstance(this, 1, LAVA), true);
                 }
             }
             return true;
@@ -115,7 +141,9 @@ bool BucketItem::useOn(ItemInstance* instance, Player* player, Level* level, int
         return false;
     }
 
-    if (contains > 0) {
+    if (aux == WATER || aux == LAVA) {
+        int contains = (aux == WATER) ? Tile::water->id : Tile::lava->id;
+
         if (level->getTile(x, y, z) == Tile::topSnow->id) {
             face = 0;
         } else {
@@ -135,14 +163,14 @@ bool BucketItem::useOn(ItemInstance* instance, Player* player, Level* level, int
             if (!level->isClientSide) level->setTileAndData(x, y, z, contains, 0);
 
             if (player != NULL && player->abilities.instabuild) {
-                // do nothing cuz player is in creative
+                // do nothing because player is in creative
             } else {
                 if (instance->count == 1) {
-                    instance->id = Item::bucket_empty->id;
+                    instance->setAuxValue(EMPTY);
                 } else {
                     instance->count--;
-                    if (!player->inventory->add(new ItemInstance(Item::bucket_empty))) {
-                        player->drop(new ItemInstance(Item::bucket_empty), true);
+                    if (!player->inventory->add(new ItemInstance(this, 1, EMPTY))) {
+                        player->drop(new ItemInstance(this, 1, EMPTY), true);
                     }
                 }
             }
@@ -155,7 +183,7 @@ bool BucketItem::useOn(ItemInstance* instance, Player* player, Level* level, int
 }
 
 ItemInstance* BucketItem::use(ItemInstance* instance, Level* level, Player* player) {
-    if (contains != 0 || player == NULL || instance == NULL) return instance;
+    if (instance->getAuxValue() != MILK || player == NULL || instance == NULL) return instance;
 
     Vec3 from = player->getPos(1).add(0, player->getHeadHeight(), 0);
     Vec3 look = player->getViewVector(1);
@@ -191,17 +219,16 @@ ItemInstance* BucketItem::use(ItemInstance* instance, Level* level, Player* play
     if (hovered != NULL) {
         float distToBlock = from.distanceTo(to);
         if (nearest < distToBlock) {
-            if (contains == 0 && hovered->isEntityType(MobTypes::Cow)) {
-                const Item* milkItem = Item::milk;
+            if (instance->getAuxValue() == MILK && hovered->isEntityType(MobTypes::Cow)) {
                 if (player->abilities.instabuild) {
-                    if (!player->inventory->add(new ItemInstance(milkItem))) player->drop(new ItemInstance(milkItem), true);
+                    if (!player->inventory->add(new ItemInstance(this, 1, MILK))) player->drop(new ItemInstance(this, 1, MILK), true);
                     return instance;
                 }
                 if (instance->count == 1) {
-                    instance->id = milkItem->id;
+                    instance->setAuxValue(MILK);
                 } else {
                     instance->count--;
-                    if (!player->inventory->add(new ItemInstance(milkItem))) player->drop(new ItemInstance(milkItem), true);
+                    if (!player->inventory->add(new ItemInstance(this, 1, MILK))) player->drop(new ItemInstance(this, 1, MILK), true);
                 }
                 return instance;
             }

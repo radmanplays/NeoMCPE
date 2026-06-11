@@ -84,5 +84,5 @@ bool CakeTile::isSolidRender() {
 }
 
 bool CakeTile::canSurvive(Level* level, int x, int y, int z) {
-    return level->isSolidBlockingTile(x, y - 1, z);
+    return true;
 }
