@@ -17,6 +17,7 @@ struct LevelSummary
 	int lastPlayed;
 	int gameType;
 	unsigned int sizeOnDisk;
+	long seed;
 
 	bool operator<(const LevelSummary& rhs) const {
 		return lastPlayed > rhs.lastPlayed;

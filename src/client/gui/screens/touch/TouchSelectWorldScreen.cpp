@@ -149,7 +149,7 @@ void TouchWorldSelectionList::renderItem( int i, int x, int y, int h, Tesselator
 	float a0 = Mth::Max(1.1f - std::abs( _height / 2 - centerY ) * 0.0055f, 0.2f);
 	if (a0 > 1) a0 = 1;
 	int textColor =  (int)(255.0f) * 0x010101;
-	int textColor2 = (int)(170.0f) * 0x010101;
+	int textColor2 = 0xFFBBBBBB;
 	const int TX = x + 5;
 	const int TY = y + 8; //@kindle-res:42
 
@@ -169,10 +169,17 @@ void TouchWorldSelectionList::renderItem( int i, int x, int y, int h, Tesselator
 
 	// Draw the worlds
 	StringVector v = _descriptions[i];
-	drawString(minecraft->font, v[0].c_str(), TX, TY +  0, textColor);
-	drawString(minecraft->font, v[3].c_str(), TX, TY + 10, textColor2);
+	drawString(minecraft->font, v[0].c_str(), TX - 2, TY - 3, textColor);
+	drawString(minecraft->font, v[3].c_str(), TX  -2, TY + 8, textColor2);
 	std::string lastPlayedStr = getLastPlayedString(levels[i].lastPlayed);
-	drawString(minecraft->font, lastPlayedStr.c_str(), TX + minecraft->font->width(v[3].c_str()) + 10, TY + 10, textColor2);
+	drawString(minecraft->font, lastPlayedStr.c_str(), TX + minecraft->font->width(v[3].c_str()) + 8, TY + 8, textColor2);
+
+	// yoinked from https://github.com/oldminecraftcommunity/MCPE-0.8.1/blob/master/minecraftpe/impl/gui/elements/LocalServerListItemElement.cpp
+	// (i did change it a bit cuz the original was obfuscated)
+	if (_listEditMode) {
+		drawString(minecraft->font, "Seed: ", ((x1 - 30) - minecraft->font->width("Seed:")) - 5.0, y + 5.0, 0xFFBBBBBB);
+		drawString(minecraft->font, std::to_string(levels[i].seed), ((x1 - 30) - minecraft->font->width(std::to_string(levels[i].seed))) - 5.0, y + 16.0, 0xFFBBBBBB);
+	}
 
 	if (_listEditMode && i < _listEditButtonCount && _editBtnNormal && _editBtnPressed) {
 		int btnX = (int)x1 - 30;

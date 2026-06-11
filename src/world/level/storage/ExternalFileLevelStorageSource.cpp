@@ -59,6 +59,7 @@ void ExternalFileLevelStorageSource::addLevelSummaryIfExists(LevelSummaryList& d
 		summary.lastPlayed = levelData.getLastPlayed();
 		summary.sizeOnDisk = (unsigned int)levelData.getSizeOnDisk();
 		summary.gameType = levelData.getGameType();
+		summary.seed = levelData.getSeed();
 
 		dest.push_back(summary);
 	}
