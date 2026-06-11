@@ -11,6 +11,7 @@
 #include "ArmorRecipes.h"
 #include "OreRecipes.h"
 #include "../CoalItem.h"
+#include "../BucketItem.h"
 #include "../../level/tile/StoneSlabTile.h"
 
 /*static*/
