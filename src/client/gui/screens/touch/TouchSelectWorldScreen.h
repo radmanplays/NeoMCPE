@@ -48,7 +48,7 @@ protected:
 	virtual float getPos(float alpha);
 	virtual void touched() { mode = 0; }
 	virtual bool capYPosition();
-	virtual float getItemBgWidthOffset();
+	virtual float getItemBgWidthOffset(int item);
 	virtual void updateHoverItem(int xm, int ym);
 	virtual int getItemAtPosition(int x, int y);
 

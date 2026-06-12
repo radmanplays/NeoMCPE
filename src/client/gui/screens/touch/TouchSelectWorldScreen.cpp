@@ -60,8 +60,11 @@ bool TouchWorldSelectionList::isEditButtonHovered(int i, int xm, int ym) const {
 		   ym >= _listEditButtonY[i] && ym < _listEditButtonY[i] + 30;
 }
 
-float TouchWorldSelectionList::getItemBgWidthOffset() {
-	return _listEditMode ? 32.0f : 0.0f;
+float TouchWorldSelectionList::getItemBgWidthOffset(int item) {
+	if (!_listEditMode) return 0.0f;
+	int lanCount = (int)lanServers.size();
+	if (item < lanCount) return 0.0f;
+	return 32.0f;
 }
 
 int TouchWorldSelectionList::getItemAtPosition(int x, int y) {
@@ -99,21 +102,21 @@ void TouchWorldSelectionList::selectItem( int item, bool doubleClick ) {
 
 	selectedItem = item;
 
-	int localWorldCount = (int)levels.size();
-	if (item >= localWorldCount) {
-		int lanIndex = item - localWorldCount;
+	int lanCount = (int)lanServers.size();
+	if (item < lanCount) {
 		if (!hasPickedLanServer) {
 			hasPickedLanServer = true;
-			pickedLanIndex = lanIndex;
+			pickedLanIndex = item;
 		}
 		return;
 	}
 
+	int localIndex = item - lanCount;
 	if (!hasPickedLevel) {
 		hasPickedLevel = true;
-		pickedIndex = item;
-		if (item < (int)levels.size())
-			pickedLevel = levels[item];
+		pickedIndex = localIndex;
+		if (localIndex < (int)levels.size())
+			pickedLevel = levels[localIndex];
 	}
 }
 
@@ -153,32 +156,38 @@ void TouchWorldSelectionList::renderItem( int i, int x, int y, int h, Tesselator
 	const int TX = x + 5;
 	const int TY = y + 8; //@kindle-res:42
 
-	int localWorldCount = (int)levels.size();
+	int lanCount = (int)lanServers.size();
 
-	if (i >= localWorldCount) {
-		int lanIndex = i - localWorldCount;
-		if (lanIndex >= 0 && lanIndex < (int)_lanDescriptions.size()) {
-			StringVector& v = _lanDescriptions[lanIndex];
+	if (i < lanCount) {
+		if (i >= 0 && i < (int)_lanDescriptions.size()) {
+			StringVector& v = _lanDescriptions[i];
 			int lanIconColor = 0x4080FF;
 			fill(TX, TY + 2, TX + 6, TY + 10, lanIconColor);
-			drawString(minecraft->font, v[0].c_str(), TX, TY +  0, 0xBABAFE);
-			drawString(minecraft->font, std::string("World on wifi: ") + v[1].c_str(), TX, TY + 10, textColor2);
+			drawString(minecraft->font, v[0].c_str(), TX - 2, TY - 3, 0xBABAFE);
+			drawString(minecraft->font, std::string("World on wifi: ") + v[1].c_str(), TX - 2, TY + 8, textColor2);
+
+			// yoink https://github.com/oldminecraftcommunity/MCPE-0.8.1/blob/master/minecraftpe/impl/gui/elements/LocalServerListItemElement.cpp
+			// wifi
+			minecraft->textures->loadAndBindTexture("gui/spritesheet.png");
+			glColor4f2(1.0f, 1.0f, 1.0f, 1.0f);
+			blit((float)x1 - 14.0f, (float)y + 9.0f, 192, -24 * (currentTick / 4 % 3) + 48, 12.0f, 12.0f, 24, 24);
 		}
 		return;
 	}
 
 	// Draw the worlds
-	StringVector v = _descriptions[i];
+	int localIndex = i - lanCount;
+	StringVector v = _descriptions[localIndex];
 	drawString(minecraft->font, v[0].c_str(), TX - 2, TY - 3, textColor);
 	drawString(minecraft->font, v[3].c_str(), TX  -2, TY + 8, textColor2);
-	std::string lastPlayedStr = getLastPlayedString(levels[i].lastPlayed);
+	std::string lastPlayedStr = getLastPlayedString(levels[localIndex].lastPlayed);
 	drawString(minecraft->font, lastPlayedStr.c_str(), TX + minecraft->font->width(v[3].c_str()) + 8, TY + 8, textColor2);
 
 	// yoinked from https://github.com/oldminecraftcommunity/MCPE-0.8.1/blob/master/minecraftpe/impl/gui/elements/LocalServerListItemElement.cpp
 	// (i did change it a bit cuz the original was obfuscated)
 	if (_listEditMode) {
 		drawString(minecraft->font, "Seed: ", ((x1 - 30) - minecraft->font->width("Seed:")) - 5.0, y + 5.0, 0xFFBBBBBB);
-		drawString(minecraft->font, std::to_string(levels[i].seed), ((x1 - 30) - minecraft->font->width(std::to_string(levels[i].seed))) - 5.0, y + 16.0, 0xFFBBBBBB);
+		drawString(minecraft->font, std::to_string(levels[localIndex].seed), ((x1 - 30) - minecraft->font->width(std::to_string(levels[localIndex].seed))) - 5.0, y + 16.0, 0xFFBBBBBB);
 	}
 
 	if (_listEditMode && i < _listEditButtonCount && _editBtnNormal && _editBtnPressed) {

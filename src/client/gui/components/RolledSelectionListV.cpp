@@ -268,7 +268,7 @@ void RolledSelectionListV::render( int xm, int ym, float a )
 		if (_renderItemBackground && _itemBgNormal && _itemBgSelected) {
 			float bx = (float)rowX - 2.0f;
 			float by = y;
-			float bw = (float)(x1 - x0) + 4.0f - getItemBgWidthOffset();
+			float bw = (float)(x1 - x0) + 4.0f - getItemBgWidthOffset(i);
 			float bh = h;
 			bool selected = renderSelection && (isSelectedItem(i) || isHoveredItem(i));
 			NinePatchLayer* bg = selected ? _itemBgSelected : _itemBgNormal;

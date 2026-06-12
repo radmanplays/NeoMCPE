@@ -56,7 +56,7 @@ protected:
 
 	virtual void updateHoverItem(int xm, int ym);
 	virtual bool isHoveredItem(int item) { return item == _hoverItem; }
-	virtual float getItemBgWidthOffset() { return 0.0f; }
+	virtual float getItemBgWidthOffset(int item) { return 0.0f; }
 protected:
 	Minecraft* minecraft;
 
