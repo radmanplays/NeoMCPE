@@ -12,19 +12,22 @@ class BucketItem: public Item {
     typedef Item super;
 public:
     static const int EMPTY = 0;
-    static const int WATER = 1;
-    static const int LAVA = 2;
-    static const int MILK = 3;
+    static const int WATER = 8;
+    static const int LAVA = 10;
+    static const int MILK = 1;
 
     BucketItem(int id);
+    virtual ~BucketItem();
 
-    virtual int getIcon(int itemAuxValue) override;
+    virtual int getMaxStackSize(const ItemInstance* itemInstance);
+    virtual int getIcon(int auxValue) override;
     virtual std::string getDescriptionId(const ItemInstance* itemInstance) const override;
     virtual bool useOn(ItemInstance* instance, Player* player, Level* level, int x, int y, int z, int face, float clickX, float clickY, float clickZ) override;
-    virtual bool useOn(ItemInstance* instance, Level* level, int x, int y, int z, int face) override {
-        return false;
-    }
-    virtual ItemInstance* use(ItemInstance* instance, Level* level, Player* player) override;
+    virtual bool isLiquidClipItem(int auxValue);
+    virtual bool isEmissive(int auxValue);
+
+private:
+    bool emptyBucket(Level* level, int type, int x, int y, int z);
 };
 
 #endif

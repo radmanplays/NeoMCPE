@@ -23,6 +23,7 @@ public:
     void addAdditonalSaveData(CompoundTag* tag);
     void readAdditionalSaveData(CompoundTag* tag);
 
+    void tick();
     bool interact(Player* player);
 protected:
     const char* getAmbientSound();
@@ -37,6 +38,9 @@ protected:
 
     /*@Override*/
     Animal* getBreedOffspring(Animal* target);
+
+private:
+    int milkedTicks;
 };
 
 #endif /*NET_MINECRAFT_WORLD_ENTITY_ANIMAL__Cow_H__*/

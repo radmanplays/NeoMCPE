@@ -116,6 +116,8 @@ void ItemInHandRenderer::renderItem(Mob* mob,  ItemInstance* item )
 		itemId = 236 + item->getAuxValue(); // 236 to 251 @dye_powder
 	} else if (itemId == Item::monsterPlacer->id) {
 		itemId = 252 + item->getAuxValue(); // 252 to 255 @monster_placer
+	} else if(itemId == Item::bucket->id) {
+		itemId = 256 + item->getAuxValue(); // 256 to 258 @bucket
 	}
 
 	RenderCall& renderObject = renderObjects[itemId];

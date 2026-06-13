@@ -5,12 +5,19 @@
 #include "../../item/BucketItem.h"
 
 Cow::Cow( Level* level )
-:	super(level)
+:	super(level),
+	milkedTicks(0)
 {
 	entityRendererId = ER_COW_RENDERER;
 
 	textureName = "mob/cow.png";
 	setSize(0.9f, 1.3f);
+}
+
+void Cow::tick()
+{
+	++milkedTicks;
+	super::tick();
 }
 
 int Cow::getEntityTypeId() const {
@@ -30,13 +37,19 @@ void Cow::readAdditionalSaveData( CompoundTag* tag ) {
 }
 
 bool Cow::interact( Player* player ) {
-	ItemInstance* item = player->inventory->getSelected();
-	if (item != NULL && item->getItem() == Item::bucket && item->getAuxValue() == BucketItem::EMPTY) {
-		ItemInstance milk(Item::bucket, 1, BucketItem::MILK);
-		player->inventory->setItem(player->inventory->selected, &milk);
-		return true;
+	ItemInstance* selected = player->inventory->getSelected();
+	if (milkedTicks <= 20 || !selected || selected->getItem() != Item::bucket || selected->getAuxValue() || player->abilities.instabuild) {
+		return super::interact(player);
 	}
-	return super::interact(player);
+	milkedTicks = 0;
+	ItemInstance milk(Item::bucket, 1, BucketItem::MILK);
+	selected->count--;
+	if (!selected->count) {
+		*selected = milk;
+	} else {
+		player->inventory->add(&milk);
+	}
+	return true;
 }
 
 const char* Cow::getAmbientSound() {
