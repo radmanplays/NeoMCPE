@@ -188,7 +188,7 @@ void TouchWorldSelectionList::renderItem( int i, int x, int y, int h, Tesselator
 	// (i did change it a bit cuz the original was obfuscated)
 	if (_listEditMode) {
 		drawString(minecraft->font, "Seed: ", ((x1 - 30) - minecraft->font->width("Seed:")) - 5.0, y + 5.0, 0xFFBBBBBB);
-		drawString(minecraft->font, std::to_string(levels[localIndex].seed), ((x1 - 30) - minecraft->font->width(std::to_string(levels[localIndex].seed))) - 5.0, y + 16.0, 0xFFBBBBBB);
+		drawString(minecraft->font, m_seedStrings[localIndex], ((x1 - 30) - m_seedWidths[localIndex]) - 5.0, y + 16.0, 0xFFBBBBBB);
 	}
 
 	if (_listEditMode && i < _listEditButtonCount && _editBtnNormal && _editBtnPressed) {
