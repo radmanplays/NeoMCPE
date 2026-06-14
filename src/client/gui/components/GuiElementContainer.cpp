@@ -29,6 +29,22 @@ void GuiElementContainer::addChild( GuiElement* element ) {
 	children.push_back(element);
 }
 
+void GuiElementContainer::clearAll() {
+	while (!children.empty()) {
+		GuiElement* element = children.back();
+		children.pop_back();
+		delete element;
+	}
+}
+
+size_t GuiElementContainer::size() const {
+	return children.size();
+}
+
+GuiElement* GuiElementContainer::get(int index) const {
+	return children[index];
+}
+
 void GuiElementContainer::removeChild( GuiElement* element ) {
 	std::vector<GuiElement*>::iterator it = std::find(children.begin(), children.end(), element);
 	if(it != children.end())
