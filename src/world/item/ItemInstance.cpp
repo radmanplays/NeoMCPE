@@ -202,7 +202,7 @@ ItemInstance* ItemInstance::setDescriptionId(const std::string& id) {
 }
 
 std::string ItemInstance::getName() const {
-	return I18n::get(getDescriptionId() + ".name");
+    return getItem()->getDisplayName(auxValue);
 }
 
 std::string ItemInstance::toString() const {

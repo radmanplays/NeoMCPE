@@ -373,6 +373,10 @@ public:
         return I18n::get(getDescriptionId() + ".name");
     }
 
+    virtual std::string getDisplayName(int auxValue) const {
+        return getName();
+    }
+
 	virtual void releaseUsing( ItemInstance* itemInstance, Level* level, Player* player, int durationLeft ) {}
 	virtual UseAnim::UseAnimation getUseAnimation() {return UseAnim::none;}
 protected:

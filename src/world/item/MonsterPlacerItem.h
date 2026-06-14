@@ -16,9 +16,11 @@ public:
     MonsterPlacerItem(int id);
 
     virtual int getIcon(int itemAuxValue) override;
+    virtual std::string getDisplayName(int auxValue) const override;
 
     virtual bool useOn(ItemInstance* itemInstance, Player* player, Level* level, int x, int y, int z, int face, float clickX, float clickY, float clickZ) override;
 
+private:
     static int getIconForMobType(int mobTypeId);
 };
 
