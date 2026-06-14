@@ -253,12 +253,12 @@ void EntityRenderer::renderFlame(Entity* e, float x, float y, float z, float a) 
 void EntityRenderer::renderShadow(Entity* e, float x, float y, float z, float pow, float a) { //
 	glEnable2(GL_BLEND);
 	glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable2(GL_TEXTURE_2D);
 
 	//Textures* textures = entityRenderDispatcher->textures;
 	//textures->bind(textures->loadTexture("%clamp%/environment/shadow.png"));
 	Textures* textures = entityRenderDispatcher->textures;
 	textures->loadAndBindTexture("/misc/shadow.png"); 
-    
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
