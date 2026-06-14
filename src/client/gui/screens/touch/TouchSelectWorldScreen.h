@@ -11,6 +11,7 @@
 #include "../../../Minecraft.h"
 #include "../../../../world/level/storage/LevelStorageSource.h"
 #include "../../../../network/RakNetInstance.h"
+#include <sstream>
 
 
 class NinePatchLayer;
@@ -60,6 +61,8 @@ private:
 	int _height;
 	LevelSummaryList levels;
 	std::vector<StringVector> _descriptions;
+	std::vector<std::string> m_seedStrings;
+	std::vector<float> m_seedWidths;
 
 	ServerList lanServers;
 	std::vector<StringVector> _lanDescriptions;

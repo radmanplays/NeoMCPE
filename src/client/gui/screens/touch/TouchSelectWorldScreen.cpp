@@ -15,6 +15,7 @@
 #include "../../../../platform/input/Mouse.h"
 #include "../../../../Performance.h"
 
+#include <sstream>
 #include <algorithm>
 #include <set>
 #include "../SimpleChooseLevelScreen.h"
@@ -231,6 +232,9 @@ void TouchWorldSelectionList::stepRight() {
 }
 
 void TouchWorldSelectionList::commit() {
+	m_seedStrings.clear();
+    m_seedWidths.clear();
+
 	for (unsigned int i = 0; i < levels.size(); ++i) {
 		LevelSummary& level = levels[i];
 
@@ -243,6 +247,13 @@ void TouchWorldSelectionList::commit() {
 		// } else {
 		// 	_imageNames.push_back("gui/default_world.png");
 		// }
+
+		std::stringstream ss;
+        ss << levels[i].seed;
+        std::string seedStr = ss.str();
+        m_seedStrings.push_back(seedStr);
+        float width = minecraft->font->width(seedStr);
+        m_seedWidths.push_back(width);
 
 		StringVector lines;
 		lines.push_back(levels[i].name);
