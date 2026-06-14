@@ -81,15 +81,12 @@ void ItemInHandRenderer::tick()
 		if (itemInHand && itemInHand->count > 0) {
 			item.id = itemInHand->id;
 			item.setAuxValue(itemInHand->getAuxValue());
+		} else {
+			item.id = 0;
 		}
 
-		float max = 0.4f;
-		float tHeight = 1;//matches ? 1 : 0;
-		float dd = tHeight - height;
-		if (dd < -max) dd = -max;
-		if (dd > max) dd = max;
-
-		height += dd;
+		height = (item.id > 0) ? 1 : 0;
+		oHeight = height;
 	}
 }
 
@@ -412,7 +409,10 @@ void ItemInHandRenderer::render( float a )
 		const float swing2 = Mth::sin(sqrtSwing * Mth::PI);
 
 		glTranslatef2(-swing2 * 0.3f, (float) Mth::sin(Mth::sqrt(swing) * Mth::PI * 2) * 0.4f, -swing1 * 0.4f);
-		glTranslatef2(0.8f * d, -0.75f * d - (1 - h) * 0.6f, -0.9f * d);
+		if (mc->options.getBooleanValue(OPTIONS_RESTORED_ANIMS))
+			glTranslatef2(0.8f * d, -0.75f * d - (1 - h) * 0.6f, -0.9f * d);
+		else
+			glTranslatef2(0.8f * d, -0.75f * d, -0.9f * d);
 
 		glRotatef2(45, 0, 1, 0);
 //		glEnable2(GL_RESCALE_NORMAL);
