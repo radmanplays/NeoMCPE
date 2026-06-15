@@ -55,8 +55,8 @@ void OptionsGroup::setupPositions() {
 }
 
 void OptionsGroup::render( Minecraft* minecraft, int xm, int ym ) {
-	float padX = 10.0f;
-	float padY = 5.0f;
+	float padX = 2.0f;
+	float padY = 0.0f;
 	const int labelHeight = 18;
 	
 	minecraft->font->draw(label, (float)x + padX, (float)y + padY, 0xffffffff, false);
@@ -64,7 +64,7 @@ void OptionsGroup::render( Minecraft* minecraft, int xm, int ym ) {
 	glEnable2(GL_SCISSOR_TEST);
 	glScissor(
 		Gui::GuiScale * x,
-		minecraft->height - Gui::GuiScale * (y + height),
+		minecraft->height - Gui::GuiScale * (y + height - 10),
 		Gui::GuiScale * width,
 		Gui::GuiScale * (height - labelHeight)
 	);
