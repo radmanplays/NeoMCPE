@@ -107,7 +107,7 @@ void JoinByIPScreen::setupPositions() {
 		const int listX = 10;
 		const int listY = 32;
 		const int listW = width - 20;
-		const int listH = height /2 + 50;
+		const int listH = height /2 + 30;
 		guiBackground->setSize((float)listW + 6.0f, (float)listH + 6.0f);
 	}
 }
