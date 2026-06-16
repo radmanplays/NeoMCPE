@@ -6,5 +6,6 @@ class TextOption : public TextBox {
 public:
     TextOption(Minecraft* minecraft, OptionId optId);
 
+    virtual void setFocus(Minecraft* minecraft);
     virtual bool loseFocus(Minecraft* minecraft);
 };

@@ -11,6 +11,8 @@
 
 class Font;
 class Minecraft;
+class Button;
+class Screen;
 
 class TextBox: public GuiElement
 {
@@ -20,16 +22,20 @@ public:
 	TextBox(int id, int x, int y, int w, int h, const std::string& msg);
 
 	virtual void mouseClicked(Minecraft* minecraft, int x, int y, int buttonNum);
+	virtual void mouseReleased(Minecraft* minecraft, int x, int y, int buttonNum);
 
 	virtual void setFocus(Minecraft* minecraft);
 	virtual bool loseFocus(Minecraft* minecraft);
 
 	virtual void render(Minecraft* minecraft, int xm, int ym);
+	virtual void topRender(Minecraft* minecraft, int xm, int ym);
 
 	virtual void keyPressed(Minecraft* minecraft, int key);
 	virtual void charPressed(Minecraft* minecraft, char c);
 	virtual void tick(Minecraft* minecraft);
-	
+
+	virtual bool suppressOtherGUI();
+
 public:
 	std::string hint;
 	std::string text;
@@ -39,6 +45,16 @@ public:
 
 	bool focused;
 	bool blink;
+
+	bool editing;
+	int maxChars;
+	Button* doneButton;
+	Button* pressedButton;
+	int mouseDown;
+
+	Screen* callbackScreen;
+	void (Screen::*callback)(int32_t);
+	int32_t callbackKey;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_COMPONENTS__TextBox_H__*/

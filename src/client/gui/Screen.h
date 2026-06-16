@@ -53,6 +53,7 @@ public:
 	virtual void toGUICoordinate(int& x, int& y);
 protected:
 	void updateTabButtonSelection();
+	bool isTextBoxEditing();
 
 	virtual void buttonClicked(Button* button) {}
 	virtual void mouseClicked(int x, int y, int buttonNum);
@@ -68,6 +69,11 @@ public:
 	int height;
 	bool passEvents;
 	//GuiParticles* particles;
+
+	void addTextBox(TextBox* textbox) {
+        textBoxes.push_back(textbox);
+    }
+	
 protected:
 	Minecraft* minecraft;
 	std::vector<Button*> buttons;

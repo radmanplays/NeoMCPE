@@ -31,6 +31,11 @@ void Screen::render( int xm, int ym, float a )
 		TextBox* textbox = textBoxes[i];
 		textbox->render(minecraft, xm, ym);
 	}
+
+	for (unsigned int i = 0; i < textBoxes.size(); i++) {
+		TextBox* textbox = textBoxes[i];
+		textbox->topRender(minecraft, xm, ym);
+	}
 }
 
 void Screen::init( Minecraft* minecraft, int width, int height )
@@ -237,9 +242,19 @@ void Screen::updateTabButtonSelection()
 #endif
 }
 
+bool Screen::isTextBoxEditing()
+{
+	for (auto& textbox : textBoxes) {
+		if (textbox->suppressOtherGUI()) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Screen::mouseClicked( int x, int y, int buttonNum )
 {
-	if (buttonNum == MouseAction::ACTION_LEFT) {
+	if (buttonNum == MouseAction::ACTION_LEFT && !isTextBoxEditing()) {
 		for (unsigned int i = 0; i < buttons.size(); ++i) {
 			Button* button = buttons[i];
             //LOGI("Hit-testing button: %p\n", button);
@@ -266,9 +281,7 @@ void Screen::mouseClicked( int x, int y, int buttonNum )
 
 void Screen::mouseReleased( int x, int y, int buttonNum )
 {
-	//LOGI("b_id: %d, (%p), text: %s\n", buttonNum, clickedButton, clickedButton?clickedButton->msg.c_str():"<null>");
-	if (!clickedButton || buttonNum != MouseAction::ACTION_LEFT) return;
-
+	if (clickedButton && buttonNum == MouseAction::ACTION_LEFT) {
 #if 1
 //#if defined(ANDROID) || defined(__APPLE__) //if (minecraft->isTouchscreen()) {
 		for (unsigned int i = 0; i < buttons.size(); ++i) {
@@ -282,7 +295,12 @@ void Screen::mouseReleased( int x, int y, int buttonNum )
 # else //	} else {
 		clickedButton->released(x, y);
 #endif // }
-	clickedButton = NULL;
+		clickedButton = NULL;
+	}
+
+	for (auto& textbox : textBoxes) {
+		textbox->mouseReleased(minecraft, x, y, buttonNum);
+	}
 }
 
 bool Screen::renderGameBehind() {

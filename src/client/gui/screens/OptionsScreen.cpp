@@ -149,13 +149,14 @@ void OptionsScreen::render(int xm, int ym, float a) {
 	fill(0, 0, 38, this->height, 0xFF958782);// the thing behind the category buttons
 
 	super::render(xm, ym, a);
-
-    for (size_t i = 0; i < categoryButtons.size(); ++i) {
-        if (i < sizeof(categoryIcons) / sizeof(categoryIcons[0])) {
-            const IconRect& icon = categoryIcons[i];
-            drawCategoryIcon(categoryButtons[i], icon.u, icon.v, icon.w, icon.h);
-        }
-    }
+	if (!isTextBoxEditing()) {
+		for (size_t i = 0; i < categoryButtons.size(); ++i) {
+			if (i < sizeof(categoryIcons) / sizeof(categoryIcons[0])) {
+				const IconRect& icon = categoryIcons[i];
+				drawCategoryIcon(categoryButtons[i], icon.u, icon.v, icon.w, icon.h);
+			}
+		}
+	}
 }
 
 void OptionsScreen::drawCategoryIcon(Touch::TButton* button, int u, int v, int iconW, int iconH) {
@@ -275,21 +276,21 @@ void OptionsScreen::generateOptionScreens() {
 }
 
 void OptionsScreen::mouseClicked(int x, int y, int buttonNum) {
-	if (currentOptionsGroup != NULL)
+	if (!isTextBoxEditing() && currentOptionsGroup != NULL)
 		currentOptionsGroup->mouseClicked(minecraft, x, y, buttonNum);
 
 	super::mouseClicked(x, y, buttonNum);
 }
 
 void OptionsScreen::mouseReleased(int x, int y, int buttonNum) {
-	if (currentOptionsGroup != NULL)
+	if (!isTextBoxEditing() && currentOptionsGroup != NULL)
 		currentOptionsGroup->mouseReleased(minecraft, x, y, buttonNum);
 
 	super::mouseReleased(x, y, buttonNum);
 }
 
 void OptionsScreen::mouseWheel(int dx, int dy, int xm, int ym) {
-	if (currentOptionsGroup != NULL && currentOptionsGroup->pointInside(xm, ym) && dy != 0) {
+	if (!isTextBoxEditing() && currentOptionsGroup != NULL && currentOptionsGroup->pointInside(xm, ym) && dy != 0) {
 		currentOptionsGroup->scrollByPixels((float)dy * 18.0f);
 	}
 }

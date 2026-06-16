@@ -110,6 +110,8 @@ void OptionsGroup::mouseClicked(Minecraft* minecraft, int x, int y, int buttonNu
 	scrollingGesture = false;
 	touchDispatched = false;
 
+	super::mouseClicked(minecraft, x, y, buttonNum);
+
 	if (buttonNum == MouseAction::ACTION_LEFT && pointInside(x, y)) {
 		trackingScrollGesture = true;
 		dragStartX = x;
@@ -117,10 +119,7 @@ void OptionsGroup::mouseClicked(Minecraft* minecraft, int x, int y, int buttonNu
 		lastDragY = y;
 		touchStartX = x;
 		touchStartY = y;
-		return;
 	}
-
-	super::mouseClicked(minecraft, x, y, buttonNum);
 }
 
 void OptionsGroup::mouseReleased(Minecraft* minecraft, int x, int y, int buttonNum) {
@@ -216,6 +215,10 @@ void OptionsGroup::createTextbox(OptionId optId, Minecraft* minecraft) {
 	OptionsItem* item = new OptionsItem(optId, itemLabel, element);
 	addChild(item);
 	setupPositions();
+
+	if (minecraft->screen != NULL) {
+        minecraft->screen->addTextBox(element);
+    }
 }
 
 void OptionsGroup::createKey(OptionId optId, Minecraft* minecraft) {
