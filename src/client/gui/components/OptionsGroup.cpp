@@ -111,6 +111,7 @@ void OptionsGroup::mouseClicked(Minecraft* minecraft, int x, int y, int buttonNu
 	touchDispatched = false;
 
 	super::mouseClicked(minecraft, x, y, buttonNum);
+	touchDispatched = true;
 
 	if (buttonNum == MouseAction::ACTION_LEFT && pointInside(x, y)) {
 		trackingScrollGesture = true;
