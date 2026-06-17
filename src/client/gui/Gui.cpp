@@ -146,7 +146,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 		renderDebugInfo();
 #endif
 
-		if (Keyboard::isKeyDown(Keyboard::KEY_TAB)) {
+		if (Keyboard::isKeyDown(Keyboard::KEY_TAB) && minecraft->options.getIntValue(OPTIONS_MENU_STYLE) == 2) {
 			renderPlayerList(font, screenWidth, screenHeight);
 		}
 
