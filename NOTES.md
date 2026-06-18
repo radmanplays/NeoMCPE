@@ -1,20 +1,27 @@
-# NeoMCPE 0.7.1-alpha-1.0.2b
+# neoMCPE 0.7.2-alpha-1.0.3b
 
 ## Changes
 
-* Fully port mcpe 0.7.1
-* Putting lava in a furnace no longer breaks the fire gui texture
-* Fixed some important gui bugs
-* Fixed flowing lava depth not correctly updating in accordance with surrounding lava until receiving a random tick.
-* Fixed losing milk buckets when crafting cake.
-* Sprint-jumping is now faster than sprinting(you can now do 4 block parkour jumps)
-* Changed the logo on the mainmenu to the one in 0.7.1
+* Fully port mcpe 0.7.2
+* Theres now a player list on the pausemenu
+* Pressing "Edit" on the world selection screen now shows world [seeds](https://minecraft.wiki/w/Seed_(world_generation)).
+* Backported 0.7.2 chat gui and packet
+* Slight GUI change
+* The multiplayer servers now show up at the top of the play menu, rather than the bottom.
+* Made Buckets more accurate(their ids now match 0.7.0)
+* Made MonsterPlacer(Spawn eggs) more accurate
+* Fixed joinbyipscreen
+* Fixed restored animations not showing the player's hand
+* Fixed Melon seeds and Pumpkin seeds names
+* Made options more accurate
+* Added the textboxes from 0.7.0
+* Fixed sliders in options so you wouldnt have to click/tapping them twice
+* Made sliders "teleport" to where you're clicking/tapping to make them accurate
+* Changed the name at the top of releases from "NeoMCPE" to "neoMCPE" due to request from the creator of neoLegacy :>
 
 ## Known bugs
-* Something seems wrong with the chat packet as it dosnt recognise the one from real 0.7.0
+* Something seems wrong with the chat packet as it somewhat dosnt recognise the one from real 0.7.0 and looks buggy for some reason
 * The scrolling in TouchSelectWorldMenu is not accurate to real 0.7.0 as i couldnt figure out how to port it(its really buggy rn)
-* The TextBox(not component and Chat menus have not been ported yet)
-* The options category texts are slightly indented in real 0.7.0 while they're not in this port
 
 ## Roadmap
 
