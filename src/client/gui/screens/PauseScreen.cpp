@@ -227,45 +227,46 @@ void PauseScreen::tick() {
 	//	drawString(font, "Saving level..", 8, height - 16, br << 16 | br << 8 | br);
 	//}
 
+	if (minecraft->options.getIntValue(OPTIONS_MENU_STYLE) != 2) {
+		int totalHeight = 0;
+		if (minecraft->player) totalHeight += playerListItemHeight;
+		totalHeight += playerListContainer->size() * playerListItemHeight;
 
-	int totalHeight = 0;
-	if (minecraft->player) totalHeight += playerListItemHeight;
-	totalHeight += playerListContainer->size() * playerListItemHeight;
+		bool isDown = Mouse::isButtonDown(MouseAction::ACTION_LEFT);
+		int mx = Mouse::getX() * width / minecraft->width;
+		int my = Mouse::getY() * height / minecraft->height;
+		bool inside = mx >= playerListX && mx < playerListX + playerListWidth && my >= playerListY && my < playerListY + playerListHeight;
 
-	bool isDown = Mouse::isButtonDown(MouseAction::ACTION_LEFT);
-	int mx = Mouse::getX() * width / minecraft->width;
-	int my = Mouse::getY() * height / minecraft->height;
-	bool inside = mx >= playerListX && mx < playerListX + playerListWidth && my >= playerListY && my < playerListY + playerListHeight;
+		if (isDown && !playerListWasDown && inside) {
+			playerListDragging = true;
+			playerListDragStartY = my;
+			playerListDragStartScroll = (float)playerListScroll;
+		}
 
-	if (isDown && !playerListWasDown && inside) {
-		playerListDragging = true;
-		playerListDragStartY = my;
-		playerListDragStartScroll = (float)playerListScroll;
-	}
-
-	if (playerListDragging) {
-		if (isDown) {
-			if (totalHeight > playerListHeight) {
-				int deltaY = playerListDragStartY - my;
-				int maxScroll = totalHeight - playerListHeight;
-				playerListScroll = (int)(playerListDragStartScroll + deltaY);
-				if (playerListScroll < 0) playerListScroll = 0;
-				if (playerListScroll > maxScroll) playerListScroll = maxScroll;
+		if (playerListDragging) {
+			if (isDown) {
+				if (totalHeight > playerListHeight) {
+					int deltaY = playerListDragStartY - my;
+					int maxScroll = totalHeight - playerListHeight;
+					playerListScroll = (int)(playerListDragStartScroll + deltaY);
+					if (playerListScroll < 0) playerListScroll = 0;
+					if (playerListScroll > maxScroll) playerListScroll = maxScroll;
+				}
+				playerListScrollBarAlpha = 1.0f;
+			} else {
+				playerListDragging = false;
 			}
-			playerListScrollBarAlpha = 1.0f;
-		} else {
-			playerListDragging = false;
 		}
-	}
 
-	if (!playerListDragging) {
-		if (playerListScrollBarAlpha > 0.0f) {
-			playerListScrollBarAlpha -= 0.1f;
-			if (playerListScrollBarAlpha < 0.0f) playerListScrollBarAlpha = 0.0f;
+		if (!playerListDragging) {
+			if (playerListScrollBarAlpha > 0.0f) {
+				playerListScrollBarAlpha -= 0.1f;
+				if (playerListScrollBarAlpha < 0.0f) playerListScrollBarAlpha = 0.0f;
+			}
 		}
-	}
 
-	playerListWasDown = isDown;
+		playerListWasDown = isDown;
+	}
 }
 
 void PauseScreen::mouseWheel(int dx, int dy, int xm, int ym) {
