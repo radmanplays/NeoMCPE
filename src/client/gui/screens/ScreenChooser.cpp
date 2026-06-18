@@ -11,6 +11,7 @@
 #include "touch/TouchSelectWorldScreen.h"
 #include "touch/TouchJoinGameScreen.h"
 #include "touch/TouchIngameBlockSelectionScreen.h"
+#include "ChatScreen.h"
 
 #include "../../Minecraft.h"
 
@@ -30,7 +31,7 @@ Screen* ScreenChooser::createScreen( ScreenId id )
 		case SCREEN_PAUSEPREV:	     screen = new PauseScreen(true);	 break;
 		case SCREEN_BLOCKSELECTION:	 screen = new Touch::IngameBlockSelectionScreen();	break;
 		case SCREEN_JOINBYIP:        screen = new JoinByIPScreen(); break;
-		case SCREEN_CONSOLE:		 screen = new ConsoleScreen(); break;
+		case SCREEN_CONSOLE:		 screen = new ChatScreen(); break;
 		case SCREEN_NONE:
 		default:
 			// Do nothing
