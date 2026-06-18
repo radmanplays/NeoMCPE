@@ -211,6 +211,17 @@ static int androidKeyToInternal(int androidKey) {
         case AKEYCODE_ENTER:
         case AKEYCODE_NUMPAD_ENTER:
             return Keyboard::KEY_RETURN;
+        
+        case AKEYCODE_0: return '0';
+        case AKEYCODE_1: return '1';
+        case AKEYCODE_2: return '2';
+        case AKEYCODE_3: return '3';
+        case AKEYCODE_4: return '4';
+        case AKEYCODE_5: return '5';
+        case AKEYCODE_6: return '6';
+        case AKEYCODE_7: return '7';
+        case AKEYCODE_8: return '8';
+        case AKEYCODE_9: return '9';
         // letters are delivered via nativeTextChar so no need to map here
         default:
             return androidKey; // fall back to raw code
