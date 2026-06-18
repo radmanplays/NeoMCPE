@@ -4,6 +4,7 @@
 #include "../Screen.h"
 #include "../components/Button.h"
 #include "../components/OptionsGroup.h"
+#include <map>
 
 class ImageButton;
 class OptionsPane;
@@ -44,8 +45,8 @@ private:
 	std::vector<OptionsGroup*> optionPanes;
 
 	OptionsGroup* currentOptionsGroup;
-
 	int selectedCategory;
+	std::map<int, int> optionCategoryMap;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_SCREENS__OptionsScreen_H__*/

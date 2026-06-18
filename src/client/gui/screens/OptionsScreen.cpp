@@ -10,6 +10,8 @@
 
 #include "../components/ImageButton.h"
 #include "../components/OptionsGroup.h"
+#include "../components/OptionsItem.h"
+#include "../components/TextBox.h"
 #include "platform/input/Keyboard.h"
 
 OptionsScreen::OptionsScreen()
@@ -188,8 +190,36 @@ void OptionsScreen::buttonClicked(Button* button) {
 	}
 }
 
+static void collectTextboxesFromGroup(OptionsGroup* group, std::vector<TextBox*>& out) {
+	for (size_t i = 0; i < group->size(); i++) {
+		GuiElement* child = group->get(i);
+		OptionsItem* item = dynamic_cast<OptionsItem*>(child);
+		if (item == NULL) continue;
+		for (size_t j = 0; j < item->size(); j++) {
+			TextBox* tb = dynamic_cast<TextBox*>(item->get(j));
+			if (tb != NULL) {
+				out.push_back(tb);
+			}
+		}
+	}
+}
+
 void OptionsScreen::selectCategory(int index) {
 	int currentIndex = 0;
+
+	for (int i = (int)textBoxes.size() - 1; i >= 0; i--) {
+		if (optionCategoryMap.count(textBoxes[i]->id)) {
+			textBoxes.erase(textBoxes.begin() + i);
+		}
+	}
+
+	if (index < (int)optionPanes.size()) {
+		std::vector<TextBox*> categoryBoxes;
+		collectTextboxesFromGroup(optionPanes[index], categoryBoxes);
+		for (auto* tb : categoryBoxes) {
+			textBoxes.push_back(tb);
+		}
+	}
 
 	for (std::vector<Touch::TButton*>::iterator it = categoryButtons.begin(); it != categoryButtons.end(); ++it) {
 
@@ -215,6 +245,13 @@ void OptionsScreen::generateOptionScreens() {
 	optionPanes.push_back(new OptionsGroup("options.group.tweaks"));
 
 	// Game Pane
+	optionCategoryMap[OPTIONS_USERNAME] = 0;
+	optionCategoryMap[OPTIONS_DIFFICULTY] = 0;
+	optionCategoryMap[OPTIONS_SERVER_VISIBLE] = 0;
+	optionCategoryMap[OPTIONS_THIRD_PERSON_VIEW] = 0;
+	optionCategoryMap[OPTIONS_WINDOW_SCALE] = 0;
+	optionCategoryMap[OPTIONS_GUI_SCALE] = 0;
+	optionCategoryMap[OPTIONS_SMOOTH_CAMERA] = 0;
 	optionPanes[0]->addOptionItem(OPTIONS_USERNAME, minecraft)
 		.addOptionItem(OPTIONS_DIFFICULTY, minecraft)
 		.addOptionItem(OPTIONS_SERVER_VISIBLE, minecraft)
@@ -224,6 +261,17 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_SMOOTH_CAMERA, minecraft);
 
 	// Controls Pane
+	optionCategoryMap[OPTIONS_SENSITIVITY] = 1;
+	optionCategoryMap[OPTIONS_INVERT_Y_MOUSE] = 1;
+	optionCategoryMap[OPTIONS_IS_LEFT_HANDED] = 1;
+	optionCategoryMap[OPTIONS_USE_TOUCHSCREEN] = 1;
+	optionCategoryMap[OPTIONS_IS_JOY_TOUCH_AREA] = 1;
+	optionCategoryMap[OPTIONS_DPAD_SIZE] = 1;
+	optionCategoryMap[OPTIONS_DESTROY_VIBRATION] = 1;
+	optionCategoryMap[OPTIONS_AUTOJUMP] = 1;
+	for (int i = OPTIONS_KEY_FORWARD; i <= OPTIONS_KEY_USE; i++) {
+		optionCategoryMap[i] = 1;
+	}
 	optionPanes[1]->addOptionItem(OPTIONS_SENSITIVITY, minecraft)
 		.addOptionItem(OPTIONS_INVERT_Y_MOUSE, minecraft)
 		.addOptionItem(OPTIONS_IS_LEFT_HANDED, minecraft)
@@ -238,6 +286,18 @@ void OptionsScreen::generateOptionScreens() {
 	}
 
 	// Graphics Pane
+	optionCategoryMap[OPTIONS_VIEW_DISTANCE] = 2;
+	optionCategoryMap[OPTIONS_FANCY_GRAPHICS] = 2;
+	optionCategoryMap[OPTIONS_BEAUTIFUL_SKY] = 2;
+	optionCategoryMap[OPTIONS_RENDER_DEBUG] = 2;
+	optionCategoryMap[OPTIONS_ANAGLYPH_3D] = 2;
+	optionCategoryMap[OPTIONS_VIEW_BOBBING] = 2;
+	optionCategoryMap[OPTIONS_AMBIENT_OCCLUSION] = 2;
+	optionCategoryMap[OPTIONS_NORMAL_LIGHTING] = 2;
+	optionCategoryMap[OPTIONS_LIMIT_FRAMERATE] = 2;
+	optionCategoryMap[OPTIONS_VSYNC] = 2;
+	optionCategoryMap[OPTIONS_VIGNETTE] = 2;
+	optionCategoryMap[OPTIONS_BLOCK_OUTLINE] = 2;
 	optionPanes[2]->addOptionItem(OPTIONS_VIEW_DISTANCE, minecraft)
 		// .addOptionItem(&Option::VIEW_BOBBING, minecraft)
 		// .addOptionItem(&Option::AMBIENT_OCCLUSION, minecraft)
@@ -256,10 +316,23 @@ void OptionsScreen::generateOptionScreens() {
 		.addOptionItem(OPTIONS_BLOCK_OUTLINE, minecraft);
 
 	// Sound Pane
+	optionCategoryMap[OPTIONS_MUSIC_VOLUME] = 3;
+	optionCategoryMap[OPTIONS_SOUND_VOLUME] = 3;
 	optionPanes[3]->addOptionItem(OPTIONS_MUSIC_VOLUME, minecraft)
 		.addOptionItem(OPTIONS_SOUND_VOLUME, minecraft);
 
 	// Tweaks Pane
+	optionCategoryMap[OPTIONS_ALLOW_SPRINT] = 4;
+	optionCategoryMap[OPTIONS_BAR_ON_TOP] = 4;
+	optionCategoryMap[OPTIONS_MENU_STYLE] = 4;
+	optionCategoryMap[OPTIONS_RPI_CURSOR] = 4;
+	optionCategoryMap[OPTIONS_FOLIAGE_TINT] = 4;
+	optionCategoryMap[OPTIONS_TINTED_SIDE] = 4;
+	optionCategoryMap[OPTIONS_JAVA_HUD] = 4;
+	optionCategoryMap[OPTIONS_FOG_TYPE] = 4;
+	optionCategoryMap[OPTIONS_BETA_SKY] = 4;
+	optionCategoryMap[OPTIONS_RESTORED_ANIMS] = 4;
+	optionCategoryMap[OPTIONS_DEBUG_STYLE] = 4;
 	optionPanes[4]->addOptionItem(OPTIONS_ALLOW_SPRINT, minecraft)
 		.addOptionItem(OPTIONS_BAR_ON_TOP, minecraft)
 		.addOptionItem(OPTIONS_MENU_STYLE, minecraft)
