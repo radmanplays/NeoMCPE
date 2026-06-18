@@ -127,18 +127,9 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse) {
 
 		glEnable(GL_BLEND);
 		bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
-		unsigned int max = 10;
-		if (isChatting) {
-			int lineHeight = 9;
-			max = (screenHeight - 48) / lineHeight;
-			if (max < 1) max = 1;
-			int maxScroll = (int)guiMessages.size() - (int)max;
-			if (maxScroll < 0) maxScroll = 0;
-			if (chatScrollOffset > maxScroll) chatScrollOffset = maxScroll;
-		} else {
-			chatScrollOffset = 0;
+		if (!isChatting) {
+			renderChatMessages(screenHeight, 10, isChatting, font);
 		}
-		renderChatMessages(screenHeight, max, isChatting, font);
 #if !defined(RPI)
 		renderOnSelectItemNameText(screenWidth, font, ySlot);
 #endif
@@ -226,29 +217,6 @@ void Gui::handleClick(int button, int x, int y) {
 
 	void Gui::handleKeyPressed(int key)
 	{
-		bool isChatting = (minecraft->screen && (dynamic_cast<ChatScreen*>(minecraft->screen) || dynamic_cast<ConsoleScreen*>(minecraft->screen)));
-		if (isChatting) {
-			// Allow scrolling the chat history with the mouse/keyboard when chat is open
-			if (key == 38) { // VK_UP
-				scrollChat(1);
-				return;
-			} else if (key == 40) { // VK_DOWN
-				scrollChat(-1);
-				return;
-			} else if (key == 33) { // VK_PRIOR (Page Up)
-				// Scroll by a page
-				int screenHeight = (int)(minecraft->height * InvGuiScale);
-				int maxVisible = (screenHeight - 48) / 9;
-				scrollChat(maxVisible);
-				return;
-			} else if (key == 34) { // VK_NEXT (Page Down)
-				int screenHeight = (int)(minecraft->height * InvGuiScale);
-				int maxVisible = (screenHeight - 48) / 9;
-				scrollChat(-maxVisible);
-				return;
-			}
-		}
-
 		if (key == Keyboard::KEY_F1) {
 			minecraft->options.toggle(OPTIONS_HIDEGUI);
 		}
@@ -327,15 +295,27 @@ void Gui::addMessage(const std::string& _string) {
 	message.ticks = 0;
 	guiMessages.insert(guiMessages.begin(), message);
 
-	// Keep a larger history so users can scroll through the full chat
-	const unsigned int MaxHistoryLines = 200;
+	const unsigned int MaxHistoryLines = 30;
 	while (guiMessages.size() > MaxHistoryLines) {
 		guiMessages.pop_back();
 	}
+}
 
-	// If the user has scrolled up, keep their window fixed (new messages shift older ones down)
-	if (chatScrollOffset > 0) {
-		chatScrollOffset++;
+void Gui::addMessage(const std::string& source, const std::string& message, int ticks)
+{
+	std::string formatted = "<" + source + "> " + message;
+	addMessage(formatted);
+	if (!guiMessages.empty()) {
+		guiMessages.front().ticks = 0;
+	}
+
+	if (!minecraft->isOnline() && !guiMessages.empty() && guiMessages.front().message[0] == '/') {
+		std::string cmd = guiMessages.front().message.substr(1);
+		std::string response = cmd.empty() ? "Error: no command provided" : "Error: Command " + cmd + " not found";
+		GuiMessage errMsg;
+		errMsg.message = response;
+		errMsg.ticks = 0;
+		guiMessages.insert(guiMessages.begin(), errMsg);
 	}
 }
 
@@ -513,7 +493,6 @@ void Gui::onConfigChanged( const Config& c ) {
 	} else {
 		_numSlots = Inventory::MAX_SELECTION_SIZE; // Xperia Play
 	}
-	MAX_MESSAGE_WIDTH = c.guiWidth;
 }
 
 float Gui::floorAlignToScreenPixel(float v) {
@@ -1063,53 +1042,43 @@ float Gui::getColoredWidth(Font* font, const std::string& text) {
 }
 
 void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isChatting, Font* font ) {
-	//        if (minecraft.screen instanceof ChatScreen) {
-	//            max = 20;
-	//            isChatting = true;
-	//        }
-	//
-	//        glEnable(GL_BLEND);
-	//        glBlendFunc2(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//        glDisable(GL_ALPHA_TEST);
-	//
-	//        glPushMatrix2();
-	//        glTranslatef2(0, screenHeight - 48, 0);
-	//        // glScalef2(1.0f / ssc.scale, 1.0f / ssc.scale, 1);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	int baseY = screenHeight - 48;
-	int start = chatScrollOffset;
-	if (start < 0) start = 0;
-	for (unsigned int i = 0; i < max; i++) {
-		unsigned int msgIdx = (unsigned int)start + i;
-		if (msgIdx >= guiMessages.size())
-			break;
-
-		GuiMessage& message = guiMessages.at(msgIdx);
-		if (message.ticks < 20 * 10 || isChatting) {
-			float t = message.ticks / (20 * 10.0f);
-			t = 1 - t;
-			t = t * 10;
-			if (t < 0) t = 0;
-			if (t > 1) t = 1;
-			t = t * t;
-			int alpha = (int) (255 * t);
-			if (isChatting) alpha = 255;
-
-			if (alpha > 0) {
-				const float x = 2;
-				const float y = (float)(baseY - i * 9);
-				std::string msg = message.message;
-				this->fill(x, y - 1, x + MAX_MESSAGE_WIDTH, y + 8, (alpha / 2) << 24);
-				glEnable(GL_BLEND);
-
-				// special-case join/leave announcements
-				int baseColor = 0xffffff;
-				if (msg.find(" joined the game") != std::string::npos ||
-					msg.find(" left the game") != std::string::npos) {
-						baseColor = 0xffff00; // yellow
+	if (!isChatting) {
+		int visibleCount = 0;
+		if (!guiMessages.empty()) {
+			for (int i = (int)guiMessages.size() - 1; i >= 0; i--) {
+				if (guiMessages[i].ticks < 20 * 10) {
+					visibleCount++;
 				}
-				// replace previous logic; allow full colour tags now
-				Gui::drawColoredString(font, msg, x, y, alpha);
+			}
+
+			int drawn = 0;
+			for (int i = (int)guiMessages.size() - 1; i >= 0; i--) {
+				GuiMessage& msg = guiMessages[i];
+				if (msg.ticks < 20 * 10) {
+					float t = 1.0f - (float)msg.ticks / (20 * 10.0f);
+					t = t * 10.0f;
+					if (t < 0) t = 0;
+					else if (t > 1) t = 1;
+					int alpha = (int)(t * t * 255.0f);
+
+					if (alpha > 0) {
+						if (visibleCount <= 10) {
+							drawn++;
+							float x = 2.0f;
+							float y = (float)(9 * drawn + 18);
+							this->fill(x, y - 1.0f, (float)MAX_MESSAGE_WIDTH + 2.0f, y + 8.0f, (alpha / 2) << 24);
+							int color;
+							if (!msg.message.empty() && msg.message[0] == '/') {
+								color = 0xffcccccc;
+							} else {
+								color = 0xffffffff;
+							}
+							font->drawShadow(msg.message, x, y, color + (alpha << 24));
+						} else {
+							visibleCount--;
+						}
+					}
+				}
 			}
 		}
 	}

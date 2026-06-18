@@ -57,14 +57,14 @@ public:
 	virtual void handle(const RakNet::RakNetGUID& source, ContainerSetSlotPacket* packet);
 	virtual void handle(const RakNet::RakNetGUID& source, ContainerClosePacket* packet);
 	virtual void handle(const RakNet::RakNetGUID& source, SignUpdatePacket* packet);
-	virtual void handle(const RakNet::RakNetGUID& source, ChatPacket* packet);
+	virtual void handle(const RakNet::RakNetGUID& source, MessagePacket* packet);
 
 	bool allowsIncomingConnections() { return _allowIncoming; }
 	void allowIncomingConnections(bool doAllow);
 
 	Player* popPendingPlayer(const RakNet::RakNetGUID& source);
 
-	void displayGameMessage(const std::string& message);
+	void displayGameMessage(const std::string& source, const std::string& message);
 private:
 	/**
 	 * @brief Send packet to all players

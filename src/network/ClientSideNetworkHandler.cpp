@@ -173,7 +173,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& source, MessageP
 {
 	LOGI("MessagePacket\n");
 #ifndef STANDALONE_SERVER
-	minecraft->gui.addMessage(packet->message.C_String());
+	minecraft->gui.addMessage(packet->source.C_String(), packet->message.C_String(), 200);
 #endif
 }
 

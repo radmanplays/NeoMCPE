@@ -123,20 +123,20 @@ void ServerSideNetworkHandler::redistributePacket(Packet* packet, const RakNet::
 	rakPeer->Send(&bitStream, packet->priority, packet->reliability, 0, fromPlayer, true);
 }
 
-void ServerSideNetworkHandler::displayGameMessage(const std::string& message)
+void ServerSideNetworkHandler::displayGameMessage(const std::string& source, const std::string& message)
 {
 #ifndef STANDALONE_SERVER
-	minecraft->gui.addMessage(message);
+	minecraft->gui.addMessage(source, message, 200);
 #else
-	LOGI("%s\n", message.c_str());
+	LOGI("%s: %s\n", source.c_str(), message.c_str());
 #endif
-	MessagePacket packet(message.c_str());
+	MessagePacket packet(RakNet::RakString(source.c_str()), RakNet::RakString(message.c_str()));
 	raknetInstance->send(packet);
 }
 
-void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChatPacket* packet)
+void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, MessagePacket* packet)
 {
-	displayGameMessage(packet->message);
+	displayGameMessage(packet->source.C_String(), packet->message.C_String());
 }
 
 void ServerSideNetworkHandler::onNewClient(const RakNet::RakNetGUID& clientGuid)
@@ -156,9 +156,8 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 
 		if (player->owner == guid)
 		{
-			std::string message = player->name;
-			message += " disconnected from the game";
-			displayGameMessage(message);
+			std::string message = player->name + " disconnected from the game";
+			displayGameMessage("server", message);
 
 			//RemoveEntityPacket packet(player->entityId);
 			//raknetInstance->send(packet);

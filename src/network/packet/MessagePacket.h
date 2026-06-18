@@ -8,6 +8,7 @@ class MessagePacket : public Packet
 public:
 
 	RakNet::RakString message;
+	RakNet::RakString source;
 
 	MessagePacket()
 	{
@@ -18,15 +19,23 @@ public:
 	{
 	}
 
+	MessagePacket(const RakNet::RakString& source, const RakNet::RakString& message)
+	:	source(source),
+		message(message)
+	{
+	}
+
 	void write(RakNet::BitStream* bitStream)
 	{
 		bitStream->Write((RakNet::MessageID)(ID_USER_PACKET_ENUM + PACKET_MESSAGE));
 
+		bitStream->Write(source);
 		bitStream->Write(message);
 	}
 
 	void read(RakNet::BitStream* bitStream)
 	{
+		bitStream->Read(source);
 		bitStream->Read(message);
 	}
 

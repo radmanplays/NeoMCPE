@@ -722,7 +722,7 @@ void Minecraft::tickInput() {
 			}
 
 			if (!screen && key == Keyboard::KEY_T && level) {
-				setScreen(new ConsoleScreen());
+				setScreen(new ChatScreen());
 			}
 
 			if (key == Keyboard::KEY_F3) {

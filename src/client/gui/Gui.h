@@ -66,6 +66,7 @@ public:
 	void renderProgressIndicator( const bool isTouchInterface, const int screenWidth, const int screenHeight, float a );
 
     void addMessage(const std::string& string);
+	void addMessage(const std::string& source, const std::string& message, int ticks);
 	void clearMessages();
 	void postError(int errCode);
 
@@ -99,6 +100,8 @@ private:
 	int MAX_MESSAGE_WIDTH;
 	//ItemRenderer itemRenderer;
 	GuiMessageList guiMessages;
+public:
+	const GuiMessageList& getGuiMessages() const { return guiMessages; }
 	int chatScrollOffset;
 	Random random;
 

@@ -74,7 +74,7 @@ void ConsoleScreen::execute()
         std::string msg = std::string("<") + minecraft->player->name + "> " + _input;
         if (minecraft->netCallback && minecraft->raknetInstance->isServer()) {
             // Hosting a LAN game: displayGameMessage shows locally + broadcasts MessagePacket to clients
-            static_cast<ServerSideNetworkHandler*>(minecraft->netCallback)->displayGameMessage(msg);
+            static_cast<ServerSideNetworkHandler*>(minecraft->netCallback)->displayGameMessage(minecraft->player->name, _input);
         } else if (minecraft->netCallback) {
             // Connected client: send ChatPacket to server; server echoes it back as MessagePacket
             ChatPacket chatPkt(msg);
