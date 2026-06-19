@@ -222,7 +222,33 @@ static int androidKeyToInternal(int androidKey) {
         case AKEYCODE_7: return '7';
         case AKEYCODE_8: return '8';
         case AKEYCODE_9: return '9';
-        // letters are delivered via nativeTextChar so no need to map here
+
+        case AKEYCODE_A: return 'a';
+        case AKEYCODE_B: return 'b';
+        case AKEYCODE_C: return 'c';
+        case AKEYCODE_D: return 'd';
+        case AKEYCODE_E: return 'e';
+        case AKEYCODE_F: return 'f';
+        case AKEYCODE_G: return 'g';
+        case AKEYCODE_H: return 'h';
+        case AKEYCODE_I: return 'i';
+        case AKEYCODE_J: return 'j';
+        case AKEYCODE_K: return 'k';
+        case AKEYCODE_L: return 'l';
+        case AKEYCODE_M: return 'm';
+        case AKEYCODE_N: return 'n';
+        case AKEYCODE_O: return 'o';
+        case AKEYCODE_P: return 'p';
+        case AKEYCODE_Q: return 'q';
+        case AKEYCODE_R: return 'r';
+        case AKEYCODE_S: return 's';
+        case AKEYCODE_T: return 't';
+        case AKEYCODE_U: return 'u';
+        case AKEYCODE_V: return 'v';
+        case AKEYCODE_W: return 'w';
+        case AKEYCODE_X: return 'x';
+        case AKEYCODE_Y: return 'y';
+        case AKEYCODE_Z: return 'z';
         default:
             return androidKey; // fall back to raw code
     }
