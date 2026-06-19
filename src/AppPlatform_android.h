@@ -654,6 +654,7 @@ private:
 	jmethodID _methodHideSoftInput;
 
 	jmethodID _methodGetKeyFromKeyCode;
+	jmethodID _methodGetKeyboardHeight;
 
     int _screenWidth;
     int _screenHeight;
