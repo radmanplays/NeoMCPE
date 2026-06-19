@@ -424,6 +424,17 @@ public class MainActivity extends Activity {
    	    return (metrics.xdpi + metrics.ydpi) * 0.5f / 25.4f;
     }
 
+    public int getKeyboardHeight() {
+        try {
+            android.graphics.Rect visibleFrame = new android.graphics.Rect();
+            getWindow().getDecorView().getWindowVisibleDisplayFrame(visibleFrame);
+            int keyboardHeight = _screenHeight - (visibleFrame.bottom - visibleFrame.top);
+            return keyboardHeight > 0 ? keyboardHeight : 0;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     public int checkLicense() { return LicenseCodes.LICENSE_OK; }
     
     public String getDateString(int s) {

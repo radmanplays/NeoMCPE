@@ -1073,7 +1073,7 @@ void Gui::renderChatMessages( const int screenHeight, unsigned int max, bool isC
 							} else {
 								color = 0xffffffff;
 							}
-							font->drawShadow(msg.message, x, y, color + (alpha << 24));
+							font->drawShadow(msg.message, x, y, color + ((alpha / 2) << 24));
 						} else {
 							visibleCount--;
 						}

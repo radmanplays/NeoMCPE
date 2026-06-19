@@ -136,6 +136,7 @@ public:
 		keyboardVisible = false;
 	}
 	virtual bool isKeyboardVisible() {return keyboardVisible;}
+	virtual int getKeyboardHeight() { return 0; }
 protected:
 	bool keyboardVisible;
 };

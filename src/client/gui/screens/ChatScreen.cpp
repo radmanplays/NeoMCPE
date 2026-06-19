@@ -1,5 +1,4 @@
 #include "ChatScreen.h"
-#include "DialogDefinitions.h"
 #include "../Gui.h"
 #include "../components/NinePatch.h"
 #include "../../Minecraft.h"
@@ -118,6 +117,25 @@ ChatScreen::~ChatScreen() {
 	delete m_textBoxButton;
 	delete m_keyboardButton;
 	delete m_sendButton;
+}
+
+int ChatScreen::getBaseY() {
+	if (!m_keyboardVisible) {
+		return height;
+	}
+	if (minecraft->platform()->supportsTouchscreen()) {
+		int rawKbHeight = minecraft->platform()->getKeyboardHeight();
+		int screenHeight = minecraft->platform()->getScreenHeight();
+		if (rawKbHeight > 0 && screenHeight > 0) {
+			int scaledKbHeight = (rawKbHeight * height) / screenHeight;
+			int btnHeight = m_keyboardButton ? m_keyboardButton->height : 0;
+			int offset = scaledKbHeight + btnHeight;
+			if (offset < height) {
+				return height - offset;
+			}
+		}
+	}
+	return height / 2;
 }
 
 void ChatScreen::closeWindow() {
@@ -316,16 +334,11 @@ void ChatScreen::updateToggleKeyboardButton() {
 	m_keyboardButton->setImageDef(def, false);
 
 	int btnH = m_keyboardButton->height;
-	if (m_keyboardVisible) {
-		m_keyboardButton->y = height / 2 - btnH;
-	} else {
-		m_keyboardButton->y = height - btnH;
-	}
+	m_keyboardButton->y = getBaseY() - btnH;
 }
 
 void ChatScreen::init() {
-	minecraft->platform()->showDialog(DialogDefinitions::DIALOG_NEW_CHAT_MESSAGE);
-	minecraft->platform()->createUserInput();
+	m_keyboardVisible = false;
 
 	m_textBoxButton = new BlankButton(1);
 
@@ -379,7 +392,7 @@ void ChatScreen::setupPositions() {
 		if (m_keyboardButton) {
 			m_sendButton->x = m_keyboardButton->x;
 		}
-		m_sendButton->y = height / 2 - m_sendButton->height;
+		m_sendButton->y = getBaseY() - m_sendButton->height;
 	}
 	updateToggleKeyboardButton();
 	m_keyboardButton->setSize((float)m_keyboardButton->width, (float)m_keyboardButton->height);
@@ -405,7 +418,7 @@ void ChatScreen::render(int a2, int a3, float a4) {
 		textBoxHeight = m_keyboardButton->height;
 	}
 
-	int textAreaY = (m_keyboardVisible ? height / 2 : height) - textBoxHeight;
+	int textAreaY = getBaseY() - textBoxHeight;
 
 	drawChatMessages(textAreaY);
 
@@ -437,11 +450,23 @@ bool ChatScreen::handleBackEvent(bool a2) {
 	return true;
 }
 
+void ChatScreen::syncKeyboardState() {
+	bool kbVisible = minecraft->platform()->isKeyboardVisible();
+	if (kbVisible != m_keyboardVisible) {
+		m_keyboardVisible = kbVisible;
+		updateKeyboardVisibility();
+	}
+}
+
 void ChatScreen::tick() {
 	Screen::tick();
 	if (guiMessagesUpdated()) {
 		updateGuiMessages();
 	}
+	syncKeyboardState();
+
+	if (m_keyboardButton) m_keyboardButton->y = getBaseY() - m_keyboardButton->height;
+	if (m_sendButton) m_sendButton->y = getBaseY() - m_sendButton->height;
 }
 
 void ChatScreen::removed() {

@@ -95,7 +95,8 @@ public:
 		_hasSetPowerVR(false),
 		_nativeActivity(0),
 
-		_methodGetKeyFromKeyCode(0)
+        _methodGetKeyFromKeyCode(0),
+		_methodGetKeyboardHeight(0)
     {
     }
 
@@ -168,6 +169,7 @@ public:
 		_methodHideSoftInput = env->GetMethodID(_classInputManager, "hideSoftInputFromWindow", "(Landroid/os/IBinder;I)Z");
 		
 		_methodGetKeyFromKeyCode = env->GetMethodID( _activityClass, "getKeyFromKeyCode", "(III)I");
+		_methodGetKeyboardHeight = env->GetMethodID( _activityClass, "getKeyboardHeight", "()I");
 
         if (env->ExceptionOccurred()) {
             env->ExceptionDescribe();
@@ -534,6 +536,15 @@ public:
 		JNIEnv* env = ta.getEnv();
 
 		return env->CallBooleanMethod(instance, _methodIsNetworkEnabled, onlyWifiAllowed);
+	}
+
+	virtual int getKeyboardHeight() {
+		if (!_isInited || !_methodGetKeyboardHeight) return 0;
+
+		JVMAttacher ta(_vm);
+		JNIEnv* env = ta.getEnv();
+
+		return env->CallIntMethod(instance, _methodGetKeyboardHeight);
 	}
 
     static __inline bool isSquare(int n) {

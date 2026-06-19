@@ -50,6 +50,7 @@ public:
 	bool closeOnPlayerHurt();
 
 private:
+	int getBaseY();
 	void closeWindow();
 	void drawChatMessages(int baseY);
 	bool guiMessagesUpdated();
@@ -58,6 +59,7 @@ private:
 	void updateGuiMessages();
 	void updateKeyboardVisibility();
 	void updateToggleKeyboardButton();
+	void syncKeyboardState();
 
 	bool m_keyboardVisible;
 	bool m_composing;
