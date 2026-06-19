@@ -415,15 +415,14 @@ void ItemInHandRenderer::render( float a )
 			glTranslatef2(0.8f * d, -0.75f * d, -0.9f * d);
 
 		glRotatef2(45, 0, 1, 0);
-//		glEnable2(GL_RESCALE_NORMAL);
-		glEnable(GL_NORMALIZE);
+		glEnable2(GL_RESCALE_NORMAL);
 		glRotatef2(swing2 * 70, 0, 1, 0);
 		glRotatef2(-swing3 * 20, 0, 0, 1);
 		// glRotatef2(-swing2 * 80, 1, 0, 0);
 
 		mc->textures->loadAndBindTexture(player->getTexture());
 		glTranslatef2(-1.0f, +3.6f, +3.5f);
-		glRotatef2(120, 0, 0, 1);	
+		glRotatef2(120, 0, 0, 1);
 		glRotatef2(180 + 20, 1, 0, 0);
 		glRotatef2(-90 - 45, 0, 1, 0);
 		glScalef2(1.5f / 24.0f * 16, 1.5f / 24.0f * 16, 1.5f / 24.0f * 16);
@@ -433,7 +432,9 @@ void ItemInHandRenderer::render( float a )
 		HumanoidMobRenderer* playerRenderer = (HumanoidMobRenderer*) er;
 		float ss = 1;
 		glScalef2(ss, ss, ss);
+		glDisable2(GL_CULL_FACE);
 		playerRenderer->renderHand();
+		glEnable2(GL_CULL_FACE);
 		glPopMatrix2();
 	}
 	glDisable2(GL_RESCALE_NORMAL);
