@@ -35,7 +35,6 @@ public:
 	
 	void init();
 	void setupPositions();
-
 	void render(int xm, int ym, float a);
 
 	void buttonClicked(Button* button);
@@ -43,6 +42,7 @@ public:
 	bool handleBackEvent(bool isDown);
 	bool isInGameScreen();
 private:
+	void renderSplashText(float a);
 	
 	Touch::TButton bHost;
 	// Touch::TButton bJoin;
@@ -56,6 +56,17 @@ private:
 	int versionPosY;
 
 	std::string username;
+
+	// Splash text system
+	static const char* gSplashes[];
+	int currentSplash;
+	const char* splash;
+
+	float titleX;
+	float titleY;
+	float titleW;
+	float titleH;
+	int splashStartTime;
 };
 };
 
