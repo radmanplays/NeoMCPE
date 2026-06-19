@@ -20,7 +20,7 @@
 #include "../../world/item/UseAnim.h"
 #include "../../world/item/BowItem.h"
 #include "../../world/level/tile/LeafTile.h"
-#include "entity/HumanoidMobRenderer.h"
+#include "entity/PlayerRenderer.h"
 #include "Lighting.h"
 
 //static StopwatchHandler handler;
@@ -423,14 +423,15 @@ void ItemInHandRenderer::render( float a )
 
 		mc->textures->loadAndBindTexture(player->getTexture());
 		glTranslatef2(-1.0f, +3.6f, +3.5f);
-		glRotatef2(120, 0, 0, 1);	
+		glRotatef2(120, 0, 0, 1);
 		glRotatef2(180 + 20, 1, 0, 0);
 		glRotatef2(-90 - 45, 0, 1, 0);
 		glScalef2(1.5f / 24.0f * 16, 1.5f / 24.0f * 16, 1.5f / 24.0f * 16);
 		glTranslatef2(5.6f, 0, 0);
 
 		EntityRenderer* er = EntityRenderDispatcher::getInstance()->getRenderer(mc->player);
-		HumanoidMobRenderer* playerRenderer = (HumanoidMobRenderer*) er;
+		PlayerRenderer* playerRenderer = (PlayerRenderer*) er;
+		playerRenderer->updateSkinModel(mc->player);
 		float ss = 1;
 		glScalef2(ss, ss, ss);
 		playerRenderer->renderHand();
