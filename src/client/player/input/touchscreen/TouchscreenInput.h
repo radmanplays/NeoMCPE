@@ -40,6 +40,7 @@ public:
 
 	const RectangleArea& getRectangleArea();
     const RectangleArea& getPauseRectangleArea();
+    const RectangleArea& getChatRectangleArea();
 
 private:
 	void clear();

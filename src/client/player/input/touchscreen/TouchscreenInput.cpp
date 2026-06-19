@@ -433,6 +433,10 @@ const RectangleArea& TouchscreenInput_TestFps::getPauseRectangleArea()
 {
     return *aPause;
 }
+const RectangleArea& TouchscreenInput_TestFps::getChatRectangleArea()
+{
+    return *aChat;
+}
 
 void TouchscreenInput_TestFps::rebuild() {
     if (_options->getBooleanValue(OPTIONS_HIDEGUI))

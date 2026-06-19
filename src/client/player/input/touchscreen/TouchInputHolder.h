@@ -71,6 +71,7 @@ public:
 		joyTouchArea(-1, -1, 0, 0),
 		inventoryArea(-1,-1, 0, 0),
 		pauseArea(-1, -1, 0, 0),
+		chatArea(-1, -1, 0, 0),
 		_buildMovement(0),
 		_sentFirstRemove(false),
 		_canDestroy(false),
@@ -123,15 +124,19 @@ public:
             pauseArea._y0 -= border;
             pauseArea._y1 += border;
 
+            chatArea._x0 -= border;
+            chatArea._x1 += border;
+            chatArea._y0 -= border;
+            chatArea._y1 += border;
+
 			//LOGI("move: %f, %f, %f, %f\n", moveArea._x0, moveArea._y0, moveArea._x1, moveArea._y1);
 
 			_area.clear();
 			_area.include(&screenArea);
 			_area.exclude(&moveArea);
 			_area.exclude(&inventoryArea);
-#ifdef __APPLE__
-            _area.exclude(&pauseArea);
-#endif /*__APPLE__*/
+			_area.exclude(&pauseArea);
+			_area.exclude(&chatArea);
 			//LOGI("Movearea: %f %f %f% f\n", moveArea._x0, moveArea._x1, moveArea._y0, moveArea._y1);
 
 			_model.clear();
@@ -369,6 +374,7 @@ public:
 	RectangleArea joyTouchArea;
 	RectangleArea inventoryArea;
     RectangleArea pauseArea;
+    RectangleArea chatArea;
 
 private:
 	IInputHolder* _holder;
@@ -434,6 +440,7 @@ public:
 		_move.onConfigChanged(c);
 		_turnBuild.moveArea = _move.getRectangleArea();
 		_turnBuild.pauseArea = _move.getPauseRectangleArea();
+		_turnBuild.chatArea = _move.getChatRectangleArea();
 		_turnBuild.inventoryArea = _mc->gui.getRectangleArea( _mc->options.getBooleanValue(OPTIONS_IS_LEFT_HANDED)? 1 : -1 );
 		_turnBuild.setSensitivity(c.options->getBooleanValue(OPTIONS_IS_JOY_TOUCH_AREA)? 1.8f : 1.0f);
 		((ITurnInput*)&_turnBuild)->onConfigChanged(c);
