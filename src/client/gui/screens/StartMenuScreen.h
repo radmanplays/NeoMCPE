@@ -5,6 +5,8 @@
 #include "../components/Button.h"
 #include "../components/ImageButton.h"
 
+class Textures;
+
 class StartMenuScreen: public Screen
 {
 public:
@@ -29,12 +31,24 @@ private:
 	Button* bQuit; 
 
 	std::string copyright;
-	int copyrightPosX;
+	int copyrightPosY;
 
 	std::string version;
-	int versionPosX;
+	int versionPosY;
 
 	std::string username;
+
+	static const char* gSplashes[];
+	int currentSplash;
+	const char* splash;
+	int splashStartTime;
+
+	float titleX;
+	float titleY;
+	float titleW;
+	float titleH;
+
+	void renderSplashText(float a);
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_SCREENS__StartMenuScreen_H__*/

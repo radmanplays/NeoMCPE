@@ -69,23 +69,24 @@ TextureData loadPngFromMemory(const unsigned char* data, size_t size) {
     // Handle interlaced PNGs properly
     int number_passes = png_set_interlace_handling(pngPtr);
 
-    png_read_update_info(pngPtr, infoPtr);
-
     int colorType = png_get_color_type(pngPtr, infoPtr);
     if (colorType == PNG_COLOR_TYPE_RGB) {
         png_set_filler(pngPtr, 0xFF, PNG_FILLER_AFTER);
     }
 
+    png_read_update_info(pngPtr, infoPtr);
+
     out.w = png_get_image_width(pngPtr, infoPtr);
     out.h = png_get_image_height(pngPtr, infoPtr);
 
+    png_size_t rowBytes = png_get_rowbytes(pngPtr, infoPtr);
+
     png_bytep* rowPtrs = new png_bytep[out.h];
-    out.data = new unsigned char[4 * out.w * out.h];
+    out.data = new unsigned char[rowBytes * out.h];
     out.memoryHandledExternally = false;
 
-    int rowStrideBytes = 4 * out.w;
     for (int i = 0; i < out.h; i++) {
-        rowPtrs[i] = (png_bytep)&out.data[i*rowStrideBytes];
+        rowPtrs[i] = (png_bytep)&out.data[i * rowBytes];
     }
 
     png_read_image(pngPtr, rowPtrs);

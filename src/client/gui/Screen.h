@@ -17,6 +17,10 @@ class Screen: public GuiComponent
 public:
 	Screen();
 
+	static const char* panoramaImages[6];
+	static float panoramaRotation;
+	static int startTimeMs;
+
     virtual void render(int xm, int ym, float a);
 
     void init(Minecraft* minecraft, int width, int height);

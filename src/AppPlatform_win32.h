@@ -24,10 +24,23 @@ class AppPlatform_win32: public AppPlatform
 public:
     AppPlatform_win32()
     {
+		char modulePath[MAX_PATH] = { 0 };
+		const DWORD len = GetModuleFileNameA(NULL, modulePath, MAX_PATH);
+		if (len > 0 && len < MAX_PATH) {
+			std::string exePath(modulePath, len);
+			const size_t slashPos = exePath.find_last_of("\\/");
+			if (slashPos != std::string::npos) {
+				dataRoot = exePath.substr(0, slashPos) + "/data";
+			}
+		}
+
+		if (dataRoot.empty()) {
+			dataRoot = "../../data";
+		}
     }
 
 	BinaryBlob readAssetFile(const std::string& filename) {
-		FILE* fp = fopen(("data/" + filename).c_str(), "r");
+		FILE* fp = openAssetFile(filename, "rb");
 		if (!fp)
 			return BinaryBlob();
 
@@ -64,8 +77,8 @@ public:
 
 		TextureData out;
 
-		std::string filename = textureFolder? "data/images/" + filename_
-								: filename_;
+		std::string filename = textureFolder ? resolveAssetPath("images/" + filename_)
+												 : filename_;
 		std::ifstream source(filename.c_str(), std::ios::binary);
 
 		if (source) {
@@ -86,18 +99,52 @@ public:
 
 			png_read_info(pngPtr, infoPtr);
 
+			// png to 8-bit rgba
+			// https://github.com/oldminecraftcommunity/MCPE-PEWIKU/blob/main/handheld/src/AppPlatform_win32.h
+			png_byte colorType = png_get_color_type(pngPtr, infoPtr);
+			png_byte bitDepth  = png_get_bit_depth(pngPtr, infoPtr);
+
+			if (bitDepth == 16)
+				png_set_strip_16(pngPtr);
+
+			if (colorType == PNG_COLOR_TYPE_PALETTE)
+				png_set_palette_to_rgb(pngPtr);
+
+			if (colorType == PNG_COLOR_TYPE_GRAY && bitDepth < 8)
+				png_set_expand_gray_1_2_4_to_8(pngPtr);
+
+			if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))
+				png_set_tRNS_to_alpha(pngPtr);
+
+			if (colorType == PNG_COLOR_TYPE_GRAY ||
+				colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+			{
+				png_set_gray_to_rgb(pngPtr);
+			}
+
+			// if image with no alpha -> add opaque alpha
+			if (colorType == PNG_COLOR_TYPE_RGB ||
+				colorType == PNG_COLOR_TYPE_GRAY ||
+				colorType == PNG_COLOR_TYPE_PALETTE)
+			{
+				png_set_filler(pngPtr, 0xFF, PNG_FILLER_AFTER);
+			}
+
+			png_read_update_info(pngPtr, infoPtr);
+
 			// Set up the texdata properties
 			out.w = png_get_image_width(pngPtr, infoPtr);
 			out.h = png_get_image_height(pngPtr, infoPtr);
 
-			png_bytep* rowPtrs = new png_bytep[out.h];
-			out.data = new unsigned char[4 * out.w * out.h];
+			png_size_t rowBytes = png_get_rowbytes(pngPtr, infoPtr);
+
+			out.data = new unsigned char[rowBytes * out.h];
 			out.memoryHandledExternally = false;
 
-			int rowStrideBytes = 4 * out.w;
-			for (int i = 0; i < out.h; i++) {
-				rowPtrs[i] = (png_bytep)&out.data[i*rowStrideBytes];
-			}
+			png_bytep* rowPtrs = new png_bytep[out.h];
+			for (int i = 0; i < out.h; ++i)
+				rowPtrs[i] = out.data + i * rowBytes;
+
 			png_read_image(pngPtr, rowPtrs);
 
 			// Teardown and return
@@ -117,13 +164,6 @@ public:
 	TextureData loadTextureFromMemory(const unsigned char* data, size_t size) override {
 		return loadPngFromMemory(data, size);
 	}
- 		time_t tm = s;
-
-		char mbstr[100];
-		std::strftime(mbstr, sizeof(mbstr), "%F %T", std::localtime(&tm));
-
-		return std::string(mbstr);
-	}
 
 	virtual int getScreenWidth();
 	virtual int getScreenHeight();
@@ -137,6 +177,27 @@ public:
 	}
 
 private:
+	std::string dataRoot;
+
+	std::string resolveAssetPath(const std::string& relativePath) const {
+		const std::string primary = dataRoot + "/" + relativePath;
+		std::ifstream primaryFile(primary.c_str(), std::ios::binary);
+		if (primaryFile.good()) {
+			return primary;
+		}
+
+		return "../../data/" + relativePath;
+	}
+
+	FILE* openAssetFile(const std::string& relativePath, const char* mode) const {
+		std::string primary = dataRoot + "/" + relativePath;
+		FILE* fp = fopen(primary.c_str(), mode);
+		if (fp) {
+			return fp;
+		}
+
+		return fopen(("../../data/" + relativePath).c_str(), mode);
+	}
 };
 
 #endif /*APPPLATFORM_WIN32_H__*/
