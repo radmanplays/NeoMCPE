@@ -375,7 +375,7 @@ void StartMenuScreen::renderSplashText(float a)
 	glTranslatef((titleX + titleW) * 0.71f, (titleY + titleH) - 15.0f, 0.0f);
 	glRotatef(-20.0f, 0.0f, 0.0f, 1.0f);
 	glScalef(splashScale, splashScale, splashScale);
-	drawCenteredString(font, splash, 0, 2, 0xFFFFFF00);
+	drawCenteredString(font, splash, 0, -4, 0xFFFFFF00);
 	glPopMatrix();
 }
 
