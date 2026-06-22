@@ -148,11 +148,7 @@ void TextBox::render(Minecraft* minecraft, int xm, int ym) {
 
     int _y = y + (height - Font::DefaultLineHeight) / 2;
 
-    if (text.empty() && !editing) {
-        drawString(minecraft->font, hint, x + 5, _y + 1, 0xff5e5e5e);
-    } else {
-        minecraft->font->draw(text, (float)(x + 5), (float)_y + 1, 0xFFFFFFFF, false);
-    }
+    minecraft->font->draw(text, (float)(x + 5), (float)_y + 1, 0xFFFFFFFF, false);
 
     glDisable2(GL_SCISSOR_TEST);
 }

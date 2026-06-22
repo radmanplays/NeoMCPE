@@ -23,8 +23,8 @@ SimpleChooseLevelScreen::SimpleChooseLevelScreen(const std::string& levelName)
     gamemode(GameType::Creative),
     cheatsEnabled(false),
     customGenerationEnabled(false),
-    tLevelName(0, 0, 0, 100, 18, ""),
-    tSeed(1, 0, 0, 100, 18,"")
+    tLevelName(0, 0, 0, 100, 18, "Name"),
+    tSeed(1, 0, 0, 100, 18,"Seed")
 {
 }
 

@@ -371,17 +371,15 @@ void OptionsScreen::mouseWheel(int dx, int dy, int xm, int ym) {
 void OptionsScreen::keyPressed(int eventKey) {
 	if (currentOptionsGroup != NULL)
 		currentOptionsGroup->keyPressed(minecraft, eventKey);
-	if (eventKey == Keyboard::KEY_ESCAPE) 
+	if (eventKey == Keyboard::KEY_ESCAPE) {
 		minecraft->options.save();
-
-	super::keyPressed(eventKey);
+		minecraft->setScreen(NULL);
+	}
 }
 
 void OptionsScreen::charPressed(char inputChar) {
 	if (currentOptionsGroup != NULL)
 		currentOptionsGroup->charPressed(minecraft, inputChar);
-
-	super::keyPressed(inputChar);
 }
 
 void OptionsScreen::tick() {
