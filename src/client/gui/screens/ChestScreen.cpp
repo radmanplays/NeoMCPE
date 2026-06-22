@@ -115,7 +115,7 @@ ChestScreen::ChestScreen(Player* player, ChestTileEntity* chest)
 	chestPane(NULL),
 	btnClose(4, ""),
 	bHeader (5, "Inventory"),
-	bHeaderChest (6, "Chest"),
+	bHeaderChest (6, chest->isPairValid() ? "Large Chest" : "Chest"),
 	guiBackground(NULL),
 	guiSlot(NULL),
 	guiSlotMarked(NULL),
@@ -130,6 +130,12 @@ ChestScreen::ChestScreen(Player* player, ChestTileEntity* chest)
 }
 
 ChestScreen::~ChestScreen() {
+	if (chest) {
+		chest->stopOpen();
+		if (chest->clientSideOnly)
+			delete chest;
+	}
+
 	delete inventoryPane;
 	delete chestPane;
 
@@ -140,9 +146,6 @@ ChestScreen::~ChestScreen() {
 	delete guiPaneFrame;
 
 	delete menu;
-
-	if (chest->clientSideOnly)
-		delete chest;
 }
 
 void ChestScreen::init() {

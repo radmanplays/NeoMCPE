@@ -35,6 +35,8 @@
 #include "data/hurt.pcm"
 #include "data/door_open.pcm"
 #include "data/door_close.pcm"
+#include "data/chestopen.pcm"
+#include "data/chestclosed.pcm"
 #include "data/glass1.pcm"
 #include "data/glass2.pcm"
 #include "data/glass3.pcm"
@@ -145,6 +147,8 @@ SoundDesc SA_splash((char*)PCM_splash);
 
 SoundDesc SA_door_open((char*)PCM_door_open);
 SoundDesc SA_door_close((char*)PCM_door_close);
+SoundDesc SA_chestopen((char*)PCM_chestopen);
+SoundDesc SA_chestclosed((char*)PCM_chestclosed);
 SoundDesc SA_pop((char*)PCM_pop);
 SoundDesc SA_hurt((char*)PCM_hurt);
 SoundDesc SA_glass1((char*)PCM_glass1);

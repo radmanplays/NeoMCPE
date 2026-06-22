@@ -1,16 +1,18 @@
 #include "ChestRenderer.h"
 #include "TileEntityRenderer.h"
 #include "../gles.h"
-#include "../../model/ChestModel.h"
 #include "../../../world/level/tile/entity/ChestTileEntity.h"
 #include "../../../world/level/tile/ChestTile.h"
 #include "../../../util/Mth.h"
 
-
 void ChestRenderer::render( TileEntity* entity, float x, float y, float z, float a )
 {
 	ChestTileEntity* chest = (ChestTileEntity*) entity;
+
+	if (!chest->isUnpaired) return;
+
 	int data = 0;
+	bool noLevel = false;
 
 	if (chest->level) {
 		Tile* tile = chest->getTile();
@@ -22,39 +24,51 @@ void ChestRenderer::render( TileEntity* entity, float x, float y, float z, float
 		}
 
 		chest->checkNeighbors();
+	} else {
+		noLevel = true;
+		data = 0;
 	}
-	if (chest->n != NULL || chest->w != NULL) return;
+
+	bool hasValidPair = chest->isPairValid();
 
 	ChestModel* model;
-	//if (chest->e != NULL || chest->s != NULL) {
-	//	//model = &largeChestModel;
-	//	bindTexture("item/largechest.png");
-	//} else
-	{
+	if (hasValidPair) {
+		model = &largeChestModel;
+		bindTexture("item/chest/double_normal.png");
+	} else {
 		model = &chestModel;
-		bindTexture("item/chest.png");
+		bindTexture("item/chest/normal.png");
 	}
 
 	glPushMatrix2();
-	glColor4f2(1, 1, 1, 1);
 	glTranslatef2(x, y + 1, z + 1);
 	glScalef2(1, -1, -1);
 
 	glTranslatef2(0.5f, 0.5f, 0.5f);
-	GLfloat rot = 0;
-	if (data == 2) rot = 180;
-	if (data == 3) rot = 0;
-	if (data == 4) rot = 90;
-	if (data == 5) rot = -90;
 
-	if (data == 2 && chest->e != NULL) {
-		glTranslatef2(1, 0, 0);
+	if (!noLevel) {
+		float rot = 0;
+		if (data == 2) rot = 180;
+		if (data == 3) rot = 0;
+		if (data == 4) rot = 90;
+		if (data == 5) rot = -90;
+
+		glRotatef2(rot, 0, 1, 0);
+		glTranslatef2(-0.5f, -0.5f, -0.5f);
+	} else {
+		glTranslatef2(-1.0f, 0.0f, 0.0f);
 	}
-	if (data == 5 && chest->s != NULL) {
-		glTranslatef2(0, 0, -1);
+
+	if (hasValidPair) {
+		float offsetDir;
+		if (data == 2 || data == 5) {
+			offsetDir = -1.0f;
+		} else {
+			offsetDir = 1.0f;
+		}
+		float modelOffsetX = chest->getModelOffsetX();
+		glTranslatef2(modelOffsetX * offsetDir, 0.0f, 0.0f);
 	}
-	glRotatef2(rot, 0, 1, 0);
-	glTranslatef2(-0.5f, -0.5f, -0.5f);
 
 	float open = chest->oOpenness + (chest->openness - chest->oOpenness) * a;
 	if (chest->n != NULL) {
@@ -66,11 +80,8 @@ void ChestRenderer::render( TileEntity* entity, float x, float y, float z, float
 		if (open2 > open) open = open2;
 	}
 
-	open = 1 - open;
-	open = 1 - open * open * open;
-
-	model->lid.xRot = -(open * Mth::PI / 2);
+	open = 1.0f - open;
+	model->lid.xRot = -((1.0f - (open * open * open)) * 3.1416f * 0.5f);
 	model->render();
 	glPopMatrix2();
-	glColor4f2(1, 1, 1, 1);
 }

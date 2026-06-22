@@ -34,7 +34,9 @@ public class SoundPlayer
 
 			new SoundId(R.raw.door_open, "random.door_open"),
 			new SoundId(R.raw.door_close, "random.door_close"),
-			
+			new SoundId(R.raw.chestopen, "random.chestopen"),
+			new SoundId(R.raw.chestclosed, "random.chestclosed"),
+
 			new SoundId(R.raw.cloth1, "step.cloth"),
 			new SoundId(R.raw.cloth2, "step.cloth"),
 			new SoundId(R.raw.cloth3, "step.cloth"),

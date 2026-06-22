@@ -65,6 +65,8 @@ void SoundEngine::init( Minecraft* mc, Options* options )
 
 	sounds.add("random.door_open", SA_door_open);
 	sounds.add("random.door_close", SA_door_close);
+	sounds.add("random.chestopen", SA_chestopen);
+	sounds.add("random.chestclosed", SA_chestclosed);
 	sounds.add("random.pop", SA_pop);
 	sounds.add("random.pop2", SA_pop2);
 	sounds.add("random.hurt", SA_hurt);

@@ -29,6 +29,7 @@
 #include "../world/entity/item/PrimedTnt.h"
 #include "../world/entity/projectile/Arrow.h"
 #include "../world/level/tile/entity/ChestTileEntity.h"
+#include "../world/level/tile/EntityTile.h"
 #include "../client/player/RemotePlayer.h"
 #include "../world/level/tile/LevelEvent.h"
 #include "../world/entity/item/FallingTile.h"
@@ -414,8 +415,40 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& source, UpdateBl
 		//LOGI("chunk is loaded - UPDATE @ %d, %d, %d -- %d, %d\n", x, packet->y, z, packet->blockId, packet->blockData);
 
 		int y = packet->y;
+		int oldTile = level->getTile(x, y, z);
 		int tileId = Tile::transformToValidBlockId(packet->blockId, x, y, z);
+
+		if (oldTile > 0 && Tile::isEntityTile[oldTile] && tileId != oldTile) {
+			TileEntity* te = level->getTileEntity(x, y, z);
+			if (te && te->isType(TileEntityType::Chest)) {
+				ChestTileEntity* chest = (ChestTileEntity*)te;
+				chest->unpair();
+			}
+			level->removeTileEntity(x, y, z);
+
+			int ddx[] = {-1, 1, 0, 0};
+			int ddz[] = {0, 0, -1, 1};
+			for (int d = 0; d < 4; d++) {
+				int nx = x + ddx[d];
+				int nz = z + ddz[d];
+				TileEntity* neighbor = level->getTileEntity(nx, y, nz);
+				if (neighbor && neighbor->isType(TileEntityType::Chest)) {
+					ChestTileEntity* neighborChest = (ChestTileEntity*)neighbor;
+					if (neighborChest->pair && neighborChest->pairX == x && neighborChest->pairZ == z) {
+						neighborChest->_unpair();
+					}
+				}
+			}
+		}
+
 		level->setTileAndData(x, y, z, tileId, packet->blockData);
+
+		if (tileId > 0 && Tile::isEntityTile[tileId] && oldTile != tileId) {
+			if (!level->getTileEntity(x, y, z)) {
+				TileEntity* te = ((EntityTile*)Tile::tiles[tileId])->newTileEntity();
+				level->setTileEntity(x, y, z, te);
+			}
+		}
 	} else {
 		SBufferedBlockUpdate update;
 		update.blockId = packet->blockId;
@@ -555,6 +588,20 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChunkDat
 		}
 	}
 
+	for (int lx = 0; lx < CHUNK_WIDTH; lx++) {
+		for (int lz = 0; lz < CHUNK_DEPTH; lz++) {
+			for (int ly = y0; ly <= y1; ly++) {
+				int t = chunk->getTile(lx, ly, lz);
+				if (t > 0 && Tile::isEntityTile[t]) {
+					if (!chunk->hasTileEntityAt(lx, ly, lz)) {
+						TileEntity* te = ((EntityTile*)Tile::tiles[t])->newTileEntity();
+						level->setTileEntity(rx + lx, ly, rz + lz, te);
+					}
+				}
+			}
+		}
+	}
+
  	if (recalcHeight)
  	{
 // 		chunk->recalcHeightmap();
@@ -574,7 +621,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChunkDat
 // 		//		}
 // 		//	}
 // 		//}
-// 
+//
  	}
 	//chunk->terrainPopulated = true;
 	chunk->unsaved = false;
@@ -831,8 +878,11 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& source, Containe
 			minecraft->player->containerMenu->containerId = packet->containerId;
 	}
 	if (packet->type == ContainerType::CONTAINER) {
-		ChestTileEntity* te = new ChestTileEntity();
-		te->clientSideOnly = true;
+		ChestTileEntity* te = (ChestTileEntity*)level->getTileEntity(packet->x, packet->y, packet->z);
+		if (!te) {
+			te = new ChestTileEntity();
+			te->clientSideOnly = true;
+		}
 		minecraft->player->openContainer(te);
 		if (minecraft->player->containerMenu)
 			minecraft->player->containerMenu->containerId = packet->containerId;

@@ -94,6 +94,8 @@ extern SoundDesc SA_splash;
 
 extern SoundDesc SA_door_open;
 extern SoundDesc SA_door_close;
+extern SoundDesc SA_chestopen;
+extern SoundDesc SA_chestclosed;
 extern SoundDesc SA_pop;
 extern SoundDesc SA_pop2;
 extern SoundDesc SA_hurt;

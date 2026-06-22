@@ -7,6 +7,7 @@
 #include "../../world/entity/Entity.h"
 #include "../../world/level/chunk/ChunkSource.h"
 #include "../../world/level/dimension/Dimension.h"
+#include "MultiPlayerChunkCache.h"
 //#include "../../world/level/storage/MockedLevelStorage.h"
 
 #include <set>
@@ -202,9 +203,8 @@ protected:
     }
     /*@Override*/
     ChunkSource* createChunkSource() {
-        //chunkCache = /*new*/ MultiPlayerChunkCache(this);
-        //return chunkCache;
-		return NULL;
+        chunkCache = new MultiPlayerChunkCache(this);
+        return chunkCache;
     }
 
     void entityAdded(Entity* e) {
@@ -255,7 +255,7 @@ protected:
 private:
     ResetInfoList updatesToReset;
     //ClientConnection connection;
-    //MultiPlayerChunkCache chunkCache;
+    MultiPlayerChunkCache* chunkCache;
 
     EntityIdMap entitiesById;
     EntitySet forced;

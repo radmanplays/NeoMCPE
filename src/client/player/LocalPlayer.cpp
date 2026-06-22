@@ -8,6 +8,7 @@
 #include "../../world/level/Level.h"
 #include "../../world/level/tile/Tile.h"
 #include "../../world/level/tile/entity/TileEntity.h"
+#include "../../world/level/tile/entity/ChestTileEntity.h"
 #include "../../world/level/material/Material.h"
 #include "../../network/packet/ContainerClosePacket.h"
 #include "../../network/packet/MovePlayerPacket.h"
@@ -815,6 +816,8 @@ void LocalPlayer::openContainer( ChestTileEntity* container ) {
 #ifndef STANDALONE_SERVER
 	if (!minecraft->isCreativeMode())
 		minecraft->setScreen( new ChestScreen(this, container) );
+	else
+		container->stopOpen();
 #endif
 }
 
