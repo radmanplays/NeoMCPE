@@ -25,9 +25,8 @@ public:
 	std::string getName() const;
 
     ItemInstance* getItem(int slot);
-	//void setItem(int slot, ItemInstance* item);
-    //ItemInstance removeItem(int slot, int count);
-    //ItemInstance removeItemNoUpdate(int slot);
+	void setItem(int slot, ItemInstance* item);
+	bool add(ItemInstance* item);
 
 	bool shouldSave();
     void load(CompoundTag* base);
@@ -49,14 +48,38 @@ public:
     /*@Override*/
     void setRemoved();
 
+    bool canPairWith(TileEntity* te);
+    void pairWith(ChestTileEntity* other, bool isUnpaired);
+    void unpair();
+    bool canOpen();
+    void openBy(Player* player);
+    void _getCenter(float& x, float& y, float& z);
+    void _unpair();
+    bool _canOpenThis();
+    void _resetAABB();
+    void tryPairWithNeighbors();
+    float getModelOffsetX();
+    bool isPairValid() const;
+
 	bool hasCheckedNeighbors;
 	ChestTileEntity* n;
 	ChestTileEntity* e;
 	ChestTileEntity* w;
 	ChestTileEntity* s;
 
+	ChestTileEntity* pair;
+	int pairX, pairZ;
+	bool isUnpaired;
+	bool pairSameXPos;
+
 	float openness, oOpenness;
 	int openCount;
+
+	bool hasPendingPair;
+	int pendingPairX, pendingPairZ;
+
+	Player* openedBy;
+	int openDelay;
 
 private:
 	static const int ItemsSize = 9*3;

@@ -42,8 +42,9 @@ public:
 
     TileEntity* newTileEntity();
 
-private:
 	bool isFullChest(Level* level, int x, int y, int z);
+
+	virtual void triggerEvent(Level* level, int x, int y, int z, int b0, int b1);
 
 	Random random;
 };

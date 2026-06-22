@@ -1,6 +1,7 @@
 #include "ChestTileEntity.h"
 #include "../ChestTile.h"
 #include "../../Level.h"
+#include "../../material/Material.h"
 #include "../../../entity/player/Player.h"
 #include "../../../../nbt/NbtIo.h"
 
@@ -11,74 +12,103 @@ ChestTileEntity::ChestTileEntity()
 	openCount(0),
 	openness(0), oOpenness(0),
 	hasCheckedNeighbors(false),
-	n(NULL), s(NULL), w(NULL), e(NULL)
+	n(NULL), s(NULL), w(NULL), e(NULL),
+	pair(NULL),
+	isUnpaired(true),
+	pairSameXPos(false),
+	hasPendingPair(false),
+	pendingPairX(0), pendingPairZ(0),
+	openedBy(NULL),
+	openDelay(0)
 {
-	//rendererId = TR_CHEST_RENDERER;
+	rendererId = TR_CHEST_RENDERER;
 }
 
 int ChestTileEntity::getContainerSize() const
 {
+	if (isPairValid()) return ItemsSize * 2;
 	return ItemsSize;
 }
 
 ItemInstance* ChestTileEntity::getItem( int slot )
 {
+	if (isPairValid() && !isUnpaired) {
+		return pair->getItem(slot);
+	}
+
+	if (slot < ItemsSize) {
+		return items[slot];
+	}
+
+	if (isPairValid()) {
+		return pair->items[slot - ItemsSize];
+	}
+
 	return items[slot];
-}
-
-/*
-ItemInstance ChestTileEntity::removeItem( int slot, int count )
-{
-	if (!items[slot].isNull()) {
-		if (items[slot].count <= count) {
-			ItemInstance item = items[slot];
-			items[slot].setNull();
-			this->setChanged();
-			return item;
-		} else {
-			ItemInstance i = items[slot].remove(count);
-			if (items[slot].count == 0) items[slot].setNull();
-			this->setChanged();
-			return i;
-		}
-	}
-	return ItemInstance();
-}
-
-ItemInstance ChestTileEntity::removeItemNoUpdate( int slot )
-{
-	if (!items[slot].isNull()) {
-		ItemInstance item = items[slot];
-		items[slot].setNull();
-		return item;
-	}
-	return ItemInstance();
 }
 
 void ChestTileEntity::setItem( int slot, ItemInstance* item )
 {
-	items[slot] = item? *item : ItemInstance();
-	if (item != NULL && item->count > getMaxStackSize()) item->count = getMaxStackSize();
-	this->setChanged();
+	if (isPairValid() && !isUnpaired) {
+		pair->setItem(slot, item);
+		return;
+	}
+
+	if (slot < ItemsSize) {
+		if (items[slot]) {
+			*items[slot] = (item ? *item : ItemInstance());
+		} else {
+			items[slot] = (item ? new ItemInstance(*item) : new ItemInstance());
+		}
+	} else if (isPairValid()) {
+		int pairSlot = slot - ItemsSize;
+		if (pair->items[pairSlot]) {
+			*pair->items[pairSlot] = (item ? *item : ItemInstance());
+		} else {
+			pair->items[pairSlot] = (item ? new ItemInstance(*item) : new ItemInstance());
+		}
+	}
+	setChanged();
 }
-*/
 
 std::string ChestTileEntity::getName() const
 {
+	if (isPairValid()) return "container.chestDouble";
 	return "container.chest";
 }
 
-bool ChestTileEntity::shouldSave() {
-	for (int i = 0; i < ItemsSize; ++i)
-		if (items[i] && !items[i]->isNull()) return true;
+bool ChestTileEntity::add(ItemInstance* item)
+{
+	if (!pair) {
+		return FillingContainer::add(item);
+	}
+
+	if (FillingContainer::add(item)) {
+		return true;
+	}
+
+	if (item && !item->isNull() && item->count > 0) {
+		return pair->FillingContainer::add(item);
+	}
+
 	return false;
+}
+
+bool ChestTileEntity::shouldSave() {
+	return true;
 }
 
 void ChestTileEntity::load( CompoundTag* base )
 {
 	super::load(base);
 
-	if (!base->contains("Items"))//, Tag::TAG_List)
+	hasPendingPair = base->contains("pairx");
+	if (hasPendingPair) {
+		pendingPairX = base->getInt("pairx");
+		pendingPairZ = base->getInt("pairz");
+	}
+
+	if (!base->contains("Items"))
 		return;
 
 	ListTag* inventoryList = base->getList("Items");
@@ -100,6 +130,11 @@ bool ChestTileEntity::save( CompoundTag* base )
 {
 	if (!super::save(base))
 		return false;
+
+	if (pair && isUnpaired) {
+		base->putInt("pairx", pair->x);
+		base->putInt("pairz", pair->z);
+	}
 
 	ListTag* listTag = new ListTag();
 
@@ -144,7 +179,6 @@ void ChestTileEntity::checkNeighbors()
 	w = NULL;
 	s = NULL;
 
-	//        if (getTile() != NULL) {
 	if (level->getTile(x - 1, y, z) == Tile::chest->id) {
 		w = (ChestTileEntity*) level->getTileEntity(x - 1, y, z);
 	}
@@ -162,7 +196,141 @@ void ChestTileEntity::checkNeighbors()
 	if (s != NULL) s->clearCache();
 	if (e != NULL) e->clearCache();
 	if (w != NULL) w->clearCache();
-	//        }
+}
+
+bool ChestTileEntity::_canOpenThis()
+{
+	Tile* above = Tile::tiles[level->getTile(x, y + 1, z)];
+	if (above && above->material->isSolidBlocking()) {
+		return !level->isSolidBlockingTile(x, y + 1, z);
+	}
+	return true;
+}
+
+void ChestTileEntity::_getCenter(float& cx, float& cy, float& cz)
+{
+	cy = (float) y;
+	if (pair) {
+		cx = (float)(x + pair->x) * 0.5f;
+		cz = (float)(z + pair->z) * 0.5f;
+	} else {
+		cx = (float) x;
+		cz = (float) z;
+	}
+}
+
+bool ChestTileEntity::canPairWith(TileEntity* te)
+{
+	if (!te) return false;
+	if (!te->isType(TileEntityType::Chest)) return false;
+	if (te->y != y) return false;
+
+	ChestTileEntity* other = (ChestTileEntity*) te;
+	if (other->pair) return false;
+
+	int d = getData();
+	if (d != te->getData()) return false;
+
+	int checkVal;
+	if (te->x == x) {
+		checkVal = d - 2;
+	} else {
+		checkVal = d - 4;
+	}
+	return (unsigned int)checkVal > 1;
+}
+
+void ChestTileEntity::pairWith(ChestTileEntity* other, bool isUnpairedFlag)
+{
+	pair = other;
+	pairX = other->x;
+	pairZ = other->z;
+	isUnpaired = isUnpairedFlag;
+	pairSameXPos = (other->x == x);
+}
+
+void ChestTileEntity::_unpair()
+{
+	pair = NULL;
+	pairX = 0;
+	pairZ = 0;
+	isUnpaired = true;
+}
+
+bool ChestTileEntity::isPairValid() const
+{
+	if (!pair) return false;
+	if (!level) return false;
+	Level* lvl = const_cast<Level*>(level);
+	TileEntity* te = lvl->getTileEntity(pairX, y, pairZ);
+	return (te == pair);
+}
+
+void ChestTileEntity::unpair()
+{ 
+	if (pair) {
+		pair->_unpair();
+		_unpair();
+	}
+}
+
+bool ChestTileEntity::canOpen()
+{
+	if (pair) {
+		if (!_canOpenThis()) return false;
+		return pair->_canOpenThis();
+	}
+	return _canOpenThis();
+}
+
+void ChestTileEntity::openBy(Player* player)
+{
+	ChestTileEntity* primary = this;
+	while (!primary->isUnpaired) {
+		primary = primary->pair;
+	}
+	if (!primary->openedBy) {
+		primary->openDelay = 6;
+		primary->openedBy = player;
+		primary->startOpen();
+	}
+}
+
+void ChestTileEntity::tryPairWithNeighbors()
+{
+	if (pair) return;
+
+	int dx[] = {-1, 1, 0, 0};
+	int dz[] = {0, 0, -1, 1};
+	for (int i = 0; i < 4; i++) {
+		TileEntity* te = level->getTileEntity(x + dx[i], y, z + dz[i]);
+		if (canPairWith(te)) {
+			pairWith((ChestTileEntity*)te, true);
+			((ChestTileEntity*)te)->pairWith(this, false);
+			return;
+		}
+	}
+}
+
+void ChestTileEntity::_resetAABB()
+{
+}
+
+float ChestTileEntity::getModelOffsetX()
+{
+	if (!isUnpaired) return 0.0f;
+
+	ChestTileEntity* p = pair;
+	int posZ, posX;
+	if (pairSameXPos) {
+		posZ = p->z;
+		posX = z;
+	} else {
+		posZ = p->x;
+		posX = x;
+	}
+	if (posZ >= posX) return 0.5f;
+	else return -0.5f;
 }
 
 void ChestTileEntity::tick()
@@ -170,23 +338,42 @@ void ChestTileEntity::tick()
 	super::tick();
 	checkNeighbors();
 
+	if (hasPendingPair) {
+		TileEntity* te = level->getTileEntity(pendingPairX, y, pendingPairZ);
+		if (te && canPairWith(te)) {
+			pairWith((ChestTileEntity*)te, true);
+			((ChestTileEntity*)te)->pairWith(this, false);
+		}
+		hasPendingPair = false;
+	}
+
+	tryPairWithNeighbors();
+
 	if (++tickInterval >= 4 * SharedConstants::TicksPerSecond) {
 		level->tileEvent(x, y, z, ChestTile::EVENT_SET_OPEN_COUNT, openCount);
 		tickInterval = 0;
 	}
 
+	if (openedBy) {
+		openDelay--;
+		if (!openDelay) {
+			openedBy->openContainer(this);
+			openedBy = NULL;
+		}
+	}
+
 	oOpenness = openness;
+
+	ChestTileEntity* soundSource = this;
+	if (!isUnpaired && pair) {
+		soundSource = pair;
+	}
 
 	float speed = 0.10f;
 	if (openCount > 0 && openness == 0) {
-		if (n == NULL && w == NULL) {
-			float xc = x + 0.5f;
-			float zc = z + 0.5f;
-			if (s != NULL) zc += 0.5f;
-			if (e != NULL) xc += 0.5f;
-
-			level->playSound(xc, y + 0.5f, zc, "random.chestopen", 0.5f, level->random.nextFloat() * 0.1f + 0.9f);
-		}
+		float cx, cy, cz;
+		soundSource->_getCenter(cx, cy, cz);
+		level->playSound(cx, (float)y + 0.5f, cz, "random.chestopen", 0.5f, level->random.nextFloat() * 0.1f + 0.9f);
 	}
 	if ((openCount == 0 && openness > 0) || (openCount > 0 && openness < 1)) {
 		float oldOpen = openness;
@@ -197,14 +384,9 @@ void ChestTileEntity::tick()
 		}
 		float lim = 0.5f;
 		if (openness < lim && oldOpen >= lim) {
-			if (n == NULL && w == NULL) {
-				float xc = x + 0.5f;
-				float zc = z + 0.5f;
-				if (s != NULL) zc += 0.5f;
-				if (e != NULL) xc += 0.5f;
-
-				level->playSound(xc, y + 0.5f, zc, "random.chestclosed", 0.5f, level->random.nextFloat() * 0.1f + 0.9f);
-			}
+			float cx, cy, cz;
+			soundSource->_getCenter(cx, cy, cz);
+			level->playSound(cx, (float)y + 0.5f, cz, "random.chestclosed", 0.5f, level->random.nextFloat() * 0.1f + 0.9f);
 		}
 		if (openness < 0) {
 			openness = 0;
@@ -221,19 +403,32 @@ void ChestTileEntity::triggerEvent( int b0, int b1 )
 
 void ChestTileEntity::startOpen()
 {
-	openCount++;
-	level->tileEvent(x, y, z, ChestTile::EVENT_SET_OPEN_COUNT, openCount);
+	ChestTileEntity* primary = this;
+	if (!isUnpaired && pair) {
+		primary = pair;
+	}
+	primary->openCount++;
+	if (level && !level->isClientSide) {
+		primary->level->tileEvent(primary->x, primary->y, primary->z, ChestTile::EVENT_SET_OPEN_COUNT, primary->openCount);
+	}
 }
 
 void ChestTileEntity::stopOpen()
 {
-	openCount--;
-	level->tileEvent(x, y, z, ChestTile::EVENT_SET_OPEN_COUNT, openCount);
+	ChestTileEntity* primary = this;
+	if (!isUnpaired && pair) {
+		primary = pair;
+	}
+	if (primary->isUnpaired) {
+		primary->openCount--;
+		if (level && !level->isClientSide) {
+			primary->level->tileEvent(primary->x, primary->y, primary->z, ChestTile::EVENT_SET_OPEN_COUNT, primary->openCount);
+		}
+	}
 }
 
 void ChestTileEntity::setRemoved()
 {
 	clearCache();
-	checkNeighbors();
 	super::setRemoved();
 }
