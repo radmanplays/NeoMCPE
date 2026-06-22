@@ -19,7 +19,7 @@ public:
 
 	static const char* panoramaImages[6];
 	static float panoramaRotation;
-	static int startTimeMs;
+	static float time;
 
     virtual void render(int xm, int ym, float a);
 

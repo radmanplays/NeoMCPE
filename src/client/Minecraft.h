@@ -123,6 +123,7 @@ public:
     void audioEngineOff();
     
 	bool isPowerVR() { return _powerVr; }
+	float getDeltaTime() const { return timer.deltaTime; }
 	bool isKindleFire(int kindleVersion);
 	bool transformResolution(int* w, int* h);
 	void optionUpdated(OptionId option, bool value);

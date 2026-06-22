@@ -47,7 +47,8 @@ public:
         if (passedSeconds > 1) passedSeconds = 1;
         //LOGI("passed s: %f\n", passedSeconds);
 
-        passedTime += passedSeconds * timeScale * ticksPerSecond;
+        deltaTime = passedSeconds * timeScale;
+        passedTime += deltaTime * ticksPerSecond;
 
         ticks = (int) passedTime;
         passedTime -= ticks;
@@ -112,6 +113,7 @@ public:
 	float a;
 	float timeScale;
 	float passedTime;
+	float deltaTime;
 private:
 	static const int MAX_TICKS_PER_UPDATE = 10;
 
