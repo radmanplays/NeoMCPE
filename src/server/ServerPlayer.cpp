@@ -81,7 +81,7 @@ void ServerPlayer::hurtArmor(int dmg) {
 void ServerPlayer::openContainer( ChestTileEntity* container) {
 	LOGI("Client is opening a container\n");
 	nextContainerCounter();
-	ContainerOpenPacket packet(_containerCounter, ContainerType::CONTAINER, container->getName(), container->getContainerSize());
+	ContainerOpenPacket packet(container->x, container->y, container->z, _containerCounter, ContainerType::CONTAINER, container->getName(), container->getContainerSize());
 	_mc->raknetInstance->send(owner, packet);
 	setContainerMenu(new ContainerMenu(container, container->runningId));
 }
@@ -89,7 +89,7 @@ void ServerPlayer::openContainer( ChestTileEntity* container) {
 void ServerPlayer::openFurnace( FurnaceTileEntity* furnace ) {
 	LOGI("Client is opening a furnace\n");
 	nextContainerCounter();
-	ContainerOpenPacket packet(_containerCounter, ContainerType::FURNACE, furnace->getName(), furnace->getContainerSize());
+	ContainerOpenPacket packet(furnace->x, furnace->y, furnace->z, _containerCounter, ContainerType::FURNACE, furnace->getName(), furnace->getContainerSize());
 	_mc->raknetInstance->send(owner, packet);
 	setContainerMenu(new FurnaceMenu(furnace));
 }

@@ -5,6 +5,8 @@
 #include "../world/entity/player/Inventory.h"
 #include "../world/Container.h"
 #include "../world/inventory/BaseContainerMenu.h"
+#include "../world/inventory/ContainerMenu.h"
+#include "../world/level/tile/entity/ChestTileEntity.h"
 #include "packet/PacketInclude.h"
 
 #include "RakNetInstance.h"
@@ -606,8 +608,15 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, Containe
 	Player* p = findPlayer(level, &source);
 	if (!p) return;
 
-	if (p != minecraft->player)
-		static_cast<ServerPlayer*>(p)->doCloseContainer();
+	if (p->containerMenu && p->containerMenu->containerType == ContainerType::CONTAINER) {
+		ContainerMenu* menu = static_cast<ContainerMenu*>(p->containerMenu);
+		if (menu->container) {
+			ChestTileEntity* chest = static_cast<ChestTileEntity*>(menu->container);
+			chest->stopOpen();
+		}
+	}
+
+	static_cast<ServerPlayer*>(p)->doCloseContainer();
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ContainerSetSlotPacket* packet) {
