@@ -73,7 +73,7 @@ void ChestTileEntity::setItem( int slot, ItemInstance* item )
 
 std::string ChestTileEntity::getName() const
 {
-	if (isPairValid()) return "container.chestDouble";
+	if (isPairValid()) return "container.largechest";
 	return "container.chest";
 }
 
