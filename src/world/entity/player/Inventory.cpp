@@ -165,6 +165,7 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::BRICK_SLAB));
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::SAND_SLAB));
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::SMOOTHBRICK_SLAB));
+		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::QUARTZ_SLAB));
 
 		addItem(new ItemInstance(Tile::quartzBlock, 1, QuartzBlockTile::TYPE_DEFAULT));
 		addItem(new ItemInstance(Tile::quartzBlock, 1, QuartzBlockTile::TYPE_LINES));

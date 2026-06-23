@@ -5,7 +5,7 @@
 #include "../../Facing.h"
 
 const std::string StoneSlabTile::SLAB_NAMES[] = {
-	"stone", "sand", "wood", "cobble", "brick", "smoothStoneBrick"
+	"stone", "sand", "wood", "cobble", "brick", "smoothStoneBrick", "quartz"
 };
 const int StoneSlabTile::SLAB_NAMES_COUNT = sizeof(SLAB_NAMES) / sizeof(std::string);
 
@@ -60,6 +60,10 @@ int StoneSlabTile::getTexture(int face, int data) {
 		return Tile::redBrick->tex;
 	} else if (data == SMOOTHBRICK_SLAB) {
 		return Tile::stoneBrickSmooth->tex;
+	} else if (data == QUARTZ_SLAB) {
+		if (face == Facing::DOWN) return 3 + 13 * 16;
+		if (face == Facing::UP) return 4 + 12 * 16;
+		return Tile::quartzBlock->tex;
 	}
     return 6;
 }

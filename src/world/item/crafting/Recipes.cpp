@@ -144,6 +144,10 @@ Recipes::Recipes()
 		"###", //
 		definition('#', Tile::stoneBrickSmooth));
 
+	addShapedRecipe(ItemInstance(Tile::stoneSlabHalf, 6, StoneSlabTile::QUARTZ_SLAB), //
+		"###", //
+		definition('#', Tile::quartzBlock));
+
 	addShapedRecipe(ItemInstance(Tile::ladder, 2), //
 		"# #", //
 		"###", //
