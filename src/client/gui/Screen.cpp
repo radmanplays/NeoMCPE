@@ -191,7 +191,7 @@ void Screen::renderMenuBackground( float a )
 	glColor4f2(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glRotatef2(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef2(Mth::sin((a + time) / 400.0f) + 20.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef2(Mth::sin((a + time) / 400.0f) * 25.0f + 20.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef2(-(a + time) * 0.1f, 0.0f, 1.0f, 0.0f);
 
 	for (int i = 0; i < 6; ++i) {
