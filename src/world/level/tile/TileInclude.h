@@ -48,6 +48,7 @@
 #include "StairTile.h"
 #include "StemTile.h"
 #include "StonecutterTile.h"
+#include "WoodSlabTile.h"
 #include "StoneTile.h"
 #include "StoneSlabTile.h"
 #include "TallGrass.h"

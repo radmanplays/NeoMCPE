@@ -161,7 +161,8 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance(Tile::stairs_quartz));
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::STONE_SLAB));
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::COBBLESTONE_SLAB));
-		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::WOOD_SLAB));
+		// addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::WOOD_SLAB));
+		addItem(new ItemInstance(Tile::woodSlabHalf, 1, 0));
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::BRICK_SLAB));
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::SAND_SLAB));
 		addItem(new ItemInstance(Tile::stoneSlabHalf, 1, StoneSlabTile::SMOOTHBRICK_SLAB));

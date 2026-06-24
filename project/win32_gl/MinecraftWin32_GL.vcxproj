@@ -320,7 +320,9 @@
     <ClCompile Include="..\..\src\world\level\TickNextTickData.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\DoorTile.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\SandTile.cpp" />
+    <ClCompile Include="..\..\src\world\level\tile\SlabTile.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\StoneSlabTile.cpp" />
+    <ClCompile Include="..\..\src\world\level\tile\WoodSlabTile.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\Tile.cpp" />
     <ClCompile Include="..\..\src\world\phys\HitResult.cpp" />
   </ItemGroup>
@@ -506,7 +508,9 @@
     <ClInclude Include="..\..\src\world\level\tile\ReedTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\SandTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\StairTile.h" />
+    <ClInclude Include="..\..\src\world\level\tile\SlabTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\StoneSlabTile.h" />
+    <ClInclude Include="..\..\src\world\level\tile\WoodSlabTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\StoneTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\Tile.h" />
     <ClInclude Include="..\..\src\world\level\tile\TileInclude.h" />

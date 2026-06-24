@@ -10,8 +10,8 @@ HatchetItem::HatchetItem( int id, const Tier& tier ) :   super(id, 3, tier)
 	d.push_back(Tile::bookshelf);
 	d.push_back(Tile::treeTrunk);
 	d.push_back(Tile::chest);
-	d.push_back(Tile::stoneSlab);
-	d.push_back(Tile::stoneSlabHalf);
+	d.push_back(Tile::woodSlab);
+	d.push_back(Tile::woodSlabHalf);
 	//d.push_back(Tile::pumpkin);
 	//d.push_back(Tile::litPumpkin);
 

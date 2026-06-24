@@ -144,9 +144,11 @@ set(CompileFiles ../../src/main.cpp
 ../../src/world/level/tile/Mushroom.cpp
 ../../src/world/level/tile/NetherReactor.cpp
 ../../src/world/level/tile/NetherReactorPattern.cpp
+../../src/world/level/tile/SlabTile.cpp
 ../../src/world/level/tile/StairTile.cpp
 ../../src/world/level/tile/StemTile.cpp
 ../../src/world/level/tile/StoneSlabTile.cpp
+../../src/world/level/tile/WoodSlabTile.cpp
 ../../src/world/level/tile/TallGrass.cpp
 ../../src/world/level/tile/Tile.cpp
 ../../src/world/level/tile/TrapDoorTile.cpp

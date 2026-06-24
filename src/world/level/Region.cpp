@@ -77,7 +77,7 @@ int Region::getRawBrightness(int x, int y, int z, bool propagate) {
 
     if (propagate) {
         int id = getTile(x, y, z);
-        if (id == Tile::stoneSlabHalf->id || id == Tile::farmland->id) {
+        if (id == Tile::stoneSlabHalf->id || id == Tile::farmland->id || id == Tile::woodSlabHalf->id) {
             int br = getRawBrightness(x, y + 1, z, false);
             int br1 = getRawBrightness(x + 1, y, z, false);
             int br2 = getRawBrightness(x - 1, y, z, false);

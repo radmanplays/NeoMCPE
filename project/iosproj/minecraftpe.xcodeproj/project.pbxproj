@@ -46,6 +46,10 @@
 		1701443E9D9ACF83AFE153B9 /* CakeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 475146CAA02DC7781719E7EC /* CakeTile.cpp */; };
 		1E144E7EA33BF542B5074103 /* CakeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 402547329C01813978E5519D /* CakeTile.h */; };
 		2A82410FB753D5CD90A09580 /* CakeTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 402547329C01813978E5519D /* CakeTile.h */; };
+		32354B30B35212343A8674CA /* SlabTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AAC4A0986EB6234C482826C /* SlabTile.h */; };
+		44A649769AE2B0B5C485224C /* SlabTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AAC4A0986EB6234C482826C /* SlabTile.h */; };
+		4E2445238F784037E8CFFAEB /* WoodSlabTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E6A64606B68959C925F2ABE7 /* WoodSlabTile.h */; };
+		56E249E8BCC0DEE3595B129C /* WoodSlabTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E6A64606B68959C925F2ABE7 /* WoodSlabTile.h */; };
 		5BCF42C8863D39DC93F4931A /* MonsterPlacerItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AA4D27A9C7867E9BB7EDDB /* MonsterPlacerItem.cpp */; };
 		663441C4AF3B5B7EE205ADA1 /* CustomLevelSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE314233B8EDAB568BE06613 /* CustomLevelSource.cpp */; };
 		7F4A4DC98B9D9B44FA327863 /* CustomLevelSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 755E4985A956D6B727D4D8A3 /* CustomLevelSource.h */; };
@@ -56,9 +60,11 @@
 		9D293CEB160720D6000305C8 /* worldname_iphone5_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */; };
 		9D293CEC160720D6000305C8 /* worldname_iphone5_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */; };
 		B7874D8581157F2EC0E4DF32 /* MonsterPlacerItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AA4D27A9C7867E9BB7EDDB /* MonsterPlacerItem.cpp */; };
+		BABD4DFCB5D92FEDC83460EF /* WoodSlabTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B748398F7609D09A6437B8 /* WoodSlabTile.cpp */; };
 		BEEF202614CFF670005F0002 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
 		BEEF202614CFF670005F0003 /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEEF202614CFF670005F0001 /* Lighting.cpp */; };
 		C4B34E7EB13CEC921A5EF5D9 /* MonsterPlacerItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */; };
+		C6C04384A3D7EBAB3B903270 /* WoodSlabTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B748398F7609D09A6437B8 /* WoodSlabTile.cpp */; };
 		C81E40F896F9BF1FDF3E3D7A /* BucketItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 275A418BB4966ABAD7242355 /* BucketItem.h */; };
 		CEAF441881B94A73E50EA846 /* BucketItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB84402957EED76B68641A6 /* BucketItem.cpp */; };
 		D37343DE9C76FE3979F99F12 /* BucketItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB84402957EED76B68641A6 /* BucketItem.cpp */; };
@@ -1164,6 +1170,8 @@
 		DAC341FD9FE1034C00624011 /* BucketItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 275A418BB4966ABAD7242355 /* BucketItem.h */; };
 		DFD4469A98C7E8A3E19B3B88 /* CustomLevelSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE314233B8EDAB568BE06613 /* CustomLevelSource.cpp */; };
 		E95B40DC85CEFB2FCB05787B /* CakeTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 475146CAA02DC7781719E7EC /* CakeTile.cpp */; };
+		EA1C433F970D0DF2ED626A0C /* SlabTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C2474EA473595C4800CD3B /* SlabTile.cpp */; };
+		F0014A82BA809A5047317E56 /* SlabTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C2474EA473595C4800CD3B /* SlabTile.cpp */; };
 		F912B8CF2F6C3D5200BC60DF /* TextBox.h in Sources */ = {isa = PBXBuildFile; fileRef = 042A91AC16B17517007ABBC6 /* TextBox.h */; };
 		F99D341F2F736AA100DC153E /* HttpClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99D341E2F736AA100DC153E /* HttpClient.cpp */; };
 		F99D34202F736AA100DC153E /* HttpClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F99D341E2F736AA100DC153E /* HttpClient.cpp */; };
@@ -1262,11 +1270,13 @@
 		042A91AC16B17517007ABBC6 /* TextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBox.h; path = ../../src/client/gui/components/TextBox.h; sourceTree = SOURCE_ROOT; };
 		044129061682FF9600B70EE6 /* MouseHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseHandler.cpp; sourceTree = "<group>"; };
 		07AA4D27A9C7867E9BB7EDDB /* MonsterPlacerItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MonsterPlacerItem.cpp; path = ../../src/world/item/MonsterPlacerItem.cpp; sourceTree = SOURCE_ROOT; };
+		21C2474EA473595C4800CD3B /* SlabTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SlabTile.cpp; path = ../../src/world/level/tile/SlabTile.cpp; sourceTree = SOURCE_ROOT; };
 		275A418BB4966ABAD7242355 /* BucketItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BucketItem.h; path = ../../src/world/item/BucketItem.h; sourceTree = SOURCE_ROOT; };
 		402547329C01813978E5519D /* CakeTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CakeTile.h; path = ../../src/world/level/tile/CakeTile.h; sourceTree = SOURCE_ROOT; };
 		475146CAA02DC7781719E7EC /* CakeTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CakeTile.cpp; path = ../../src/world/level/tile/CakeTile.cpp; sourceTree = SOURCE_ROOT; };
 		4FB84402957EED76B68641A6 /* BucketItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BucketItem.cpp; path = ../../src/world/item/BucketItem.cpp; sourceTree = SOURCE_ROOT; };
 		535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MonsterPlacerItem.h; path = ../../src/world/item/MonsterPlacerItem.h; sourceTree = SOURCE_ROOT; };
+		6AAC4A0986EB6234C482826C /* SlabTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SlabTile.h; path = ../../src/world/level/tile/SlabTile.h; sourceTree = SOURCE_ROOT; };
 		755E4985A956D6B727D4D8A3 /* CustomLevelSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CustomLevelSource.h; path = ../../src/world/level/levelgen/CustomLevelSource.h; sourceTree = SOURCE_ROOT; };
 		9D293CE616071C08000305C8 /* CreateNewWorld_iphone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CreateNewWorld_iphone.xib; path = minecraftpe/dialogs/CreateNewWorld_iphone.xib; sourceTree = "<group>"; };
 		9D293CEA160720D6000305C8 /* worldname_iphone5_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = worldname_iphone5_3.png; sourceTree = "<group>"; };
@@ -2464,6 +2474,8 @@
 		D5F3B7C814548E7900D25470 /* IASKPSToggleSwitchSpecifierViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IASKPSToggleSwitchSpecifierViewCell.xib; sourceTree = "<group>"; };
 		D5F3B7C914548E7900D25470 /* IASKSpecifierValuesView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IASKSpecifierValuesView.xib; sourceTree = "<group>"; };
 		D5F3B7E41454930400D25470 /* InAppSettings.bundle */ = {isa = PBXFileReference; explicitFileType = "wrapper.installer-pkg"; path = InAppSettings.bundle; sourceTree = "<group>"; };
+		E4B748398F7609D09A6437B8 /* WoodSlabTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WoodSlabTile.cpp; path = ../../src/world/level/tile/WoodSlabTile.cpp; sourceTree = SOURCE_ROOT; };
+		E6A64606B68959C925F2ABE7 /* WoodSlabTile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WoodSlabTile.h; path = ../../src/world/level/tile/WoodSlabTile.h; sourceTree = SOURCE_ROOT; };
 		F99D341D2F736AA100DC153E /* HttpClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HttpClient.h; path = ../../src/platform/HttpClient.h; sourceTree = "<group>"; };
 		F99D341E2F736AA100DC153E /* HttpClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HttpClient.cpp; path = ../../src/platform/HttpClient.cpp; sourceTree = "<group>"; };
 		F99D34212F736AD400DC153E /* TextOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextOption.h; path = ../../src/client/gui/components/TextOption.h; sourceTree = "<group>"; };
@@ -4387,6 +4399,10 @@
 				535B4B198BBA5CC2E3115967 /* MonsterPlacerItem.h */,
 				FE314233B8EDAB568BE06613 /* CustomLevelSource.cpp */,
 				755E4985A956D6B727D4D8A3 /* CustomLevelSource.h */,
+				21C2474EA473595C4800CD3B /* SlabTile.cpp */,
+				6AAC4A0986EB6234C482826C /* SlabTile.h */,
+				E4B748398F7609D09A6437B8 /* WoodSlabTile.cpp */,
+				E6A64606B68959C925F2ABE7 /* WoodSlabTile.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -4614,6 +4630,8 @@
 				1E144E7EA33BF542B5074103 /* CakeTile.h in Headers */,
 				C4B34E7EB13CEC921A5EF5D9 /* MonsterPlacerItem.h in Headers */,
 				850C41A09BD23F56DCE75465 /* CustomLevelSource.h in Headers */,
+				32354B30B35212343A8674CA /* SlabTile.h in Headers */,
+				4E2445238F784037E8CFFAEB /* WoodSlabTile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4625,6 +4643,8 @@
 				2A82410FB753D5CD90A09580 /* CakeTile.h in Headers */,
 				8BAD43608BA7132F57A2F1D3 /* MonsterPlacerItem.h in Headers */,
 				7F4A4DC98B9D9B44FA327863 /* CustomLevelSource.h in Headers */,
+				44A649769AE2B0B5C485224C /* SlabTile.h in Headers */,
+				56E249E8BCC0DEE3595B129C /* WoodSlabTile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5507,6 +5527,8 @@
 				E95B40DC85CEFB2FCB05787B /* CakeTile.cpp in Sources */,
 				5BCF42C8863D39DC93F4931A /* MonsterPlacerItem.cpp in Sources */,
 				663441C4AF3B5B7EE205ADA1 /* CustomLevelSource.cpp in Sources */,
+				EA1C433F970D0DF2ED626A0C /* SlabTile.cpp in Sources */,
+				C6C04384A3D7EBAB3B903270 /* WoodSlabTile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5894,6 +5916,8 @@
 				1701443E9D9ACF83AFE153B9 /* CakeTile.cpp in Sources */,
 				B7874D8581157F2EC0E4DF32 /* MonsterPlacerItem.cpp in Sources */,
 				DFD4469A98C7E8A3E19B3B88 /* CustomLevelSource.cpp in Sources */,
+				F0014A82BA809A5047317E56 /* SlabTile.cpp in Sources */,
+				BABD4DFCB5D92FEDC83460EF /* WoodSlabTile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5980,6 +6004,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -6008,6 +6033,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6036,6 +6062,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = "-DDEMO_MODE";
 				PRODUCT_NAME = minecraftpe.demo;
@@ -6060,6 +6087,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6126,6 +6154,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -6159,6 +6188,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -6263,6 +6293,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";
@@ -6303,6 +6334,7 @@
 					"$(SRCROOT)//..//..//src//world//item",
 					"$(SRCROOT)//..//..//src//world//level//tile",
 					"$(SRCROOT)//..//..//src//world//level//levelgen",
+					"$(SRCROOT)//..//..//src//world//level//tile",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mojang.mcpe-arm64";

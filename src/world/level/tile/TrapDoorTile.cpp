@@ -150,5 +150,5 @@ bool TrapDoorTile::attachesTo( int id ) {
 	}
 	Tile* tile = Tile::tiles[id];
 	bool isStair = tile != NULL && tile->getRenderShape() == Tile::SHAPE_STAIRS;
-	return tile != NULL && (tile->material->isSolidBlocking() && tile->isCubeShaped()) || tile == Tile::lightGem || tile == Tile::stoneSlabHalf || isStair;
+	return tile != NULL && (tile->material->isSolidBlocking() && tile->isCubeShaped()) || tile == Tile::lightGem || tile == Tile::stoneSlabHalf || tile == Tile::woodSlabHalf || isStair;
 }

@@ -348,7 +348,9 @@
     <ClCompile Include="..\..\src\world\level\tile\NetherReactorPattern.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\StairTile.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\StemTile.cpp" />
+    <ClCompile Include="..\..\src\world\level\tile\SlabTile.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\StoneSlabTile.cpp" />
+    <ClCompile Include="..\..\src\world\level\tile\WoodSlabTile.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\TallGrass.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\Tile.cpp" />
     <ClCompile Include="..\..\src\world\level\tile\TrapDoorTile.cpp" />
@@ -993,7 +995,9 @@
     <ClInclude Include="..\..\src\world\level\tile\StairTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\StemTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\StonecutterTile.h" />
+    <ClInclude Include="..\..\src\world\level\tile\SlabTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\StoneSlabTile.h" />
+    <ClInclude Include="..\..\src\world\level\tile\WoodSlabTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\StoneTile.h" />
     <ClInclude Include="..\..\src\world\level\tile\TallGrass.h" />
     <ClInclude Include="..\..\src\world\level\tile\ThinFenceTile.h" />

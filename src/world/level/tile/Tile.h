@@ -228,8 +228,10 @@ public:
 	static Tile* stairs_sandStone;
 	static Tile* quartzBlock;
 	static Tile* stairs_quartz;
+	static Tile* woodSlab;
+	static Tile* woodSlabHalf;
 
-	// invisible bedrock is used to block off empty chunks (i.e. prevent player movement)
+    // invisible bedrock is used to block off empty chunks (i.e. prevent player movement)
 	static Tile* invisible_bedrock;
 	static Tile* info_updateGame1;
 	static Tile* info_updateGame2;

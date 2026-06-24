@@ -130,10 +130,16 @@ Recipes::Recipes()
 		"###", //
 		definition('#', Tile::sandStone));
 
-	addShapedRecipe(ItemInstance(Tile::stoneSlabHalf, 6, StoneSlabTile::WOOD_SLAB), //
+	addShapedRecipe(ItemInstance(Tile::woodSlabHalf, 6, 0), //
 		"###", //
 
 		definition('#', Tile::wood));
+
+	//old woodenslabs("fake wood slab")
+	// addShapedRecipe(ItemInstance(Tile::stoneSlabHalf, 6, StoneSlabTile::WOOD_SLAB), //
+	// 	"###", //
+
+	// 	definition('#', Tile::wood));
 
 	addShapedRecipe(ItemInstance(Tile::stoneSlabHalf, 6, StoneSlabTile::BRICK_SLAB), //
 		"###", //

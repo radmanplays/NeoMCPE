@@ -32,6 +32,8 @@ public:
 			flameOdds[i] = burnOdds[i] = 0;
 
         setFlammable(Tile::wood->id, FLAME_HARD, BURN_MEDIUM);
+        setFlammable(Tile::woodSlab->id, FLAME_HARD, BURN_MEDIUM);
+        setFlammable(Tile::woodSlabHalf->id, FLAME_HARD, BURN_MEDIUM);
         setFlammable(Tile::treeTrunk->id, FLAME_HARD, BURN_HARD);
         setFlammable(((Tile*)Tile::leaves)->id, FLAME_EASY, BURN_EASY);
         setFlammable(Tile::bookshelf->id, FLAME_EASY, BURN_MEDIUM);
