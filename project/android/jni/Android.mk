@@ -255,6 +255,7 @@ LOCAL_SRC_FILES := ../../../src/main.cpp \
 ../../../src/world/level/tile/StemTile.cpp \
 ../../../src/world/level/tile/StoneSlabTile.cpp \
 ../../../src/world/level/tile/WoodSlabTile.cpp \
+../../../src/world/level/tile/SlabTile.cpp \
 ../../../src/world/level/tile/TallGrass.cpp \
 ../../../src/world/level/tile/Tile.cpp \
 ../../../src/world/level/tile/TrapDoorTile.cpp \
