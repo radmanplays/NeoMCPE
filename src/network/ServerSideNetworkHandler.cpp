@@ -162,6 +162,23 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, MessageP
 	auto player = getPlayer(source);
 
 	if (player == nullptr) return; // @todo maybe kick?
+	std::string msg = packet->message.C_String();
+
+	if (packet->message[0] == '/') {
+		// This is a command
+
+		ChatPacket resp(minecraft->commandManager().execute(*minecraft, *player, Util::stringTrim(msg.substr(1))));
+		return sendPrivate(resp, source);
+	}
+
+	displayGameMessage("<" + player->name + "> " + msg);
+}
+
+void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChatPacket* packet)
+{
+	auto player = getPlayer(source);
+
+	if (player == nullptr) return; // @todo maybe kick?
 	
 	if (packet->message[0] == '/') {
 		// This is a command
