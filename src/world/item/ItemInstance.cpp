@@ -295,3 +295,7 @@ bool ItemInstance::isArmorItem( const ItemInstance* instance ) {
 
 	return item->isArmor();
 }
+
+bool ItemInstance::isBlock(const ItemInstance* instance) {
+    return instance->id < 256;
+}

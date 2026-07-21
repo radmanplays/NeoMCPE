@@ -13,9 +13,6 @@ public:
 	virtual void setupPositions();
 	virtual void addChild(GuiElement* element);
 	virtual void removeChild(GuiElement* element);
-	void clearAll();
-	size_t size() const;
-	GuiElement* get(int index) const;
 	bool containsPointInChildren(int x, int y) const;
 
 	virtual void tick( Minecraft* minecraft );

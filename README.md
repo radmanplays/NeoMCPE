@@ -26,6 +26,16 @@ Huge thanks to the following projects:
 - [Kolyah35/minecraft-pe-0.6.1](https://gitea.sffempire.ru/Kolyah35/minecraft-pe-0.6.1) - for the base for this project
 - [neoStudiosLCE/neoLegacy](https://github.com/neoStudiosLCE/neoLegacy) - for inspiring me to make this project
 
+# Screenshots
+<p align="center">
+
+<img width="49%" alt="menu" src="https://sffempire.ru/mcpe-screenshots/menu.png" />
+<img width="49%" alt="settings" src="https://sffempire.ru/mcpe-screenshots/settings.png" />
+<img width="49%" alt="worlds" src="https://sffempire.ru/mcpe-screenshots/worlds.png" />
+<img width="49%" alt="gameplay" src="https://sffempire.ru/mcpe-screenshots/gameplay.png" />
+
+</p>
+
 # Build
 
 ## CMake
@@ -78,8 +88,14 @@ cmake --build .
    ```
    C:\android-ndk-r14b
    ```
+3. Install **Build tools 35** with [SDKManager](https://dl.google.com/android/repository/commandlinetools-win-15859902_latest.zip) (build-tools should be in AppData):
 
-3. Run the build script:
+```powershell
+sdkmanager "build-tools;35.0.0" --sdk_root="%LocalAppData%\Android\Sdk"
+sdkmanager "build-tools;android-36" --sdk_root="%LocalAppData%\Android\Sdk"
+```
+
+4. Run the build script:
 
 ```powershell
 # Full build (NDK + Java + APK + install)
@@ -153,7 +169,6 @@ cmake --build .
 
    ```bash
    35.0.0
-   33.0.2
    ```
 
 6. Download **Android NDK r14b**:  
@@ -199,7 +214,7 @@ cmake --build .
    ```
 ## iOS
 ### Xcode
-> [Note!]
+> [!Note]
 > There's a precompiled IPA artifact in the GitHub mirror under Actions for those who either don't have Macs or don't want to build themself. But if you want to build youself, you'll need a Mac with Xcode. Download Xcode from the Mac App Store.
 
 ### 1. Clone
