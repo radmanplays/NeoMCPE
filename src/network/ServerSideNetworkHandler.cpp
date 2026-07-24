@@ -171,7 +171,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, MessageP
 		return sendPrivate(resp, source);
 	}
 
-	displayGameMessage("<" + player->name + "> " + msg);
+	displayGameMessage("<" + player->name + "> ", msg);
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChatPacket* packet)
@@ -187,7 +187,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChatPack
 		return sendPrivate(resp, source);
 	}
 
-	displayGameMessage("<" + player->name + "> " + packet->message);
+	displayGameMessage("<" + player->name + "> ", packet->message);
 }
 
 void ServerSideNetworkHandler::onNewClient(const RakNet::RakNetGUID& clientGuid)
@@ -211,7 +211,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 
 			std::string message = player->name;
 			message += " disconnected from the game";
-			displayGameMessage(message);
+			displayGameMessage("<Server> ", message);
 
 			//RemoveEntityPacket packet(player->entityId);
 			//raknetInstance->send(packet);
@@ -533,7 +533,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, RequestC
 	if (!chunk)
         return;
 
-	memset(chunk->updateMap, 0xFF, CHUNK_COLUMNS);
+	memset(chunk->updateMap, 0xFF, LevelConstants::CHUNK_COLUMNS);
 
 	ChunkDataPacket cpacket(chunk->x, chunk->z, chunk);
 
